@@ -1,0 +1,68 @@
+{
+  "name": "@unicrow/sdk",
+  "version": "0.0.0",
+  "author": "Unicrow Dev Team <hi@unicrow.com>",
+  "license": "ISC",
+  "description": "Universal Escrow SDK",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint --fix --ext .ts . --max-warnings=0",
+    "format": "prettier --write --ext .ts .",
+    "type-check": "tsc --project tsconfig.json --pretty --noEmit",
+    "test": "jest --clearCache && jest"
+  },
+  "devDependencies": {
+    "@jest/types": "^27.5.1",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@types/jest": "28.1.1",
+    "@types/luxon": "3.0.0",
+    "@types/mocha": "9.1.1",
+    "@types/node": "^17.0.31",
+    "@types/react": "17.0.38",
+    "@types/react-dom": "17.0.2",
+    "@types/styled-components": "^5.1.25",
+    "@unicrow/contract-types": "ssh://git@github.com/unicrowio/contract-types",
+    "esbuild": "^0.14.38",
+    "esbuild-jest": "^0.5.0",
+    "esbuild-jest-preset": "^0.0.5",
+    "jest": "^28.0.3",
+    "jest-environment-jsdom": "^28.0.2",
+    "prettier": "2.6.2",
+    "tsup": "^5.12.6",
+    "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "@ethersproject/providers": "^5.6.8",
+    "@metamask/providers": "^8.1.1",
+    "bignumber.js": "^9.0.2",
+    "buffer": "^6.0.3",
+    "clipboard": "2.0.11",
+    "date-fns": "^2.25.0",
+    "ethers": "^5.6.5",
+    "graphql": "^16.4.0",
+    "graphql-request": "^4.2.0",
+    "jss": "^10.9.0",
+    "jss-preset-default": "^10.9.0",
+    "luxon": "^3.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "styled-components": "^5.3.5"
+  },
+  "engines": {
+    "node": ">=8.0.0 <=16.14.2"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "displayName": "Unicrow SDK",
+    "readmeFile": "./README.md",
+    "tsconfig": "./tsconfig.json"
+  }
+}

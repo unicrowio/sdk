@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "strict": false,
+    "target": "es2017",
+    "module": "commonjs",
+    "declaration": true,
+    "declarationMap": true,
+    "lib": ["es6", "dom"],
+    "removeComments": false,
+    "typeRoots": ["./node_modules/@types", "src/@types"],
+    "sourceMap": true,
+    "outDir": "lib",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "baseUrl": "src",
+    "jsx": "react",
+    "paths": {
+      "@unicrow/sdk": ["./src/index"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "lib/**"]
+}
