@@ -10,6 +10,7 @@
     "lib/"
   ],
   "scripts": {
+    "prepare": "tsup",
     "dev": "tsup --watch",
     "build": "tsup",
     "lint": "eslint --fix --ext .ts . --max-warnings=0",
