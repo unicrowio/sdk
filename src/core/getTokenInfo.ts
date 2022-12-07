@@ -1,4 +1,4 @@
-import { ERC20__factory } from '@unicrow/contract-types'
+import { ERC20__factory } from '@unicrowio/ethers-types'
 import { ETH_ADDRESS } from '../helpers/constants'
 import { ITokenInfo } from '../typing'
 import { getJsonRpcProvider } from './getJsonRpcProvider'

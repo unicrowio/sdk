@@ -1,4 +1,4 @@
-import { ERC20__factory, Unicrow__factory } from '@unicrow/contract-types'
+import { ERC20__factory, Unicrow__factory } from '@unicrowio/ethers-types'
 import {
   NULL_ARBITRATOR_ADDRESS,
   ZERO_FEE_VALUE,
@@ -16,7 +16,7 @@ import { getBalance } from './getBalance'
 import { getTokenInfo } from '../core/getTokenInfo'
 import { errorHandler } from './errorHandler'
 import { getWeb3Provider, getWalletAccount } from '../wallet/index'
-import { EscrowInputStruct } from '@unicrow/contract-types/src/Unicrow'
+import { EscrowInputStruct } from '@unicrowio/ethers-types/src/Unicrow'
 import { validateParameters } from '../helpers/validateParameters'
 import { parsePay } from 'parsers/eventPay'
 import { checkBalance, parse } from '../helpers'

@@ -1,4 +1,4 @@
-import { ERC20__factory } from '@unicrow/contract-types'
+import { ERC20__factory } from '@unicrowio/ethers-types'
 import { getWeb3Provider, getWalletAccount } from '../wallet'
 import { ETH_ADDRESS } from '../helpers/constants'
 import { BigNumber } from 'ethers'

@@ -1,4 +1,4 @@
-import { Unicrow__factory } from '@unicrow/contract-types'
+import { Unicrow__factory } from '@unicrowio/ethers-types'
 import { UNICROW_ADDRESS } from '../config'
 import { bipsToPercentage } from '../helpers'
 import { getJsonRpcProvider } from './getJsonRpcProvider'

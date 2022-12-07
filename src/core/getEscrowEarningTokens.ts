@@ -1,4 +1,4 @@
-import { UnicrowPrimaryTokensList__factory } from '@unicrow/contract-types'
+import { UnicrowPrimaryTokensList__factory } from '@unicrowio/ethers-types'
 import { CROW_LIST_TOKENS } from '../config'
 import { IToken } from '../typing'
 import { getJsonRpcProvider } from './getJsonRpcProvider'

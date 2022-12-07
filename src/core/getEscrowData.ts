@@ -16,16 +16,16 @@ import {
   ISettlementParsed,
   ITokenParsed
 } from '../typing'
-import { Unicrow__factory } from '@unicrow/contract-types'
+import { Unicrow__factory } from '@unicrowio/ethers-types'
 import { getWeb3Provider, getWalletAccount } from '../wallet'
 import { bipsToPercentage, isSameAddress } from '../helpers'
 import {
   DataStructOutput,
   SettlementStructOutput,
   TokenStruct
-} from '@unicrow/contract-types/src/Unicrow'
-import { ArbitratorStructOutput } from '@unicrow/contract-types/src/IUnicrowArbitrator'
-import { EscrowStructOutput } from '@unicrow/contract-types/src/IUnicrow'
+} from '@unicrowio/ethers-types/src/Unicrow'
+import { ArbitratorStructOutput } from '@unicrowio/ethers-types/src/IUnicrowArbitrator'
+import { EscrowStructOutput } from '@unicrowio/ethers-types/src/IUnicrow'
 
 const getConnectedUser = async ({
   buyer,
