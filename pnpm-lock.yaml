@@ -40,6 +40,7 @@ specifiers:
 dependencies:
   '@ethersproject/providers': 5.7.2
   '@metamask/providers': 8.1.1
+  '@unicrowio/ethers-types': 0.0.0
   bignumber.js: 9.1.1
   buffer: 6.0.3
   clipboard: 2.0.11
@@ -66,7 +67,6 @@ devDependencies:
   '@types/react': 17.0.38
   '@types/react-dom': 17.0.2
   '@types/styled-components': 5.1.26
-  '@unicrowio/ethers-types': 0.0.0
   esbuild: 0.14.54
   esbuild-jest: 0.5.0_esbuild@0.14.54
   esbuild-jest-preset: 0.0.5_esbuild@0.14.54
@@ -1429,7 +1429,7 @@ packages:
 
   /@unicrowio/ethers-types/0.0.0:
     resolution: {integrity: sha512-wbKwx9r0zXvur6gdea9Rft/3hcsOUk+S5XaXJXCLK1Z0EsNxCFzgpbu6NG4xrdXmXREvWNUdbWnv0P/SU9UK+Q==}
-    dev: true
+    dev: false
 
   /abab/2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
