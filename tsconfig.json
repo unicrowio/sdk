@@ -17,6 +17,7 @@
     "rootDir": "src",
     "baseUrl": "src",
     "jsx": "react",
+    "moduleResolution": "node",
     "paths": {
       "@unicrow/sdk": ["./src/index"]
     }
