@@ -9,7 +9,7 @@ type Props = {
 }
 
 export const ArbitrationDataDisplayer = ({ data }: Props) => {
-  const { arbitration, connectedUser } = data
+  const { arbitrator: arbitration, connectedUser } = data
 
   if (arbitration?.arbitrator && connectedUser === 'arbitrator') {
     return (

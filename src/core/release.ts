@@ -1,16 +1,13 @@
 import { Unicrow__factory } from '@unicrowio/ethers-types'
 import { UNICROW_ADDRESS } from '../config'
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from '../typing'
-import { getWeb3Provider } from '../wallet'
+import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { errorHandler } from './errorHandler'
 import { parseRelease } from 'parsers/eventRelease'
 
 /**
- * Release the payment to the seller and to all other parties that charge a fee from it.
+ * Release the escrow to the seller and to all other parties that charge a fee from it.
  *
- * @async
- * @param number escrowId
- * @typeParam IReleaseTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If account is not connected (=no provider given) or if called in invalid state (e.g. already claimed / not called by seller)
  * @returns {Promise<ReleaseParsedPayload>}
@@ -25,6 +22,8 @@ export const release = async (
   if (!provider) {
     throw new Error('Error on Release, Account Not connected')
   }
+
+  autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 

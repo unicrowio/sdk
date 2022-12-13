@@ -2,7 +2,7 @@ import { tag } from '../helpers/tag'
 import { jss } from '../ui/jss'
 import {
   GetResponseUserBalance,
-  IClaimModalProps,
+  IClaimMultipleModalProps,
   IPaymentModalProps,
   IPaymentProps,
   IReleaseModalProps,
@@ -14,7 +14,7 @@ import {
   IChallengeModalProps,
   IArbitrationModalProps,
   IArbitrationTransactionCallbacks,
-  ISingleClaimModalProps,
+  IClaimModalProps,
   IRefundModalProps,
   ISettlementApproveTransactionCallbacks,
   ISettlementOfferTransactionCallbacks,
@@ -27,10 +27,10 @@ import { ROOT_UNICROW_SDK_ELEMENT } from '../helpers/constants'
 import Deferred from '../helpers/deferred'
 import {
   RefundModal,
-  SingleClaimModal,
+  ClaimModal,
   PayModal,
   ReleaseModal,
-  ClaimModal,
+  ClaimMultipleModal,
   ChallengeModal,
   Arbitrate,
   AddApproveArbitrator,
@@ -77,9 +77,6 @@ const CreateReactElement = React.createElement
 /**
  * Creates a modal within .rootUnicrowSDkElement (use props you want to pass to React.createElement for your component).
  *
- * @async
- * @param FunctionComponent<any> component
- * @param any props (optional)
  */
 export const renderModal = (component: FunctionComponent<any>, props?: any) => {
   let container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT)
@@ -109,24 +106,21 @@ export const umountModal = () => {
 /**
  * Renders payment modal with given payment params.
  *
- * @async
  * @example
  * ```js
  *  const response = await crow.ui.pay({});
  *  console.log(response)
  * ```
  *
- * @typeParam IPaymentProps paymentRequestData (interface with amount, seller, challengePeriod, ...)
- * @typeParam IPayTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If payment parameters are not valid.
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const pay = async (
-  paymentRequestData: IPaymentProps,
+  paymentProps: IPaymentProps,
   callbacks?: IPayTransactionCallbacks
 ) => {
-  const data = paymentRequestData
+  const data = paymentProps
 
   try {
     validateParameters(data)
@@ -139,7 +133,7 @@ export const pay = async (
   const deferredPromise = new Deferred<string>()
 
   const paymentModalProps: IPaymentModalProps = {
-    paymentRequestData,
+    paymentProps: paymentProps,
     callbacks,
     deferredPromise
   }
@@ -151,10 +145,7 @@ export const pay = async (
 /**
  * Renders a modal to release the payment.
  *
- * @async
- * @param number escrowId
- * @typeParam IReleaseTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const release = async (
   escrowId: number,
@@ -175,22 +166,39 @@ export const release = async (
 /**
  * Renders a modal to claim a given amount to different wallets (?) from the payment. //TODO clarify
  *
- * @async
- * @param string[] walletsToClaim
- * @typeParam GetResponseUserBalance balances
- * @typeParam IClaimTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
-export const claim = async (
-  walletsToClaim: string[],
+export const claimMultiple = async (
+  escrowIds: number[],
   balances: GetResponseUserBalance,
   callbacks?: IClaimTransactionCallbacks
 ) => {
   const deferredPromise = new Deferred<string>()
 
-  const claimModalProps: IClaimModalProps = {
-    walletsToClaim,
+  const claimMultipleModalProps: IClaimMultipleModalProps = {
+    escrowIds,
     balances,
+    callbacks,
+    deferredPromise
+  }
+
+  renderModal(ClaimMultipleModal, claimMultipleModalProps)
+  return deferredPromise.promise
+}
+
+/**
+ * Renders a modal to claim a given amount to current user from the payment. //TODO clarify
+ *
+ * @returns {Promise<string>}
+ */
+export const claim = async (
+  escrowId: number,
+  callbacks?: IClaimTransactionCallbacks
+) => {
+  const deferredPromise = new Deferred<string>()
+
+  const claimModalProps: IClaimModalProps = {
+    escrowId,
     callbacks,
     deferredPromise
   }
@@ -200,36 +208,9 @@ export const claim = async (
 }
 
 /**
- * Renders a modal to claim a given amount to current user from the payment. //TODO clarify
- *
- * @async
- * @param number escrowId
- * @typeParam IClaimTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
- */
-export const claimPayment = async (
-  escrowId: number,
-  callbacks?: IClaimTransactionCallbacks
-) => {
-  const deferredPromise = new Deferred<string>()
-
-  const singleClaimModalProps: ISingleClaimModalProps = {
-    escrowId,
-    callbacks,
-    deferredPromise
-  }
-
-  renderModal(SingleClaimModal, singleClaimModalProps)
-  return deferredPromise.promise
-}
-
-/**
  * Renders a modal to release the payment (can only be done by seller).
  *
- * @async
- * @param number escrowId
- * @typeParam IRefundTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const refund = async (
   escrowId: number,
@@ -250,10 +231,7 @@ export const refund = async (
 /**
  * Renders a modal to challenge a payment (either by buyer or seller).
  *
- * @async
- * @param number escrowId
- * @typeParam IChallengeTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const challenge = async (
   escrowId: number,
@@ -274,10 +252,7 @@ export const challenge = async (
 /**
  * Renders a modal to offer a settlement proposal (either by buyer or seller).
  *
- * @async
- * @param number escrowId
- * @typeParam ISettlementOfferTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const settlementOffer = async (
   escrowId: number,
@@ -298,10 +273,7 @@ export const settlementOffer = async (
 /**
  * Renders a modal to approve a settlement proposal (either by buyer or seller).
  *
- * @async
- * @param number escrowId
- * @typeParam ISettlementApproveTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const approveSettlement = async (
   escrowId: number,
@@ -322,10 +294,7 @@ export const approveSettlement = async (
 /**
  * Renders a modal to propose an arbitrator for a payment (either by buyer or seller).
  *
- * @async
- * @param number escrowId
- * @typeParam IArbitrationTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const addApproveArbitrator = async (
   escrowId: number,
@@ -346,10 +315,7 @@ export const addApproveArbitrator = async (
 /**
  * Renders a modal to propose an arbitration (only visible for arbitrator as agreed by both escrow parties).
  *
- * @async
- * @param number escrowId
- * @typeParam IArbitrationTransactionCallbacks callbacks (optional)
- * @returns `Promise<string>`
+ * @returns {Promise<string>}
  */
 export const arbitrate = async (
   escrowId: number,

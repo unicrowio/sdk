@@ -68,8 +68,7 @@ const _handleMataMaskError = (error: IMMError) => {
 /**
  * Returns errors from the contract, MetaMask or any error that might arise.
  *
- * @param * error
- * @returns string
+ * @returns {string}
  */
 export const errorHandler = (error: any) => {
   // generic message when no error code is found

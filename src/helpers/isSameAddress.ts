@@ -3,9 +3,7 @@
  *
  * *Always use this function to compare addresses, and avoid to call toLowerCase() directly*
  *
- * @param address1
- * @param address2
- * @returns boolean
+ * @returns {boolean}
  */
 export const isSameAddress = (
   address1: string | null,

@@ -1,7 +1,7 @@
-import { ClaimModal } from './Claim'
+import { ClaimMultipleModal } from './ClaimMultiple'
 import { PayModal } from './Pay'
 import { ReleaseModal } from './Release'
-import { SingleClaimModal } from './SingleClaim'
+import { ClaimModal } from './Claim'
 import { ChallengeModal } from './Challenge'
 import { ApproveSettlementModal } from './ApproveSettlement'
 import { RefundModal } from './Refund'
@@ -10,10 +10,10 @@ import { AddApproveArbitrator } from './AddApproveArbitrator'
 import { Arbitrate } from './Arbitrate'
 
 export {
-  ClaimModal,
+  ClaimMultipleModal,
   PayModal,
   ReleaseModal,
-  SingleClaimModal,
+  ClaimModal,
   ChallengeModal,
   RefundModal,
   ApproveSettlementModal,

@@ -8,16 +8,18 @@ import {
 } from '../helpers/constants'
 import { calculateStatus } from './calculateStatus'
 import {
-  IArbitratorParsed,
+  IArbitratorInfo,
   tConnectedUser,
   IEscrowData,
   IGetConnectedUser,
   IGetEscrowData,
-  ISettlementParsed,
-  ITokenParsed
+  ISettlement,
+  ITokenInfo
 } from '../typing'
+
 import { Unicrow__factory } from '@unicrowio/ethers-types'
-import { getWeb3Provider, getWalletAccount } from '../wallet'
+import { getWeb3Provider, getWalletAccount, autoSwitchNetwork } from '../wallet'
+
 import { bipsToPercentage, isSameAddress } from '../helpers'
 import {
   DataStructOutput,
@@ -52,8 +54,8 @@ const getConnectedUser = async ({
 
 const parseArbitration = (
   data: ArbitratorStructOutput
-): IArbitratorParsed | null => {
-  if (data.arbitrator === ADDRESS_ZERO) return null
+): IArbitratorInfo | null => {
+  if (data === null || data.arbitrator === ADDRESS_ZERO) return null
   return {
     arbitrator: data.arbitrator,
     consensusSeller: data.sellerConsensus,
@@ -135,9 +137,7 @@ const parseEscrow = (
   }
 }
 
-const parseSettlement = (
-  data: SettlementStructOutput
-): ISettlementParsed | null => {
+const parseSettlement = (data: SettlementStructOutput): ISettlement | null => {
   if (data.latestSettlementOfferBy === ADDRESS_ZERO) return null
 
   const [latestSettlementOfferBuyer, latestSettlementOfferSeller] =
@@ -150,7 +150,7 @@ const parseSettlement = (
   }
 }
 
-const parseToken = (data: TokenStruct): ITokenParsed | null => {
+const parseToken = (data: TokenStruct): ITokenInfo | null => {
   // is ETH
   if (data.address_ === ADDRESS_ZERO)
     return {
@@ -163,17 +163,15 @@ const parseToken = (data: TokenStruct): ITokenParsed | null => {
   return {
     tokenAddress: data.address_,
     symbol: data.symbol,
-    decimals: Number(data.decimals.toString()) // TODO fix build temporary: data.decimals.toNumber()
+    decimals: data.decimals.toNumber()
   }
 }
 
 const parse = (escrowId: number, data: DataStructOutput): any => {
-  const arbitration: IArbitratorParsed | null = parseArbitration(
-    data.arbitrator
-  )
+  const arbitration: IArbitratorInfo | null = parseArbitration(data.arbitrator)
 
-  const settlement: ISettlementParsed | null = parseSettlement(data.settlement)
-  const token: ITokenParsed | null = parseToken(data.token)
+  const settlement: ISettlement | null = parseSettlement(data.settlement)
+  const token: ITokenInfo | null = parseToken(data.token)
   const escrow: IEscrowData = parseEscrow(
     escrowId,
     data.escrow,
@@ -197,11 +195,9 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *
  * Returns null if some data, like arbitration or settlement, doesn't exist.
  *
- * @async
  * @example TODO:
  * - one with no arbitrator, settlement, or token data (when ETH was used)
  * - one with arbitrator added, payment settled by the arbitrator, and with token (e.g. DAI) info
- * @param number escrowId
  * @throws Error
  * If escrow id doesn't exist.
  * @returns {Promise<IGetEscrowData>}
@@ -210,6 +206,12 @@ export const getEscrowData = async (
   escrowId: number
 ): Promise<IGetEscrowData> => {
   const provider = await getWeb3Provider()
+
+  if (!provider) {
+    throw new Error('Error on Getting Escrow Data, Account Not connected')
+  }
+
+  autoSwitchNetwork()
 
   const Unicrow = Unicrow__factory.connect(UNICROW_ADDRESS, provider)
 

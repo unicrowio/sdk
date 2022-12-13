@@ -8,7 +8,7 @@ import {
 } from '../../typing'
 import {
   Subtitle,
-  StyledButton,
+  Button,
   Amount,
   ScopedModal,
   ArbitrationDataDisplayer
@@ -29,6 +29,11 @@ import { Forbidden } from '../components/Forbidden'
 import { displayChallengePeriod } from '../../helpers/displayChallengePeriod'
 import { MARKER } from '../../config/marker'
 import { useCountdownChallengePeriod } from '../hooks/useCountdownChallengePeriod'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { DefaultNetwork } from 'config/init'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
+import { SpinnerIcon } from '../components/icons/Spinner'
+
 
 const InfoContainer = styled.div`
   display: flex;
@@ -65,6 +70,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
   )
 
   const [paymentStatus, setPaymentStatus] = React.useState<string | undefined>()
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
 
   const {
     buttonLabel,
@@ -74,39 +80,49 @@ export function ChallengeModal(props: IChallengeModalProps) {
     shouldWaitOtherParty
   } = useCountdownChallengePeriod(escrowData)
 
-  React.useEffect(() => {
-    setIsLoading(true)
-    setLoadingMessage('Getting Escrow information')
-    let isMounted = true
-    getEscrowData(props.escrowId)
-      .then(async (data: IGetEscrowData) => {
-        if (!isMounted) {
-          return
-        }
-        setEscrowData(data)
+  const loadData = async () => {
+    const isCorrect = await isCorrectNetworkConnected()
+    setIsCorrectNetwork(isCorrect)
 
-        if (data.status.state === EscrowStatus.CHALLENGED) {
-          const who =
-            data.status.latestChallenge === data.connectedUser
-              ? 'you'
-              : data?.status.latestChallenge
-          setPaymentStatus(EscrowStatus.CHALLENGED + ' by ' + who)
-          return
-        }
+    if (isCorrect) {
+      setIsLoading(true)
+      setLoadingMessage('Getting Escrow information')
+      let isMounted = true
+      getEscrowData(props.escrowId)
+        .then(async (data: IGetEscrowData) => {
+          if (!isMounted) {
+            return
+          }
+          setEscrowData(data)
 
-        setPaymentStatus(data.status.state)
-      })
-      .catch(e => {
-        toast(e, 'error')
-        onModalClose()
-      })
-      .finally(() => {
-        setLoadingMessage('')
-        setIsLoading(false)
-      })
-    return () => {
-      isMounted = false
+          if (data.status.state === EscrowStatus.CHALLENGED) {
+            const who =
+              data.status.latestChallengeBy === data.connectedUser
+                ? 'you'
+                : data?.status.latestChallengeBy
+            setPaymentStatus(EscrowStatus.CHALLENGED + ' by ' + who)
+            return
+          }
+
+          setPaymentStatus(data.status.state)
+        })
+        .catch(e => {
+          toast(e, 'error')
+          onModalClose()
+        })
+        .finally(() => {
+          setLoadingMessage('')
+          setIsLoading(false)
+        })
+
+      return () => {
+        isMounted = false
+      }
     }
+  }
+
+  React.useEffect(() => {
+    loadData()
   }, [])
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
@@ -147,16 +163,22 @@ export function ChallengeModal(props: IChallengeModalProps) {
     })
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const ModalBody = () => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     if (!escrowData) {
       return null
     }
 
-    // SIGNED AS SELLER
-    const isSeller = escrowData.connectedUser === SELLER
-
-    // SIGNED AS BUYER
-    const isBuyer = escrowData.connectedUser === BUYER
+    const isSeller = escrowData.connectedUser === SELLER // SIGNED AS SELLER
+    const isBuyer = escrowData.connectedUser === BUYER // SIGNED AS BUYER
 
     if (!isBuyer && !isSeller) {
       return <Forbidden onClose={onModalClose} />
@@ -221,31 +243,24 @@ export function ChallengeModal(props: IChallengeModalProps) {
   }
 
   const ModalFooter = () => {
-    if (!escrowData) {
-      return null
-    }
+    const isSeller = escrowData.connectedUser === SELLER // SIGNED AS SELLER
+    const isBuyer = escrowData.connectedUser === BUYER // SIGNED AS BUYER
 
-    // SIGNED AS SELLER
-    const isSeller = escrowData.connectedUser === SELLER
-
-    // SIGNED AS BUYER
-    const isBuyer = escrowData.connectedUser === BUYER
-
-    if (!isBuyer && !isSeller) {
+    if (!isCorrectNetwork || !escrowData || (!isBuyer && !isSeller)) {
       return null
     }
 
     if (
       isSeller &&
-      (escrowData.status.latestChallenge === SELLER ||
-        escrowData.status.latestChallenge === null)
+      (escrowData.status.latestChallengeBy === SELLER ||
+        escrowData.status.latestChallengeBy === null)
     ) {
       return (
         <Info message="You are the current payee. You don't need to challenge." />
       )
     }
 
-    if (isBuyer && escrowData.status.latestChallenge === BUYER) {
+    if (isBuyer && escrowData.status.latestChallengeBy === BUYER) {
       return (
         <Info message="You are the current payee. You don't need to challenge." />
       )
@@ -271,27 +286,50 @@ export function ChallengeModal(props: IChallengeModalProps) {
     return (
       <>
         {!shouldWaitOtherParty && (
-          <StyledButton
+          <Button
             fullWidth
             disabled={isLoading || disableButton}
             onClick={buttonOnClick}
           >
             {buttonChildren}
-          </StyledButton>
+          </Button>
         )}
 
         {shouldWaitOtherParty && countdown !== 'expired' && (
-          <Info message="Wait for the other party to do the challenge." />
+          <>
+            <Button fullWidth disabled variant="primary">
+              <>
+                <SpinnerIcon />
+                Challenge period hasn't started yet
+              </>
+            </Button>
+          </>
         )}
       </>
     )
   }
 
+  const renderBody = () => {
+    if (isCorrectNetwork && !escrowData) {
+      return null
+    }
+
+    return <ModalBody />
+  }
+
+  const renderFooter = () => {
+    if (!isCorrectNetwork || (!isCorrectNetwork && !escrowData)) {
+      return null
+    }
+
+    return <ModalFooter />
+  }
+
   return (
     <ScopedModal
       title={'Challenge'}
-      body={escrowData ? <ModalBody /> : null}
-      footer={escrowData ? <ModalFooter /> : null}
+      body={renderBody()}
+      footer={renderFooter()}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}

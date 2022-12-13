@@ -17,8 +17,6 @@ const fetchTokenInfo = async (tokenAddress: string) => {
 /**
  * Gets info of an ERC20 token based on its address.
  *
- * @async
- * @param string tokenAddress - default value: null
  * @throws Error
  * If token info doesn't exist on this address or the token address couldn't be parsed.
  * @returns {Promise<ITokenInfo>}

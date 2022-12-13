@@ -7,7 +7,7 @@ import {
   IGetEscrowData,
   OfferSettlementParsedPayload
 } from '../../typing'
-import { StyledButton } from '../../ui/components/Button'
+import { Button } from '../../ui/components/Button'
 import { useModalStates } from '../../ui/hooks/useModalStates'
 import styled from 'styled-components'
 import { offerSettlement } from '../../core/offerSettlement'
@@ -20,6 +20,9 @@ import { InputText, ScopedModal, Stack } from '../components'
 import { AdornmentContent } from '../components/InputText'
 import { Forbidden } from '../components/Forbidden'
 import { getEscrowData } from '../../core/getEscrowData'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { DefaultNetwork } from 'config/init'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -88,38 +91,49 @@ export function SettlementOfferModal({
     return ['Buyer should get back', 'You should receive']
   }, [escrow])
 
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
+
+  const loadData = async () => {
+    const isCorrect = await isCorrectNetworkConnected()
+    setIsCorrectNetwork(isCorrect)
+
+    if (isCorrect) {
+      setIsLoading(true)
+      setLoadingMessage('Getting Escrow information')
+      getEscrowData(escrowId)
+        .then((data: IGetEscrowData) => {
+          const settlementModalProps: ISettlementOfferModalProps = {
+            escrowId,
+            escrowData: data,
+            deferredPromise,
+            callbacks
+          }
+
+          if (data.status.latestSettlementOfferBy) {
+            onModalClose()
+            renderModal(ApproveSettlementModal, settlementModalProps)
+          }
+
+          setEscrow(data)
+        })
+        .catch(e => {
+          toast(e, 'error')
+          onModalClose()
+        })
+        .finally(() => {
+          setLoadingMessage('')
+          setIsLoading(false)
+        })
+    }
+  }
+
   React.useEffect(() => {
     if (escrowData) {
       setEscrow(escrowData)
       return
     }
 
-    setIsLoading(true)
-    setLoadingMessage('Getting Escrow information')
-    getEscrowData(escrowId)
-      .then((data: IGetEscrowData) => {
-        const settlementModalProps: ISettlementOfferModalProps = {
-          escrowId,
-          escrowData: data,
-          deferredPromise,
-          callbacks
-        }
-
-        if (data.status.latestSettlementOffer) {
-          onModalClose()
-          renderModal(ApproveSettlementModal, settlementModalProps)
-        }
-
-        setEscrow(data)
-      })
-      .catch(e => {
-        toast(e, 'error')
-        onModalClose()
-      })
-      .finally(() => {
-        setLoadingMessage('')
-        setIsLoading(false)
-      })
+    loadData()
   }, [])
 
   const handleChange = (
@@ -189,7 +203,7 @@ export function SettlementOfferModal({
   )
 
   const onCancel = () => {
-    if (escrow) {
+    if (escrowData) {
       const settlementModalProps: ISettlementOfferModalProps = {
         escrowId,
         escrowData: escrow,
@@ -203,46 +217,45 @@ export function SettlementOfferModal({
     }
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const renderButtons = () => {
     if (error) {
       return (
-        <StyledButton fullWidth type="submit" variant="secondary">
+        <Button fullWidth type="submit" variant="secondary">
           Retry
-        </StyledButton>
+        </Button>
       )
     }
 
     if (success) {
       return (
-        <StyledButton fullWidth variant="primary" onClick={onModalClose}>
+        <Button fullWidth variant="primary" onClick={onModalClose}>
           Close
-        </StyledButton>
+        </Button>
       )
     }
 
     return (
       <>
-        <StyledButton
-          fullWidth
-          type="button"
-          variant="tertiary"
-          onClick={onCancel}
-        >
+        <Button fullWidth type="button" variant="tertiary" onClick={onCancel}>
           Cancel
-        </StyledButton>
-        <StyledButton
-          variant="primary"
-          type="submit"
-          disabled={isLoading}
-          fullWidth
-        >
+        </Button>
+        <Button variant="primary" type="submit" disabled={isLoading} fullWidth>
           Submit
-        </StyledButton>
+        </Button>
       </>
     )
   }
 
   const ModalBody = () => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     if (
       !isLoading &&
       escrow &&
@@ -329,7 +342,7 @@ export function SettlementOfferModal({
   }
 
   const ModalFooter = () => {
-    if (!escrow || escrow.status.claimed) {
+    if (!isCorrectNetwork || !escrow || escrow.status.claimed) {
       return null
     }
 
@@ -340,12 +353,28 @@ export function SettlementOfferModal({
     )
   }
 
+  const renderBody = () => {
+    if (isCorrectNetwork && !escrowData) {
+      return null
+    }
+
+    return <ModalBody />
+  }
+
+  const renderFooter = () => {
+    if (!isCorrectNetwork || (!isCorrectNetwork && !escrowData)) {
+      return null
+    }
+
+    return <ModalFooter />
+  }
+
   return (
     <form autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={'Settlement Offer'}
-        body={escrow ? ModalBody() : null}
-        footer={escrow ? ModalFooter() : null}
+        body={renderBody()}
+        footer={renderFooter()}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}

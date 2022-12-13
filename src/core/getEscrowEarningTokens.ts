@@ -6,7 +6,6 @@ import { getJsonRpcProvider } from './getJsonRpcProvider'
 /**
  * Returns a list of all escrow earning tokens.
  *
- * @async
  * @returns {Promise<IToken[]>}
  */
 export const getEscrowEarningTokens = async (): Promise<IToken[]> => {

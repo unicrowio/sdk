@@ -5,18 +5,14 @@ import {
   ISettlementApproveTransactionCallbacks
 } from '../typing'
 import { errorHandler } from './errorHandler'
-import { getWeb3Provider } from '../wallet'
+import { getWeb3Provider, autoSwitchNetwork } from '../wallet'
 import { parseApproveSettlement } from 'parsers/eventApproveSettlement'
 
 /**
  * Sends an offer to settle the payment between the buyer and the seller.
  *
- * @async
- * @param number escrowId
- * @param number splitBuyer
- * @param number splitSeller
- * @typeParam ISettlementApproveTransactionCallbacks callbacks (optional, interface)
- * @throws Error
+
+     * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
  * @returns {Promise<ApproveSettlementParsedPayload>}
  */
@@ -33,6 +29,8 @@ export const approveSettlement = async (
     if (!provider) {
       throw new Error('Error on Approve Offer, Account Not connected')
     }
+
+    autoSwitchNetwork(callbacks)
 
     const CrowDisputeContract = UnicrowDispute__factory.connect(
       UNICROW_DISPUTE_ADDRESS,

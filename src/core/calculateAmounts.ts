@@ -3,8 +3,8 @@ import { ZERO } from '../helpers/constants'
 import {
   CalculateAmountsInput,
   CalculateFunction,
-  Shares,
-  Splits
+  tShares,
+  tSplits
 } from '../typing'
 
 // Functions
@@ -13,7 +13,7 @@ const calculatePercentage = (n1: number, n2: number) => {
   return n1 > 0 ? new BigNumber(n1).multipliedBy(n2).dividedBy(100) : ZERO
 }
 
-const calculateShares = (newSplit: Splits, amount: number) =>
+const calculateShares = (newSplit: tSplits, amount: number) =>
   ({
     amountBuyer: calculatePercentage(
       newSplit.splitBuyer.toNumber(),
@@ -35,7 +35,7 @@ const calculateShares = (newSplit: Splits, amount: number) =>
       newSplit.splitArbitrator.toNumber(),
       amount
     ).toNumber()
-  } as Shares)
+  } as tShares)
 
 const zeroSplits = () => {
   return {
@@ -44,7 +44,7 @@ const zeroSplits = () => {
     splitSeller: ZERO,
     splitMarketplace: ZERO,
     splitArbitrator: ZERO
-  } as Splits
+  } as tSplits
 }
 
 const calculateSharesWithoutArbitration = ({
@@ -109,9 +109,7 @@ const calculateSharesWithArbitration = ({
 /**
  * Calculates how the balance in the escrow are split between all the relevant parties.
  *
- * @typeParam CalculateAmountsInput data
- * @param boolean isSettledByArbitrator
- * @returns Shares
+ * @returns {tShares}
  */
 export const calculateAmounts = (
   data: CalculateAmountsInput,

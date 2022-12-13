@@ -1,16 +1,13 @@
 import { UNICROW_ADDRESS } from '../config'
 import { Unicrow__factory } from '@unicrowio/ethers-types'
 import { IRefundTransactionCallbacks } from '../typing'
-import { getWeb3Provider } from '../wallet'
+import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { errorHandler } from './errorHandler'
 
 /**
  * Refunds 100% of the buyer payment (all fees are waived), returns transactions' hash.
  *
  * @privateRemarks Can only be called by the seller.
- * @async
- * @param number escrowId
- * @typeParam IRefundTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If account is not connected (=no provider given) or if called in invalid state (e.g. already claimed / not called by seller)
  * @returns {Promise<string>}
@@ -25,6 +22,8 @@ export const refund = async (
   if (!provider) {
     throw new Error('Error on Refund, Account Not connected')
   }
+
+  autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 
