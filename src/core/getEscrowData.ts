@@ -26,8 +26,6 @@ import {
   SettlementStructOutput,
   TokenStruct
 } from '@unicrowio/ethers-types/src/Unicrow'
-import { ArbitratorStructOutput } from '@unicrowio/ethers-types/src/IUnicrowArbitrator'
-import { EscrowStructOutput } from '@unicrowio/ethers-types/src/IUnicrow'
 
 const getConnectedUser = async ({
   buyer,
@@ -52,9 +50,7 @@ const getConnectedUser = async ({
   return { connectedUser, connectedWallet }
 }
 
-const parseArbitration = (
-  data: ArbitratorStructOutput
-): IArbitratorInfo | null => {
+const parseArbitration = (data): IArbitratorInfo | null => {
   if (data === null || data.arbitrator === ADDRESS_ZERO) return null
   return {
     arbitrator: data.arbitrator,
@@ -67,7 +63,7 @@ const parseArbitration = (
 
 const parseEscrow = (
   escrowId: number,
-  data: EscrowStructOutput,
+  data,
   latestSettlementOfferAddress?: string
 ): IEscrowData => {
   const [
@@ -163,7 +159,7 @@ const parseToken = (data: TokenStruct): ITokenInfo | null => {
   return {
     tokenAddress: data.address_,
     symbol: data.symbol,
-    decimals: data.decimals.toNumber()
+    decimals: Number(data.decimals)
   }
 }
 
