@@ -2,27 +2,21 @@ import { IQuery } from '../indexer/queryBuilder'
 import Deferred from '../helpers/deferred'
 import { BigNumber as BigNumberJs } from 'bignumber.js'
 
-export type TokenSymbol = 'DAI' | 'USDT' | 'USDC' | 'ETH' | string
+export type tTokenSymbol = 'DAI' | 'USDT' | 'USDC' | 'ETH' | string
 
 /**
- * @field TokenSymbol symbol ('DAI' | 'USDT' | 'USDC' | 'ETH' | string)
- * @field string address
+ * Only symbol and address of a token (no decimals i.e. rounding precision)
+ *
  */
 export interface IToken {
-  symbol: TokenSymbol
+  /** 'DAI' | 'USDT' | 'USDC' | 'ETH' | string  */
+  symbol: tTokenSymbol
   address: string
 }
 
 /**
- * @field string | BigNumber | number amount
- * @field string seller
- * @field number challengePeriod
- * @field string tokenAddress (optional)
- * @field string marketplace (optional)
- * @field number marketplaceFee (optional)
- * @field string arbitrator (optional)
- * @field number arbitratorFee (optional)
- * @field number challengePeriodExtension (optional)
+ * All properties needed for a payment.
+ *
  */
 export interface IPaymentProps {
   /** Amount in token */
@@ -31,13 +25,14 @@ export interface IPaymentProps {
   seller: string
   /** Initial challenge period (in seconds) */
   challengePeriod: number
+  /** address of the token used in the payment */
   tokenAddress?: string
   /** address of a marketplace that has facilitated the payment */
   marketplace?: string
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee?: number
-  /** Address of the arbitrator. 0x00..00 for no arbitrator */
-  arbitrator?: string
+  /** Address of the arbitrator. null for no arbitrator */
+  arbitrator?: string | null
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee?: number
   /** By how much will the challenge period get extended after a challenge (in seconds) */
@@ -47,9 +42,6 @@ export interface IPaymentProps {
 export interface IArbitratorData {
   address: string
   fee: number
-}
-
-export interface IArbitrateData {
   splitBuyer: number
   splitSeller: number
 }
@@ -64,21 +56,21 @@ export enum EscrowStatus {
   SETTLED = 'Settled'
 }
 
-export type EscrowStatusLatestParty = 'buyer' | 'seller' | null
+export type tEscrowParty = 'buyer' | 'seller' | null
 
 /**
- * @field EscrowStatus state (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED)
- * @field boolean claimed
- * @field EscrowStatusLatestParty latestChallenge ('buyer' | 'seller' | null)
- * @field EscrowStatusLatestParty latestSettlementOffer ('buyer' | 'seller' | null)
+ * Full status of an escrow.
+ *
  */
 export interface IEscrowStatus {
+  /** The current state of an escrow (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED). */
   state: EscrowStatus
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean
-  latestChallenge: EscrowStatusLatestParty
-  /** how the payment was offered to be settled [buyer, seller] in bips */
-  latestSettlementOffer: EscrowStatusLatestParty
+  /** address of who sent the latest challenge ('buyer' | 'seller' | null) */
+  latestChallengeBy: tEscrowParty
+  /** address of who sent the latest settlement offer ('buyer' | 'seller' | null) */
+  latestSettlementOfferBy: tEscrowParty
 }
 
 export interface EscrowStatusView {
@@ -119,13 +111,13 @@ export interface EscrowStatusView {
 }
 
 /**
- * @field string tokenAddress
- * @field string symbol
- * @field number decimals
+ * Properties of a token, incl. decimals as in its rounding precision.
+ *
  */
 export interface ITokenInfo {
   tokenAddress: string
   symbol: string
+  /** Number of token decimals. To get "human readable" format, divide the amount by pow(10, decimals) */
   decimals: number
 }
 
@@ -167,18 +159,6 @@ export interface IEscrowDataWithTokenInfo extends IEscrowData {
   tokenInfo: ITokenInfo
 }
 
-export interface IBalance {
-  amount: string
-  amountInUSD: string
-  tokenSymbol: TokenSymbol
-  status: 'Pending' | 'Ready for claim'
-}
-
-export interface IBalanceResponse {
-  pending: IBalance[]
-  readyForClaim: IBalance[]
-}
-
 export interface GenericParsedTxPayload {
   name: string
   transactionHash: string
@@ -187,13 +167,12 @@ export interface GenericParsedTxPayload {
 }
 
 /**
- * @field string arbitrator
- * @field number arbitratorFee
- * @field 'ArbitratorApproved' statusArbitration
+ * The data sent by the user when he approves an arbitrator for a payment.
+ *
  */
 export type ApproveArbitratorParsedPayload = GenericParsedTxPayload & {
-  /** Address of the arbitrator. 0x00..00 for no arbitrator */
-  arbitrator: string
+  /** Address of the arbitrator. null for no arbitrator */
+  arbitrator: string | null
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee: number
   /** Has the escrow been decided by the arbitrator, false if value === null // TODO: verify if true */
@@ -201,34 +180,15 @@ export type ApproveArbitratorParsedPayload = GenericParsedTxPayload & {
 }
 
 /**
- * @field Date settledAt
- * @field number latestSettlementOfferBuyer
- * @field number latestSettlementOfferSeller
- * @field string buyer
- * @field string seller
- * @field number challengePeriodExtension
- * @field Date challengePeriodStart
- * @field Date challengePeriodEnd
- * @field string marketplace
- * @field number marketplaceFee
- * @field string currency
- * @field boolean claimed
- * @field number consensusBuyer
- * @field number consensusSeller
- * @field number splitBuyer
- * @field number splitSeller
- * @field number splitMarketplace
- * @field number splitProtocol
- * @field string amount
- * @field string amountBuyer
- * @field string amountSeller
- * @field string amountMarketplace
- * @field string amountProtocol
- * @field string amountArbitrator
+ * The data sent by the user when he approves a payment settlement.
+ *
  */
 export type ApproveSettlementParsedPayload = GenericParsedTxPayload & {
+  /* The date when payment has been settled at */
   settledAt: Date
+  /** How much was the buyer offered in the latest settlement offer */
   latestSettlementOfferBuyer: number
+  /** How much was the seller offered in the latest settlement offer */
   latestSettlementOfferSeller: number
   /** Who sent the payment */
   buyer: string
@@ -244,50 +204,38 @@ export type ApproveSettlementParsedPayload = GenericParsedTxPayload & {
   marketplace: string
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number
-  /** Token used in the payment (0x00..00 for ETH) */
-  currency: string
+  /** Token used in the payment (null for ETH) */
+  currency: string | null
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean
   /** Buyer's agreement on the arbitrator */
   consensusBuyer: number
   /** Seller's agreement on the arbitrator */
   consensusSeller: number
+  /** Current buyer's split based on the latest action on the escrow */
   splitBuyer: number
+  /** Current seller's split based on the latest action on the escrow */
   splitSeller: number
+  /** Marketplace fee (bips) */
   splitMarketplace: number
+  /** Protocol fee (bips) */
   splitProtocol: number
   /** Amount in token */
   amount: string
+  /** Buyer's final share in percentage incl. fees */
   amountBuyer: string
+  /** Seller's final share in percentage incl. fees */
   amountSeller: string
+  /** Marketplace's final share in percentage incl. fees */
   amountMarketplace: string
+  /** Protocol's final share in percentage incl. fees */
   amountProtocol: string
+  /** Arbitrator's final share in percentage incl. fees */
   amountArbitrator: string
 }
 
 /**
- * @field Date settledAt
- * @field string buyer
- * @field string seller
- * @field number challengePeriodExtension
- * @field Date challengePeriodStart
- * @field Date challengePeriodEnd
- * @field string marketplace
- * @field number marketplaceFee
- * @field string currency
- * @field boolean claimed
- * @field number consensusBuyer
- * @field number consensusSeller
- * @field number splitBuyer
- * @field number splitSeller
- * @field number splitMarketplace
- * @field number splitProtocol
- * @field string amount
- * @field string amountBuyer
- * @field string amountSeller
- * @field string amountMarketplace
- * @field string amountProtocol
- * @field string amountArbitrator
+ * The data sent by an arbitrator when he makes his arbitration proposal.
  */
 export type ArbitrateParsedPayload = GenericParsedTxPayload & {
   settledAt: Date
@@ -305,47 +253,42 @@ export type ArbitrateParsedPayload = GenericParsedTxPayload & {
   marketplace: string
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number
-  /** Token used in the payment (0x00..00 for ETH) */
-  currency: string
+  /** Token used in the payment (null for ETH) */
+  currency: string | null
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean
   /** Buyer's agreement on the arbitrator */
   consensusBuyer: number
   /** Seller's agreement on the arbitrator */
   consensusSeller: number
+  /** Current buyer's split based on the latest action on the escrow */
   splitBuyer: number
+  /** Current seller's split based on the latest action on the escrow */
   splitSeller: number
+  /** Marketplace fee (bips) */
   splitMarketplace: number
+  /** Protocol fee (bips) */
   splitProtocol: number
   /** Amount in token */
   amount: string
+  /** Buyer's final share in percentage incl. fees */
   amountBuyer: string
+  /** Seller's final share in percentage incl. fees */
   amountSeller: string
+  /** Marketplace's final share in percentage incl. fees */
   amountMarketplace: string
+  /** Protocol's final share in percentage incl. fees */
   amountProtocol: string
+  /** Arbitrator's final share in percentage incl. fees */
   amountArbitrator: string
 }
 
 /**
- * @field Date challengedAt
- * @field string buyer
- * @field string seller
- * @field number challengePeriodExtension
- * @field Date challengePeriodStart
- * @field Date challengePeriodEnd
- * @field string marketplace
- * @field number marketplaceFee
- * @field string currency
- * @field boolean claimed
- * @field number consensusBuyer
- * @field number consensusSeller
- * @field number splitBuyer
- * @field number splitSeller
- * @field number splitMarketplace
- * @field number splitProtocol
- * @field string amount
+ * The data sent either by the buyer or seller when they challenge a payment.
+ *
  */
 export type ChallengeParsedPayload = GenericParsedTxPayload & {
+  /* The date when payment has been challenged at */
   challengedAt: Date
   /** Who sent the payment */
   buyer: string
@@ -361,8 +304,8 @@ export type ChallengeParsedPayload = GenericParsedTxPayload & {
   marketplace: string
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number
-  /** Token used in the payment (0x00..00 for ETH) */
-  currency: string
+  /** Token used in the payment (null for ETH) */
+  currency: string | null
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean
   /** Buyer's agreement on the arbitrator */
@@ -377,7 +320,7 @@ export type ChallengeParsedPayload = GenericParsedTxPayload & {
   amount: string
 }
 
-export type SingleClaimParsedPayload = GenericParsedTxPayload & {
+export type ClaimParsedPayload = GenericParsedTxPayload & {
   amountBuyer: string
   amountSeller: string
   amountMarketplace: string
@@ -386,55 +329,35 @@ export type SingleClaimParsedPayload = GenericParsedTxPayload & {
 }
 
 /**
- * @field SingleClaimParsedPayload[] payload (array with amountBuyer, amountSeller, amountMarketplace, amountProtocol, amountArbitrator)
+ * The data sent by either the buyer or seller when he claims an escrow.
+ *
  */
-export type ClaimParsedPayload = GenericParsedTxPayload & {
-  payload: SingleClaimParsedPayload[]
+export type MultipleClaimParsedPayload = GenericParsedTxPayload & {
+  /** The data for a single claim of an escrow share. (array with amountBuyer, amountSeller, amountMarketplace, amountProtocol, amountArbitrator) */
+  payload: ClaimParsedPayload[]
 }
 
 /**
- * @field Date settlementOfferAt
- * @field number latestSettlementOfferBuyer
- * @field number latestSettlementOfferSeller
- * @field string latestSettlementOfferAddress
+ * The data sent by either the buyer or seller when he proposes an escrow settlement.
+ *
  */
 export type OfferSettlementParsedPayload = GenericParsedTxPayload & {
+  /* The date when payment has been offered at */
   settlementOfferAt: Date
   latestSettlementOfferBuyer: number
   latestSettlementOfferSeller: number
+  /** address of who sent the latest settlement offer. */
   latestSettlementOfferAddress: string
 }
 
 /**
- * @field Date paidAt
- * @field string arbitrator
- * @field number arbitratorFee
- * @field string buyer
- * @field string seller
- * @field number challengePeriod
- * @field number challengePeriodExtension
- * @field Date challengePeriodStart
- * @field Date challengePeriodEnd
- * @field string marketplace
- * @field number marketplaceFee
- * @field string currency
- * @field boolean claimed
- * @field number consensusBuyer
- * @field number consensusSeller
- * @field number splitBuyer
- * @field number splitSeller
- * @field number splitMarketplace
- * @field number splitProtocol
- * @field string amount
- * @field string amountBuyer
- * @field string amountSeller
- * @field string amountMarketplace
- * @field string amountProtocol
- * @field string amountArbitrator
+ * The data sent by either buyer or seller when he initalizes a new payment.
+ *
  */
 export type PayParsedPayload = GenericParsedTxPayload & {
+  /* The date when payment has been paid at */
   paidAt: Date
-  /** Address of the arbitrator. 0x00..00 for no arbitrator */
+  /** Address of the arbitrator */
   arbitrator: string
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee: number
@@ -454,8 +377,8 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   marketplace: string
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number
-  /** Token used in the payment (0x00..00 for ETH) */
-  currency: string
+  /** Token used in the payment (null for ETH) */
+  currency: string | null
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean
   /** Buyer's agreement on the arbitrator */
@@ -468,25 +391,30 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   splitProtocol: number
   /** Amount in token */
   amount: string
+  /** Current buyer's split based on the latest action on the escrow */
   amountBuyer: string
+  /** Current seller's split based on the latest action on the escrow */
   amountSeller: string
+  /** Marketplace fee (bips) */
   amountMarketplace: string
+  /** Arbitrator fee (bips) */
   amountArbitrator: string
+  /** Protocol fee (bips) */
   amountProtocol: string
 }
 
 /**
- * @field string arbitrator
- * @field number arbitratorFee
- * @field string proposer
- * @field 'ArbitratorProposed' amountMarketplace
+ * The data sent by either the buyer or seller when he proposes an arbitrator for an escrow.
+ *
  */
 export type ProposalArbitratorParsedPayload = GenericParsedTxPayload & {
-  /** Address of the arbitrator. 0x00..00 for no arbitrator */
-  arbitrator: string
+  /** Address of the arbitrator. null for no arbitrator */
+  arbitrator: string | null
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee: number
+  /** Address of the proposer */
   proposer: string
+  /** status of the arbitration  */
   statusArbitration: 'ArbitratorProposed'
 }
 
@@ -518,6 +446,7 @@ export type ReleaseParsedPayload = GenericParsedTxPayload & {
 export interface IGenericTransactionCallbacks {
   connectingWallet?: (payload?: any) => void
   connected?: (payload?: any) => void
+  switchingNetwork?: (payload?: any) => void
   broadcasting?: (payload?: any) => void
   broadcasted?: (payload: any) => void
   confirmed?: (payload: any) => void
@@ -556,11 +485,13 @@ export interface IPayTransactionPayload {
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for a payment.
+ *
  */
 export interface IPayTransactionCallbacks extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: IPayTransactionPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: IPayTransactionPayload) => void
 }
 
@@ -569,13 +500,16 @@ export type IReleasedTransactionPayload = ReleaseParsedPayload
 export interface IReleasedTransactionBroadcastPayload {
   transactionHash: string
 }
+
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for an escrow release.
+ *
  */
 export interface IReleaseTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: IReleasedTransactionBroadcastPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: IReleasedTransactionPayload) => void
 }
 
@@ -586,22 +520,26 @@ export interface ISettlementTransactionPayload {
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for a settlement approval.
+ *
  */
 export interface ISettlementApproveTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: ISettlementTransactionPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: ApproveSettlementParsedPayload) => void
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for a settlement offer.
+ *
  */
 export interface ISettlementOfferTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: ISettlementTransactionPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: OfferSettlementParsedPayload) => void
 }
 
@@ -614,12 +552,14 @@ export interface IChallengeTransactionPayload {
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for an escrow challenge.
+ *
  */
 export interface IChallengeTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: IChallengeTransactionPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: IChallengeTransactionPayload) => void
 }
 
@@ -636,14 +576,16 @@ export interface IArbitrateTransactionPayload {
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for an arbitration.
+ *
  */
 export interface IArbitrationTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (
     data: IArbitrationTransactionPayload | IArbitrateTransactionPayload
   ) => void
+  /** Called when the transaction is minted */
   confirmed?: (
     data:
       | ProposalArbitratorParsedPayload
@@ -657,12 +599,14 @@ export interface IRefundTransactionPayload {
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for a refund.
+ *
  */
 export interface IRefundTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: IRefundTransactionPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: IRefundTransactionPayload) => void
 }
 
@@ -671,16 +615,18 @@ export interface IClaimTransactionPayload {
 }
 
 /**
- * @field function broadcasted (optional)
- * @field function confirmed (optional)
+ * The callbacks one could set up for a claim.
+ *
  */
 export interface IClaimTransactionCallbacks
   extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
   broadcasted?: (data: IClaimTransactionPayload) => void
+  /** Called when the transaction is minted */
   confirmed?: (data: IClaimTransactionPayload) => void
 }
 export interface IPaymentModalProps {
-  paymentRequestData: IPaymentProps
+  paymentProps: IPaymentProps
   deferredPromise: Deferred<any>
   callbacks?: IPayTransactionCallbacks
 }
@@ -709,12 +655,6 @@ export interface IArbitrationModalProps {
   callbacks?: IArbitrationTransactionCallbacks
 }
 
-export type TBalance = {
-  token: string
-  status: 'Ready to Claim' | 'Pending'
-  total: BigNumberJs
-}
-
 export type tConnectedUser =
   | 'buyer'
   | 'seller'
@@ -722,44 +662,58 @@ export type tConnectedUser =
   | 'marketplace'
   | 'other'
 
+export interface IBalance {
+  amount: string
+  amountInUSD?: string
+  tokenSymbol: tTokenSymbol
+  status: 'Pending' | 'Ready to claim'
+}
+
+export interface IBalanceResponse {
+  pending: IBalance[]
+  readyForClaim: IBalance[]
+}
+
 /**
- * @field string tokenAddress (optional)
- * @field string symbol (optional)
- * @field function decimals (optional)
- * @field string | BigNumber displayableAmount
- * @field BigNumber amountBN
- * @field tConnectedUser connectedUser ("buyer" | "seller" | "arbitrator" | "marketplace" | "other")
- * @field string connectedWallet
- * @field IEscrowStatus statusEscrow (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED)
+ * Info about the token, the claim and escrow status etc.
+ *
  */
-export interface IBalanceWithTokenInfo extends TBalance {
+export interface IBalanceWithTokenInfo extends IBalance {
   tokenAddress?: string
   symbol?: string
+  /** the rounding precision of a token */
   decimals?: number
+  /** amount converted to human readable form */
   displayableAmount: string | BigNumberJs
+  /** helper field used when calculating with other BigNumber fields */
   amountBN: BigNumberJs
+  /** user's role in the escrow ('buyer' | 'seller' | 'arbitrator' | 'marketplace' | 'other') */
   connectedUser: tConnectedUser
+  /** the address of the connected user */
   connectedWallet: string
-  /** Indicates status of the payment */
+  /** Indicates status of the payment (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED) */
   statusEscrow: IEscrowStatus
 }
+
 /**
- * @field IBalanceWithTokenInfo[] pending
- * @field IBalanceWithTokenInfo[] readyForClaim
+ * Used for calculations of the user balance.
+ *
  */
 export interface GetResponseUserBalance {
+  /** Balance in escrows where the challenge period hasn't ended yet */
   pending: IBalanceWithTokenInfo[]
+  /** Balance that can be claimed from the contract */
   readyForClaim: IBalanceWithTokenInfo[]
 }
 
-export interface IClaimModalProps {
-  walletsToClaim: string[]
+export interface IClaimMultipleModalProps {
+  escrowIds: number[]
   balances: GetResponseUserBalance
   deferredPromise: Deferred<any>
   callbacks?: IClaimTransactionCallbacks
 }
 
-export interface ISingleClaimModalProps {
+export interface IClaimModalProps {
   escrowId: number
   deferredPromise: Deferred<any>
   callbacks?: IClaimTransactionCallbacks
@@ -796,27 +750,23 @@ export interface IArbitratorContractData {
 }
 
 /**
- * @field string latestSettlementOfferAddress
- * @field number latestSettlementOfferBuyer
- * @field number latestSettlementOfferSeller
+ * Properties of an escrow settlement.
+ *
  */
-export interface ISettlementParsed {
-  /** address of who sent the latest settlement offer. Returns 0x00..00 if no offer has been made */
+export interface ISettlement {
+  /** address of who sent the latest settlement offer */
   latestSettlementOfferAddress: string
   latestSettlementOfferBuyer: number
   latestSettlementOfferSeller: number
 }
 
 /**
- * @field string arbitrator
- * @field boolean consensusSeller
- * @field boolean consensusBuyer
- * @field boolean arbitrated
- * @field number arbitratorFee
+ * Properties of an escrow arbitration.
+ *
  */
-export interface IArbitratorParsed {
-  /** Address of the arbitrator. 0x00..00 for no arbitrator */
-  arbitrator: string
+export interface IArbitratorInfo {
+  /** Address of the arbitrator. null for no arbitrator */
+  arbitrator: string | null
   /** Seller's agreement on the arbitrator */
   consensusSeller: boolean
   /** Buyer's agreement on the arbitrator */
@@ -827,17 +777,6 @@ export interface IArbitratorParsed {
   arbitratorFee: number
 }
 
-/**
- * @field string tokenAddress
- * @field number decimals
- * @field string symbol
- */
-export interface ITokenParsed {
-  tokenAddress: string
-  decimals: number
-  symbol: string
-}
-
 export type IGetConnectedUser = {
   buyer: string
   seller: string
@@ -846,17 +785,19 @@ export type IGetConnectedUser = {
 }
 
 /**
- * @field ITokenParsed token (interface with tokenAddress, decimals, symbol)
- * @field IArbitratorParsed | null arbitration (interface with arbitrator, consensusSeller, consensusBuyer, arbitrated, arbitratorFee)
- * @field ISettlementParsed | null settlement (interface with latestSettlementOfferAddress, latestSettlementOfferBuyer, latestSettlementOfferSeller)
- * @field tConnectedUser connectedUser ("buyer" | "seller" | "arbitrator" | "marketplace" | "other")
- * @field string connectedWallet
+ * All data of an escrow incl. info about the arbitrator, settlement and current user.
+ *
  */
 export interface IGetEscrowData extends IEscrowData {
-  token: ITokenParsed
-  arbitration: IArbitratorParsed | null
-  settlement: ISettlementParsed | null
+  /** interface with tokenAddress, decimals, symbol */
+  token: ITokenInfo
+  /** interface with arbitrator, consensusSeller, consensusBuyer, arbitrated, arbitratorFee */
+  arbitration: IArbitratorInfo | null
+  /** interface with latestSettlementOfferAddress, latestSettlementOfferBuyer, latestSettlementOfferSeller */
+  settlement: ISettlement | null
+  /** user's role in the escrow ('buyer' | 'seller' | 'arbitrator' | 'marketplace' | 'other') */
   connectedUser: tConnectedUser
+  /** the address of the connected user */
   connectedWallet: string
 }
 
@@ -880,14 +821,7 @@ export interface IArbitrateModalProps {
 }
 
 /**
- * @field string seller
- * @field number consensusBuyer
- * @field number consensusSeller
- * @field number splitSeller
- * @field number splitBuyer
- * @field Date expires
- * @field boolean claimed
- * @field string latestSettlementOfferAddress (optional)
+ * The info needed for calculating the status of an escrow.
  *
  */
 export interface ICalculateStatusParams {
@@ -897,52 +831,62 @@ export interface ICalculateStatusParams {
   consensusBuyer: number
   /** Seller's agreement on the arbitrator */
   consensusSeller: number
+  /** Seller's final share in percentage incl. fees */
   splitSeller: number
+  /** Buyer's share, and fees, in bips */
   splitBuyer: number
   expires: Date
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean
+  /** address of who sent the latest settlement offer. */
   latestSettlementOfferAddress?: string
 }
 
 /**
- * @field number amount
- * @field number splitBuyer
- * @field number splitSeller
- * @field number splitProtocol
- * @field number splitMarketplace
- * @field number arbitratorFee (optional)
+ * The info needed for calculating the share of each party of an escrow.
+ *
  */
 export type CalculateAmountsInput = {
   amount: number
+  /** Buyer's share, and fees, in bips */
   splitBuyer: number
+  /** Seller's share, and fees, in bips */
   splitSeller: number
+  /** Protocol's share, and fees, in bips */
   splitProtocol: number
+  /** Marketplace's share, and fees, in bips */
   splitMarketplace: number
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee?: number
 }
 
 /**
- * @field number amountBuyer
- * @field number amountSeller
- * @field number amountProtocol
- * @field number amountMarketplace
- * @field number amountArbitrator
+ * The amounts for each party of an escrow.
+ *
  */
-export type Shares = {
+export type tShares = {
+  /** Buyer's final share in percentage incl. fees */
   amountBuyer: number
+  /** Seller's final share in percentage incl. fees */
   amountSeller: number
+  /** Protocol's final share in percentage incl. fees */
   amountProtocol: number
+  /** Marketplace's final share in percentage incl. fees */
   amountMarketplace: number
+  /** Arbitrator's final share in percentage incl. fees */
   amountArbitrator: number
 }
 
-export type Splits = {
+export type tSplits = {
+  /** Buyer's final share in percentage incl. fees */
   splitBuyer: BigNumberJs
+  /** Seller's final share in percentage incl. fees */
   splitSeller: BigNumberJs
+  /** Protocol's final share in percentage incl. fees */
   splitProtocol: BigNumberJs
+  /** Marketplace's final share in percentage incl. fees */
   splitMarketplace: BigNumberJs
+  /** Arbitrator's final share in percentage incl. fees */
   splitArbitrator: BigNumberJs
 }
 

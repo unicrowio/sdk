@@ -1,4 +1,4 @@
-import { ERC20__factory, Unicrow__factory } from '@unicrowio/ethers-types'
+import { ERC20__factory, Unicrow__factory } from '@unicrow/contract-types'
 import {
   NULL_ARBITRATOR_ADDRESS,
   ZERO_FEE_VALUE,
@@ -15,8 +15,14 @@ import {
 import { getBalance } from './getBalance'
 import { getTokenInfo } from '../core/getTokenInfo'
 import { errorHandler } from './errorHandler'
-import { getWeb3Provider, getWalletAccount } from '../wallet/index'
-import { EscrowInputStruct } from '@unicrowio/ethers-types/src/Unicrow'
+
+import {
+  getWeb3Provider,
+  getWalletAccount,
+  autoSwitchNetwork
+} from '../wallet/index'
+import { EscrowInputStruct } from '@unicrow/contract-types/src/Unicrow'
+
 import { validateParameters } from '../helpers/validateParameters'
 import { parsePay } from 'parsers/eventPay'
 import { checkBalance, parse } from '../helpers'
@@ -25,7 +31,6 @@ import { BigNumberish } from 'ethers'
 /**
  * Deposits a payment into an escrow and returns its data.
  *
- * @async
  * @example
  * Here's a simple example:
 
@@ -59,14 +64,12 @@ import { BigNumberish } from 'ethers'
           * "challengePeriodExtension": 0,
       * }}"
  * ```
- * @typeParam IPaymentProps paymentRequestData (interface with amount, seller, period, ...)
- * @typeParam IPayTransactionCallbacks callbacks (optional, for each step during the transaction)
- * @throws Error
+   * @throws Error
  * If account is not connected (=no provider given) or token info doesn't exist (or sth. else went wrong).
  * @returns {Promise<PayParsedPayload>}
  */
 export const pay = async (
-  paymentRequestData: IPaymentProps,
+  paymentProps: IPaymentProps,
   callbacks?: IPayTransactionCallbacks
 ): Promise<PayParsedPayload> => {
   const {
@@ -79,13 +82,16 @@ export const pay = async (
     arbitrator,
     arbitratorFee = ZERO_FEE_VALUE,
     challengePeriodExtension = 0
-  } = paymentRequestData
+  } = paymentProps
 
   callbacks?.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider()
+
   if (!provider) {
     throw new Error('Wallet not connected')
   }
+
+  autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 
@@ -143,11 +149,11 @@ export const pay = async (
   validateParameters({
     seller,
     arbitrator,
-    arbitratorFee: paymentRequestData.arbitratorFee,
+    arbitratorFee: paymentProps.arbitratorFee,
     marketplace: marketplaceAddress,
     marketplaceFee: marketplaceFeeValue,
-    challengePeriod: paymentRequestData.challengePeriod,
-    challengePeriodExtension: paymentRequestData.challengePeriodExtension,
+    challengePeriod: paymentProps.challengePeriod,
+    challengePeriodExtension: paymentProps.challengePeriodExtension,
     tokenAddress,
     amount
   })

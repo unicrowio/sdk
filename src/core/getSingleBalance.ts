@@ -10,14 +10,13 @@ import { getEscrowData } from './getEscrowData'
 /**
  * Gets balance of an escrow with its token info.
  *
- * @async
- * @param number escrowId
  * @returns {Promise<IBalanceWithTokenInfo>}
  */
 export const getSingleBalance = async (
   escrowId: number
 ): Promise<IBalanceWithTokenInfo> => {
   const escrowData = await getEscrowData(escrowId)
+  const { arbitrated = false, arbitratorFee = 0 } = escrowData.arbitration || {}
 
   const amount = getSplitFromLoggedUser(
     {
@@ -29,12 +28,8 @@ export const getSingleBalance = async (
       buyer: escrowData.buyer,
       seller: escrowData.seller,
       marketplace: escrowData.marketplace,
-      arbitrator_fee: escrowData.arbitration
-        ? escrowData.arbitration.arbitratorFee
-        : 0,
-      arbitrated: escrowData.arbitration
-        ? escrowData.arbitration.arbitrated
-        : false
+      arbitrator_fee: arbitratorFee,
+      arbitrated
     },
     escrowData.connectedWallet
   )
@@ -43,11 +38,10 @@ export const getSingleBalance = async (
 
   const balance: IBalanceWithTokenInfo = {
     tokenAddress: escrowData.token.tokenAddress,
-    symbol: escrowData.token.symbol,
+    tokenSymbol: escrowData.token.symbol,
     decimals: escrowData.token.decimals,
-    status: 'Ready to Claim',
-    token: escrowData.token.tokenAddress,
-    total: amountBN,
+    status: 'Ready to claim',
+    amount: amountBN.toString(),
     amountBN: displayableAmountBN(amountBN, escrowData.token.decimals),
     displayableAmount: displayableAmount(amountBN, escrowData.token.decimals),
     connectedUser: escrowData.connectedUser,

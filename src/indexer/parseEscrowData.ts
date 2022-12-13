@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import {
   EscrowStatus,
-  EscrowStatusLatestParty,
+  tEscrowParty,
   EscrowStatusView,
   IEscrowData
 } from '../typing'
@@ -31,7 +31,7 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
     return latestChallenge
   })()
 
-  const latestSettlementOffer = ((): EscrowStatusLatestParty => {
+  const latestSettlementOffer = ((): tEscrowParty => {
     if (!item.latest_settlement_offer_address) return null
 
     return isSameAddress(item.latest_settlement_offer_address, item.buyer)
@@ -47,8 +47,8 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
     challengePeriod: item.challenge_period,
     status: {
       state,
-      latestChallenge,
-      latestSettlementOffer,
+      latestChallengeBy: latestChallenge,
+      latestSettlementOfferBy: latestSettlementOffer,
       claimed: item.claimed
     },
 

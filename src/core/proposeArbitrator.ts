@@ -1,11 +1,11 @@
-import { UnicrowArbitrator__factory } from '@unicrowio/ethers-types'
+import { UnicrowArbitrator__factory } from '@unicrow/contract-types'
 import { UNICROW_ARBITRATOR_ADDRESS } from '../config'
 import {
   IArbitrationTransactionCallbacks,
   ProposalArbitratorParsedPayload
 } from '../typing'
 import { errorHandler } from './errorHandler'
-import { getWeb3Provider } from '../wallet'
+import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { validateAddress } from '../helpers/validateAddress'
 import { parseProposalArbitrator } from 'parsers/eventProposalArbitrator'
 
@@ -13,11 +13,6 @@ import { parseProposalArbitrator } from 'parsers/eventProposalArbitrator'
  * One of the parties (buyer or seller) can call this to propose an arbitrator
  * for an escrow that has no arbitrator defined.
  *
- * @async
- * @param number escrowId
- * @param string arbitrator
- * @param number arbitratorFee
- * @typeParam IArbitrationTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
  * @returns {Promise<ProposalArbitratorParsedPayload>}
@@ -37,6 +32,8 @@ export const proposeArbitrator = async (
     if (!provider) {
       throw new Error('Error on Adding Arbitrator. Account not connected')
     }
+
+    autoSwitchNetwork(callbacks)
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
       UNICROW_ARBITRATOR_ADDRESS,

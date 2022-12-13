@@ -9,7 +9,7 @@ import React from 'react'
 import {
   Subtitle,
   Amount,
-  StyledButton,
+  Button,
   ScopedModal,
   DataDisplayer
 } from '../../ui/components'
@@ -27,6 +27,9 @@ import { useModalStates } from 'ui/hooks/useModalStates'
 import { ContainerDataDisplayer } from 'ui/components/DataDisplayer'
 import { addressWithYou } from 'helpers/addressFormat'
 import { useCountdownChallengePeriod } from 'ui/hooks'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
+import { DefaultNetwork } from 'config/config'
 
 type IProtectedActions = {
   canRefund: boolean
@@ -54,53 +57,66 @@ export function RefundModal(props: IRefundModalProps) {
   )
 
   const [paymentStatus, setPaymentStatus] = React.useState<string | undefined>()
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData)
 
-  React.useEffect(() => {
-    setIsLoading(true)
-    setLoadingMessage('Getting Escrow information')
-    getEscrowData(props.escrowId)
-      .then(async (data: IGetEscrowData) => {
-        setEscrowData(data)
-        if (data.connectedUser !== SELLER) {
+  const loadData = async () => {
+    const isCorrect = await isCorrectNetworkConnected()
+    setIsCorrectNetwork(isCorrect)
+    
+    if(isCorrect) {
+      setIsLoading(true)
+      isCorrectNetworkConnected().then((isCorrect) => {
+        setIsCorrectNetwork(isCorrect)
+      })
+      setLoadingMessage('Getting Escrow information')
+      getEscrowData(props.escrowId)
+        .then(async (data: IGetEscrowData) => {
+          setEscrowData(data)
+          if (data.connectedUser !== SELLER) {
+            setProtect({
+              canRefund: false,
+              reason: 'Only the seller can release the payment'
+            })
+            return
+          }
+  
+          if (data.status.claimed) {
+            setProtect({
+              canRefund: false,
+              reason: 'The payment cannot be refunded via Unicrow anymore'
+            })
+            return
+          }
+  
           setProtect({
-            canRefund: false,
-            reason: 'Only the seller can release the payment'
+            canRefund: true
           })
-          return
-        }
-
-        if (data.status.claimed) {
-          setProtect({
-            canRefund: false,
-            reason: 'The payment cannot be refunded via Unicrow anymore'
-          })
-          return
-        }
-
-        setProtect({
-          canRefund: true
+  
+          if (data.status.state === EscrowStatus.CHALLENGED) {
+            setPaymentStatus(
+              EscrowStatus.CHALLENGED + ' by ' + data?.status.latestChallengeBy
+            )
+            return
+          }
+  
+          setPaymentStatus(data.status.state)
         })
-
-        if (data.status.state === EscrowStatus.CHALLENGED) {
-          setPaymentStatus(
-            EscrowStatus.CHALLENGED + ' by ' + data?.status.latestChallenge
-          )
-          return
-        }
-
-        setPaymentStatus(data.status.state)
-      })
-      .catch(e => {
-        toast(e, 'error')
-        onModalClose()
-      })
-      .finally(() => {
-        setLoadingMessage('')
-        setIsLoading(false)
-      })
+        .catch(e => {
+          toast(e, 'error')
+          onModalClose()
+        })
+        .finally(() => {
+          setLoadingMessage('')
+          setIsLoading(false)
+        })
+    }
+  }
+  
+  React.useEffect(() => {
+    loadData();
   }, [])
 
   const refundCallbacks: IRefundTransactionCallbacks = {
@@ -139,7 +155,16 @@ export function RefundModal(props: IRefundModalProps) {
     })
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const ModalBody = () => {
+    if(!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch}/>
+    }
+
     if (!escrowData) {
       return null
     }
@@ -204,6 +229,10 @@ export function RefundModal(props: IRefundModalProps) {
   }
 
   const ModalFooter = () => {
+    if(!isCorrectNetwork) {
+      return null;
+    }
+
     if (!isLoading && !protect.canRefund) {
       return null
     }
@@ -226,17 +255,45 @@ export function RefundModal(props: IRefundModalProps) {
     }
 
     return (
-      <StyledButton fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </StyledButton>
+      </Button>
     )
+  }
+
+  const renderBody = () => {
+    if(!isCorrectNetwork) {
+      return <ModalBody />
+    }
+
+    if(isCorrectNetwork && escrowData) {
+      return <ModalBody />
+    }
+
+    if(isCorrectNetwork && !escrowData) {
+      return null;
+    }
+
+    return <ModalBody/>
+  }
+
+  const renderFooter = () => {
+    if(!isCorrectNetwork) {
+      return null
+    }
+
+    if(!isCorrectNetwork && !escrowData) {
+      return null;
+    }
+
+    return <ModalFooter/>
   }
 
   return (
     <ScopedModal
       title={'Refund Payment'}
-      body={escrowData ? <ModalBody /> : null}
-      footer={<ModalFooter />}
+      body={renderBody()}
+      footer={renderFooter()}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}

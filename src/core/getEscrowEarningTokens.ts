@@ -1,4 +1,4 @@
-import { UnicrowPrimaryTokensList__factory } from '@unicrowio/ethers-types'
+import { UnicrowPrimaryTokensList__factory } from '@unicrow/contract-types'
 import { CROW_LIST_TOKENS } from '../config'
 import { IToken } from '../typing'
 import { getJsonRpcProvider } from './getJsonRpcProvider'
@@ -6,7 +6,6 @@ import { getJsonRpcProvider } from './getJsonRpcProvider'
 /**
  * Returns a list of all escrow earning tokens.
  *
- * @async
  * @returns {Promise<IToken[]>}
  */
 export const getEscrowEarningTokens = async (): Promise<IToken[]> => {

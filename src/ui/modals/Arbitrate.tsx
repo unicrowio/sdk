@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react'
 import {
   InputText,
-  StyledButton,
+  Button,
   Stack,
   FormattedPercentageAmountAdornment,
   ScopedModal
@@ -12,10 +12,12 @@ import { IArbitrateModalProps, IGetEscrowData } from '../../typing'
 import { useModalStates } from '../hooks/useModalStates'
 import { AdornmentContent } from '../components/InputText'
 import { Forbidden } from '../components/Forbidden'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
+import { DefaultNetwork } from 'config/init'
 
 /**
  * Arbitrator should arbitrate the escrow payment
- * @param param0 {arbitration, modalStates}
  * @returns
  */
 export const Arbitrate = ({
@@ -39,18 +41,25 @@ export const Arbitrate = ({
   const [buyerValue, setBuyerValue] = React.useState<string>('')
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null)
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
 
   const loadData = async () => {
     try {
       setIsLoading(true)
-      setLoadingMessage('Getting Arbitration information')
 
-      const escrowData: IGetEscrowData = await getEscrowData(escrowId)
+      const isCorrect = await isCorrectNetworkConnected()
+      setIsCorrectNetwork(isCorrect)
 
-      setEscrow(escrowData)
-      if (escrowData.arbitration && escrowData.arbitration.arbitrated) {
-        setBuyerValue(escrowData.splitBuyer.toString())
-        setSellerValue(escrowData.splitSeller.toString())
+      if (isCorrect) {
+        setLoadingMessage('Getting Arbitration information')
+
+        const escrowData: IGetEscrowData = await getEscrowData(escrowId)
+
+        setEscrow(escrowData)
+        if (escrowData.arbitration && escrowData.arbitration.arbitrated) {
+          setBuyerValue(escrowData.splitBuyer.toString())
+          setSellerValue(escrowData.splitSeller.toString())
+        }
       }
     } catch (error: any) {
       console.error(error)
@@ -104,7 +113,16 @@ export const Arbitrate = ({
     }
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const renderBody = () => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     if (!escrow) return null
 
     if (escrow.connectedUser !== 'arbitrator') {
@@ -173,21 +191,23 @@ export const Arbitrate = ({
   }
 
   const renderFooter = () => {
-    if (!escrow || !escrow.arbitration) return null
+    if (!isCorrectNetwork || !escrow || !escrow.arbitration) {
+      return null
+    }
 
     if (
       success ||
       (escrow.connectedUser === 'arbitrator' && escrow.arbitration.arbitrated)
     ) {
       return (
-        <StyledButton
+        <Button
           disabled={isLoading}
           fullWidth
           variant="tertiary"
           onClick={onModalClose}
         >
           Close
-        </StyledButton>
+        </Button>
       )
     }
     if (
@@ -195,14 +215,9 @@ export const Arbitrate = ({
       !escrow.arbitration.arbitrated
     ) {
       return (
-        <StyledButton
-          disabled={isLoading}
-          fullWidth
-          variant="primary"
-          type="submit"
-        >
+        <Button disabled={isLoading} fullWidth variant="primary" type="submit">
           {error ? 'Retry' : 'Confirm'}
-        </StyledButton>
+        </Button>
       )
     }
   }

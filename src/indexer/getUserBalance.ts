@@ -10,9 +10,10 @@ import {
   EscrowStatusView,
   GetResponseUserBalance,
   ITokenInfo,
-  TBalance
+  IBalance
 } from '../typing'
 import { buildBalanceQuery } from './queryBalance'
+import BigNumber from 'bignumber.js'
 
 export const getUserBalance = async (
   client: GraphQLClient,
@@ -30,33 +31,33 @@ export const getUserBalance = async (
   const groupByPending = groupBy(pending, item => item.currency)
   const groupByReady = groupBy(ready_for_claim, item => item.currency)
 
-  const pendingData: TBalance[] = Object.keys(groupByPending)
+  const pendingData: IBalance[] = Object.keys(groupByPending)
     .map(key => {
       const group = groupByPending[key]
       const total = calculateSplit(group, walletUserAddress)
       return {
-        token: key,
+        tokenSymbol: key,
         status: 'Pending',
-        total
+        amount: total.toString()
       }
     })
-    .filter((item: any) => item.total > 0) as TBalance[]
+    .filter((item: any) => new BigNumber(item.total).gt(0)) as IBalance[]
 
-  const readyData: TBalance[] = Object.keys(groupByReady)
+  const readyData: IBalance[] = Object.keys(groupByReady)
     .map(key => {
       const group = groupByReady[key]
       const total = calculateSplit(group, walletUserAddress)
       return {
-        token: key,
-        status: 'Ready to Claim',
-        total
+        tokenSymbol: key,
+        status: 'Ready to claim',
+        amount: total.toString()
       }
     })
-    .filter((item: any) => item.total > 0) as TBalance[]
+    .filter((item: any) => new BigNumber(item.total).gt(0)) as IBalance[]
 
   const tokensAddress = []
   for await (const balance of [...pendingData, ...readyData]) {
-    const tokenInfo = await getTokenInfo(balance.token)
+    const tokenInfo = await getTokenInfo(balance.tokenSymbol)
     tokensAddress.push(tokenInfo)
   }
 
@@ -65,7 +66,7 @@ export const getUserBalance = async (
   const tokensInfo = await Promise.all(Array.from(uniqueTokensAddress))
 
   const resolve = (item: any) => {
-    const _amount = item.total.div(1000)
+    const _amount = new BigNumber(item.total).div(1000)
     const tokenInfo = tokensInfo.find(
       t => t.tokenAddress === item.token
     ) as ITokenInfo

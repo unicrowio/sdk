@@ -3,10 +3,11 @@ import * as ui from './ui'
 import * as wallet from './wallet'
 import * as indexer from './indexer'
 import * as helpers from './helpers'
+import initNetworks from './config/init'
 
 export * from './typing'
 
-export default { core, ui, wallet, indexer, helpers }
+export default { core, ui, wallet, indexer, helpers, initNetworks }
 
 // We need uncom,ent this code bellow and comment the code above when generates te documentation (docusaurus/typedoc)
 
@@ -18,4 +19,4 @@ export default { core, ui, wallet, indexer, helpers }
 
 // export * from './typing'
 
-// export default { core, ui, wallet, indexer, helpers }
+// export default { core, ui, wallet, indexer, helpers, config }

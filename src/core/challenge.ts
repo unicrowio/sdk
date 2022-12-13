@@ -1,6 +1,6 @@
-import { UnicrowDispute__factory } from '@unicrowio/ethers-types'
+import { UnicrowDispute__factory } from '@unicrow/contract-types'
 
-import { getWeb3Provider } from '../wallet'
+import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { UNICROW_DISPUTE_ADDRESS } from '../config'
 import {
   ChallengeParsedPayload,
@@ -13,8 +13,6 @@ import { parseChallenge } from 'parsers/eventChallenge'
  * Performs a challenge and returns its data.
  *
  * @async
- * @param number escrowId
- * @typeParam IChallengeTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
  * @returns {Promise<ChallengeParsedPayload>}
@@ -29,6 +27,8 @@ export const challenge = async (
   if (!provider) {
     throw new Error('Error on Challenge, Account Not connected')
   }
+
+  autoSwitchNetwork(callbacks)
 
   try {
     callbacks?.connected && callbacks.connected()

@@ -1,12 +1,18 @@
 import EventEmitter from 'events'
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
+import { networks } from './networks'
+import { DefaultNetwork } from '../config/init'
+import initNetworks from '../config/init'
 
+let currentNetworkId: number | null = null
 let currentWallet: string | null = null
 let externalOnChangeWalletCallback:
   | ((walletAddress: string | null) => void)
   | null
 let accountChangedListener: EventEmitter | null = null
+let networkChangedListener: EventEmitter | null = null
+let externalOnChangeNetworkCallback: ((network: number) => void) | null
 
 const checkIsWalletInstalled = () => {
   if (typeof window === 'undefined') {
@@ -14,6 +20,7 @@ const checkIsWalletInstalled = () => {
   }
   // Have to check the ethereum binding on the window object to see if it's installed
   const { ethereum } = window
+
   if (!(ethereum && ethereum.isMetaMask)) {
     // is there a more agnostic way to check? I know otherwallets use isMetaMask too, but perhaps there are better flags
     throw new Error('Please Install a web3 browser wallet')
@@ -36,6 +43,18 @@ const handleAccountsChanged = (accounts: string[]) => {
 
   if (externalOnChangeWalletCallback) {
     externalOnChangeWalletCallback(currentWallet)
+  }
+}
+
+const handleNetworkChanged = (networkId: number) => {
+  if (currentNetworkId == networkId) {
+    return
+  }
+
+  currentNetworkId = networkId
+
+  if (externalOnChangeNetworkCallback) {
+    externalOnChangeNetworkCallback(networkId)
   }
 }
 
@@ -68,6 +87,57 @@ export const connect = async (): Promise<string | null> => {
   return currentWallet
 }
 
+export const switchNetwork = async (name: DefaultNetwork) => {
+  const ethereum = checkIsWalletInstalled()
+
+  if (!accountChangedListener) {
+    accountChangedListener = ethereum!.on(
+      'accountsChanged',
+      (accounts: any) => {
+        handleAccountsChanged(accounts)
+      }
+    )
+  }
+
+  const params: any = {
+    chainId: ethers.utils.hexValue(Number(networks[name].chainId))
+  }
+
+  await ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [params]
+  })
+
+  const connected = await getNetwork()
+
+  if (connected.chainId == Number(networks[name].chainId)) {
+    initNetworks({ defaultNetwork: name })
+  }
+
+  return name
+}
+
+export const getNetwork = async (): Promise<ethers.providers.Network> => {
+  const provider = await getWeb3Provider()
+  return provider.getNetwork()
+}
+
+export const isCorrectNetworkConnected = async (): Promise<boolean> => {
+  const network = await getNetwork()
+  return network.chainId === globalThis.defaultNetwork.chainId
+}
+
+export const autoSwitchNetwork = async (callbacks?) => {
+  if (!(await isCorrectNetworkConnected())) {
+    if (globalThis.autoNetworkSwitch) {
+      callbacks?.switchingNetwork && callbacks.switchingNetwork()
+      switchNetwork(globalThis.defaultNetwork.name)
+    } else {
+      throw new Error('Wrong network')
+    }
+  }
+}
+
 export const startListening = (
   onChangeWalletCallback: (walletAddress: string | null) => void
 ) => {
@@ -83,6 +153,21 @@ export const startListening = (
   }
 
   externalOnChangeWalletCallback = onChangeWalletCallback
+}
+
+export const startListeningNetwork = (
+  onChangeNetworkCallback: (network: number) => void
+) => {
+  const ethereum = checkIsWalletInstalled()
+
+  if (!networkChangedListener) {
+    networkChangedListener = ethereum!.on('networkChanged', networkId => {
+      console.info('networkChanged', networkId)
+      handleNetworkChanged(networkId)
+    })
+  }
+
+  externalOnChangeNetworkCallback = onChangeNetworkCallback
 }
 
 export const isListening = (): boolean => {

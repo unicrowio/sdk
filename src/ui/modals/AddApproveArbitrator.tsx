@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react'
 import { AdornmentContent, InputText } from '../../ui/components/InputText'
-import { StyledButton } from '../../ui/components/Button'
+import { Button } from '../../ui/components/Button'
 import { Stack } from '../../ui/components/Stack'
 import { approveArbitrator } from '../../core/approveArbitrator'
 import { proposeArbitrator } from '../../core/proposeArbitrator'
@@ -12,10 +12,12 @@ import { getEscrowData } from '../../core/getEscrowData'
 import { ScopedModal } from '../components'
 import { BUYER, SELLER } from '../../helpers/constants'
 import { Forbidden } from '../components/Forbidden'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { DefaultNetwork } from 'config/init'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
 
 /**
  * Approve the Arbitrator proposed
- * @param param0
  * @returns
  */
 export const AddApproveArbitrator = ({
@@ -48,59 +50,70 @@ export const AddApproveArbitrator = ({
 
   const [title, setTitle] = React.useState<string>('')
 
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
+
   const loadData = async () => {
     try {
-      setIsLoading(true)
-      setLoadingMessage('Getting Arbitration information')
-      const escrow: IGetEscrowData = await getEscrowData(escrowId)
-      setEscrowData(escrow)
-
-      // Buyer or Seller should propose an arbitrator
-      if (!escrow.arbitration) {
-        setAction('new')
-        setTitle('Propose an Arbitrator')
-        setArbitrator('')
-        setArbitratorFee('')
-        return
-      }
-
-      // Seller who proposed the arbitrator
-      if (
-        escrow.connectedUser === SELLER &&
-        escrow.arbitration.consensusSeller
-      ) {
-        setAction('view')
-        setTitle('Arbitrator Proposal')
-        setArbitrator(escrow.arbitration.arbitrator)
-        setArbitratorFee(String(escrow.arbitration.arbitratorFee))
-        return
-      }
-
-      // Buyer who proposed the arbitrator
-      if (escrow.connectedUser === BUYER && escrow.arbitration.consensusBuyer) {
-        setAction('view')
-        setTitle('Arbitrator Proposal')
-        setArbitrator(escrow.arbitration.arbitrator)
-        setArbitratorFee(String(escrow.arbitration.arbitratorFee))
-        return
-      }
-
-      // buyer or seller should accept the arbitrator proposal
-      if (
-        escrow.arbitration.consensusBuyer &&
-        escrow.arbitration.consensusSeller
-      ) {
-        setTitle('Arbitrator Proposal')
-        setArbitrator(escrow.arbitration.arbitrator)
-        setArbitratorFee(String(escrow.arbitration.arbitratorFee))
-        setAction('edit')
-        return
-      }
-
       setTitle('Arbitrator Proposal')
-      setArbitrator(escrow.arbitration.arbitrator)
-      setArbitratorFee(escrow.arbitration.arbitratorFee.toString())
-      setAction('edit')
+      setIsLoading(true)
+
+      const isCorrect = await isCorrectNetworkConnected()
+      setIsCorrectNetwork(isCorrect)
+
+      if (isCorrect) {
+        setLoadingMessage('Getting Arbitration information')
+        const escrow: IGetEscrowData = await getEscrowData(escrowId)
+        setEscrowData(escrow)
+
+        // Buyer or Seller should propose an arbitrator
+        if (!escrow.arbitration) {
+          setAction('new')
+          setTitle('Propose an Arbitrator')
+          setArbitrator('')
+          setArbitratorFee('')
+          return
+        }
+
+        // Seller who proposed the arbitrator
+        if (
+          escrow.connectedUser === SELLER &&
+          escrow.arbitration.consensusSeller
+        ) {
+          setAction('view')
+          setTitle('Arbitrator Proposal')
+          setArbitrator(escrow.arbitration.arbitrator)
+          setArbitratorFee(String(escrow.arbitration.arbitratorFee))
+          return
+        }
+
+        // Buyer who proposed the arbitrator
+        if (
+          escrow.connectedUser === BUYER &&
+          escrow.arbitration.consensusBuyer
+        ) {
+          setAction('view')
+          setTitle('Arbitrator Proposal')
+          setArbitrator(escrow.arbitration.arbitrator)
+          setArbitratorFee(String(escrow.arbitration.arbitratorFee))
+          return
+        }
+
+        // buyer or seller should accept the arbitrator proposal
+        if (
+          escrow.arbitration.consensusBuyer &&
+          escrow.arbitration.consensusSeller
+        ) {
+          setTitle('Arbitrator Proposal')
+          setArbitrator(escrow.arbitration.arbitrator)
+          setArbitratorFee(String(escrow.arbitration.arbitratorFee))
+          setAction('edit')
+          return
+        }
+
+        setArbitrator(escrow.arbitration.arbitrator)
+        setArbitratorFee(escrow.arbitration.arbitratorFee.toString())
+        setAction('edit')
+      }
     } catch (error: any) {
       console.error(error)
       toast(error.message, 'error')
@@ -171,32 +184,30 @@ export const AddApproveArbitrator = ({
   }
 
   const renderFooter = () => {
-    if (!escrowData) return null
+    const isBuyer = escrowData.connectedUser === BUYER
+    const isSeller = escrowData.connectedUser === SELLER
 
-    if (
-      escrowData.connectedUser !== BUYER &&
-      escrowData.connectedUser !== SELLER
-    ) {
+    if (!isCorrectNetwork || !escrowData || (!isBuyer && !isSeller)) {
       return null
     }
 
     if (action === 'view' || action === 'added') {
       return (
-        <StyledButton
+        <Button
           disabled={isLoading}
           fullWidth
           variant="tertiary"
           onClick={onModalClose}
         >
           Close
-        </StyledButton>
+        </Button>
       )
     }
 
     if (action === 'edit') {
       return (
         <Stack direction="row" style={{ width: '100%' }}>
-          <StyledButton
+          <Button
             disabled={isLoading}
             fullWidth
             variant="secondary"
@@ -208,16 +219,16 @@ export const AddApproveArbitrator = ({
             }}
           >
             Change
-          </StyledButton>
+          </Button>
 
-          <StyledButton
+          <Button
             disabled={isLoading}
             fullWidth
             variant="primary"
             type="submit"
           >
             {error ? 'Retry' : 'Accept'}
-          </StyledButton>
+          </Button>
         </Stack>
       )
     }
@@ -225,7 +236,7 @@ export const AddApproveArbitrator = ({
     if (action === 'editing') {
       return (
         <Stack direction="row" style={{ width: '100%' }}>
-          <StyledButton
+          <Button
             disabled={isLoading}
             fullWidth
             variant="tertiary"
@@ -241,16 +252,16 @@ export const AddApproveArbitrator = ({
             }}
           >
             Back
-          </StyledButton>
+          </Button>
 
-          <StyledButton
+          <Button
             disabled={isLoading}
             fullWidth
             variant="primary"
             type="submit"
           >
             {error ? 'Retry' : 'Confirm'}
-          </StyledButton>
+          </Button>
         </Stack>
       )
     }
@@ -258,7 +269,7 @@ export const AddApproveArbitrator = ({
     if (action === 'new') {
       return (
         <Stack direction="row" style={{ width: '100%' }}>
-          <StyledButton
+          <Button
             disabled={isLoading}
             fullWidth
             variant="tertiary"
@@ -266,16 +277,16 @@ export const AddApproveArbitrator = ({
             onClick={onModalClose}
           >
             Cancel
-          </StyledButton>
+          </Button>
 
-          <StyledButton
+          <Button
             disabled={isLoading}
             fullWidth
             variant="primary"
             type="submit"
           >
             {error ? 'Retry' : 'Confirm'}
-          </StyledButton>
+          </Button>
         </Stack>
       )
     }
@@ -283,7 +294,16 @@ export const AddApproveArbitrator = ({
     return null
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const renderBody = () => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     if (!escrowData) return null
 
     if (
@@ -333,8 +353,6 @@ export const AddApproveArbitrator = ({
       </Stack>
     )
   }
-
-  if (!escrowData) return null
 
   return (
     <form autoComplete="off" onSubmit={handleSubmit}>

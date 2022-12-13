@@ -1,5 +1,5 @@
 export { Amount } from './Amount'
-export { StyledButton } from './Button'
+export { Button } from './Button'
 export { Chip } from './Chip'
 export { CopyToClipboard } from './Copy'
 export { FormattedPercentageAmountAdornment } from './FormattedPercentageAmountAdornment'

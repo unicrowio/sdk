@@ -12,7 +12,7 @@ import {
   Subtitle,
   Amount,
   Symbol,
-  StyledButton,
+  Button,
   ScopedModal
 } from '../../ui/components'
 import { useModalStates } from '../../ui/hooks/useModalStates'
@@ -30,6 +30,9 @@ import { SettlementOfferModal } from './SettlementOffer'
 import { Forbidden } from '../components/Forbidden'
 
 import { MARKER } from '../../config/marker'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { DefaultNetwork } from 'config/init'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -63,6 +66,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   } = useModalStates({ deferredPromise })
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null)
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(false)
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrow && escrow?.settlement) {
@@ -103,27 +107,27 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     if (escrow && escrow.settlement && escrow.connectedUser) {
       if (
         escrow.connectedUser === BUYER &&
-        escrow.status.latestSettlementOffer === BUYER
+        escrow.status.latestSettlementOfferBy === BUYER
       ) {
         return 'Settlement Offered by You'
       } else if (
         escrow.connectedUser === SELLER &&
-        escrow.status.latestSettlementOffer === SELLER
+        escrow.status.latestSettlementOfferBy === SELLER
       ) {
         return 'Settlement Offered by You'
       } else if (
         escrow.connectedUser === BUYER &&
-        escrow.status.latestSettlementOffer !== BUYER
+        escrow.status.latestSettlementOfferBy !== BUYER
       ) {
         return 'Settlement Offered by Seller'
       } else if (
         escrow.connectedUser === SELLER &&
-        escrow.status.latestSettlementOffer !== SELLER
+        escrow.status.latestSettlementOfferBy !== SELLER
       ) {
         return 'Settlement Offered by Buyer'
       }
     }
-    return null
+    return isCorrectNetwork ? null : 'Approve Settlement'
   }, [escrow])
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
@@ -135,32 +139,41 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrow])
 
   const displayActionButtons = React.useMemo(() => {
-    return escrow?.status.latestSettlementOffer !== escrow?.connectedUser
+    return escrow?.status.latestSettlementOfferBy !== escrow?.connectedUser
   }, [escrow])
 
-  React.useEffect(() => {
-    if (escrowData) {
-      setEscrow(escrowData)
-      return
-    }
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
 
-    setIsLoading(true)
-    setLoadingMessage('Getting Escrow information')
-    getEscrowData(escrowId)
-      .then((data: IGetEscrowData) => {
-        if (!data.settlement) {
-          throw new Error('There is no settlement to this escrow')
-        }
-        setEscrow(data)
-      })
-      .catch(e => {
-        toast(e, 'error')
-        onModalClose()
-      })
-      .finally(() => {
-        setLoadingMessage('')
-        setIsLoading(false)
-      })
+  const loadData = async () => {
+    const isCorrect = await isCorrectNetworkConnected()
+    setIsCorrectNetwork(isCorrect)
+
+    if (isCorrect) {
+      setIsLoading(true)
+      setLoadingMessage('Getting Escrow information')
+      getEscrowData(escrowId)
+        .then((data: IGetEscrowData) => {
+          if (!data.settlement) {
+            throw new Error('There is no settlement to this escrow')
+          }
+          setEscrow(data)
+        })
+        .catch(e => {
+          toast(e, 'error')
+          onModalClose()
+        })
+        .finally(() => {
+          setLoadingMessage('')
+          setIsLoading(false)
+        })
+    }
+  }
+
+  React.useEffect(() => {
+    loadData()
   }, [])
 
   const approveSettlementOfferCallbacks: ISettlementApproveTransactionCallbacks =
@@ -203,6 +216,10 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrowId, escrow])
 
   const ModalBody = React.useCallback(() => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     if (!escrow) {
       return null
     }
@@ -271,59 +288,69 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }
 
   const ModalFooter = React.useCallback(() => {
-    if (!escrow) {
+    if (!isCorrectNetwork || !escrow) {
       return null
     }
+
     if (success || escrow.status.claimed) {
       return (
         <ContainerButtons>
-          <StyledButton fullWidth variant="primary" onClick={onModalClose}>
+          <Button fullWidth variant="primary" onClick={onModalClose}>
             Close
-          </StyledButton>
+          </Button>
         </ContainerButtons>
       )
     }
     return displayActionButtons ? (
       <>
         <ContainerButtons>
-          <StyledButton
-            fullWidth
-            variant="secondary"
-            onClick={openNegotiateModal}
-          >
+          <Button fullWidth variant="secondary" onClick={openNegotiateModal}>
             Negotiate
-          </StyledButton>
-          <StyledButton
+          </Button>
+          <Button
             variant="primary"
             disabled={isLoading}
             fullWidth
             onClick={onAcceptClick}
           >
             Accept
-          </StyledButton>
+          </Button>
         </ContainerButtons>
       </>
     ) : (
       <ContainerButtons>
-        <StyledButton
-          fullWidth
-          variant="secondary"
-          onClick={openNegotiateModal}
-        >
+        <Button fullWidth variant="secondary" onClick={openNegotiateModal}>
           Change
-        </StyledButton>
-        <StyledButton fullWidth variant="primary" onClick={onModalClose}>
+        </Button>
+        <Button fullWidth variant="primary" onClick={onModalClose}>
           Close
-        </StyledButton>
+        </Button>
       </ContainerButtons>
     )
   }, [displayActionButtons, isLoading, escrow])
 
+  const renderBody = () => {
+    if (isCorrectNetwork && !escrow) {
+      return null
+    }
+
+    return <ModalBody />
+  }
+
+  const renderFooter = () => {
+    // TODO: check if we can simplify this to "if (!isCorrectNetwork || !escrow) {"
+    if (!isCorrectNetwork || (!isCorrectNetwork && !escrow)) {
+      return null
+    }
+
+    return <ModalFooter />
+  }
+
   return (
     <ScopedModal
       title={title}
-      body={escrow ? <ModalBody /> : null}
-      footer={escrow ? <ModalFooter /> : null}
+      body={renderBody()}
+      footer={renderFooter()}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}

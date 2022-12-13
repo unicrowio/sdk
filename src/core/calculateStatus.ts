@@ -20,8 +20,7 @@ const whoMadeLatestSettlementOffer = (
 /**
  * Retrieves Escrow status calculated based on consensus, split, expire time and claim status.
  *
- * @typeParam ICalculateStatusParams (interface with seller, info of consensus and split, expires, claimed, ...)
- * @returns IEscrowStatus (interface with EscrowStatus, claimed, EscrowStatusLatestParty, EscrowStatusLatestParty)
+ * @returns IEscrowStatus - (interface with EscrowStatus, claimed, tEscrowParty, tEscrowParty)
  */
 export const calculateStatus = ({
   seller,
@@ -33,7 +32,7 @@ export const calculateStatus = ({
   claimed,
   latestSettlementOfferAddress
 }: ICalculateStatusParams): IEscrowStatus => {
-  const latestSettlementOffer = whoMadeLatestSettlementOffer(
+  const latestSettlementOfferBy = whoMadeLatestSettlementOffer(
     seller,
     latestSettlementOfferAddress
   )
@@ -44,18 +43,19 @@ export const calculateStatus = ({
     (consensusBuyer > 0 && consensusSeller < 0) ||
     (consensusBuyer < 0 && consensusSeller > 0)
 
-  let latestChallenge: 'buyer' | 'seller' | null = null
+  let latestChallengeBy: 'buyer' | 'seller' | null = null
 
   if (isChallenged) {
-    latestChallenge = consensusBuyer > 0 && consensusSeller < 0 ? BUYER : SELLER
+    latestChallengeBy =
+      consensusBuyer > 0 && consensusSeller < 0 ? BUYER : SELLER
   }
 
   // Settled between buyer and seller (i.e. partial refund for the buyer)
   if (splitBuyer > 0 && splitSeller > 0) {
     return {
       state: EscrowStatus.SETTLED,
-      latestChallenge,
-      latestSettlementOffer,
+      latestChallengeBy,
+      latestSettlementOfferBy,
       claimed
     }
   }
@@ -64,8 +64,8 @@ export const calculateStatus = ({
   if (consensusBuyer > 0 && consensusSeller > 0 && splitBuyer === 100) {
     return {
       state: EscrowStatus.REFUNDED,
-      latestChallenge: null,
-      latestSettlementOffer,
+      latestChallengeBy: null,
+      latestSettlementOfferBy,
       claimed
     }
   }
@@ -74,8 +74,8 @@ export const calculateStatus = ({
   if (consensusSeller === 1 && consensusBuyer === 1) {
     return {
       state: EscrowStatus.RELEASED,
-      latestChallenge: null,
-      latestSettlementOffer,
+      latestChallengeBy: null,
+      latestSettlementOfferBy,
       claimed
     }
   }
@@ -84,8 +84,8 @@ export const calculateStatus = ({
   if (consensusSeller > 1 && consensusBuyer > 1) {
     return {
       state: EscrowStatus.RELEASED,
-      latestChallenge: consensusSeller === consensusBuyer ? BUYER : SELLER,
-      latestSettlementOffer,
+      latestChallengeBy: consensusSeller === consensusBuyer ? BUYER : SELLER,
+      latestSettlementOfferBy,
       claimed
     }
   }
@@ -101,8 +101,8 @@ export const calculateStatus = ({
 
     return {
       state,
-      latestChallenge,
-      latestSettlementOffer,
+      latestChallengeBy,
+      latestSettlementOfferBy,
       claimed
     }
   }
@@ -111,16 +111,16 @@ export const calculateStatus = ({
   if (isTimeExpired) {
     return {
       state: EscrowStatus.PERIOD_EXPIRED,
-      latestChallenge: null,
-      latestSettlementOffer,
+      latestChallengeBy: null,
+      latestSettlementOfferBy,
       claimed
     }
   } else {
     // Paid, not challenged, challenge period not expired
     return {
       state: EscrowStatus.PAID,
-      latestChallenge: null,
-      latestSettlementOffer,
+      latestChallengeBy: null,
+      latestSettlementOfferBy,
       claimed
     }
   }

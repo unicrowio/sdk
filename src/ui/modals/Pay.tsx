@@ -8,12 +8,7 @@ import {
   ITokenInfo
 } from '../../typing'
 import { pay } from '../../core/pay'
-import {
-  Subtitle,
-  ScopedModal,
-  Amount,
-  StyledButton
-} from '../../ui/components'
+import { Subtitle, ScopedModal, Amount, Button } from '../../ui/components'
 import {
   DataDisplayer,
   ContainerDataDisplayer
@@ -23,10 +18,16 @@ import { displayChallengePeriod } from '../../helpers/displayChallengePeriod'
 
 import { addressWithYou, reduceAddress } from '../../helpers/addressFormat'
 import { toast } from '../components/notification/toast'
-import { getWalletAccount } from '../../wallet'
+import {
+  getWalletAccount,
+  isCorrectNetworkConnected,
+  switchNetwork
+} from '../../wallet'
 import { ADDRESS_ZERO } from '../../helpers/constants'
 import { formatAmount } from '../../helpers/formatAmount'
 import { MARKER } from '../../config/marker'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
+import { DefaultNetwork } from 'config/init'
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -48,13 +49,17 @@ export function PayModal(props: IPaymentModalProps) {
   const [buyer, setBuyer] = React.useState<string | null>()
 
   const [walletUser, setWalletUser] = React.useState<string | null>(null)
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
 
   React.useEffect(() => {
     setIsLoading(true)
+    isCorrectNetworkConnected().then(isCorrect => {
+      setIsCorrectNetwork(isCorrect)
+    })
     getWalletAccount().then(account => {
       setWalletUser(account)
     })
-    getTokenInfo(props.paymentRequestData.tokenAddress)
+    getTokenInfo(props.paymentProps.tokenAddress)
       .then(setTokenInfo)
       .catch(() => {
         onModalClose()
@@ -99,18 +104,27 @@ export function PayModal(props: IPaymentModalProps) {
   }
 
   const onPayClick = () => {
-    pay(props.paymentRequestData, payCallbacks).catch(e => {
+    pay(props.paymentProps, payCallbacks).catch(e => {
       setIsLoading(false)
       toast(e, 'error')
     })
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const ModalBody = () => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     return (
       <>
         <Amount
           amount={formatAmount(
-            props.paymentRequestData.amount,
+            props.paymentProps.amount,
             tokenInfo?.decimals || 18,
             tokenInfo?.symbol || 'ERR'
           )}
@@ -121,8 +135,8 @@ export function PayModal(props: IPaymentModalProps) {
         <ContainerDataDisplayer>
           <DataDisplayer
             label="Seller ETH/ENS Address"
-            value={addressWithYou(props.paymentRequestData.seller, walletUser!)}
-            copy={props.paymentRequestData.seller}
+            value={addressWithYou(props.paymentProps.seller, walletUser!)}
+            copy={props.paymentProps.seller}
             marker={MARKER.seller}
           />
           {buyer && (
@@ -135,44 +149,42 @@ export function PayModal(props: IPaymentModalProps) {
           )}
           <DataDisplayer
             label="Challenge Period"
-            value={displayChallengePeriod(
-              props.paymentRequestData.challengePeriod
-            )}
+            value={displayChallengePeriod(props.paymentProps.challengePeriod)}
             marker={MARKER.challengePeriod}
           />
-          {props.paymentRequestData.challengePeriodExtension && (
+          {props.paymentProps.challengePeriodExtension && (
             <DataDisplayer
               label="Challenge Period Extension"
               value={displayChallengePeriod(
-                props.paymentRequestData.challengePeriodExtension
+                props.paymentProps.challengePeriodExtension
               )}
               marker={MARKER.challengePeriodExtension}
             />
           )}
-          {props.paymentRequestData.arbitrator && (
+          {props.paymentProps.arbitrator && (
             <>
               <DataDisplayer
                 label="Arbitrator"
-                value={reduceAddress(props.paymentRequestData.arbitrator)}
-                copy={props.paymentRequestData.arbitrator}
+                value={reduceAddress(props.paymentProps.arbitrator)}
+                copy={props.paymentProps.arbitrator}
                 marker={MARKER.arbitrator}
               />
               <DataDisplayer
                 label="Arbitrator Fee"
                 value={`${
-                  props.paymentRequestData.arbitratorFee?.toString() || '... '
+                  props.paymentProps.arbitratorFee?.toString() || '... '
                 }%`}
                 marker={MARKER.arbitratorFee}
               />
             </>
           )}
-          {props.paymentRequestData.marketplace &&
-            props.paymentRequestData.marketplace?.toLowerCase() !==
+          {props.paymentProps.marketplace &&
+            props.paymentProps.marketplace?.toLowerCase() !==
               ADDRESS_ZERO.toLowerCase() && (
               <DataDisplayer
                 label="Marketplace Address"
-                value={reduceAddress(props.paymentRequestData.marketplace)}
-                copy={props.paymentRequestData.marketplace}
+                value={reduceAddress(props.paymentProps.marketplace)}
+                copy={props.paymentProps.marketplace}
                 marker={MARKER.marketplace}
               />
             )}
@@ -182,11 +194,15 @@ export function PayModal(props: IPaymentModalProps) {
   }
 
   const ModalFooter = () => {
+    if (!isCorrectNetwork) {
+      return null
+    }
+
     let buttonChildren
     let buttonOnClick
 
     if (!error && !success) {
-      buttonChildren = `Pay ${props.paymentRequestData.amount} ${
+      buttonChildren = `Pay ${props.paymentProps.amount} ${
         tokenInfo ? tokenInfo.symbol : '-'
       }`
       buttonOnClick = onPayClick
@@ -199,9 +215,9 @@ export function PayModal(props: IPaymentModalProps) {
     }
 
     return (
-      <StyledButton fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </StyledButton>
+      </Button>
     )
   }
 

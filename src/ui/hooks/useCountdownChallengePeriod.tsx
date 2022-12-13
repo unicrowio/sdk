@@ -86,8 +86,8 @@ export const useCountdownChallengePeriod = (
     if (!isSellerConnected && !isBuyerConnected) return
 
     if (
-      (isSellerConnected && !escrow.status.latestChallenge) ||
-      (isBuyerConnected && !escrow.status.latestChallenge)
+      (isSellerConnected && !escrow.status.latestChallengeBy) ||
+      (isBuyerConnected && !escrow.status.latestChallengeBy)
     ) {
       timer = setup(escrow.challengePeriodEnd, true)
 
@@ -100,8 +100,8 @@ export const useCountdownChallengePeriod = (
     }
 
     if (
-      (isSellerConnected && escrow.status.latestChallenge === SELLER) ||
-      (isBuyerConnected && escrow.status.latestChallenge === BUYER)
+      (isSellerConnected && escrow.status.latestChallengeBy === SELLER) ||
+      (isBuyerConnected && escrow.status.latestChallengeBy === BUYER)
     ) {
       if (!isExpired(escrow.challengePeriodStart)) {
         if (Date.now() > escrow.challengePeriodStart.getTime()) {
@@ -119,8 +119,8 @@ export const useCountdownChallengePeriod = (
     }
 
     if (
-      (isSellerConnected && escrow.status.latestChallenge === BUYER) ||
-      (isBuyerConnected && escrow.status.latestChallenge === SELLER)
+      (isSellerConnected && escrow.status.latestChallengeBy === BUYER) ||
+      (isBuyerConnected && escrow.status.latestChallengeBy === SELLER)
     ) {
       if (!isExpired(escrow.challengePeriodStart)) {
         if (Date.now() > escrow.challengePeriodStart.getTime()) {

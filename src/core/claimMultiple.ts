@@ -1,9 +1,12 @@
 import { UNICROW_CLAIM_ADDRESS } from '../config'
-import { UnicrowClaim__factory } from '@unicrowio/ethers-types'
-import { ClaimParsedPayload, IClaimTransactionCallbacks } from '../typing'
-import { getWeb3Provider } from '../wallet'
+import { UnicrowClaim__factory } from '@unicrow/contract-types'
+import {
+  MultipleClaimParsedPayload,
+  IClaimTransactionCallbacks
+} from '../typing'
+import { getWeb3Provider, autoSwitchNetwork } from '../wallet'
 import { errorHandler } from './errorHandler'
-import { parseClaim } from 'parsers/eventClaim'
+import { parseMultipleClaim } from 'parsers/eventClaimMultiple'
 
 /**
  * Claim multiple escrow payments at the same time. To save everyone's gas costs, it claims balances and fees
@@ -13,23 +16,22 @@ import { parseClaim } from 'parsers/eventClaim'
  * The gas cost of this grows almost linearly with each additional escrow, therefore this function will set an
  * appropriate gas limit if necessary.
  *
- * @async
- * @param string[] wallets
- * @typeParam IClaimTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns `Promise<ClaimParsedPayload>`
+ * @returns {Promise<MultipleClaimParsedPayload>}
  */
-export const claim = async (
-  wallets: string[],
+export const claimMultiple = async (
+  escrowIds: number[],
   callbacks?: IClaimTransactionCallbacks
-): Promise<ClaimParsedPayload> => {
+): Promise<MultipleClaimParsedPayload> => {
   callbacks?.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider()
 
   if (!provider) {
     throw new Error('Error on Claiming, Account Not connected')
   }
+
+  autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 
@@ -40,7 +42,7 @@ export const claim = async (
 
   try {
     // FIX-ME: No need to get signer if the contract reference is initialized globally
-    const claimTx = await smartContract.claim(wallets)
+    const claimTx = await smartContract.claimMultiple(escrowIds)
     callbacks?.broadcasting && callbacks.broadcasting()
 
     callbacks?.broadcasted &&
@@ -50,7 +52,7 @@ export const claim = async (
 
     const receiptTx = await claimTx.wait()
 
-    const parsedPayload = parseClaim(receiptTx.events)
+    const parsedPayload = parseMultipleClaim(receiptTx.events)
 
     callbacks?.confirmed && callbacks.confirmed(parsedPayload)
 

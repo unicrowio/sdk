@@ -22,8 +22,8 @@ describe('Initial state', () => {
     const result = calculateStatus(params)
 
     expect(result.state).toBe(EscrowStatus.PAID)
-    expect(result.latestChallenge).toBe(null)
-    expect(result.latestSettlementOffer).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
+    expect(result.latestSettlementOfferBy).toBe(null)
     expect(result.claimed).toBe(false)
   })
 
@@ -34,8 +34,8 @@ describe('Initial state', () => {
     const result = calculateStatus(params)
 
     expect(result.state).toBe(EscrowStatus.PERIOD_EXPIRED)
-    expect(result.latestChallenge).toBe(null)
-    expect(result.latestSettlementOffer).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
+    expect(result.latestSettlementOfferBy).toBe(null)
     expect(result.claimed).toBe(false)
   })
 
@@ -47,7 +47,7 @@ describe('Initial state', () => {
     const result = calculateStatus(params)
 
     expect(result.state).toBe(EscrowStatus.PERIOD_EXPIRED)
-    expect(result.latestChallenge).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
   })
 
   it('Should return Refund regardless the expiration time', () => {
@@ -59,7 +59,7 @@ describe('Initial state', () => {
 
     const result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.REFUNDED)
-    expect(result.latestChallenge).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
   })
 })
 
@@ -84,19 +84,19 @@ describe('After challenged', () => {
     params.expires = futureDate
     result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.CHALLENGED)
-    expect(result.latestChallenge).toBe(BUYER)
+    expect(result.latestChallengeBy).toBe(BUYER)
 
     params.consensusBuyer = -1
     params.consensusSeller = 1
     result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.CHALLENGED)
-    expect(result.latestChallenge).toBe(SELLER)
+    expect(result.latestChallengeBy).toBe(SELLER)
 
     params.consensusBuyer = 1
     params.consensusSeller = 1
     result = calculateStatus(params)
     expect(result.state).not.toBe(EscrowStatus.CHALLENGED)
-    expect(result.latestChallenge).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
   })
 
   it('Should return Expired when time is expired', () => {
@@ -106,19 +106,19 @@ describe('After challenged', () => {
     params.expires = pastDate
     result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.PERIOD_EXPIRED)
-    expect(result.latestChallenge).toBe(BUYER)
+    expect(result.latestChallengeBy).toBe(BUYER)
 
     params.consensusBuyer = -1
     params.consensusSeller = 1
     result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.PERIOD_EXPIRED)
-    expect(result.latestChallenge).toBe(SELLER)
+    expect(result.latestChallengeBy).toBe(SELLER)
 
     params.consensusBuyer = 1
     params.consensusSeller = 1
     result = calculateStatus(params)
     expect(result.state).not.toBe(EscrowStatus.PERIOD_EXPIRED)
-    expect(result.latestChallenge).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
   })
 
   it('Should return RELEASED', () => {
@@ -128,13 +128,13 @@ describe('After challenged', () => {
 
     let result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.RELEASED)
-    expect(result.latestChallenge).toBe(BUYER)
+    expect(result.latestChallengeBy).toBe(BUYER)
 
     params.consensusBuyer = 2
     params.consensusSeller = 3
     result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.RELEASED)
-    expect(result.latestChallenge).toBe(SELLER)
+    expect(result.latestChallengeBy).toBe(SELLER)
   })
 
   it('Should return Refund regardless the expiration time', () => {
@@ -148,6 +148,6 @@ describe('After challenged', () => {
 
     const result = calculateStatus(params)
     expect(result.state).toBe(EscrowStatus.REFUNDED)
-    expect(result.latestChallenge).toBe(null)
+    expect(result.latestChallengeBy).toBe(null)
   })
 })

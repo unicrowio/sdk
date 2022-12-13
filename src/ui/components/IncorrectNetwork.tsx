@@ -5,8 +5,8 @@ import { transformSVGInBase64 } from '../../helpers/transformSVGInBase64'
 import { Button } from '.'
 import styled from 'styled-components'
 
-interface IForbiddenProps {
-  onClose: () => void
+interface IIncorrectNetworkProps {
+  onClick: () => void
   title?: string
   description?: string
   image?: string
@@ -46,20 +46,20 @@ const ButtonContainer = styled.div`
   width: 100%;
 `
 
-export const Forbidden = ({
-  onClose,
-  title = 'Action Forbidden',
-  description = ' You are neither buyer nor seller in this payment',
+export const IncorrectNetwork = ({
+  onClick,
+  title = 'Incorrect Network',
+  description = 'Please, connect to the network below',
   image = transformSVGInBase64(ActionForbidden)
-}: IForbiddenProps) => {
+}: IIncorrectNetworkProps) => {
   return (
     <Container>
-      <Image src={image} alt="Forbidden" />
+      <Image src={image} alt="Wrong network" />
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>
-        <Button fullWidth onClick={onClose}>
-          Close
+        <Button fullWidth onClick={onClick}>
+          Connect to {globalThis.defaultNetwork.displayName}
         </Button>
       </ButtonContainer>
     </Container>

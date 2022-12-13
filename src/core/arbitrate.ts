@@ -1,21 +1,17 @@
-import { UnicrowArbitrator__factory } from '@unicrowio/ethers-types'
+import { UnicrowArbitrator__factory } from '@unicrow/contract-types'
 import { UNICROW_ARBITRATOR_ADDRESS } from '../config'
 import {
   ArbitrateParsedPayload,
   IArbitrationTransactionCallbacks
 } from '../typing'
 import { errorHandler } from './errorHandler'
-import { getWeb3Provider } from '../wallet'
+import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { parseArbitrate } from 'parsers/eventArbitrate'
 
 /**
  * Performs and arbitration and returns its data.
  *
  * @async
- * @param number escrowId
- * @param number splitBuyer
- * @param number splitSeller
- * @typeParam IArbitrationTransactionCallbacks callbacks (optional, interface)
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
  * @returns {Promise<ArbitrateParsedPayload>}
@@ -33,6 +29,8 @@ export const arbitrate = async (
     if (!provider) {
       throw new Error('Error on Arbitrating. Account not connected')
     }
+
+    autoSwitchNetwork(callbacks)
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
       UNICROW_ARBITRATOR_ADDRESS,

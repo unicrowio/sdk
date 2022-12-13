@@ -1,7 +1,7 @@
 /**
  *  Format Date to Day, minutes and seconds
  *
- * e.g.
+ * @example
  *  difference > day :
  *    1 day / x days
  *
@@ -14,8 +14,7 @@
  *  difference < minute:
  *    0
  *
- * @param seconds seconds since EPOCH
- * @returns Formatted time as @string
+ * @returns {string} - Formatted time
  */
 export function formatDuration(seconds: number) {
   const deadline = new Date(seconds * 1000)

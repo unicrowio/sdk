@@ -1,11 +1,11 @@
 //  Helpers functions to parser event SDK
 
 type Event =
-  | 'SingleClaim'
+  | 'Claim'
   | 'Pay'
   | 'Release'
   | 'Refund'
-  | 'Claim'
+  | 'ClaimMultiple'
   | 'Challenge'
   | 'ArbitratorProposed'
   | 'ArbitratorApproved'

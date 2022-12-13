@@ -10,12 +10,7 @@ import {
   ContainerDataDisplayer,
   DataDisplayer
 } from '../../ui/components/DataDisplayer'
-import {
-  StyledButton,
-  Subtitle,
-  Amount,
-  ScopedModal
-} from '../../ui/components'
+import { Button, Subtitle, Amount, ScopedModal } from '../../ui/components'
 import { useModalStates } from '../../ui/hooks/useModalStates'
 import { addressWithYou, reduceAddress } from '../../helpers/addressFormat'
 import { toast } from '../components/notification/toast'
@@ -26,6 +21,9 @@ import { Forbidden } from '../components/Forbidden'
 import { MARKER } from '../../config/marker'
 import { useCountdownChallengePeriod } from 'ui/hooks'
 import { displayChallengePeriod } from 'helpers'
+import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
+import { DefaultNetwork } from 'config/init'
+import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
 
 type IProtectedActions = {
   canRelease: boolean
@@ -49,6 +47,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
   )
 
   const [paymentStatus, setPaymentStatus] = React.useState<string | undefined>()
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
 
   const [protect, setProtect] = React.useState<IProtectedActions>(
     {} as IProtectedActions
@@ -57,49 +56,58 @@ export function ReleaseModal(props: IReleaseModalProps) {
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData)
 
-  React.useEffect(() => {
-    setIsLoading(true)
-    setLoadingMessage('Getting Escrow information')
-    getEscrowData(props.escrowId)
-      .then(async (data: IGetEscrowData) => {
-        setEscrowData(data)
+  const loadData = async () => {
+    const isCorrect = await isCorrectNetworkConnected()
+    setIsCorrectNetwork(isCorrect)
 
-        if (data.connectedUser !== 'buyer') {
+    if (isCorrect) {
+      setIsLoading(true)
+      setLoadingMessage('Getting Escrow information')
+      getEscrowData(props.escrowId)
+        .then(async (data: IGetEscrowData) => {
+          setEscrowData(data)
+
+          if (data.connectedUser !== 'buyer') {
+            setProtect({
+              canRelease: false,
+              reason: 'Only the buyer can release the payment'
+            })
+            return
+          }
+
+          if (data.status.claimed) {
+            setProtect({
+              canRelease: false,
+              reason: 'The payment is already claimed'
+            })
+            return
+          }
+
+          setPaymentStatus(data.status.state)
+
+          if (data.status.state === EscrowStatus.CHALLENGED) {
+            setPaymentStatus(
+              EscrowStatus.CHALLENGED + ' by ' + data.status.latestChallengeBy
+            )
+          }
+
           setProtect({
-            canRelease: false,
-            reason: 'Only the buyer can release the payment'
+            canRelease: true
           })
-          return
-        }
-
-        if (data.status.claimed) {
-          setProtect({
-            canRelease: false,
-            reason: 'The payment is already claimed'
-          })
-          return
-        }
-
-        setPaymentStatus(data.status.state)
-
-        if (data.status.state === EscrowStatus.CHALLENGED) {
-          setPaymentStatus(
-            EscrowStatus.CHALLENGED + ' by ' + data.status.latestChallenge
-          )
-        }
-
-        setProtect({
-          canRelease: true
         })
-      })
-      .catch(e => {
-        toast(e, 'error')
-        onModalClose()
-      })
-      .finally(() => {
-        setLoadingMessage('')
-        setIsLoading(false)
-      })
+        .catch(e => {
+          toast(e, 'error')
+          onModalClose()
+        })
+        .finally(() => {
+          setLoadingMessage('')
+          setIsLoading(false)
+        })
+    }
+  }
+
+  React.useEffect(() => {
+    loadData()
   }, [])
 
   const releaseCallbacks: IReleaseTransactionCallbacks = {
@@ -137,7 +145,16 @@ export function ReleaseModal(props: IReleaseModalProps) {
     })
   }
 
+  const onNetworkSwitch = async () => {
+    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
+    setIsCorrectNetwork(await isCorrectNetworkConnected())
+  }
+
   const ModalBody = () => {
+    if (!isCorrectNetwork) {
+      return <IncorrectNetwork onClick={onNetworkSwitch} />
+    }
+
     if (!escrowData) {
       return null
     }
@@ -198,7 +215,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
   }
 
   const ModalFooter = () => {
-    if (!isLoading && !protect.canRelease) {
+    if (!isCorrectNetwork || (!isLoading && !protect.canRelease)) {
       return null
     }
 
@@ -220,17 +237,33 @@ export function ReleaseModal(props: IReleaseModalProps) {
     }
 
     return (
-      <StyledButton fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </StyledButton>
+      </Button>
     )
+  }
+
+  const renderBody = () => {
+    if (isCorrectNetwork && !escrowData) {
+      return null
+    }
+
+    return <ModalBody />
+  }
+
+  const renderFooter = () => {
+    if (!isCorrectNetwork || (!isCorrectNetwork && !escrowData)) {
+      return null
+    }
+
+    return <ModalFooter />
   }
 
   return (
     <ScopedModal
       title={'Release Payment'}
-      body={escrowData ? <ModalBody /> : null}
-      footer={<ModalFooter />}
+      body={renderBody()}
+      footer={renderFooter()}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}
