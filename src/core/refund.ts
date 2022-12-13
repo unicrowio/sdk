@@ -1,5 +1,5 @@
 import { UNICROW_ADDRESS } from '../config'
-import { Unicrow__factory } from '@unicrow/contract-types'
+import { Unicrow__factory } from '@unicrowio/ethers-types'
 import { IRefundTransactionCallbacks } from '../typing'
 import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { errorHandler } from './errorHandler'

@@ -1,4 +1,4 @@
-import { Unicrow__factory } from '@unicrow/contract-types'
+import { Unicrow__factory } from '@unicrowio/ethers-types'
 import { UNICROW_ADDRESS } from '../config'
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from '../typing'
 import { autoSwitchNetwork, getWeb3Provider } from '../wallet'

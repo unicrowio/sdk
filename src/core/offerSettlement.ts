@@ -1,4 +1,4 @@
-import { UnicrowDispute__factory } from '@unicrow/contract-types'
+import { UnicrowDispute__factory } from '@unicrowio/ethers-types'
 
 import { UNICROW_DISPUTE_ADDRESS } from '../config'
 import {

@@ -1,4 +1,4 @@
-import { UnicrowArbitrator__factory } from '@unicrow/contract-types'
+import { UnicrowArbitrator__factory } from '@unicrowio/ethers-types'
 import { UNICROW_ARBITRATOR_ADDRESS } from '../config'
 import {
   ArbitrateParsedPayload,

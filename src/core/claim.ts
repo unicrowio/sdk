@@ -1,5 +1,5 @@
 import { UNICROW_CLAIM_ADDRESS } from '../config'
-import { UnicrowClaim__factory } from '@unicrow/contract-types'
+import { UnicrowClaim__factory } from '@unicrowio/ethers-types'
 import { IClaimTransactionCallbacks, ClaimParsedPayload } from '../typing'
 import { getWeb3Provider, autoSwitchNetwork } from '../wallet'
 import { errorHandler } from './errorHandler'
