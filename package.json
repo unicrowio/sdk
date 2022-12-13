@@ -1,6 +1,6 @@
 {
   "name": "@unicrowio/sdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Unicrow Dev Team <hi@unicrowio.com>",
   "license": "ISC",
   "description": "Universal Escrow SDK",
@@ -42,7 +42,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "@unicrowio/ethers-types": "^0.0.7",
+    "@unicrowio/ethers-types": "^0.0.8",
     "@ethersproject/providers": "^5.6.8",
     "@metamask/providers": "^8.1.1",
     "bignumber.js": "^9.0.2",
