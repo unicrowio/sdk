@@ -22,11 +22,9 @@ function initNetworks({
   autoSwitchNetwork = false
 }: IConfig) {
   const fallbacks = {
-    arbitrum: networks?.arbitrum?.rpcUrl || process.env.ARBITRUM_RPC_URL,
-    arbitrumTestnet:
-      networks?.arbitrumTestnet?.rpcUrl || process.env.ARBITRUM_TESTNET_RPC_URL,
-    development:
-      networks?.development?.rpcUrl || process.env.DEVELOPMENT_RPC_URL
+    arbitrum: networks?.arbitrum?.rpcUrl || DefaultNetworks.arbitrum?.rpcUrls[0],
+    arbitrumTestnet: networks?.arbitrumTestnet?.rpcUrl || DefaultNetworks.arbitrumTestnet?.rpcUrls[0],
+    development: networks?.development?.rpcUrl || DefaultNetworks.development?.rpcUrls[0]
   }
 
   if (networks?.arbitrum)
