@@ -6,7 +6,7 @@ import {
   ETH_ADDRESS,
   MAX_UINT256
 } from '../helpers/constants'
-import { UNICROW_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import {
   IPaymentProps,
   IPayTransactionCallbacks,
@@ -104,6 +104,8 @@ export const pay = async (
   }
 
   const walletUser = await getWalletAccount()
+
+  const UNICROW_ADDRESS = getContractAddress('unicrow')
 
   let bigNumberAmount: BigNumberish
   if (tokenAddress === ETH_ADDRESS) {

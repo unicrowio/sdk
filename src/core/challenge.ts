@@ -1,7 +1,7 @@
 import { UnicrowDispute__factory } from '@unicrowio/ethers-types'
 
 import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
-import { UNICROW_DISPUTE_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import {
   ChallengeParsedPayload,
   IChallengeTransactionCallbacks
@@ -33,7 +33,7 @@ export const challenge = async (
   try {
     callbacks?.connected && callbacks.connected()
     const smartContract = UnicrowDispute__factory.connect(
-      UNICROW_DISPUTE_ADDRESS,
+      getContractAddress('dispute'),
       provider.getSigner()
     )
 

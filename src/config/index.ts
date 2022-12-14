@@ -22,21 +22,22 @@ const contracts = {
   }
 }
 
+type tGetAddress = 'unicrow' | 'dispute' | 'arbitrator' | 'claim'
+
+export const getContractAddress = (address: tGetAddress): string => {
+  const network = globalThis?.defaultNetwork?.name
+
+  const addressMap = {
+    unicrow: contracts[network]?.address,
+    dispute: contracts[network]?.dispute,
+    arbitrator: contracts[network]?.arbitrator,
+    claim: contracts[network]?.claim
+  }
+
+  return addressMap[address]
+}
+
 initNetworks({
   autoSwitchNetwork: false,
   defaultNetwork: 'arbitrum'
 })
-
-export const UNICROW_ADDRESS =
-  contracts[globalThis?.defaultNetwork?.name]?.unicrow
-
-export const UNICROW_DISPUTE_ADDRESS =
-  contracts[globalThis?.defaultNetwork?.name]?.dispute
-export const UNICROW_ARBITRATOR_ADDRESS =
-  contracts[globalThis?.defaultNetwork?.name]?.arbitrator
-
-export const UNICROW_CLAIM_ADDRESS =
-  contracts[globalThis?.defaultNetwork?.name]?.claim
-
-// Not been used yet
-export const CROW_LIST_TOKENS = ''

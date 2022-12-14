@@ -1,6 +1,6 @@
 import { UnicrowDispute__factory } from '@unicrowio/ethers-types'
 
-import { UNICROW_DISPUTE_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import {
   ISettlementOfferTransactionCallbacks,
   OfferSettlementParsedPayload
@@ -34,7 +34,7 @@ export const offerSettlement = async (
     autoSwitchNetwork(callbacks)
 
     const crowDisputeContract = UnicrowDispute__factory.connect(
-      UNICROW_DISPUTE_ADDRESS,
+      getContractAddress('dispute'),
       provider.getSigner()
     )
 

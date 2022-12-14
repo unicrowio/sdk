@@ -1,6 +1,6 @@
 import { UnicrowArbitrator__factory } from '@unicrowio/ethers-types'
 
-import { UNICROW_ARBITRATOR_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import {
   ApproveArbitratorParsedPayload,
   IArbitrationTransactionCallbacks
@@ -35,7 +35,7 @@ export const approveArbitrator = async (
     autoSwitchNetwork(callbacks)
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
-      UNICROW_ARBITRATOR_ADDRESS,
+      getContractAddress('arbitrator'),
       provider.getSigner()
     )
 

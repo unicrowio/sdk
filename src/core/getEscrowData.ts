@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 import { BigNumber as BigNumberJs } from 'bignumber.js'
-import { UNICROW_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import {
   ADDRESS_ZERO,
   NULL_MARKETPLACE_ADDRESS,
@@ -209,7 +209,10 @@ export const getEscrowData = async (
 
   autoSwitchNetwork()
 
-  const Unicrow = Unicrow__factory.connect(UNICROW_ADDRESS, provider)
+  const Unicrow = Unicrow__factory.connect(
+    getContractAddress('unicrow'),
+    provider
+  )
 
   const allEscrowData: DataStructOutput = await Unicrow.getAllEscrowData(
     escrowId
