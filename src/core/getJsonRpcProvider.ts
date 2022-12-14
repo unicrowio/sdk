@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { RPC_HOST } from '../config'
+import { getHost } from '../config'
 /**
  * Returns the url of the RPC provider.
  *
@@ -8,7 +8,7 @@ import { RPC_HOST } from '../config'
  * @returns {ethers.providers.JsonRpcProvider}
  */
 export const getJsonRpcProvider = () => {
-  const provider = new ethers.providers.JsonRpcProvider(RPC_HOST)
+  const provider = new ethers.providers.JsonRpcProvider(getHost())
 
   if (!provider) {
     throw new Error('Could not get provider')

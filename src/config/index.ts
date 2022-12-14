@@ -1,8 +1,9 @@
 import { networks } from '../wallet/networks'
 import initNetworks from './init'
 
-export const RPC_HOST =
-  globalThis?.defaultNetwork?.rpcUrl || networks?.arbitrum?.rpcUrls[0]
+export const getHost = (): string => {
+  return globalThis?.defaultNetwork?.rpcUrl || networks?.arbitrum?.rpcUrls[0]
+}
 
 // Arbitrum mainnet Unicrow Contract Addresses
 const Arbitrum = {
