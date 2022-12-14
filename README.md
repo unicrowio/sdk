@@ -1,5 +1,5 @@
 <h1 align="center">
-   💲 <a href="#"> ESCROW </a> 🪙
+   <a href="#"> Unicrow SDK </a>
 </h1>
 
 <h3 align="center">
@@ -7,7 +7,7 @@
 </h3>
 
 <h4 align="center">
-	 Status: ⚠️ Building ⚒️
+	 Status: NPM Private
 </h4>
 
 <p align="center">
@@ -67,16 +67,15 @@ In addition, it is good to have an editor to work with the code like [VSCode] (h
 #### Run
 
 1. `yarn install` to install dependencies
-
 2. `yarn dev` to start a server with hot reload
+3. `yarn test` to run the tests
+4. `yarn build` to generate new bundle
+5. Assure that `yarn link` was ran in the crow-sdk project
+6. `yarn link @unicrowio/sdk` to add your local crow-sdk project as dependency on node_modules folder
 
-3. Assure that `yarn link` was ran in the crow-sdk project
+7. Thats all
 
-4. `yarn link @unicrow/sdk` to add your local crow-sdk project as dependency on node_modules folder
-
-5. Thats all
-
-In order to use this project as dependency without having to publish it all the time, on can run `yarn link` to expose this project as globally installed module an then, on the application that will be using this module as dependency, `yarn link crow-sdk-dev`. It will add this very module to the node_modules through symbolic links. After this setup, all changes in this project will be reflected in every module that has it linked.
+In order to use this project as dependency without having to publish it all the time, on can run `yarn link` to expose this project as globally installed module an then, on the application that will be using this module as dependency, `yarn link sdk`. It will add this very module to the node_modules through symbolic links. After this setup, all changes in this project will be reflected in every module that has it linked.
 
 ---
 
