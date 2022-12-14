@@ -11,7 +11,6 @@ import { useModalStates } from '../hooks/useModalStates'
 import { toast } from '../components/notification/toast'
 import { claimMultiple, getTokenInfo } from '../../core'
 import {
-  displayableAmountBN,
   displayDecimals,
   formatAmountToUSD,
   getExchangeRates
@@ -76,7 +75,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
       React.useEffect(() => {
         setTokenInfoLoading(true)
-        getTokenInfo(balance.symbol)
+        getTokenInfo(balance.tokenAddress)
           .then(setRowTokenInfo)
           .finally(() => {
             setTokenInfoLoading(false)
@@ -116,10 +115,9 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
       return (
         <tr key={`balance-${balance.symbol}`}>
           <td>
-            {displayableAmountBN(
-              balance.amountBN,
-              rowTokenInfo.decimals
-            ).toFixed(displayDecimals(balance.symbol!))}{' '}
+            {balance.amountBN
+              .toNumber()
+              .toFixed(displayDecimals(balance.symbol!))}{' '}
             <Symbol>{rowTokenInfo.symbol}</Symbol>
           </td>
           <td>

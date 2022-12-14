@@ -41,7 +41,7 @@ export const getUserBalance = async (
         amount: total.toString()
       }
     })
-    .filter((item: any) => new BigNumber(item.total).gt(0)) as IBalance[]
+    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[]
 
   const readyData: IBalance[] = Object.keys(groupByReady)
     .map(key => {
@@ -53,7 +53,7 @@ export const getUserBalance = async (
         amount: total.toString()
       }
     })
-    .filter((item: any) => new BigNumber(item.total).gt(0)) as IBalance[]
+    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[]
 
   const tokensAddress = []
   for await (const balance of [...pendingData, ...readyData]) {
@@ -66,9 +66,9 @@ export const getUserBalance = async (
   const tokensInfo = await Promise.all(Array.from(uniqueTokensAddress))
 
   const resolve = (item: any) => {
-    const _amount = new BigNumber(item.total).div(1000)
+    const _amount = new BigNumber(item.total).div(100)
     const tokenInfo = tokensInfo.find(
-      t => t.tokenAddress === item.token
+      t => t.tokenAddress === item.tokenSymbol
     ) as ITokenInfo
     return {
       ...item,

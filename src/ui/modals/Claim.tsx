@@ -61,6 +61,7 @@ export function ClaimModal(props: IClaimModalProps) {
     try {
       setIsLoading(true)
       setLoadingMessage('Getting Escrow information')
+
       const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
         Number(props.escrowId)
       )
