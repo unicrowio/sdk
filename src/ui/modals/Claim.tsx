@@ -113,11 +113,8 @@ export function ClaimModal(props: IClaimModalProps) {
     getBalance()
   }, [props.escrowId])
 
-  const renderClaimableBalance = React.useCallback(async () => {
-    const isCorrect = await isCorrectNetworkConnected()
-    setIsCorrectNetwork(isCorrect)
-
-      if(isCorrect){
+  const renderClaimableBalance = React.useCallback(() => {
+      if(isCorrectNetwork){
         if (isLoading || !escrowBalance) {
           return (
             <tr>
