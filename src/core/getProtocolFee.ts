@@ -1,5 +1,5 @@
 import { Unicrow__factory } from '@unicrowio/ethers-types'
-import { UNICROW_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import { bipsToPercentage } from '../helpers'
 import { getJsonRpcProvider } from './getJsonRpcProvider'
 
@@ -11,7 +11,7 @@ import { getJsonRpcProvider } from './getJsonRpcProvider'
  */
 export const getProtocolFee = async () => {
   const smartContract = Unicrow__factory.connect(
-    UNICROW_ADDRESS,
+    getContractAddress('unicrow'),
     getJsonRpcProvider()
   )
 

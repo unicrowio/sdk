@@ -1,4 +1,4 @@
-import { UNICROW_CLAIM_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import { UnicrowClaim__factory } from '@unicrowio/ethers-types'
 import {
   MultipleClaimParsedPayload,
@@ -36,7 +36,7 @@ export const claimMultiple = async (
   callbacks?.connected && callbacks.connected()
 
   const smartContract = UnicrowClaim__factory.connect(
-    UNICROW_CLAIM_ADDRESS,
+    getContractAddress('claim'),
     provider.getSigner()
   )
 

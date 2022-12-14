@@ -1,5 +1,5 @@
 import { Unicrow__factory } from '@unicrowio/ethers-types'
-import { UNICROW_ADDRESS } from '../config'
+import { getContractAddress } from '../config'
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from '../typing'
 import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
 import { errorHandler } from './errorHandler'
@@ -28,7 +28,7 @@ export const release = async (
   callbacks?.connected && callbacks.connected()
 
   const Unicrow = Unicrow__factory.connect(
-    UNICROW_ADDRESS,
+    getContractAddress('unicrow'),
     provider.getSigner()
   )
 

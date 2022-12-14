@@ -66,7 +66,7 @@ export const getUserBalance = async (
   const tokensInfo = await Promise.all(Array.from(uniqueTokensAddress))
 
   const resolve = (item: any) => {
-    const _amount = new BigNumber(item.total).div(100)
+    const _amount = new BigNumber(item.amount).div(100)
     const tokenInfo = tokensInfo.find(
       t => t.tokenAddress === item.tokenSymbol
     ) as ITokenInfo
