@@ -1,7 +1,7 @@
 import { networks } from '../wallet/networks'
 import initNetworks from './init'
 
-export let RPC_HOST =
+export const RPC_HOST =
   globalThis?.defaultNetwork?.rpcUrl || networks?.arbitrum?.rpcUrls[0]
 
 // Arbitrum mainnet Unicrow Contract Addresses
@@ -20,24 +20,24 @@ const Private = {
   claim: '0x85bD5aC27e86DD74ef5e9dba6dc5D2DF732bAE67'
 }
 
-export let UNICROW_ADDRESS =
+export const UNICROW_ADDRESS =
   globalThis.defaultNetwork.name == 'arbitrum'
     ? Arbitrum.unicrow
     : Private.unicrow
-export let UNICROW_DISPUTE_ADDRESS =
+export const UNICROW_DISPUTE_ADDRESS =
   globalThis.defaultNetwork.name == 'arbitrum'
     ? Arbitrum.dispute
     : Private.dispute
-export let UNICROW_ARBITRATOR_ADDRESS =
+export const UNICROW_ARBITRATOR_ADDRESS =
   globalThis.defaultNetwork.name == 'arbitrum'
     ? Arbitrum.arbitrator
     : Private.arbitrator
 
-export let UNICROW_CLAIM_ADDRESS =
+export const UNICROW_CLAIM_ADDRESS =
   globalThis.defaultNetwork.name == 'arbitrum' ? Arbitrum.claim : Private.claim
 
 // Not been used yet
-export let CROW_LIST_TOKENS = ''
+export const CROW_LIST_TOKENS = ''
 
 initNetworks({
   autoSwitchNetwork: false,
