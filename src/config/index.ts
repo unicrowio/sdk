@@ -28,7 +28,7 @@ export const getContractAddress = (address: tGetAddress): string => {
   const network = globalThis?.defaultNetwork?.name
 
   const addressMap = {
-    unicrow: contracts[network]?.address,
+    unicrow: contracts[network]?.unicrow,
     dispute: contracts[network]?.dispute,
     arbitrator: contracts[network]?.arbitrator,
     claim: contracts[network]?.claim
