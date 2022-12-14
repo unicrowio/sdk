@@ -27,6 +27,28 @@
 
 ---
 
+## How to install
+
+```
+yarn install @unicrowio/sdk
+```
+
+or
+
+```
+npm install @unicrowio/sdk
+```
+
+
+> ps. Once we are currently in private npm and this SDK depends of the "@unicrowio/ethers-types" private lib. Then, we need do this adtional steps:
+
+1. Create [Access Token](https://www.npmjs.com/settings/unicrowio/packages)
+2. Run in the terminal: `npm config set '//registry.npmjs.org/:_authToken' "YOUR_ACCESS_TOKEN"` 
+3. Take a look at the version of the "@unicrowio/sdk" on [package.json](./package.json)
+
+
+---
+
 ## Features
 
 - [x] Pay:
