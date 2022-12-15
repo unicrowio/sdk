@@ -134,7 +134,7 @@ export function PayModal(props: IPaymentModalProps) {
         <Subtitle>Payment Summary</Subtitle>
         <ContainerDataDisplayer>
           <DataDisplayer
-            label="Seller ETH/ENS Address"
+            label="Seller ETH Address"
             value={addressWithYou(props.paymentProps.seller, walletUser!)}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}
