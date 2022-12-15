@@ -76,6 +76,10 @@ export const connect = async (): Promise<string | null> => {
     })
 
     handleAccountsChanged(_accounts)
+    // only switches automatically if 2 criterias are met:
+    // 1) user has allowed Metamask already to let the page switch to Arbitrum
+    // 2) the network got initialized with autoSwitchNetwork = true (src/config.index.ts)
+    autoSwitchNetwork()
 
     if (_accounts && _accounts.length > 0) {
       currentWallet = _accounts[0]
@@ -180,8 +184,6 @@ export const stopListening = () => {
 
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
   const ethereum = checkIsWalletInstalled()
-
-  await connect()
 
   return new ethers.providers.Web3Provider(
     ethereum as unknown as ExternalProvider
