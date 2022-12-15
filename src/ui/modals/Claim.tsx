@@ -123,13 +123,14 @@ export function ClaimModal(props: IClaimModalProps) {
           )
         }
 
+        const amount = Number(escrowBalance.displayableAmount)
+        const decimals = displayDecimals(escrowBalance.tokenSymbol!)
+
         return (
           <tr>
             <td>
-              <>
-              {Number(escrowBalance.displayableAmount).toFixed(displayDecimals(escrowBalance.tokenSymbol))}{' '}
-              <Symbol>{escrowBalance.tokenSymbol!}</Symbol>
-              </>
+              {amount.toFixed(decimals)}{' '}
+              <Symbol>{decimals}</Symbol>
             </td>
             <td>
               {'$'}
