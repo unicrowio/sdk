@@ -3,8 +3,7 @@ import {
   NULL_ARBITRATOR_ADDRESS,
   ZERO_FEE_VALUE,
   NULL_MARKETPLACE_ADDRESS,
-  ETH_ADDRESS,
-  MAX_UINT256
+  ETH_ADDRESS
 } from '../helpers/constants'
 import { getContractAddress } from '../config'
 import {
