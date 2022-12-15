@@ -21,5 +21,4 @@ export const displayableAmountBN = (
   return calculate(amount, tokenPrecision)
 }
 
-export const displayDecimals = (tokenSymbol: string) =>
-  STABLE_COINS.includes(tokenSymbol.toUpperCase()) ? 2 : 4
+export const displayDecimals = (tokenSymbol: string) => STABLE_COINS.includes(tokenSymbol.toUpperCase()) ? 2 : 4

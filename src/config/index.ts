@@ -15,10 +15,10 @@ const contracts = {
   },
   // Private RPC development Unicrow Contract Addresses
   development: {
-    unicrow: '0x1e8d308cA9b8098cB2D9EfBf54992B252f7CaAc0',
-    dispute: '0xA60b443FAef64ce299C31671a180e0309d6619D1',
-    arbitrator: '0x0Ae4B7FA978e3A21eb05444533d5744e02c9E095',
-    claim: '0x85bD5aC27e86DD74ef5e9dba6dc5D2DF732bAE67'
+    unicrow: '0x1e589153C06c334c8d882C49328b72B345499E49',
+    dispute: '0x1e5B82795d1d2206868756DE939d6F0fB1ddc152',
+    arbitrator: '0x03fCe9c6382A3DFD97a93aD243B20835F520023B',
+    claim: '0x52783d0373B4597F1545bD250194E0B50E8f4190'
   }
 }
 

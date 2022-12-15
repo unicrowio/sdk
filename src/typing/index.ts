@@ -680,7 +680,6 @@ export interface IBalanceResponse {
  */
 export interface IBalanceWithTokenInfo extends IBalance {
   tokenAddress?: string
-  symbol?: string
   /** the rounding precision of a token */
   decimals?: number
   /** amount converted to human readable form */
