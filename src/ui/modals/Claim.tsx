@@ -66,9 +66,9 @@ export function ClaimModal(props: IClaimModalProps) {
         Number(props.escrowId)
       )
 
-      const exchangeValues = await getExchangeRates([_escrowBalance.symbol!])
+      const exchangeValues = await getExchangeRates([_escrowBalance.tokenSymbol!])
 
-      const exchangeValue = exchangeValues[_escrowBalance.symbol!]
+      const exchangeValue = exchangeValues[_escrowBalance.tokenSymbol!]
 
       if (exchangeValue) {
         _escrowBalance.amountInUSD = formatAmountToUSD(
@@ -122,13 +122,13 @@ export function ClaimModal(props: IClaimModalProps) {
             </tr>
           )
         }
-        
+
         return (
           <tr>
             <td>
               <>
               {Number(escrowBalance.displayableAmount).toFixed(displayDecimals(escrowBalance.tokenSymbol))}{' '}
-              <Symbol>{escrowBalance.symbol! || escrowBalance.tokenSymbol!}</Symbol>
+              <Symbol>{escrowBalance.tokenSymbol!}</Symbol>
               </>
             </td>
             <td>

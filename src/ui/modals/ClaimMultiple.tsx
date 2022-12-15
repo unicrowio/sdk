@@ -81,8 +81,8 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
             setTokenInfoLoading(false)
           })
 
-        getExchangeRates([balance.symbol!]).then(exchangeValues => {
-          const symbol = balance.symbol as string
+        getExchangeRates([balance.tokenSymbol!]).then(exchangeValues => {
+          const symbol = balance.tokenSymbol as string
           const exchangeValue = exchangeValues[symbol]
 
           if (exchangeValue) {
@@ -106,18 +106,18 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
       if (!rowTokenInfo) {
         return (
-          <tr key={`balance-${balance.symbol}`}>
+          <tr key={`balance-${balance.tokenSymbol}`}>
             <td>Error while loading Token Info</td>
           </tr>
         )
       }
 
       return (
-        <tr key={`balance-${balance.symbol}`}>
+        <tr key={`balance-${balance.tokenSymbol}`}>
           <td>
             {balance.amountBN
               .toNumber()
-              .toFixed(displayDecimals(balance.symbol!))}{' '}
+              .toFixed(displayDecimals(balance.tokenSymbol!))}{' '}
             <Symbol>{rowTokenInfo.symbol}</Symbol>
           </td>
           <td>

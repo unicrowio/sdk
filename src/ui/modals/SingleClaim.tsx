@@ -9,7 +9,7 @@ import {
 import { useModalStates } from '../../ui/hooks'
 import { toast } from '../components/notification/toast'
 
-import { ScopedModal, Symbol, Table, StyledButton } from '../components'
+import { ScopedModal, Symbol, Table, Button } from '../components'
 import { Forbidden } from '../components/Forbidden'
 import { getSingleBalance, singleClaim } from '../../core'
 import {
@@ -63,9 +63,9 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
           props.escrowId
         )
 
-        const exchangeValues = await getExchangeRates([_escrowBalance.symbol!])
+        const exchangeValues = await getExchangeRates([_escrowBalance.tokenSymbol!])
 
-        const exchangeValue = exchangeValues[_escrowBalance.symbol!]
+        const exchangeValue = exchangeValues[_escrowBalance.tokenSymbol!]
 
         if (exchangeValue) {
           _escrowBalance.amountInUSD = formatAmountToUSD(
@@ -123,11 +123,10 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     return (
       <tr>
         <td>
-          {displayableAmountBN(
-            escrowBalance.total,
-            escrowBalance.decimals!
-          ).toFixed(displayDecimals(escrowBalance.symbol!))}{' '}
-          <Symbol>{escrowBalance.symbol}</Symbol>
+        <>
+          {Number(escrowBalance.displayableAmount).toFixed(displayDecimals(escrowBalance.tokenSymbol))}{' '}
+          <Symbol>{escrowBalance.tokenSymbol!}</Symbol>
+        </>
         </td>
         <td>
           {'$'}
@@ -227,9 +226,9 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     }
 
     return (
-      <StyledButton fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </StyledButton>
+      </Button>
     )
   }
 
