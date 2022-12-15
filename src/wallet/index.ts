@@ -113,6 +113,13 @@ export const switchNetwork = async (name: DefaultNetwork) => {
 
   const switchParams: any = { chainId: addParams.chainId }
 
+  /**
+   * one could think that if one of the following two rpc methods fail, the code should continue within the catch blocks.
+   * which of course it does, **but**: Metamask still throws an error in that situation. in order to prevent that,
+   * we're calling both rpc methods in individual try-blocks instead of how it is described in their docs here:
+   *
+   * https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods
+   */
   try {
     await ethereum.request({
       method: 'wallet_addEthereumChain',
