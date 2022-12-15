@@ -38,6 +38,6 @@ export const getContractAddress = (address: tGetAddress): string => {
 }
 
 initNetworks({
-  autoSwitchNetwork: true,
+  autoSwitchNetwork: false,
   defaultNetwork: 'arbitrum'
 })
