@@ -127,8 +127,8 @@ export const switchNetwork = async (name: DefaultNetwork) => {
       method: 'wallet_switchEthereumChain',
       params: [switchParams]
     })
-  } catch (addError) {
-    console.log(addError)
+  } catch (switchError) {
+    console.log(switchError)
   }
 
   const connected = await getNetwork()
