@@ -6,7 +6,7 @@ const developmentRpcUrl = globalThis.development || 'https://rpc-net.unicrow.io'
 export const networks = {
   arbitrum: {
     chainId: '42161',
-    chainName: 'Arbitrum',
+    chainName: 'Arbitrum One',
     displayName: 'Arbitrum',
     nativeCurrency: {
       name: 'Arbitrum Ether',
