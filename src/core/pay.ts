@@ -3,8 +3,7 @@ import {
   NULL_ARBITRATOR_ADDRESS,
   ZERO_FEE_VALUE,
   NULL_MARKETPLACE_ADDRESS,
-  ETH_ADDRESS,
-  MAX_UINT256
+  ETH_ADDRESS
 } from '../helpers/constants'
 import { getContractAddress } from '../config'
 import {
@@ -129,7 +128,7 @@ export const pay = async (
     // TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
     if (alreadyAllowedAmount.lt(bigNumberAmount)) {
       // Allowing as close as we can to infinity
-      const approveTx = await token.approve(UNICROW_ADDRESS, MAX_UINT256)
+      const approveTx = await token.approve(UNICROW_ADDRESS, bigNumberAmount)
       // This transaction supposed to be mined very fast
       await approveTx.wait()
     }
