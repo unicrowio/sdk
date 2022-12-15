@@ -76,6 +76,10 @@ export const connect = async (): Promise<string | null> => {
     })
 
     handleAccountsChanged(_accounts)
+    // only switches automatically if 2 criterias are met:
+    // 1) user has allowed Metamask already to let the page switch to Arbitrum
+    // 2) the network got initialized with autoSwitchNetwork = true (src/config.index.ts)
+    autoSwitchNetwork()
 
     if (_accounts && _accounts.length > 0) {
       currentWallet = _accounts[0]
@@ -89,6 +93,9 @@ export const connect = async (): Promise<string | null> => {
 
 export const switchNetwork = async (name: DefaultNetwork) => {
   const ethereum = checkIsWalletInstalled()
+  const { chainName, rpcUrls, chainId, nativeCurrency } = networks[name]
+
+  const _chainId = Number(chainId)
 
   if (!accountChangedListener) {
     accountChangedListener = ethereum!.on(
@@ -99,18 +106,43 @@ export const switchNetwork = async (name: DefaultNetwork) => {
     )
   }
 
-  const params: any = {
-    chainId: ethers.utils.hexValue(Number(networks[name].chainId))
+  const addParams: any = {
+    chainId: ethers.utils.hexValue(_chainId),
+    chainName,
+    rpcUrls,
+    nativeCurrency
   }
 
-  await ethereum.request({
-    method: 'wallet_switchEthereumChain',
-    params: [params]
-  })
+  const switchParams: any = { chainId: addParams.chainId }
+
+  /**
+   * one could think that if one of the following two rpc methods fail, the code should continue within the catch blocks.
+   * which of course it does, **but**: Metamask still throws an error in that situation. in order to prevent that,
+   * we're calling both rpc methods in individual try-blocks instead of how it is described in their docs here:
+   *
+   * https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods
+   */
+  try {
+    await ethereum.request({
+      method: 'wallet_addEthereumChain',
+      params: [addParams]
+    })
+  } catch (addError) {
+    console.log(addError)
+  }
+
+  try {
+    await ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [switchParams]
+    })
+  } catch (switchError) {
+    console.log(switchError)
+  }
 
   const connected = await getNetwork()
 
-  if (connected.chainId == Number(networks[name].chainId)) {
+  if (connected.chainId == _chainId) {
     initNetworks({ defaultNetwork: name })
   }
 
@@ -180,8 +212,6 @@ export const stopListening = () => {
 
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
   const ethereum = checkIsWalletInstalled()
-
-  await connect()
 
   return new ethers.providers.Web3Provider(
     ethereum as unknown as ExternalProvider
