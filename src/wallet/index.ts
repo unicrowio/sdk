@@ -93,7 +93,14 @@ export const connect = async (): Promise<string | null> => {
 
 export const switchNetwork = async (name: DefaultNetwork) => {
   const ethereum = checkIsWalletInstalled()
-  const { chainName, rpcUrls, chainId, nativeCurrency } = networks[name]
+  const {
+    chainName,
+    rpcUrls,
+    chainId: chainIdStr,
+    nativeCurrency
+  } = networks[name]
+
+  const chainId = Number(chainIdStr)
 
   if (!accountChangedListener) {
     accountChangedListener = ethereum!.on(
@@ -105,7 +112,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   }
 
   const addParams: any = {
-    chainId: ethers.utils.hexValue(Number(chainId)),
+    chainId: ethers.utils.hexValue(chainId),
     chainName,
     rpcUrls,
     nativeCurrency
@@ -140,7 +147,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
 
   const connected = await getNetwork()
 
-  if (connected.chainId == Number(chainId)) {
+  if (connected.chainId == chainId) {
     initNetworks({ defaultNetwork: name })
   }
 
