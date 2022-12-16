@@ -5,14 +5,11 @@ import { networks } from './networks'
 import { DefaultNetwork } from '../config/init'
 import initNetworks from '../config/init'
 
-let currentNetworkId: number | null = null
 let currentWallet: string | null = null
-let externalOnChangeWalletCallback:
-  | ((walletAddress: string | null) => void)
-  | null
 let accountChangedListener: EventEmitter | null = null
-let networkChangedListener: EventEmitter | null = null
-let externalOnChangeNetworkCallback: ((network: number) => void) | null
+let chainChangedListener: EventEmitter | null = null
+let _onChangeNetworkCallback: ((networkId: number) => void) | null
+let _onChangeWalletCallback: ((walletAddress: string | null) => void) | null
 
 const checkIsWalletInstalled = () => {
   if (typeof window === 'undefined') {
@@ -41,21 +38,11 @@ const handleAccountsChanged = (accounts: string[]) => {
     currentWallet = accounts[0]
   }
 
-  if (externalOnChangeWalletCallback) {
-    externalOnChangeWalletCallback(currentWallet)
-  }
+  _onChangeWalletCallback && _onChangeWalletCallback(currentWallet)
 }
 
-const handleNetworkChanged = (networkId: number) => {
-  if (currentNetworkId == networkId) {
-    return
-  }
-
-  currentNetworkId = networkId
-
-  if (externalOnChangeNetworkCallback) {
-    externalOnChangeNetworkCallback(networkId)
-  }
+const handleChainChanged = (networkId: number) => {
+  _onChangeNetworkCallback && _onChangeNetworkCallback(networkId)
 }
 
 export const connect = async (): Promise<string | null> => {
@@ -93,6 +80,7 @@ export const connect = async (): Promise<string | null> => {
 
 export const switchNetwork = async (name: DefaultNetwork) => {
   const ethereum = checkIsWalletInstalled()
+  console.log('pwe', name, networks[name])
   const { chainName, rpcUrls, chainId, nativeCurrency } = networks[name]
 
   const _chainId = Number(chainId)
@@ -101,7 +89,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
     accountChangedListener = ethereum!.on(
       'accountsChanged',
       (accounts: any) => {
-        handleAccountsChanged(accounts)
+        handleChainChanged(accounts)
       }
     )
   }
@@ -161,53 +149,72 @@ export const isCorrectNetworkConnected = async (): Promise<boolean> => {
 
 export const autoSwitchNetwork = async (callbacks?) => {
   if (!(await isCorrectNetworkConnected())) {
-    if (globalThis.autoNetworkSwitch) {
-      callbacks?.switchingNetwork && callbacks.switchingNetwork()
-      switchNetwork(globalThis.defaultNetwork.name)
-    } else {
-      throw new Error('Wrong network')
-    }
+    switchNetwork(globalThis.defaultNetwork.name)
+    callbacks?.switchingNetwork && callbacks.switchingNetwork()
+
+    // if (globalThis.autoNetworkSwitch) {
+    //   switchNetwork(globalThis.defaultNetwork.name)
+    //   callbacks?.switchingNetwork && callbacks.switchingNetwork()
+    // } else {
+    //   throw new Error('Wrong network')
+    // }
   }
+}
+
+export const getSupportedNetworks = () => {
+  return networks
+}
+
+export const isSupportedNetworkConnected = async (): Promise<boolean> => {
+  const network = await getNetwork()
+
+  return (
+    Object.values(networks).filter(n => Number(n.chainId) === network.chainId)
+      .length > 0
+  )
 }
 
 export const startListening = (
   onChangeWalletCallback: (walletAddress: string | null) => void
 ) => {
   const ethereum = checkIsWalletInstalled()
+  _onChangeWalletCallback = onChangeWalletCallback
 
   if (!accountChangedListener) {
     accountChangedListener = ethereum!.on(
       'accountsChanged',
       (accounts: any) => {
-        handleAccountsChanged(accounts)
+        if (accounts.length === 0) {
+          // MetaMask is locked or the user has not connected any accounts
+          onChangeWalletCallback(null)
+        } else {
+          onChangeWalletCallback(accounts[0])
+        }
       }
     )
   }
-
-  externalOnChangeWalletCallback = onChangeWalletCallback
 }
 
 export const startListeningNetwork = (
-  onChangeNetworkCallback: (network: number) => void
+  onChangeNetworkCallback: (networkId: number) => void
 ) => {
   const ethereum = checkIsWalletInstalled()
+  _onChangeNetworkCallback = onChangeNetworkCallback
 
-  if (!networkChangedListener) {
-    networkChangedListener = ethereum!.on('networkChanged', networkId => {
-      console.info('networkChanged', networkId)
-      handleNetworkChanged(networkId)
+  if (!chainChangedListener) {
+    chainChangedListener = ethereum!.on('chainChanged', networkId => {
+      console.info('chainChanged', networkId)
+      onChangeNetworkCallback(networkId)
     })
   }
-
-  externalOnChangeNetworkCallback = onChangeNetworkCallback
 }
 
 export const isListening = (): boolean => {
-  return !!externalOnChangeWalletCallback
+  return !!_onChangeWalletCallback
 }
 
 export const stopListening = () => {
-  externalOnChangeWalletCallback = null
+  _onChangeWalletCallback = null
 }
 
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
