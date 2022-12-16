@@ -11,7 +11,7 @@ let externalOnChangeWalletCallback:
   | ((walletAddress: string | null) => void)
   | null
 let accountChangedListener: EventEmitter | null = null
-let networkChangedListener: EventEmitter | null = null
+let chainChangedListener: EventEmitter | null = null
 let externalOnChangeNetworkCallback: ((network: number) => void) | null
 
 const checkIsWalletInstalled = () => {
@@ -46,7 +46,7 @@ const handleAccountsChanged = (accounts: string[]) => {
   }
 }
 
-const handleNetworkChanged = (networkId: number) => {
+const handleChainChanged = (networkId: number) => {
   if (currentNetworkId == networkId) {
     return
   }
@@ -192,10 +192,10 @@ export const startListeningNetwork = (
 ) => {
   const ethereum = checkIsWalletInstalled()
 
-  if (!networkChangedListener) {
-    networkChangedListener = ethereum!.on('networkChanged', networkId => {
-      console.info('networkChanged', networkId)
-      handleNetworkChanged(networkId)
+  if (!chainChangedListener) {
+    chainChangedListener = ethereum!.on('chainChanged', networkId => {
+      console.info('chainChanged', networkId)
+      handleChainChanged(networkId)
     })
   }
 
