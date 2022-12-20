@@ -130,11 +130,11 @@ export function SettlementOfferModal({
   React.useEffect(() => {
     if (escrowData) {
       setEscrow(escrowData)
-      return
     }
-
-    loadData()
-  }, [])
+    if (!escrow && !escrowData) {
+      loadData()
+    }
+  }, [escrow, escrowData])
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement & { name: 'buyer' | 'seller' }>
@@ -354,7 +354,7 @@ export function SettlementOfferModal({
   }
 
   const renderBody = () => {
-    if (isCorrectNetwork && !escrowData) {
+    if (isCorrectNetwork && !escrow) {
       return null
     }
 
@@ -362,7 +362,7 @@ export function SettlementOfferModal({
   }
 
   const renderFooter = () => {
-    if (!isCorrectNetwork || (!isCorrectNetwork && !escrowData)) {
+    if (!isCorrectNetwork || (!isCorrectNetwork && !escrow)) {
       return null
     }
 

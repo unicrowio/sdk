@@ -42,7 +42,7 @@ const handleAccountsChanged = (accounts: string[]) => {
 }
 
 const handleChainChanged = (networkId: number) => {
-  _onChangeNetworkCallback && _onChangeNetworkCallback(networkId)
+_onChangeNetworkCallback && _onChangeNetworkCallback(networkId)
 }
 
 export const connect = async (): Promise<string | null> => {
