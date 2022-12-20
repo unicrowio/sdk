@@ -146,6 +146,7 @@ export const Arbitrate = ({
           value={sellerValue}
           min="0"
           max="100"
+          step=".01"
           type="number"
           adornmentStart={{
             content: <AdornmentContent>%</AdornmentContent>
@@ -171,6 +172,7 @@ export const Arbitrate = ({
           value={buyerValue}
           min="0"
           max="100"
+          step=".01"
           type="number"
           adornmentStart={{
             content: <AdornmentContent>%</AdornmentContent>

@@ -288,6 +288,7 @@ export function SettlementOfferModal({
           value={buyerValue}
           min="0"
           max="100"
+          step=".01"
           type="number"
           adornmentStart={{
             content: <AdornmentContent>%</AdornmentContent>
