@@ -41,8 +41,8 @@ function initNetworks({
       DefaultNetworks[defaultNetwork]?.displayName ||
       DefaultNetworks.arbitrum?.displayName,
     chainId: defaultNetwork
-      ? Number(DefaultNetworks[defaultNetwork].chainId)
-      : Number(DefaultNetworks.arbitrum.chainId),
+      ? DefaultNetworks[defaultNetwork].chainId
+      : DefaultNetworks.arbitrum.chainId,
     rpcUrl: defaultNetwork
       ? DefaultNetworks[defaultNetwork]?.rpcUrls[0]
       : DefaultNetworks.arbitrum?.rpcUrls[0]

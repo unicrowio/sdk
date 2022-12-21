@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
-import { networks } from './networks'
+import { networks, UnicrowNetwork } from './networks'
 import { DefaultNetwork } from '../config/init'
 import initNetworks from '../config/init'
 
@@ -84,12 +84,10 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   const ethereum = checkIsWalletInstalled()
   const { chainName, rpcUrls, chainId, nativeCurrency } = networks[name]
 
-  const _chainId = Number(chainId)
-
   registerAccountChangedListener()
 
   const addParams: any = {
-    chainId: ethers.utils.hexValue(_chainId),
+    chainId: ethers.utils.hexValue(chainId),
     chainName,
     rpcUrls,
     nativeCurrency
@@ -124,7 +122,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
 
   const connected = await getNetwork()
 
-  if (connected.chainId == _chainId) {
+  if (connected.chainId == chainId) {
     initNetworks({ defaultNetwork: name })
   }
 
@@ -147,9 +145,9 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
   return provider.getNetwork()
 }
 
-export const getSupportedNetworks = () => {
-  return networks
-}
+export const getSupportedNetworks: () => {
+  [name: string]: UnicrowNetwork
+} = () => networks
 
 export const isCorrectNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork()
@@ -158,11 +156,11 @@ export const isCorrectNetworkConnected = async (): Promise<boolean> => {
 
 export const isSupportedNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork()
-
-  return (
-    Object.values(networks).filter(n => Number(n.chainId) === network.chainId)
-      .length > 0
+  const currentNetwork = Object.values(networks).filter(
+    n => n.chainId === network.chainId
   )
+
+  return currentNetwork.length > 0
 }
 
 export const startListening = (
