@@ -247,7 +247,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 		const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
 		const isBuyer = escrowData.connectedUser === BUYER; // SIGNED AS BUYER
 
-		if (!(isCorrectNetwork && escrowData) || !(isBuyer || isSeller)) {
+		if (!(isCorrectNetwork && escrowData && (isBuyer || isSeller))) {
 			return null;
 		}
 
@@ -319,7 +319,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 	};
 
 	const renderFooter = () => {
-		if (!isCorrectNetwork || !(isCorrectNetwork || escrowData)) {
+		if (!(isCorrectNetwork && (isCorrectNetwork || escrowData))) {
 			return null;
 		}
 

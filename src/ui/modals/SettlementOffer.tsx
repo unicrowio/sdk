@@ -361,7 +361,7 @@ export function SettlementOfferModal({
 	};
 
 	const renderFooter = () => {
-		if (!isCorrectNetwork || !(isCorrectNetwork || escrow)) {
+		if (!(isCorrectNetwork && (isCorrectNetwork || escrow))) {
 			return null;
 		}
 

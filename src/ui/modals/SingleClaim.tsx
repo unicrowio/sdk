@@ -206,8 +206,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
 
 	const ModalFooter = () => {
 		if (
-			!(isCorrectNetwork && escrowBalance) ||
-			!(isLoading || protect.canDoClaim)
+			!(isCorrectNetwork && escrowBalance && (isLoading || protect.canDoClaim))
 		) {
 			return null;
 		}

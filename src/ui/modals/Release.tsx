@@ -217,7 +217,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 	};
 
 	const ModalFooter = () => {
-		if (!isCorrectNetwork || !(isLoading || protect.canRelease)) {
+		if (!(isCorrectNetwork && (isLoading || protect.canRelease))) {
 			return null;
 		}
 
@@ -254,7 +254,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 	};
 
 	const renderFooter = () => {
-		if (!isCorrectNetwork || !(isCorrectNetwork || escrowData)) {
+		if (!(isCorrectNetwork && (isCorrectNetwork || escrowData))) {
 			return null;
 		}
 

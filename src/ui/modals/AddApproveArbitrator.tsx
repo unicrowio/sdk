@@ -187,7 +187,7 @@ export const AddApproveArbitrator = ({
 		const isBuyer = escrowData?.connectedUser === BUYER;
 		const isSeller = escrowData?.connectedUser === SELLER;
 
-		if (!(isCorrectNetwork && escrowData) || !(isBuyer || isSeller)) {
+		if (!(isCorrectNetwork && escrowData && (isBuyer || isSeller))) {
 			return null;
 		}
 

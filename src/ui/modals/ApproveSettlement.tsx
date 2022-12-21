@@ -340,7 +340,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
 	const renderFooter = () => {
 		// TODO: check if we can simplify this to "if (!isCorrectNetwork || !escrow) {"
-		if (!isCorrectNetwork || !(isCorrectNetwork || escrow)) {
+		if (!(isCorrectNetwork && (isCorrectNetwork || escrow))) {
 			return null;
 		}
 
