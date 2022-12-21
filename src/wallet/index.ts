@@ -66,10 +66,9 @@ export const connect = async (): Promise<string | null> => {
     })
 
     handleAccountsChanged(_accounts)
-    // only switches automatically if 2 criterias are met:
-    // 1) user has allowed Metamask already to let the page switch to Arbitrum
-    // 2) the network got initialized with autoSwitchNetwork = true (src/config.index.ts)
-    autoSwitchNetwork()
+
+    // true = forces switch to correct network even if network got configured to not autoswitch
+    autoSwitchNetwork(true)
 
     if (_accounts && _accounts.length > 0) {
       currentWallet = _accounts[0]
@@ -132,17 +131,14 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   return name
 }
 
-export const autoSwitchNetwork = async (callbacks?) => {
+export const autoSwitchNetwork = async (callbacks?, force?: boolean) => {
   if (!(await isCorrectNetworkConnected())) {
-    switchNetwork(globalThis.defaultNetwork.name)
-    callbacks?.switchingNetwork && callbacks.switchingNetwork()
-
-    // if (globalThis.autoNetworkSwitch) {
-    //   switchNetwork(globalThis.defaultNetwork.name)
-    //   callbacks?.switchingNetwork && callbacks.switchingNetwork()
-    // } else {
-    //   throw new Error('Wrong network')
-    // }
+    if (force || globalThis.autoNetworkSwitch) {
+      switchNetwork(globalThis.defaultNetwork.name)
+      callbacks?.switchingNetwork && callbacks.switchingNetwork()
+    } else {
+      throw new Error('Wrong network')
+    }
   }
 }
 
