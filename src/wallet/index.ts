@@ -29,10 +29,12 @@ const handleAccountsChanged = (accounts: string[]) => {
     )
 }
 
-const handleChainChanged = (networkId: number) => {
+const handleChainChanged = (networkId: string) => {
+  const _networkId = Number(networkId)
+
   _onChangeNetworkCallbacks.length > 0 &&
     _onChangeNetworkCallbacks.forEach((callback: (networkId: number) => void) =>
-      callback(networkId)
+      callback(_networkId)
     )
 }
 
@@ -179,8 +181,6 @@ export const startListening = (
 export const startListeningNetwork = (
   onChangeNetworkCallback: (networkId: number) => void
 ) => {
-  const ethereum = checkIsWalletInstalled()
-
   _onChangeNetworkCallbacks.push(onChangeNetworkCallback)
   registerChainChangedListener()
 }
