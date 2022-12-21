@@ -62,4 +62,6 @@ export const validateParameters = async (data: IPaymentProps) => {
   ) {
     throw new Error('Invalid marketplace fee')
   }
+
+  return addresses;
 }

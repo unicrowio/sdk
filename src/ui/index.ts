@@ -123,7 +123,7 @@ export const pay = async (
   const data = paymentProps
 
   try {
-    validateParameters(data)
+    await validateParameters(data)
   } catch (error: any) {
     console.error(error)
     toast(error, 'error')

@@ -12,13 +12,15 @@ export const validateEns = async (addresses: ValidAddressProps) => {
 
   await Promise.all(Object.entries(addresses).map(async (obj) => {
       if(!obj[1]) return;
-      
+
       if (obj[1] && obj[1].includes('eth')) {
         addrs[obj[0]] = await ensToAddress(obj[1])
-      }      
-
-      addrs[obj[0]] = obj[1]
-  }))
+      }  else {
+        addrs[obj[0]] = obj[1]
+      }
+   }))
+    
+    console.log({ addrs })
 
   return addrs
 } 
@@ -28,7 +30,7 @@ export const validateAddress = (address: ValidAddressProps) => {
     throw new Error('You should provide an address')
   }
 
-  console.log({address})
+  console.log({yxz: address})
 
   const result = Object.entries(address)
     .map(item => {
