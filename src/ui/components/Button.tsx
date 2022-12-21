@@ -1,8 +1,8 @@
-import styled, { css } from 'styled-components'
+import styled, { css } from "styled-components";
 
 interface IButtonProps {
-  fullWidth?: boolean
-  variant?: 'primary' | 'secondary' | 'tertiary'
+	fullWidth?: boolean;
+	variant?: "primary" | "secondary" | "tertiary";
 }
 
 export const Button = styled.button<IButtonProps>`
@@ -42,8 +42,8 @@ export const Button = styled.button<IButtonProps>`
   }
 
   ${({ variant }) => {
-    if (variant === 'secondary') {
-      return css`
+		if (variant === "secondary") {
+			return css`
         &:disabled {
           background-color: #c3c6d133;
           color: #a8abb5;
@@ -62,11 +62,11 @@ export const Button = styled.button<IButtonProps>`
             background-color: #d1cefb;
           }
         }
-      `
-    }
+      `;
+		}
 
-    if (variant === 'tertiary') {
-      return css`
+		if (variant === "tertiary") {
+			return css`
         &:disabled {
           background-color: transparent;
           color: #a8abb5;
@@ -89,26 +89,26 @@ export const Button = styled.button<IButtonProps>`
             background-color: #6259ff1c;
           }
         }
-      `
-    }
-  }}
+      `;
+		}
+	}}
 
-  ${props =>
-    props.hidden &&
-    css`
+  ${(props) =>
+		props.hidden &&
+		css`
       display: none;
     `}
 
-  ${props =>
-    props.fullWidth &&
-    css`
+  ${(props) =>
+		props.fullWidth &&
+		css`
       width: 100%;
     `}
 
-    ${props =>
-    props.role === 'inline' &&
-    css`
+    ${(props) =>
+			props.role === "inline" &&
+			css`
       padding: 0 6px;
       height: auto;
     `}
-`
+`;

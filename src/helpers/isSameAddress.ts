@@ -6,11 +6,11 @@
  * @returns {boolean}
  */
 export const isSameAddress = (
-  address1: string | null,
-  address2: string | null
+	address1: string | null,
+	address2: string | null,
 ) => {
-  if (address1?.toLowerCase() === address2?.toLowerCase()) {
-    return true
-  }
-  return false
-}
+	if (address1?.toLowerCase() === address2?.toLowerCase()) {
+		return true;
+	}
+	return false;
+};

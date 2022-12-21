@@ -1,13 +1,13 @@
-import { UnicrowArbitrator__factory } from '@unicrowio/ethers-types'
-import { getContractAddress } from '../config'
+import { UnicrowArbitrator__factory } from "@unicrowio/ethers-types";
+import { getContractAddress } from "../config";
 import {
-  IArbitrationTransactionCallbacks,
-  ProposalArbitratorParsedPayload
-} from '../typing'
-import { errorHandler } from './errorHandler'
-import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
-import { validateAddress } from '../helpers/validateAddress'
-import { parseProposalArbitrator } from 'parsers/eventProposalArbitrator'
+	IArbitrationTransactionCallbacks,
+	ProposalArbitratorParsedPayload,
+} from "../typing";
+import { errorHandler } from "./errorHandler";
+import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
+import { validateAddress } from "../helpers/validateAddress";
+import { parseProposalArbitrator } from "parsers/eventProposalArbitrator";
 
 /**
  * One of the parties (buyer or seller) can call this to propose an arbitrator
@@ -18,51 +18,50 @@ import { parseProposalArbitrator } from 'parsers/eventProposalArbitrator'
  * @returns {Promise<ProposalArbitratorParsedPayload>}
  */
 export const proposeArbitrator = async (
-  escrowId: number,
-  arbitrator: string,
-  arbitratorFee: number,
-  callbacks?: IArbitrationTransactionCallbacks
+	escrowId: number,
+	arbitrator: string,
+	arbitratorFee: number,
+	callbacks?: IArbitrationTransactionCallbacks,
 ): Promise<ProposalArbitratorParsedPayload> => {
-  try {
-    validateAddress({ arbitrator })
+	try {
+		validateAddress({ arbitrator });
 
-    callbacks?.connectingWallet && callbacks.connectingWallet()
-    const provider = await getWeb3Provider()
+		callbacks.connectingWallet?.();
+		const provider = await getWeb3Provider();
 
-    if (!provider) {
-      throw new Error('Error on Adding Arbitrator. Account not connected')
-    }
+		if (!provider) {
+			throw new Error("Error on Adding Arbitrator. Account not connected");
+		}
 
-    await autoSwitchNetwork(callbacks)
+		await autoSwitchNetwork(callbacks);
 
-    const crowArbitratorContract = UnicrowArbitrator__factory.connect(
-      getContractAddress('arbitrator'),
-      provider.getSigner()
-    )
+		const crowArbitratorContract = UnicrowArbitrator__factory.connect(
+			getContractAddress("arbitrator"),
+			provider.getSigner(),
+		);
 
-    callbacks?.broadcasting && callbacks.broadcasting()
-    const proposeArbitratorTx = await crowArbitratorContract.proposeArbitrator(
-      escrowId,
-      arbitrator,
-      arbitratorFee * 100
-    )
+		callbacks.broadcasting?.();
+		const proposeArbitratorTx = await crowArbitratorContract.proposeArbitrator(
+			escrowId,
+			arbitrator,
+			arbitratorFee * 100,
+		);
 
-    callbacks?.broadcasted &&
-      callbacks.broadcasted({
-        transactionHash: proposeArbitratorTx.hash,
-        arbitrator,
-        arbitratorFee
-      })
+		callbacks.broadcasted?.({
+			transactionHash: proposeArbitratorTx.hash,
+			arbitrator,
+			arbitratorFee,
+		});
 
-    const receiptTx = await proposeArbitratorTx.wait()
+		const receiptTx = await proposeArbitratorTx.wait();
 
-    const parsedPayload = parseProposalArbitrator(receiptTx.events)
+		const parsedPayload = parseProposalArbitrator(receiptTx.events);
 
-    callbacks?.confirmed && callbacks.confirmed(parsedPayload)
+		callbacks.confirmed?.(parsedPayload);
 
-    return parsedPayload
-  } catch (error) {
-    const errorMessage = errorHandler(error)
-    throw new Error(errorMessage)
-  }
-}
+		return parsedPayload;
+	} catch (error) {
+		const errorMessage = errorHandler(error);
+		throw new Error(errorMessage);
+	}
+};

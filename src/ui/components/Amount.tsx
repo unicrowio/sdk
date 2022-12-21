@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import { Chip } from '../../ui/components/Chip'
-import { formatAmount } from '../../helpers/formatAmount'
+import React from "react";
+import styled from "styled-components";
+import { Chip } from "../../ui/components/Chip";
+import { formatAmount } from "../../helpers/formatAmount";
 
 const Style = styled.div`
   display: flex;
@@ -29,25 +29,25 @@ const Style = styled.div`
       margin-left: 8px;
     }
   }
-`
+`;
 
 export interface IAmountProps {
-  amount: string
-  tokenSymbol: string
-  status?: string
-  precision?: number
+	amount: string;
+	tokenSymbol: string;
+	status?: string;
+	precision?: number;
 }
 
 export const Amount = (props: IAmountProps) => {
-  return (
-    <Style>
-      <div>
-        <strong>
-          {formatAmount(props.amount, props.precision || 18, props.tokenSymbol)}
-        </strong>
-        <span>{props.tokenSymbol}</span>
-      </div>
-      {props.status && <Chip>{props.status}</Chip>}
-    </Style>
-  )
-}
+	return (
+		<Style>
+			<div>
+				<strong>
+					{formatAmount(props.amount, props.precision || 18, props.tokenSymbol)}
+				</strong>
+				<span>{props.tokenSymbol}</span>
+			</div>
+			{props.status && <Chip>{props.status}</Chip>}
+		</Style>
+	);
+};
