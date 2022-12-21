@@ -8,8 +8,8 @@ import initNetworks from '../config/init'
 let currentWallet: string | null = null
 let accountChangedListener: EventEmitter | null = null
 let chainChangedListener: EventEmitter | null = null
-let _onChangeNetworkCallbacks = []
-let _onChangeWalletCallbacks = []
+let _onChangeNetworkCallbacks: Array<(networkId: number) => void> = []
+let _onChangeWalletCallbacks: Array<(currentWallet: string) => void> = []
 
 const handleAccountsChanged = (accounts: string[]) => {
   if (currentWallet === accounts[0]) {
@@ -24,12 +24,16 @@ const handleAccountsChanged = (accounts: string[]) => {
   }
 
   _onChangeWalletCallbacks.length > 0 &&
-    _onChangeWalletCallbacks.forEach(c => c(currentWallet))
+    _onChangeWalletCallbacks.forEach(
+      (callback: (currentWallet: string) => void) => callback(currentWallet)
+    )
 }
 
 const handleChainChanged = (networkId: number) => {
   _onChangeNetworkCallbacks.length > 0 &&
-    _onChangeNetworkCallbacks.forEach(c => c(networkId))
+    _onChangeNetworkCallbacks.forEach((callback: (networkId: number) => void) =>
+      callback(networkId)
+    )
 }
 
 const registerChainChangedListener = () => {
