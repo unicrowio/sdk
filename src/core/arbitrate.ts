@@ -30,7 +30,7 @@ export const arbitrate = async (
       throw new Error('Error on Arbitrating. Account not connected')
     }
 
-    autoSwitchNetwork(callbacks)
+    await autoSwitchNetwork(callbacks)
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
       getContractAddress('arbitrator'),

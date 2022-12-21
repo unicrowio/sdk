@@ -30,7 +30,7 @@ export const approveSettlement = async (
       throw new Error('Error on Approve Offer, Account Not connected')
     }
 
-    autoSwitchNetwork(callbacks)
+    await autoSwitchNetwork(callbacks)
 
     const CrowDisputeContract = UnicrowDispute__factory.connect(
       getContractAddress('dispute'),

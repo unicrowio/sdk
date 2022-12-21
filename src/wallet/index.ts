@@ -74,7 +74,7 @@ export const connect = async (): Promise<string | null> => {
     handleAccountsChanged(_accounts)
 
     // true = forces switch to correct network even if network got configured to not autoswitch
-    autoSwitchNetwork(true)
+    autoSwitchNetwork({}, true)
 
     if (_accounts && _accounts.length > 0) {
       currentWallet = _accounts[0]
@@ -135,13 +135,15 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   return name
 }
 
-export const autoSwitchNetwork = async (callbacks?, force?: boolean) => {
-  if (!(await isCorrectNetworkConnected())) {
-    if (force || globalThis.autoNetworkSwitch) {
-      switchNetwork(globalThis.defaultNetwork.name)
+export const autoSwitchNetwork = async (callbacks?, force: boolean = false) => {
+  const isCorrectNetwork = await isCorrectNetworkConnected()
+
+  if (!isCorrectNetwork) {
+    if (globalThis.autoSwitchNetwork || force) {
+      await switchNetwork(globalThis.defaultNetwork.name)
       callbacks?.switchingNetwork && callbacks.switchingNetwork()
     } else {
-      throw new Error('Wrong network')
+      throw new Error('Unsupported network”')
     }
   }
 }

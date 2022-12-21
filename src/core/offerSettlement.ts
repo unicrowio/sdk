@@ -31,7 +31,7 @@ export const offerSettlement = async (
       throw new Error('Error on Settlement, Account Not connected')
     }
 
-    autoSwitchNetwork(callbacks)
+    await autoSwitchNetwork(callbacks)
 
     const crowDisputeContract = UnicrowDispute__factory.connect(
       getContractAddress('dispute'),

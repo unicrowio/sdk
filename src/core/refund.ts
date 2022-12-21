@@ -23,7 +23,7 @@ export const refund = async (
     throw new Error('Error on Refund, Account Not connected')
   }
 
-  autoSwitchNetwork(callbacks)
+  await autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 

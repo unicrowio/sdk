@@ -23,7 +23,7 @@ export const release = async (
     throw new Error('Error on Release, Account Not connected')
   }
 
-  autoSwitchNetwork(callbacks)
+  await autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 
