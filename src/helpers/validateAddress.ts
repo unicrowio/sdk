@@ -1,3 +1,4 @@
+import { ensToAddress } from './ensToAddress';
 import { isValidAddress } from './isValidAddress'
 
 interface ValidAddressProps {
@@ -6,10 +7,28 @@ interface ValidAddressProps {
 
 export class InvalidAddressError extends Error {}
 
+export const validateEns = async (addresses: ValidAddressProps) => {
+  const addrs = {};
+
+  await Promise.all(Object.entries(addresses).map(async (obj) => {
+      if(!obj[1]) return;
+      
+      if (obj[1] && obj[1].includes('eth')) {
+        addrs[obj[0]] = await ensToAddress(obj[1])
+      }      
+
+      addrs[obj[0]] = obj[1]
+  }))
+
+  return addrs
+} 
+
 export const validateAddress = (address: ValidAddressProps) => {
   if (Object.keys(address).length === 0) {
     throw new Error('You should provide an address')
   }
+
+  console.log({address})
 
   const result = Object.entries(address)
     .map(item => {

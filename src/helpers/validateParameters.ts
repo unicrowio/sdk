@@ -1,14 +1,14 @@
 import { IPaymentProps } from '../typing'
-import { validateAddress } from './validateAddress'
+import { validateAddress, validateEns } from './validateAddress'
 
 interface AddressesToCheck {
   arbitrator?: string
   marketplace?: string
-  seller: string
+  seller?: string
   tokenAddress?: string
 }
 
-export const validateParameters = (data: IPaymentProps) => {
+export const validateParameters = async (data: IPaymentProps) => {
   const {
     seller,
     arbitrator,
@@ -21,24 +21,14 @@ export const validateParameters = (data: IPaymentProps) => {
     tokenAddress
   } = data
 
-  const addressesToCheck: AddressesToCheck = {
-    seller
-  }
-
-  if (arbitrator) {
-    addressesToCheck.arbitrator = arbitrator
-  }
-
-  if (marketplace) {
-    addressesToCheck.marketplace = marketplace
-  }
-
-  if (tokenAddress) {
-    addressesToCheck.tokenAddress = tokenAddress
-  }
+  const addresses: AddressesToCheck = await validateEns({ 
+    seller, 
+    arbitrator,
+    marketplace,
+  })
 
   try {
-    validateAddress({ ...addressesToCheck })
+    validateAddress({ ...addresses, tokenAddress })
   } catch (e: any) {
     throw new Error(e.message)
   }
