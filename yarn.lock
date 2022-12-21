@@ -1793,10 +1793,10 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@unicrowio/ethers-types@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@unicrowio/ethers-types/-/ethers-types-0.0.8.tgz#645c1a08c6184da3e993e58bd7a90276866c0585"
-  integrity sha512-ht2DinaAEKN62EckHn2vhYkLhmCNCt5+uhqnM/Bs8mq3jiXsw6+6OviY4+0FSimxFtTzEQlF++/Ia9XEfPSNpw==
+"@unicrowio/ethers-types@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@unicrowio/ethers-types/-/ethers-types-0.0.9.tgz#a7a7bd6bacdb9af569053c96a5921bcfd7529adc"
+  integrity sha512-Op2YVUfPq7E7F0PeLZLMiD4C8oC6OcQ1YDSjcW6JYf5k+I9fKmZ5KlKggvtx6GTjxMbZmIKQ7pVoetH55S9kHw==
   dependencies:
     "@ethersproject/abi" "5.6.4"
     "@ethersproject/providers" "5.6.8"
