@@ -1,9 +1,0 @@
-{
-  "pluginSearchDirs": ["."],
-  "tabWidth": 2,
-  "semi": false,
-  "trailingComma": "none",
-  "printWidth": 80,
-  "arrowParens": "avoid",
-  "singleQuote": true
-}
