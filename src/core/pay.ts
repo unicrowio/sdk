@@ -90,7 +90,7 @@ export const pay = async (
     throw new Error('Wallet not connected')
   }
 
-  autoSwitchNetwork(callbacks)
+  await autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 

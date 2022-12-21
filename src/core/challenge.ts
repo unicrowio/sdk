@@ -28,7 +28,7 @@ export const challenge = async (
     throw new Error('Error on Challenge, Account Not connected')
   }
 
-  autoSwitchNetwork(callbacks)
+  await autoSwitchNetwork(callbacks)
 
   try {
     callbacks?.connected && callbacks.connected()

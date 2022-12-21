@@ -31,7 +31,7 @@ export const claimMultiple = async (
     throw new Error('Error on Claiming, Account Not connected')
   }
 
-  autoSwitchNetwork(callbacks)
+  await autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 
