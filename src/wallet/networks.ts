@@ -3,9 +3,22 @@ const arbitrumTestnetmRpcUrl =
   globalThis.arbitrumTestnet || 'https://goerli-rollup.arbitrum.io/rpc'
 const developmentRpcUrl = globalThis.development || 'https://rpc-net.unicrow.io'
 
-export const networks = {
+export type UnicrowNetwork = {
+  chainId: number
+  chainName: string
+  displayName: string
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
+  rpcUrls: string[]
+  blockExplorerUrls?: string[]
+}
+
+export const networks: { [name: string]: UnicrowNetwork } = {
   arbitrum: {
-    chainId: '42161',
+    chainId: 42161,
     chainName: 'Arbitrum One',
     displayName: 'Arbitrum',
     nativeCurrency: {
@@ -17,7 +30,7 @@ export const networks = {
     blockExplorerUrls: ['https://arbiscan.io/']
   },
   arbitrumTestnet: {
-    chainId: '421613',
+    chainId: 421613,
     chainName: 'Arbitrum Goerli',
     displayName: 'Arbitrum Testnet',
     nativeCurrency: {
@@ -29,7 +42,7 @@ export const networks = {
     blockExplorerUrls: ['https://goerli-rollup-explorer.arbitrum.io']
   },
   development: {
-    chainId: '5777',
+    chainId: 5777,
     chainName: 'Unicrow Testnet',
     displayName: 'Unicrow Testnet',
     nativeCurrency: {
