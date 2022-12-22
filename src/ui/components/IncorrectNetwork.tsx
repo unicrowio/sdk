@@ -6,10 +6,10 @@ import { Button } from ".";
 import styled from "styled-components";
 
 interface IIncorrectNetworkProps {
-	onClick: () => void;
-	title?: string;
-	description?: string;
-	image?: string;
+  onClick: () => void;
+  title?: string;
+  description?: string;
+  image?: string;
 }
 
 const Container = styled.div`
@@ -47,21 +47,21 @@ const ButtonContainer = styled.div`
 `;
 
 export const IncorrectNetwork = ({
-	onClick,
-	title = "Incorrect Network",
-	description = "Please, connect to the network below",
-	image = transformSVGInBase64(ActionForbidden),
+  onClick,
+  title = "Incorrect Network",
+  description = "Please, connect to the network below",
+  image = transformSVGInBase64(ActionForbidden),
 }: IIncorrectNetworkProps) => {
-	return (
-		<Container>
-			<Image src={image} alt="Wrong network" />
-			<Title>{title}</Title>
-			<Description>{description}</Description>
-			<ButtonContainer>
-				<Button fullWidth onClick={onClick}>
-					Connect to {globalThis.defaultNetwork.displayName}
-				</Button>
-			</ButtonContainer>
-		</Container>
-	);
+  return (
+    <Container>
+      <Image src={image} alt="Wrong network" />
+      <Title>{title}</Title>
+      <Description>{description}</Description>
+      <ButtonContainer>
+        <Button fullWidth onClick={onClick}>
+          Connect to {globalThis.defaultNetwork.displayName}
+        </Button>
+      </ButtonContainer>
+    </Container>
+  );
 };

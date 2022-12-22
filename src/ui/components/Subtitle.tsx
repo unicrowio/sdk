@@ -14,13 +14,13 @@ const Text = styled.span`
 `;
 
 export type TSubtitleProps = {
-	children: ReactNode;
+  children: ReactNode;
 };
 
 export const Subtitle = (props: TSubtitleProps) => {
-	return (
-		<Container>
-			<Text>{props.children}</Text>
-		</Container>
-	);
+  return (
+    <Container>
+      <Text>{props.children}</Text>
+    </Container>
+  );
 };

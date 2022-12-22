@@ -1,76 +1,76 @@
 import { tag } from "../helpers/tag";
 import { jss } from "../ui/jss";
 import {
-	GetResponseUserBalance,
-	IClaimMultipleModalProps,
-	IPaymentModalProps,
-	IPaymentProps,
-	IReleaseModalProps,
-	IPayTransactionCallbacks,
-	IReleaseTransactionCallbacks,
-	IClaimTransactionCallbacks,
-	IRefundTransactionCallbacks,
-	IChallengeTransactionCallbacks,
-	IChallengeModalProps,
-	IArbitrationModalProps,
-	IArbitrationTransactionCallbacks,
-	IClaimModalProps,
-	IRefundModalProps,
-	ISettlementApproveTransactionCallbacks,
-	ISettlementOfferTransactionCallbacks,
-	ISettlementOfferModalProps,
-	ISettlementApproveModalProps,
+  GetResponseUserBalance,
+  IClaimMultipleModalProps,
+  IPaymentModalProps,
+  IPaymentProps,
+  IReleaseModalProps,
+  IPayTransactionCallbacks,
+  IReleaseTransactionCallbacks,
+  IClaimTransactionCallbacks,
+  IRefundTransactionCallbacks,
+  IChallengeTransactionCallbacks,
+  IChallengeModalProps,
+  IArbitrationModalProps,
+  IArbitrationTransactionCallbacks,
+  IClaimModalProps,
+  IRefundModalProps,
+  ISettlementApproveTransactionCallbacks,
+  ISettlementOfferTransactionCallbacks,
+  ISettlementOfferModalProps,
+  ISettlementApproveModalProps,
 } from "../typing";
 import ReactDOM from "react-dom";
 import React, { FunctionComponent } from "react";
 import { ROOT_UNICROW_SDK_ELEMENT } from "../helpers/constants";
 import Deferred from "../helpers/deferred";
 import {
-	RefundModal,
-	ClaimModal,
-	PayModal,
-	ReleaseModal,
-	ClaimMultipleModal,
-	ChallengeModal,
-	Arbitrate,
-	AddApproveArbitrator,
-	ApproveSettlementModal,
-	SettlementOfferModal,
+  RefundModal,
+  ClaimModal,
+  PayModal,
+  ReleaseModal,
+  ClaimMultipleModal,
+  ChallengeModal,
+  Arbitrate,
+  AddApproveArbitrator,
+  ApproveSettlementModal,
+  SettlementOfferModal,
 } from "./modals";
 import { validateParameters } from "../helpers/validateParameters";
 import { toast } from "./components/notification/toast";
 
 // load Google font Inter
 if (typeof window !== "undefined") {
-	const font1 = tag("link");
-	font1.rel = "preconnect";
-	font1.href = "https://fonts.googleapis.com";
+  const font1 = tag("link");
+  font1.rel = "preconnect";
+  font1.href = "https://fonts.googleapis.com";
 
-	const font2 = tag("link");
-	font2.rel = "preconnect";
-	font2.href = "https://fonts.gstatic.com";
-	font2.crossOrigin = "anonymous";
+  const font2 = tag("link");
+  font2.rel = "preconnect";
+  font2.href = "https://fonts.gstatic.com";
+  font2.crossOrigin = "anonymous";
 
-	const font3 = tag("link");
-	font3.rel = "stylesheet";
-	font3.href =
-		"https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap";
+  const font3 = tag("link");
+  font3.rel = "stylesheet";
+  font3.href =
+    "https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap";
 
-	document.head.append(font1, font2, font3);
+  document.head.append(font1, font2, font3);
 }
 
 jss
-	.createStyleSheet({
-		"@global html, body": {
-			fontFamily: `'Bai Jamjuree', 'Work Sans', sans-serif`,
-			fontWeight: "400",
-			margin: 0,
-			boxSizing: "border-box",
-			MozOsxFontSmoothing: "grayscale",
-			WebkitFontSmoothing: "antialiased",
-		},
-	})
-	.attach();
+  .createStyleSheet({
+    "@global html, body": {
+      fontFamily: `'Bai Jamjuree', 'Work Sans', sans-serif`,
+      fontWeight: "400",
+      margin: 0,
+      boxSizing: "border-box",
+      MozOsxFontSmoothing: "grayscale",
+      WebkitFontSmoothing: "antialiased",
+    },
+  })
+  .attach();
 
 const CreateReactElement = React.createElement;
 
@@ -79,17 +79,17 @@ const CreateReactElement = React.createElement;
  *
  */
 export const renderModal = (component: FunctionComponent<any>, props?: any) => {
-	let container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
+  let container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
 
-	if (!container) {
-		const rootUnicrowSDkElement = document.createElement("div");
-		rootUnicrowSDkElement.id = ROOT_UNICROW_SDK_ELEMENT;
-		document.documentElement.append(rootUnicrowSDkElement);
-	}
+  if (!container) {
+    const rootUnicrowSDkElement = document.createElement("div");
+    rootUnicrowSDkElement.id = ROOT_UNICROW_SDK_ELEMENT;
+    document.documentElement.append(rootUnicrowSDkElement);
+  }
 
-	container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
+  container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
 
-	ReactDOM.render(CreateReactElement(component, props), container);
+  ReactDOM.render(CreateReactElement(component, props), container);
 };
 
 /**
@@ -97,10 +97,10 @@ export const renderModal = (component: FunctionComponent<any>, props?: any) => {
  *
  */
 export const umountModal = () => {
-	const root = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
-	if (root) {
-		ReactDOM.unmountComponentAtNode(root);
-	}
+  const root = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
+  if (root) {
+    ReactDOM.unmountComponentAtNode(root);
+  }
 };
 
 /**
@@ -117,29 +117,29 @@ export const umountModal = () => {
  * @returns {Promise<string>}
  */
 export const pay = async (
-	paymentProps: IPaymentProps,
-	callbacks?: IPayTransactionCallbacks,
+  paymentProps: IPaymentProps,
+  callbacks?: IPayTransactionCallbacks,
 ) => {
-	const data = paymentProps;
+  const data = paymentProps;
 
-	try {
-		validateParameters(data);
-	} catch (error: any) {
-		console.error(error);
-		toast(error, "error");
-		return;
-	}
+  try {
+    validateParameters(data);
+  } catch (error: any) {
+    console.error(error);
+    toast(error, "error");
+    return;
+  }
 
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const paymentModalProps: IPaymentModalProps = {
-		paymentProps: paymentProps,
-		callbacks,
-		deferredPromise,
-	};
+  const paymentModalProps: IPaymentModalProps = {
+    paymentProps: paymentProps,
+    callbacks,
+    deferredPromise,
+  };
 
-	renderModal(PayModal, paymentModalProps);
-	return deferredPromise.promise;
+  renderModal(PayModal, paymentModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -148,19 +148,19 @@ export const pay = async (
  * @returns {Promise<string>}
  */
 export const release = async (
-	escrowId: number,
-	callbacks?: IReleaseTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IReleaseTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const releaseModalProps: IReleaseModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const releaseModalProps: IReleaseModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(ReleaseModal, releaseModalProps);
-	return deferredPromise.promise;
+  renderModal(ReleaseModal, releaseModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -169,21 +169,21 @@ export const release = async (
  * @returns {Promise<string>}
  */
 export const claimMultiple = async (
-	escrowIds: number[],
-	balances: GetResponseUserBalance,
-	callbacks?: IClaimTransactionCallbacks,
+  escrowIds: number[],
+  balances: GetResponseUserBalance,
+  callbacks?: IClaimTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const claimMultipleModalProps: IClaimMultipleModalProps = {
-		escrowIds,
-		balances,
-		callbacks,
-		deferredPromise,
-	};
+  const claimMultipleModalProps: IClaimMultipleModalProps = {
+    escrowIds,
+    balances,
+    callbacks,
+    deferredPromise,
+  };
 
-	renderModal(ClaimMultipleModal, claimMultipleModalProps);
-	return deferredPromise.promise;
+  renderModal(ClaimMultipleModal, claimMultipleModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -192,19 +192,19 @@ export const claimMultiple = async (
  * @returns {Promise<string>}
  */
 export const claim = async (
-	escrowId: number,
-	callbacks?: IClaimTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IClaimTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const claimModalProps: IClaimModalProps = {
-		escrowId,
-		callbacks,
-		deferredPromise,
-	};
+  const claimModalProps: IClaimModalProps = {
+    escrowId,
+    callbacks,
+    deferredPromise,
+  };
 
-	renderModal(ClaimModal, claimModalProps);
-	return deferredPromise.promise;
+  renderModal(ClaimModal, claimModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -213,19 +213,19 @@ export const claim = async (
  * @returns {Promise<string>}
  */
 export const refund = async (
-	escrowId: number,
-	callbacks?: IRefundTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IRefundTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const refundModalProps: IRefundModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const refundModalProps: IRefundModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(RefundModal, refundModalProps);
-	return deferredPromise.promise;
+  renderModal(RefundModal, refundModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -234,19 +234,19 @@ export const refund = async (
  * @returns {Promise<string>}
  */
 export const challenge = async (
-	escrowId: number,
-	callbacks?: IChallengeTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IChallengeTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const challengeModalProps: IChallengeModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const challengeModalProps: IChallengeModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(ChallengeModal, challengeModalProps);
-	return deferredPromise.promise;
+  renderModal(ChallengeModal, challengeModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -255,19 +255,19 @@ export const challenge = async (
  * @returns {Promise<string>}
  */
 export const settlementOffer = async (
-	escrowId: number,
-	callbacks?: ISettlementOfferTransactionCallbacks,
+  escrowId: number,
+  callbacks?: ISettlementOfferTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const settlementModalProps: ISettlementOfferModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const settlementModalProps: ISettlementOfferModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(SettlementOfferModal, settlementModalProps);
-	return deferredPromise.promise;
+  renderModal(SettlementOfferModal, settlementModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -276,19 +276,19 @@ export const settlementOffer = async (
  * @returns {Promise<string>}
  */
 export const approveSettlement = async (
-	escrowId: number,
-	callbacks?: ISettlementApproveTransactionCallbacks,
+  escrowId: number,
+  callbacks?: ISettlementApproveTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const settlementModalProps: ISettlementApproveModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const settlementModalProps: ISettlementApproveModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(ApproveSettlementModal, settlementModalProps);
-	return deferredPromise.promise;
+  renderModal(ApproveSettlementModal, settlementModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -297,19 +297,19 @@ export const approveSettlement = async (
  * @returns {Promise<string>}
  */
 export const addApproveArbitrator = async (
-	escrowId: number,
-	callbacks?: IArbitrationTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IArbitrationTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const arbitrateModalProps: IArbitrationModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const arbitrateModalProps: IArbitrationModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(AddApproveArbitrator, arbitrateModalProps);
-	return deferredPromise.promise;
+  renderModal(AddApproveArbitrator, arbitrateModalProps);
+  return deferredPromise.promise;
 };
 
 /**
@@ -318,17 +318,17 @@ export const addApproveArbitrator = async (
  * @returns {Promise<string>}
  */
 export const arbitrate = async (
-	escrowId: number,
-	callbacks?: IArbitrationTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IArbitrationTransactionCallbacks,
 ) => {
-	const deferredPromise = new Deferred<string>();
+  const deferredPromise = new Deferred<string>();
 
-	const arbitrateModalProps: IArbitrationModalProps = {
-		escrowId,
-		deferredPromise,
-		callbacks,
-	};
+  const arbitrateModalProps: IArbitrationModalProps = {
+    escrowId,
+    deferredPromise,
+    callbacks,
+  };
 
-	renderModal(Arbitrate, arbitrateModalProps);
-	return deferredPromise.promise;
+  renderModal(Arbitrate, arbitrateModalProps);
+  return deferredPromise.promise;
 };

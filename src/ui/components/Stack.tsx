@@ -1,8 +1,8 @@
 import styled, { css } from "styled-components";
 
 interface IStack {
-	direction?: "column" | "row";
-	gap?: number;
+  direction?: "column" | "row";
+  gap?: number;
 }
 
 export const Stack = styled.div<IStack>`
@@ -12,16 +12,16 @@ export const Stack = styled.div<IStack>`
 
   & > :not(:first-child) {
     ${(props) => {
-			const gap = props.gap ? props.gap : 8;
-			if (props.direction === "row") {
-				return css`
+      const gap = props.gap ? props.gap : 8;
+      if (props.direction === "row") {
+        return css`
           margin-left: ${gap}px;
         `;
-			} else {
-				return css`
+      } else {
+        return css`
           margin-top: ${gap}px;
         `;
-			}
-		}};
+      }
+    }};
   }
 `;

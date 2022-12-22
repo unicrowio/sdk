@@ -52,14 +52,14 @@ const Tooltip = styled.div`
 `;
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-	text: string;
+  text: string;
 }
 
 export const Marker = ({ text, ...rest }: Props) => {
-	return (
-		<Tooltip {...rest}>
-			<QuestionMarker />
-			<span>{text}</span>
-		</Tooltip>
-	);
+  return (
+    <Tooltip {...rest}>
+      <QuestionMarker />
+      <span>{text}</span>
+    </Tooltip>
+  );
 };

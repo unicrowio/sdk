@@ -12,8 +12,8 @@ const StyledInputContainer = styled.div<any>`
   background-color: #fdfcff;
 
   ${(props: any) =>
-		props.disabled &&
-		css`
+    props.disabled &&
+    css`
       background-color: #e9eaed;
     `}
 `;
@@ -65,8 +65,8 @@ const StyledLabel = styled.label`
 `;
 
 interface IAdornmentProps {
-	hideBorder?: boolean;
-	disabled?: boolean;
+  hideBorder?: boolean;
+  disabled?: boolean;
 }
 
 const AdornmentBase = styled.div`
@@ -86,18 +86,18 @@ const AdornmentBase = styled.div`
 const AdornmentStart = styled(AdornmentBase)<IAdornmentProps>`
   border-right: ${(props) => (props.hideBorder ? "none" : "1px solid #E9EAED")};
   ${(props: IAdornmentProps) =>
-		!props.hideBorder &&
-		props.disabled &&
-		css`
+    !props.hideBorder &&
+    props.disabled &&
+    css`
       border-right: 1px solid #6f7584;
     `}
 `;
 const AdornmentEnd = styled(AdornmentBase)<IAdornmentProps>`
   border-left: ${(props) => (props.hideBorder ? "none" : "1px solid #E9EAED")};
   ${(props: IAdornmentProps) =>
-		!props.hideBorder &&
-		props.disabled &&
-		css`
+    !props.hideBorder &&
+    props.disabled &&
+    css`
       border-left: 1px solid #6f7584;
     `}
 `;
@@ -111,55 +111,55 @@ const InputWrapper = styled.div`
 `;
 
 interface IAdornment {
-	content: string | ReactNode;
-	options?: { hideBorder?: boolean };
+  content: string | ReactNode;
+  options?: { hideBorder?: boolean };
 }
 
 export interface IInputTextProps
-	extends React.InputHTMLAttributes<HTMLInputElement> {
-	label?: string;
-	adornmentStart?: IAdornment;
-	adornmentEnd?: IAdornment;
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  adornmentStart?: IAdornment;
+  adornmentEnd?: IAdornment;
 }
 
 export const InputText: FC<IInputTextProps> = ({
-	id,
-	label,
-	adornmentStart,
-	adornmentEnd,
-	disabled,
-	...rest
+  id,
+  label,
+  adornmentStart,
+  adornmentEnd,
+  disabled,
+  ...rest
 }: IInputTextProps) => {
-	return (
-		<div
-			style={{
-				fontSize: 12,
-			}}
-		>
-			{label ? <StyledLabel htmlFor={id}>{label}</StyledLabel> : null}
-			<StyledInputContainer disabled={disabled}>
-				{adornmentStart ? (
-					<AdornmentStart
-						hideBorder={adornmentStart.options?.hideBorder}
-						disabled={disabled}
-					>
-						{adornmentStart.content}
-					</AdornmentStart>
-				) : null}
-				<InputWrapper>
-					<StyledInput disabled={disabled} id={id} {...rest} />
-					{adornmentEnd ? (
-						<AdornmentEnd
-							hideBorder={adornmentEnd.options?.hideBorder}
-							disabled={disabled}
-						>
-							{adornmentEnd.content}
-						</AdornmentEnd>
-					) : null}
-				</InputWrapper>
-			</StyledInputContainer>
-		</div>
-	);
+  return (
+    <div
+      style={{
+        fontSize: 12,
+      }}
+    >
+      {label ? <StyledLabel htmlFor={id}>{label}</StyledLabel> : null}
+      <StyledInputContainer disabled={disabled}>
+        {adornmentStart ? (
+          <AdornmentStart
+            hideBorder={adornmentStart.options?.hideBorder}
+            disabled={disabled}
+          >
+            {adornmentStart.content}
+          </AdornmentStart>
+        ) : null}
+        <InputWrapper>
+          <StyledInput disabled={disabled} id={id} {...rest} />
+          {adornmentEnd ? (
+            <AdornmentEnd
+              hideBorder={adornmentEnd.options?.hideBorder}
+              disabled={disabled}
+            >
+              {adornmentEnd.content}
+            </AdornmentEnd>
+          ) : null}
+        </InputWrapper>
+      </StyledInputContainer>
+    </div>
+  );
 };
 
 export const AdornmentContent = styled.span`

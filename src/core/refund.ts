@@ -13,41 +13,41 @@ import { errorHandler } from "./errorHandler";
  * @returns {Promise<string>}
  */
 export const refund = async (
-	escrowId: number,
-	callbacks?: IRefundTransactionCallbacks,
+  escrowId: number,
+  callbacks?: IRefundTransactionCallbacks,
 ) => {
-	callbacks.connectingWallet?.();
-	const provider = await getWeb3Provider();
+  callbacks.connectingWallet?.();
+  const provider = await getWeb3Provider();
 
-	if (!provider) {
-		throw new Error("Error on Refund, Account Not connected");
-	}
+  if (!provider) {
+    throw new Error("Error on Refund, Account Not connected");
+  }
 
-	await autoSwitchNetwork(callbacks);
+  await autoSwitchNetwork(callbacks);
 
-	callbacks.connected?.();
+  callbacks.connected?.();
 
-	const smartContract = Unicrow__factory.connect(
-		getContractAddress("unicrow"),
-		provider.getSigner(),
-	);
+  const smartContract = Unicrow__factory.connect(
+    getContractAddress("unicrow"),
+    provider.getSigner(),
+  );
 
-	try {
-		const refundTx = await smartContract.refund(escrowId);
-		callbacks.broadcasting?.();
-		callbacks.broadcasted?.({
-			transactionHash: refundTx.hash,
-		});
+  try {
+    const refundTx = await smartContract.refund(escrowId);
+    callbacks.broadcasting?.();
+    callbacks.broadcasted?.({
+      transactionHash: refundTx.hash,
+    });
 
-		await refundTx.wait();
+    await refundTx.wait();
 
-		callbacks.confirmed?.({
-			transactionHash: refundTx.hash,
-		});
+    callbacks.confirmed?.({
+      transactionHash: refundTx.hash,
+    });
 
-		return refundTx.hash;
-	} catch (error) {
-		const errorMessage = errorHandler(error);
-		throw new Error(errorMessage);
-	}
+    return refundTx.hash;
+  } catch (error) {
+    const errorMessage = errorHandler(error);
+    throw new Error(errorMessage);
+  }
 };
