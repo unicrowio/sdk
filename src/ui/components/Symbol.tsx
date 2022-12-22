@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Symbol = styled.span`
   font-family: 'Work Sans';
@@ -8,4 +8,4 @@ export const Symbol = styled.span`
   line-height: 22px;
 
   color: #c8cbd0;
-`
+`;

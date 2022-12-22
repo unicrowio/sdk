@@ -1,4 +1,4 @@
-import { gql } from 'graphql-request'
+import { gql } from "graphql-request";
 
 export const buildClaimableQuery = gql`
   query getClaimableEscrows($walletUserAddress: String!) {
@@ -17,4 +17,4 @@ export const buildClaimableQuery = gql`
       escrow_id
     }
   }
-`
+`;

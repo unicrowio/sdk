@@ -1,7 +1,7 @@
-import styled from 'styled-components'
-import React, { ReactNode } from 'react'
-import { CopyToClipboard } from './Copy'
-import { Marker } from './Marker'
+import styled from "styled-components";
+import React, { ReactNode } from "react";
+import { CopyToClipboard } from "./Copy";
+import { Marker } from "./Marker";
 
 const DataDisplayerWrapper = styled.div`
   height: 3.5rem;
@@ -12,7 +12,7 @@ const DataDisplayerWrapper = styled.div`
   &:last-child {
     border-bottom: none;
   }
-`
+`;
 
 const DataDisplayerLabel = styled.div`
   flex-grow: 1;
@@ -26,7 +26,7 @@ const DataDisplayerLabel = styled.div`
   line-height: 22px;
 
   color: #252e47;
-`
+`;
 
 const DataDisplayerValue = styled.div`
   font-family: 'Work Sans';
@@ -36,35 +36,35 @@ const DataDisplayerValue = styled.div`
   line-height: 22px;
 
   color: #252e47;
-`
+`;
 
 export const ContainerDataDisplayer = styled.div`
   flex: 1;
-`
+`;
 
 interface Props {
-  label: string
-  value: ReactNode
-  copy?: string | null
-  marker?: string
+	label: string;
+	value: ReactNode;
+	copy?: string | null;
+	marker?: string;
 }
 
 export const DataDisplayer = ({ label, value, copy, marker }: Props) => {
-  return (
-    <DataDisplayerWrapper>
-      <DataDisplayerLabel>
-        <>
-          {label}
-          {!!marker && <Marker style={{ marginLeft: '6px' }} text={marker} />}
-        </>
-      </DataDisplayerLabel>
-      {copy ? (
-        <DataDisplayerValue>
-          <CopyToClipboard content={value} copy={copy} />
-        </DataDisplayerValue>
-      ) : (
-        <DataDisplayerValue>{value}</DataDisplayerValue>
-      )}
-    </DataDisplayerWrapper>
-  )
-}
+	return (
+		<DataDisplayerWrapper>
+			<DataDisplayerLabel>
+				<>
+					{label}
+					{!!marker && <Marker style={{ marginLeft: "6px" }} text={marker} />}
+				</>
+			</DataDisplayerLabel>
+			{copy ? (
+				<DataDisplayerValue>
+					<CopyToClipboard content={value} copy={copy} />
+				</DataDisplayerValue>
+			) : (
+				<DataDisplayerValue>{value}</DataDisplayerValue>
+			)}
+		</DataDisplayerWrapper>
+	);
+};
