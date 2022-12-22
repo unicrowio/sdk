@@ -73,7 +73,8 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     challengePeriodExtension: Number(challengeExtension?.toString()),
     challengePeriodStart: toDate(challengePeriodStart),
     challengePeriodEnd: toDate(challengePeriodEnd),
-    marketplace: marketplace.toString(),
+    marketplace:
+      marketplace.toString() === ADDRESS_ZERO ? null : marketplace.toString(),
     marketplaceFee: bipsToPercentage([marketplaceFee.toString()])[0],
     currency: currency.toString(),
     claimed: !!claimed,
