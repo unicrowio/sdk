@@ -1,17 +1,17 @@
 import React from "react";
 import { getTokenInfo } from "../../core/getTokenInfo";
 import {
-	EscrowStatus,
-	IPaymentModalProps,
-	IPayTransactionCallbacks,
-	IPayTransactionPayload,
-	ITokenInfo,
+  EscrowStatus,
+  IPaymentModalProps,
+  IPayTransactionCallbacks,
+  IPayTransactionPayload,
+  ITokenInfo,
 } from "../../typing";
 import { pay } from "../../core/pay";
 import { Subtitle, ScopedModal, Amount, Button } from "../../ui/components";
 import {
-	DataDisplayer,
-	ContainerDataDisplayer,
+  DataDisplayer,
+  ContainerDataDisplayer,
 } from "../../ui/components/DataDisplayer";
 import { useModalStates } from "../../ui/hooks/useModalStates";
 import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
@@ -19,9 +19,9 @@ import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
 import { addressWithYou, reduceAddress } from "../../helpers/addressFormat";
 import { toast } from "../components/notification/toast";
 import {
-	getWalletAccount,
-	isCorrectNetworkConnected,
-	switchNetwork,
+  getWalletAccount,
+  isCorrectNetworkConnected,
+  switchNetwork,
 } from "../../wallet";
 import { ADDRESS_ZERO } from "../../helpers/constants";
 import { formatAmount } from "../../helpers/formatAmount";

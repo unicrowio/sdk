@@ -1,24 +1,24 @@
 import { ERC20__factory, Unicrow__factory } from "@unicrowio/ethers-types";
 import {
-	NULL_ARBITRATOR_ADDRESS,
-	ZERO_FEE_VALUE,
-	NULL_MARKETPLACE_ADDRESS,
-	ETH_ADDRESS,
+  NULL_ARBITRATOR_ADDRESS,
+  ZERO_FEE_VALUE,
+  NULL_MARKETPLACE_ADDRESS,
+  ETH_ADDRESS,
 } from "../helpers/constants";
 import { getContractAddress } from "../config";
 import {
-	IPaymentProps,
-	IPayTransactionCallbacks,
-	PayParsedPayload,
+  IPaymentProps,
+  IPayTransactionCallbacks,
+  PayParsedPayload,
 } from "../typing";
 import { getBalance } from "./getBalance";
 import { getTokenInfo } from "../core/getTokenInfo";
 import { errorHandler } from "./errorHandler";
 
 import {
-	getWeb3Provider,
-	getWalletAccount,
-	autoSwitchNetwork,
+  getWeb3Provider,
+  getWalletAccount,
+  autoSwitchNetwork,
 } from "../wallet/index";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
 
@@ -68,8 +68,8 @@ import { BigNumberish } from "ethers";
  * @returns {Promise<PayParsedPayload>}
  */
 export const pay = async (
-	paymentProps: IPaymentProps,
-	callbacks?: IPayTransactionCallbacks,
+  paymentProps: IPaymentProps,
+  callbacks?: IPayTransactionCallbacks,
 ): Promise<PayParsedPayload> => {
 	const {
 		amount,

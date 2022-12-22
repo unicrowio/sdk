@@ -12,8 +12,8 @@ export const NULL_ARBITRATOR_ADDRESS = ADDRESS_ZERO;
 export const ETH_ADDRESS = ADDRESS_ZERO;
 
 export enum consensus {
-	BUYER,
-	SELLER,
+  BUYER,
+  SELLER,
 }
 
 // TODO: It was copied from contract but should be accessed directly to prevent errors
@@ -23,11 +23,11 @@ export const WHO_SELLER = 2;
 export const WHO_MARKETPLACE = 3;
 
 export enum split {
-	BUYER,
-	SELLER,
-	MARKETPLACE,
-	CROW,
-	DEV,
+  BUYER,
+  SELLER,
+  MARKETPLACE,
+  CROW,
+  DEV,
 }
 
 export const ROOT_UNICROW_SDK_ELEMENT = "rootUnicrowSDkElement";

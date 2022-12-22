@@ -1,16 +1,16 @@
+import { getHost } from "config";
 import {
-	MAINNET_RPC_URL,
 	networks as DefaultNetworks,
 } from "../wallet/networks";
 
 export type DefaultNetwork = "arbitrum" | "arbitrumTestnet" | "development";
 
 type Network = {
-	rpcUrl: string;
+  rpcUrl: string;
 };
 
 type Networks = {
-	[key in DefaultNetwork]?: Network;
+  [key in DefaultNetwork]?: Network;
 };
 
 interface IConfig {
@@ -58,7 +58,7 @@ function initNetworks({
 	};
 
 	globalThis.autoSwitchNetwork = autoSwitchNetwork;
-	globalThis.mainnetRPCUrl = mainnetRPCUrl || MAINNET_RPC_URL;
+	globalThis.mainnetRPCUrl = mainnetRPCUrl || getHost('mainnet');
 }
 
 export default initNetworks;

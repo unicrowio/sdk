@@ -2,7 +2,7 @@ import { ensToAddress } from "./ensToAddress";
 import { isValidAddress } from "./isValidAddress";
 
 interface ValidAddressProps {
-	[key: string]: string;
+  [key: string]: string;
 }
 
 export interface AddressToReturn {
@@ -38,22 +38,22 @@ export const validateEns = async (
 };
 
 export const validateAddress = (address: ValidAddressProps) => {
-	if (Object.keys(address).length === 0) {
-		throw new Error("You should provide an address");
-	}
+  if (Object.keys(address).length === 0) {
+    throw new Error("You should provide an address");
+  }
 
-	const result = Object.entries(address)
-		.map((item) => {
-			if (!isValidAddress(item[1])) {
-				return `${item[0]} is an invalid address.`;
-			}
-			return undefined;
-		})
-		.filter(Boolean);
+  const result = Object.entries(address)
+    .map((item) => {
+      if (!isValidAddress(item[1])) {
+        return `${item[0]} is an invalid address.`;
+      }
+      return undefined;
+    })
+    .filter(Boolean);
 
-	if (result.length > 0) {
-		throw new InvalidAddressError(result.join("\n"));
-	}
+  if (result.length > 0) {
+    throw new InvalidAddressError(result.join("\n"));
+  }
 
-	return true;
+  return true;
 };

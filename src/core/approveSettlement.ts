@@ -1,8 +1,8 @@
 import { UnicrowDispute__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import {
-	ApproveSettlementParsedPayload,
-	ISettlementApproveTransactionCallbacks,
+  ApproveSettlementParsedPayload,
+  ISettlementApproveTransactionCallbacks,
 } from "../typing";
 import { errorHandler } from "./errorHandler";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
@@ -17,45 +17,45 @@ import { parseApproveSettlement } from "parsers/eventApproveSettlement";
  * @returns {Promise<ApproveSettlementParsedPayload>}
  */
 export const approveSettlement = async (
-	escrowId: number,
-	splitBuyer: number,
-	splitSeller: number,
-	callbacks?: ISettlementApproveTransactionCallbacks,
+  escrowId: number,
+  splitBuyer: number,
+  splitSeller: number,
+  callbacks?: ISettlementApproveTransactionCallbacks,
 ): Promise<ApproveSettlementParsedPayload> => {
-	try {
-		callbacks.connectingWallet?.();
-		const provider = await getWeb3Provider();
+  try {
+    callbacks.connectingWallet?.();
+    const provider = await getWeb3Provider();
 
-		if (!provider) {
-			throw new Error("Error on Approve Offer, Account Not connected");
-		}
+    if (!provider) {
+      throw new Error("Error on Approve Offer, Account Not connected");
+    }
 
-		await autoSwitchNetwork(callbacks);
+    await autoSwitchNetwork(callbacks);
 
-		const CrowDisputeContract = UnicrowDispute__factory.connect(
-			getContractAddress("dispute"),
-			provider.getSigner(),
-		);
-		const approveOfferTx = await CrowDisputeContract.approveSettlement(
-			escrowId,
-			[splitBuyer * 100, splitSeller * 100],
-		);
+    const CrowDisputeContract = UnicrowDispute__factory.connect(
+      getContractAddress("dispute"),
+      provider.getSigner(),
+    );
+    const approveOfferTx = await CrowDisputeContract.approveSettlement(
+      escrowId,
+      [splitBuyer * 100, splitSeller * 100],
+    );
 
-		callbacks.broadcasted?.({
-			transactionHash: approveOfferTx.hash,
-			splitBuyer,
-			splitSeller,
-		});
+    callbacks.broadcasted?.({
+      transactionHash: approveOfferTx.hash,
+      splitBuyer,
+      splitSeller,
+    });
 
-		const receiptTx = await approveOfferTx.wait();
+    const receiptTx = await approveOfferTx.wait();
 
-		const parsedPayload = parseApproveSettlement(receiptTx.events);
+    const parsedPayload = parseApproveSettlement(receiptTx.events);
 
-		callbacks.confirmed?.(parsedPayload);
+    callbacks.confirmed?.(parsedPayload);
 
-		return parsedPayload;
-	} catch (error) {
-		const errorMessage = errorHandler(error);
-		throw new Error(errorMessage);
-	}
+    return parsedPayload;
+  } catch (error) {
+    const errorMessage = errorHandler(error);
+    throw new Error(errorMessage);
+  }
 };

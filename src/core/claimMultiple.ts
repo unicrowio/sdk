@@ -1,8 +1,8 @@
 import { getContractAddress } from "../config";
 import { UnicrowClaim__factory } from "@unicrowio/ethers-types";
 import {
-	MultipleClaimParsedPayload,
-	IClaimTransactionCallbacks,
+  MultipleClaimParsedPayload,
+  IClaimTransactionCallbacks,
 } from "../typing";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
 import { errorHandler } from "./errorHandler";
@@ -21,43 +21,43 @@ import { parseMultipleClaim } from "parsers/eventClaimMultiple";
  * @returns {Promise<MultipleClaimParsedPayload>}
  */
 export const claimMultiple = async (
-	escrowIds: number[],
-	callbacks?: IClaimTransactionCallbacks,
+  escrowIds: number[],
+  callbacks?: IClaimTransactionCallbacks,
 ): Promise<MultipleClaimParsedPayload> => {
-	callbacks.connectingWallet?.();
-	const provider = await getWeb3Provider();
+  callbacks.connectingWallet?.();
+  const provider = await getWeb3Provider();
 
-	if (!provider) {
-		throw new Error("Error on Claiming, Account Not connected");
-	}
+  if (!provider) {
+    throw new Error("Error on Claiming, Account Not connected");
+  }
 
-	await autoSwitchNetwork(callbacks);
+  await autoSwitchNetwork(callbacks);
 
-	callbacks.connected?.();
+  callbacks.connected?.();
 
-	const smartContract = UnicrowClaim__factory.connect(
-		getContractAddress("claim"),
-		provider.getSigner(),
-	);
+  const smartContract = UnicrowClaim__factory.connect(
+    getContractAddress("claim"),
+    provider.getSigner(),
+  );
 
-	try {
-		// FIX-ME: No need to get signer if the contract reference is initialized globally
-		const claimTx = await smartContract.claimMultiple(escrowIds);
-		callbacks.broadcasting?.();
+  try {
+    // FIX-ME: No need to get signer if the contract reference is initialized globally
+    const claimTx = await smartContract.claimMultiple(escrowIds);
+    callbacks.broadcasting?.();
 
-		callbacks.broadcasted?.({
-			transactionHash: claimTx.hash,
-		});
+    callbacks.broadcasted?.({
+      transactionHash: claimTx.hash,
+    });
 
-		const receiptTx = await claimTx.wait();
+    const receiptTx = await claimTx.wait();
 
-		const parsedPayload = parseMultipleClaim(receiptTx.events);
+    const parsedPayload = parseMultipleClaim(receiptTx.events);
 
-		callbacks.confirmed?.(parsedPayload);
+    callbacks.confirmed?.(parsedPayload);
 
-		return parsedPayload;
-	} catch (error) {
-		const errorMessage = errorHandler(error);
-		throw new Error(errorMessage);
-	}
+    return parsedPayload;
+  } catch (error) {
+    const errorMessage = errorHandler(error);
+    throw new Error(errorMessage);
+  }
 };

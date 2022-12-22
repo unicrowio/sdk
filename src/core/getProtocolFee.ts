@@ -10,14 +10,14 @@ import { getJsonRpcProvider } from "./getJsonRpcProvider";
  * @returns {number}
  */
 export const getProtocolFee = async () => {
-	const smartContract = Unicrow__factory.connect(
-		getContractAddress("unicrow"),
-		getJsonRpcProvider(),
-	);
+  const smartContract = Unicrow__factory.connect(
+    getContractAddress("unicrow"),
+    getJsonRpcProvider(),
+  );
 
-	const fee = await smartContract.protocolFee();
+  const fee = await smartContract.protocolFee();
 
-	const [feeInPercentage] = bipsToPercentage([fee]);
+  const [feeInPercentage] = bipsToPercentage([fee]);
 
-	return feeInPercentage;
+  return feeInPercentage;
 };

@@ -32,22 +32,22 @@ const Style = styled.div`
 `;
 
 export interface IAmountProps {
-	amount: string;
-	tokenSymbol: string;
-	status?: string;
-	precision?: number;
+  amount: string;
+  tokenSymbol: string;
+  status?: string;
+  precision?: number;
 }
 
 export const Amount = (props: IAmountProps) => {
-	return (
-		<Style>
-			<div>
-				<strong>
-					{formatAmount(props.amount, props.precision || 18, props.tokenSymbol)}
-				</strong>
-				<span>{props.tokenSymbol}</span>
-			</div>
-			{props.status && <Chip>{props.status}</Chip>}
-		</Style>
-	);
+  return (
+    <Style>
+      <div>
+        <strong>
+          {formatAmount(props.amount, props.precision || 18, props.tokenSymbol)}
+        </strong>
+        <span>{props.tokenSymbol}</span>
+      </div>
+      {props.status && <Chip>{props.status}</Chip>}
+    </Style>
+  );
 };

@@ -6,10 +6,10 @@ import { Button } from ".";
 import styled from "styled-components";
 
 interface IForbiddenProps {
-	onClose: () => void;
-	title?: string;
-	description?: string;
-	image?: string;
+  onClose: () => void;
+  title?: string;
+  description?: string;
+  image?: string;
 }
 
 const Container = styled.div`
@@ -47,21 +47,21 @@ const ButtonContainer = styled.div`
 `;
 
 export const Forbidden = ({
-	onClose,
-	title = "Action Forbidden",
-	description = " You are neither buyer nor seller in this payment",
-	image = transformSVGInBase64(ActionForbidden),
+  onClose,
+  title = "Action Forbidden",
+  description = " You are neither buyer nor seller in this payment",
+  image = transformSVGInBase64(ActionForbidden),
 }: IForbiddenProps) => {
-	return (
-		<Container>
-			<Image src={image} alt="Forbidden" />
-			<Title>{title}</Title>
-			<Description>{description}</Description>
-			<ButtonContainer>
-				<Button fullWidth onClick={onClose}>
-					Close
-				</Button>
-			</ButtonContainer>
-		</Container>
-	);
+  return (
+    <Container>
+      <Image src={image} alt="Forbidden" />
+      <Title>{title}</Title>
+      <Description>{description}</Description>
+      <ButtonContainer>
+        <Button fullWidth onClick={onClose}>
+          Close
+        </Button>
+      </ButtonContainer>
+    </Container>
+  );
 };

@@ -1,14 +1,14 @@
 import { DefaultNetwork } from "config/config";
 declare global {
-	interface Window {
-		ethereum: any;
-	}
+  interface Window {
+    ethereum: any;
+  }
 }
 
 interface Network {
-	name: DefaultNetwork;
-	chainId: number;
-	rpcUrl: string;
+  name: DefaultNetwork;
+  chainId: number;
+  rpcUrl: string;
 }
 
 declare module globalThis {
