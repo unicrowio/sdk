@@ -29,6 +29,7 @@ import { formatAmount } from "../../helpers/formatAmount";
 import { MARKER } from "../../config/marker";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "config/init";
+import { AddressesToCheck } from "helpers/validateParameters";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -142,7 +143,11 @@ export function PayModal(props: IPaymentModalProps) {
         <ContainerDataDisplayer>
           <DataDisplayer
             label="Seller ETH Address"
-            value={addressWithYou(props.paymentProps.seller, walletUser!)}
+            value={addressWithYou(
+              props.paymentProps.seller,
+              walletUser!,
+              props.paymentProps.ensAddresses.seller,
+            )}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}
           />
@@ -172,7 +177,10 @@ export function PayModal(props: IPaymentModalProps) {
             <>
               <DataDisplayer
                 label="Arbitrator"
-                value={reduceAddress(props.paymentProps.arbitrator)}
+                value={reduceAddress(
+                  props.paymentProps.arbitrator,
+                  props.paymentProps.ensAddresses.arbitrator,
+                )}
                 copy={props.paymentProps.arbitrator}
                 marker={MARKER.arbitrator}
               />
@@ -190,7 +198,10 @@ export function PayModal(props: IPaymentModalProps) {
               ADDRESS_ZERO.toLowerCase() && (
               <DataDisplayer
                 label="Marketplace Address"
-                value={reduceAddress(props.paymentProps.marketplace)}
+                value={reduceAddress(
+                  props.paymentProps.marketplace,
+                  props.paymentProps.ensAddresses.marketplace,
+                )}
                 copy={props.paymentProps.marketplace}
                 marker={MARKER.marketplace}
               />
