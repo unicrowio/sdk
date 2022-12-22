@@ -1,5 +1,5 @@
 import { IPaymentProps } from '../typing'
-import { validateAddress, validateEns } from './validateAddress'
+import { validateAddress, validateEns, AddrsToReturn } from './validateAddress'
 
 export interface AddressesToCheck {
   arbitrator?: string
@@ -21,14 +21,14 @@ export const validateParameters = async (data: IPaymentProps) => {
     tokenAddress
   } = data
 
-  const addresses: AddressesToCheck = await validateEns({ 
+  const addrs: AddrsToReturn = await validateEns({ 
     seller, 
     arbitrator,
     marketplace,
   })
 
   try {
-    validateAddress({ ...addresses, tokenAddress })
+    validateAddress({ ...addrs.common, tokenAddress })
   } catch (e: any) {
     throw new Error(e.message)
   }
@@ -63,5 +63,5 @@ export const validateParameters = async (data: IPaymentProps) => {
     throw new Error('Invalid marketplace fee')
   }
 
-  return addresses;
+  return addrs
 }

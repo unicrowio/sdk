@@ -144,9 +144,9 @@ export const pay = async (
   // solidity doesn't work with decimal points
   const marketplaceFeeValue = 100 * marketplaceFee
   const arbitratorFeeValue = 100 * arbitratorFee
-  const marketplaceAddress =marketplace || NULL_MARKETPLACE_ADDRESS
+  const marketplaceAddress = marketplace || NULL_MARKETPLACE_ADDRESS
   
-  const addresses = await validateParameters({
+  const addrs = await validateParameters({
     seller,
     arbitrator,
     arbitratorFee: paymentProps.arbitratorFee,
@@ -158,11 +158,11 @@ export const pay = async (
     amount
   })
 
-  const _arbitrator = addresses.arbitrator || NULL_ARBITRATOR_ADDRESS
+  const _arbitrator = addrs.common.arbitrator || NULL_ARBITRATOR_ADDRESS
 
   const payInput: EscrowInputStruct = {
-    seller: addresses.seller,
-    marketplace: addresses.marketplace,
+    seller: addrs.common.seller,
+    marketplace: addrs.common.marketplace,
     marketplaceFee: marketplaceFeeValue,
     currency: tokenAddress,
     challengePeriod,

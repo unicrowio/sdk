@@ -71,8 +71,8 @@ export function PayModal(props: IPaymentModalProps) {
       seller: props.paymentProps.seller,
       arbitrator: props.paymentProps.arbitrator,
       marketplace: props.paymentProps.marketplace,
-    }).then(addresses => {
-      setParties(addresses)
+    }).then(addrs => {
+      setParties(addrs.ens)
     })
     getTokenInfo(props.paymentProps.tokenAddress)
       .then(setTokenInfo)

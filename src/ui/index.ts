@@ -123,9 +123,13 @@ export const pay = async (
   const data = paymentProps
 
   try {
-    await validateParameters(data)
+    const addrs = await validateParameters(data)
+
+    Object.entries(addrs.common).forEach(([key, value]) => {
+      paymentProps[key] = value
+    })
+
   } catch (error: any) {
-    console.error(error)
     toast(error, 'error')
     return
   }

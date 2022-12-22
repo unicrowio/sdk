@@ -4,6 +4,13 @@ import { BigNumber as BigNumberJs } from 'bignumber.js'
 
 export type tTokenSymbol = 'DAI' | 'USDT' | 'USDC' | 'ETH' | string
 
+
+interface IEnsAddresses {
+  seller?: string;
+  arbitrator?: string;
+  marketplace?: string;
+}
+
 /**
  * Only symbol and address of a token (no decimals i.e. rounding precision)
  *
@@ -37,6 +44,8 @@ export interface IPaymentProps {
   arbitratorFee?: number
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number
+  /** ENS Addresses */
+  ensAddresses?: IEnsAddresses;
 }
 
 export interface IArbitratorData {
