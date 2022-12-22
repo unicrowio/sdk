@@ -1,4 +1,4 @@
-import { getHost } from "config";
+import { getHost } from "../config";
 import { ethers } from "ethers";
 
 export const ensToAddress = async (ensName: string) => {

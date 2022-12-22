@@ -14,88 +14,106 @@ const params: IPaymentProps = {
 };
 
 describe("Valid payments function", () => {
-  it("Should not throw an error ", () => {
-    validateParameters(params);
+  it("Should not throw an error ", async () => {
+    await validateParameters(params);
   });
 
-  it("Should throw an error given an invalid seller address ", () => {
-    expect(() =>
+  it("Should throw an error given an invalid seller address ", async () => {
+    await expect(
       validateParameters({
         ...params,
         seller: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
-      }),
-    ).toThrow(/seller is an invalid address./);
+      })
+    )
+    .rejects
+    .toThrow(/seller is an invalid address./);
   });
 
-  it("Should throw an error given an invalid marketplace address ", () => {
-    expect(() =>
+  it("Should throw an error given an invalid marketplace address ", async () => {
+    await expect(async () =>
+      validateParameters({
+        ...params,
+        marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
+      })
+    )
+    .rejects
+    .toThrow(/marketplace is an invalid address./);
+  });
+
+  it("Should throw an error given an invalid arbitrator address ", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    ).toThrow(/marketplace is an invalid address./);
+    )
+    .rejects
+    .toThrow(/marketplace is an invalid address./);
   });
 
-  it("Should throw an error given an invalid arbitrator address ", () => {
-    expect(() =>
+  it("Should throw an error given an invalid token address ", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    ).toThrow(/marketplace is an invalid address./);
+    )
+    .rejects
+    .toThrow(/marketplace is an invalid address./);
   });
 
-  it("Should throw an error given an invalid token address ", () => {
-    expect(() =>
-      validateParameters({
-        ...params,
-        marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
-      }),
-    ).toThrow(/marketplace is an invalid address./);
-  });
-
-  it("Should throw an error given invalid amount", () => {
-    expect(() =>
+  it("Should throw an error given invalid amount", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         amount: 0,
       }),
-    ).toThrow(/Invalid amount/);
+    )
+    .rejects
+    .toThrow(/Invalid amount/);
   });
 
-  it("Should throw an error given invalid challenge period", () => {
-    expect(() =>
+  it("Should throw an error given invalid challenge period", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         challengePeriod: -5,
       }),
-    ).toThrow(/Invalid challenge period/);
+    )
+    .rejects
+    .toThrow(/Invalid challenge period/);
   });
 
-  it("Should throw an error given invalid challenge period extension", () => {
-    expect(() =>
+  it("Should throw an error given invalid challenge period extension", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         challengePeriodExtension: -5,
       }),
-    ).toThrow(/Invalid challenge period extension/);
+    )
+    .rejects
+    .toThrow(/Invalid challenge period extension/);
   });
 
-  it("Should throw an error given invalid arbitrator fee", () => {
-    expect(() =>
+  it("Should throw an error given invalid arbitrator fee", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         arbitratorFee: -1,
       }),
-    ).toThrow(/Invalid arbitrator fee/);
+    )
+    .rejects
+    .toThrow(/Invalid arbitrator fee/);
   });
 
-  it("Should throw an error given invalid marketplace fee", () => {
-    expect(() =>
+  it("Should throw an error given invalid marketplace fee", async () => {
+    await expect(async () =>
       validateParameters({
         ...params,
         marketplaceFee: -5,
       }),
-    ).toThrow(/Invalid marketplace fee/);
+    )
+    .rejects
+    .toThrow(/Invalid marketplace fee/);
   });
 });

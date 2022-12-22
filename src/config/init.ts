@@ -1,4 +1,4 @@
-import { getHost } from "config";
+import { getHost } from "./index";
 import {
 	networks as DefaultNetworks,
 } from "../wallet/networks";
