@@ -1,37 +1,37 @@
-import { IPaymentProps } from '../typing'
-import { validateAddress, validateEns, AddrsToReturn } from './validateAddress'
+import { IPaymentProps } from "../typing";
+import { validateAddress, validateEns, AddressToReturn } from "./validateAddress";
 
 export interface AddressesToCheck {
-  arbitrator?: string
-  marketplace?: string
-  seller?: string
-  tokenAddress?: string
+	arbitrator?: string;
+	marketplace?: string;
+	seller?: string;
+	tokenAddress?: string;
 }
 
 export const validateParameters = async (data: IPaymentProps) => {
-  const {
-    seller,
-    arbitrator,
-    marketplace,
-    amount,
-    challengePeriod,
-    challengePeriodExtension,
-    arbitratorFee,
-    marketplaceFee,
-    tokenAddress
-  } = data
+	const {
+		seller,
+		arbitrator,
+		marketplace,
+		amount,
+		challengePeriod,
+		challengePeriodExtension,
+		arbitratorFee,
+		marketplaceFee,
+		tokenAddress,
+	} = data;
 
-  const addrs: AddrsToReturn = await validateEns({ 
-    seller, 
-    arbitrator,
-    marketplace,
-  })
+	const addrs: AddressToReturn = await validateEns({
+		seller,
+		arbitrator,
+		marketplace,
+	});
 
-  try {
-    validateAddress({ ...addrs.common, tokenAddress })
-  } catch (e: any) {
-    throw new Error(e.message)
-  }
+	try {
+		validateAddress({ ...addrs.common, tokenAddress });
+	} catch (e: any) {
+		throw new Error(e.message);
+	}
 
 	if (amount <= 0) {
 		throw new Error("Invalid amount");
@@ -56,12 +56,12 @@ export const validateParameters = async (data: IPaymentProps) => {
 		throw new Error("Invalid arbitrator fee");
 	}
 
-  if (
-    Number.isNaN(marketplaceFee) ||
-    (typeof marketplaceFee !== 'undefined' && marketplaceFee < 0)
-  ) {
-    throw new Error('Invalid marketplace fee')
-  }
+	if (
+		Number.isNaN(marketplaceFee) ||
+		(typeof marketplaceFee !== "undefined" && marketplaceFee < 0)
+	) {
+		throw new Error("Invalid marketplace fee");
+	}
 
-  return addrs
-}
+	return addrs;
+};

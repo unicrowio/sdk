@@ -2,31 +2,28 @@ import { ADDRESS_ZERO } from "./constants";
 import { isSameAddress } from "./isSameAddress";
 
 export const reduceAddress = (address: string, ensAddress?: string) => {
-  if (address === ADDRESS_ZERO) return '-';
+	if (address === ADDRESS_ZERO) return "-";
 
-  // it's an ens
-  if (ensAddress && ensAddress.includes('.')) {
+	const shortAddress = address.replace(address.substring(6, address.length -4), '...')
 
-    const start = address.substring(0, 6)
-    const middle = '...'
-    const end = address.substring(address.length - 4)
+	// it's an ens
+	if (ensAddress && ensAddress.includes(".")) {
+		const loading = address.includes(".");
 
-    const loading = address.includes(".")
+		if (loading) return `${address} (loading...)`;
 
-    if(loading) return `${address} (loading...)`
-    
-    return `${ensAddress} (${start}${middle}${end})`
-  }
+		return `${ensAddress} (${shortAddress})`;
+	}
 
-	const start = address.substring(0, 6);
-	const middle = "...";
-	const end = address.substring(address.length - 4);
-
-	return `${start}${middle}${end}`;
+	return `${shortAddress}`;
 };
 
-export const addressWithYou = (address: string, currentUserAddress: string, nonEnsAddress?: string) => {
-  return isSameAddress(address, currentUserAddress)
-    ? `You (${reduceAddress(address, nonEnsAddress)})`
-    : reduceAddress(address, nonEnsAddress)
-}
+export const addressWithYou = (
+	address: string,
+	currentUserAddress: string,
+	nonEnsAddress?: string,
+) => {
+	return isSameAddress(address, currentUserAddress)
+		? `You (${reduceAddress(address, nonEnsAddress)})`
+		: reduceAddress(address, nonEnsAddress);
+};

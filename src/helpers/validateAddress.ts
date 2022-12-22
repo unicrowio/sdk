@@ -1,37 +1,41 @@
-import { ensToAddress } from './ensToAddress';
-import { isValidAddress } from './isValidAddress'
+import { ensToAddress } from "./ensToAddress";
+import { isValidAddress } from "./isValidAddress";
 
 interface ValidAddressProps {
 	[key: string]: string;
 }
 
-export interface AddrsToReturn {
-  ens?: ValidAddressProps;
-  common?: ValidAddressProps;
+export interface AddressToReturn {
+	ens?: ValidAddressProps;
+	common?: ValidAddressProps;
 }
 
 export class InvalidAddressError extends Error {}
 
-export const validateEns = async (addresses: ValidAddressProps): Promise<AddrsToReturn> => {
-  const addrs: AddrsToReturn = {
-    ens: {},
-    common: {}
-  };
+export const validateEns = async (
+	addresses: ValidAddressProps,
+): Promise<AddressToReturn> => {
+	const addrs: AddressToReturn = {
+		ens: {},
+		common: {},
+	};
 
-  await Promise.all(Object.entries(addresses).map(async (obj) => {
-      if(!obj[1]) return;
+	await Promise.all(
+		Object.entries(addresses).map(async ([key, value]) => {
+			if (!value) return;
 
-      if (obj[1] && obj[1].includes('eth')) {
-		addrs.ens[obj[0]] = obj[1]
-        addrs.common[obj[0]] = await ensToAddress(obj[1])
-		return;
-      } 
+			if (value && value.includes("eth")) {
+				addrs.ens[key] = value;
+				addrs.common[key] = await ensToAddress(value);
+				return;
+			}
 
-	  addrs.common[obj[0]] = obj[1]
-   }))
-    
-  return addrs
-} 
+			addrs.common[key] = value;
+		}),
+	);
+
+	return addrs;
+};
 
 export const validateAddress = (address: ValidAddressProps) => {
 	if (Object.keys(address).length === 0) {
