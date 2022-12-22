@@ -43,28 +43,28 @@ export const ContainerDataDisplayer = styled.div`
 `;
 
 interface Props {
-	label: string;
-	value: ReactNode;
-	copy?: string | null;
-	marker?: string;
+  label: string;
+  value: ReactNode;
+  copy?: string | null;
+  marker?: string;
 }
 
 export const DataDisplayer = ({ label, value, copy, marker }: Props) => {
-	return (
-		<DataDisplayerWrapper>
-			<DataDisplayerLabel>
-				<>
-					{label}
-					{!!marker && <Marker style={{ marginLeft: "6px" }} text={marker} />}
-				</>
-			</DataDisplayerLabel>
-			{copy ? (
-				<DataDisplayerValue>
-					<CopyToClipboard content={value} copy={copy} />
-				</DataDisplayerValue>
-			) : (
-				<DataDisplayerValue>{value}</DataDisplayerValue>
-			)}
-		</DataDisplayerWrapper>
-	);
+  return (
+    <DataDisplayerWrapper>
+      <DataDisplayerLabel>
+        <>
+          {label}
+          {!!marker && <Marker style={{ marginLeft: "6px" }} text={marker} />}
+        </>
+      </DataDisplayerLabel>
+      {copy ? (
+        <DataDisplayerValue>
+          <CopyToClipboard content={value} copy={copy} />
+        </DataDisplayerValue>
+      ) : (
+        <DataDisplayerValue>{value}</DataDisplayerValue>
+      )}
+    </DataDisplayerWrapper>
+  );
 };

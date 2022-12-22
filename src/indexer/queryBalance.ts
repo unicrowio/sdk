@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 import { returningValues } from "./payload";
 
 export const buildBalanceQuery = (address: string) => {
-	const where = (op: "_nin" | "_in") => `
+  const where = (op: "_nin" | "_in") => `
     where: {
           _or: [
             {
@@ -19,7 +19,7 @@ export const buildBalanceQuery = (address: string) => {
         }
   `;
 
-	const query = gql`
+  const query = gql`
     query getBalance {
       pending: escrow_status_view(${where("_nin")}) {
         ${returningValues.join("\n\t\t")}
@@ -30,5 +30,5 @@ export const buildBalanceQuery = (address: string) => {
     }
   `;
 
-	return query;
+  return query;
 };

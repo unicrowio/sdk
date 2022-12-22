@@ -106,8 +106,8 @@ export const Button = styled.button<IButtonProps>`
     `}
 
     ${(props) =>
-    props.role === "inline" &&
-    css`
+      props.role === "inline" &&
+      css`
       padding: 0 6px;
       height: auto;
     `}

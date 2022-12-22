@@ -106,35 +106,35 @@ export const ModalLoadingMessage = styled.p`
 `;
 
 export type TModalProps = {
-	isLoading?: boolean;
-	loadingMessage?: string;
-	children?: ReactNode;
+  isLoading?: boolean;
+  loadingMessage?: string;
+  children?: ReactNode;
 };
 
 export const Modal = ({
-	isLoading = false,
-	loadingMessage = "",
-	children,
+  isLoading = false,
+  loadingMessage = "",
+  children,
 }: TModalProps) => {
-	return (
-		<ModalWrapper>
-			<StyledModalContent>
-				{children}
-				{isLoading && (
-					<ModalLoading>
-						<div>
-							<Loading />
-							<ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
-						</div>
-					</ModalLoading>
-				)}
-			</StyledModalContent>
-		</ModalWrapper>
-	);
+  return (
+    <ModalWrapper>
+      <StyledModalContent>
+        {children}
+        {isLoading && (
+          <ModalLoading>
+            <div>
+              <Loading />
+              <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
+            </div>
+          </ModalLoading>
+        )}
+      </StyledModalContent>
+    </ModalWrapper>
+  );
 };
 
 export const ModalHeaderClose = ({ ...props }) => (
-	<CloseIconWrapper {...props}>
-		<CloseIcon />
-	</CloseIconWrapper>
+  <CloseIconWrapper {...props}>
+    <CloseIcon />
+  </CloseIconWrapper>
 );
