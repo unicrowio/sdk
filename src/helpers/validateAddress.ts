@@ -6,35 +6,35 @@ interface ValidAddressProps {
 }
 
 export interface AddressToReturn {
-	ens?: ValidAddressProps;
-	common?: ValidAddressProps;
+  ens?: ValidAddressProps;
+  common?: ValidAddressProps;
 }
 
 export class InvalidAddressError extends Error {}
 
 export const validateEns = async (
-	addresses: ValidAddressProps,
+  addresses: ValidAddressProps,
 ): Promise<AddressToReturn> => {
-	const addrs: AddressToReturn = {
-		ens: {},
-		common: {},
-	};
+  const addrs: AddressToReturn = {
+    ens: {},
+    common: {},
+  };
 
-	await Promise.all(
-		Object.entries(addresses).map(async ([key, value]) => {
-			if (!value) return;
+  await Promise.all(
+    Object.entries(addresses).map(async ([key, value]) => {
+      if (!value) return;
 
-			if (value && value.includes("eth")) {
-				addrs.ens[key] = value;
-				addrs.common[key] = await ensToAddress(value);
-				return;
-			}
+      if (value && value.includes("eth")) {
+        addrs.ens[key] = value;
+        addrs.common[key] = await ensToAddress(value);
+        return;
+      }
 
-			addrs.common[key] = value;
-		}),
-	);
+      addrs.common[key] = value;
+    }),
+  );
 
-	return addrs;
+  return addrs;
 };
 
 export const validateAddress = (address: ValidAddressProps) => {

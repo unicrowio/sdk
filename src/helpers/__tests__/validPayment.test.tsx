@@ -23,10 +23,8 @@ describe("Valid payments function", () => {
       validateParameters({
         ...params,
         seller: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
-      })
-    )
-    .rejects
-    .toThrow(/seller is an invalid address./);
+      }),
+    ).rejects.toThrow(/seller is an invalid address./);
   });
 
   it("Should throw an error given an invalid marketplace address ", async () => {
@@ -34,10 +32,8 @@ describe("Valid payments function", () => {
       validateParameters({
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
-      })
-    )
-    .rejects
-    .toThrow(/marketplace is an invalid address./);
+      }),
+    ).rejects.toThrow(/marketplace is an invalid address./);
   });
 
   it("Should throw an error given an invalid arbitrator address ", async () => {
@@ -46,9 +42,7 @@ describe("Valid payments function", () => {
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    )
-    .rejects
-    .toThrow(/marketplace is an invalid address./);
+    ).rejects.toThrow(/marketplace is an invalid address./);
   });
 
   it("Should throw an error given an invalid token address ", async () => {
@@ -57,9 +51,7 @@ describe("Valid payments function", () => {
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    )
-    .rejects
-    .toThrow(/marketplace is an invalid address./);
+    ).rejects.toThrow(/marketplace is an invalid address./);
   });
 
   it("Should throw an error given invalid amount", async () => {
@@ -68,9 +60,7 @@ describe("Valid payments function", () => {
         ...params,
         amount: 0,
       }),
-    )
-    .rejects
-    .toThrow(/Invalid amount/);
+    ).rejects.toThrow(/Invalid amount/);
   });
 
   it("Should throw an error given invalid challenge period", async () => {
@@ -79,9 +69,7 @@ describe("Valid payments function", () => {
         ...params,
         challengePeriod: -5,
       }),
-    )
-    .rejects
-    .toThrow(/Invalid challenge period/);
+    ).rejects.toThrow(/Invalid challenge period/);
   });
 
   it("Should throw an error given invalid challenge period extension", async () => {
@@ -90,9 +78,7 @@ describe("Valid payments function", () => {
         ...params,
         challengePeriodExtension: -5,
       }),
-    )
-    .rejects
-    .toThrow(/Invalid challenge period extension/);
+    ).rejects.toThrow(/Invalid challenge period extension/);
   });
 
   it("Should throw an error given invalid arbitrator fee", async () => {
@@ -101,9 +87,7 @@ describe("Valid payments function", () => {
         ...params,
         arbitratorFee: -1,
       }),
-    )
-    .rejects
-    .toThrow(/Invalid arbitrator fee/);
+    ).rejects.toThrow(/Invalid arbitrator fee/);
   });
 
   it("Should throw an error given invalid marketplace fee", async () => {
@@ -112,8 +96,6 @@ describe("Valid payments function", () => {
         ...params,
         marketplaceFee: -5,
       }),
-    )
-    .rejects
-    .toThrow(/Invalid marketplace fee/);
+    ).rejects.toThrow(/Invalid marketplace fee/);
   });
 });
