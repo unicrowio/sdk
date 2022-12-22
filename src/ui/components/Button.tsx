@@ -1,14 +1,14 @@
 import styled, { css } from "styled-components";
 
 interface IButtonProps {
-	fullWidth?: boolean;
-	variant?: "primary" | "secondary" | "tertiary";
+  fullWidth?: boolean;
+  variant?: "primary" | "secondary" | "tertiary";
 }
 
 export const Button = styled.button<IButtonProps>`
   border: 0;
   cursor: pointer;
-  font-family: 'Work Sans', sans-serif;
+  font-family: "Work Sans", sans-serif;
   height: 48px;
   outline: none;
   font-size: 14px;
@@ -42,8 +42,8 @@ export const Button = styled.button<IButtonProps>`
   }
 
   ${({ variant }) => {
-		if (variant === "secondary") {
-			return css`
+    if (variant === "secondary") {
+      return css`
         &:disabled {
           background-color: #c3c6d133;
           color: #a8abb5;
@@ -63,10 +63,10 @@ export const Button = styled.button<IButtonProps>`
           }
         }
       `;
-		}
+    }
 
-		if (variant === "tertiary") {
-			return css`
+    if (variant === "tertiary") {
+      return css`
         &:disabled {
           background-color: transparent;
           color: #a8abb5;
@@ -74,8 +74,8 @@ export const Button = styled.button<IButtonProps>`
         }
         &:enabled {
           background-color: transparent;
-          color: #5f57ffa6;
-          border: 1px solid #5f57ffa6;
+          color: #6259ff;
+          border: 1px solid #6259ff;
 
           &:hover {
             color: #6259ff;
@@ -90,24 +90,24 @@ export const Button = styled.button<IButtonProps>`
           }
         }
       `;
-		}
-	}}
+    }
+  }}
 
   ${(props) =>
-		props.hidden &&
-		css`
+    props.hidden &&
+    css`
       display: none;
     `}
 
   ${(props) =>
-		props.fullWidth &&
-		css`
+    props.fullWidth &&
+    css`
       width: 100%;
     `}
 
     ${(props) =>
-			props.role === "inline" &&
-			css`
+    props.role === "inline" &&
+    css`
       padding: 0 6px;
       height: auto;
     `}
