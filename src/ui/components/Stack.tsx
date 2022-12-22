@@ -1,27 +1,27 @@
-import styled, { css } from 'styled-components'
+import styled, { css } from "styled-components";
 
 interface IStack {
-  direction?: 'column' | 'row'
-  gap?: number
+	direction?: "column" | "row";
+	gap?: number;
 }
 
 export const Stack = styled.div<IStack>`
   display: flex;
   width: 100%;
-  flex-direction: ${props => (props.direction === 'row' ? 'row' : 'column')};
+  flex-direction: ${(props) => (props.direction === "row" ? "row" : "column")};
 
   & > :not(:first-child) {
-    ${props => {
-      const gap = props.gap ? props.gap : 8
-      if (props.direction === 'row') {
-        return css`
+    ${(props) => {
+			const gap = props.gap ? props.gap : 8;
+			if (props.direction === "row") {
+				return css`
           margin-left: ${gap}px;
-        `
-      } else {
-        return css`
+        `;
+			} else {
+				return css`
           margin-top: ${gap}px;
-        `
-      }
-    }};
+        `;
+			}
+		}};
   }
-`
+`;

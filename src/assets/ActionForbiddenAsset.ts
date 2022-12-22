@@ -62,4 +62,4 @@ export default `
 <stop offset="1" stop-color="white" stop-opacity="0"/>
 </linearGradient>
 </defs>
-</svg>`
+</svg>`;

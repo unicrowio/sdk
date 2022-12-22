@@ -1,6 +1,6 @@
-import React from 'react'
-import styled from 'styled-components'
-import { QuestionMarker } from '../../assets/QuestionCircle'
+import React from "react";
+import styled from "styled-components";
+import { QuestionMarker } from "../../assets/QuestionCircle";
 
 const Tooltip = styled.div`
   position: relative;
@@ -49,17 +49,17 @@ const Tooltip = styled.div`
   :hover span {
     visibility: visible;
   }
-`
+`;
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  text: string
+	text: string;
 }
 
 export const Marker = ({ text, ...rest }: Props) => {
-  return (
-    <Tooltip {...rest}>
-      <QuestionMarker />
-      <span>{text}</span>
-    </Tooltip>
-  )
-}
+	return (
+		<Tooltip {...rest}>
+			<QuestionMarker />
+			<span>{text}</span>
+		</Tooltip>
+	);
+};

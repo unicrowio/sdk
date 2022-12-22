@@ -1,23 +1,23 @@
-import React from 'react'
-import { getTokenInfo } from '../../core/getTokenInfo'
+import React from "react";
+import { getTokenInfo } from "../../core/getTokenInfo";
 import {
-  EscrowStatus,
-  IPaymentModalProps,
-  IPayTransactionCallbacks,
-  IPayTransactionPayload,
-  ITokenInfo
-} from '../../typing'
-import { pay } from '../../core/pay'
-import { Subtitle, ScopedModal, Amount, Button } from '../../ui/components'
+	EscrowStatus,
+	IPaymentModalProps,
+	IPayTransactionCallbacks,
+	IPayTransactionPayload,
+	ITokenInfo,
+} from "../../typing";
+import { pay } from "../../core/pay";
+import { Subtitle, ScopedModal, Amount, Button } from "../../ui/components";
 import {
-  DataDisplayer,
-  ContainerDataDisplayer
-} from '../../ui/components/DataDisplayer'
-import { useModalStates } from '../../ui/hooks/useModalStates'
-import { displayChallengePeriod } from '../../helpers/displayChallengePeriod'
+	DataDisplayer,
+	ContainerDataDisplayer,
+} from "../../ui/components/DataDisplayer";
+import { useModalStates } from "../../ui/hooks/useModalStates";
+import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
 
-import { addressWithYou, reduceAddress } from '../../helpers/addressFormat'
-import { toast } from '../components/notification/toast'
+import { addressWithYou, reduceAddress } from "../../helpers/addressFormat";
+import { toast } from "../components/notification/toast";
 import {
   getWalletAccount,
   isCorrectNetworkConnected,

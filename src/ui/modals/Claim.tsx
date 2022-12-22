@@ -1,245 +1,249 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from "react";
 import {
-  EscrowStatus,
-  IBalanceWithTokenInfo,
-  IClaimTransactionCallbacks,
-  IClaimTransactionPayload,
-  IClaimModalProps
-} from '../../typing'
-import { useModalStates } from '../hooks'
-import { Button, Table, ScopedModal, Symbol } from '../components'
-import { toast } from '../components/notification/toast'
-import { Forbidden } from '../components/Forbidden'
-import { getSingleBalance, claim } from '../../core'
+	EscrowStatus,
+	IBalanceWithTokenInfo,
+	IClaimTransactionCallbacks,
+	IClaimTransactionPayload,
+	IClaimModalProps,
+} from "../../typing";
+import { useModalStates } from "../hooks";
+import { Button, Table, ScopedModal, Symbol } from "../components";
+import { toast } from "../components/notification/toast";
+import { Forbidden } from "../components/Forbidden";
+import { getSingleBalance, claim } from "../../core";
 import {
-  displayableAmountBN,
-  displayDecimals,
-  formatAmountToUSD,
-  getExchangeRates
-} from '../../helpers'
-import { isCorrectNetworkConnected, switchNetwork } from 'wallet'
-import { DefaultNetwork } from 'config/init'
-import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
+	displayableAmountBN,
+	displayDecimals,
+	formatAmountToUSD,
+	getExchangeRates,
+} from "../../helpers";
+import { isCorrectNetworkConnected, switchNetwork } from "wallet";
+import { DefaultNetwork } from "config/init";
+import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
 type IBalanceWithTokenUSD = IBalanceWithTokenInfo & {
-  amountInUSD?: string
-}
+	amountInUSD?: string;
+};
 
 type IProtectedActions = {
-  canDoClaim: boolean
-  reason?: string
-}
+	canDoClaim: boolean;
+	reason?: string;
+};
 
 export function ClaimModal(props: IClaimModalProps) {
-  const {
-    success,
-    setSuccess,
-    isLoading,
-    setIsLoading,
-    loadingMessage,
-    setLoadingMessage,
-    error,
-    onModalClose
-  } = useModalStates({ deferredPromise: props.deferredPromise })
+	const {
+		success,
+		setSuccess,
+		isLoading,
+		setIsLoading,
+		loadingMessage,
+		setLoadingMessage,
+		error,
+		onModalClose,
+	} = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
+	const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
-  useEffect(() => {
-    isCorrectNetworkConnected().then(isCorrect => {
-      setIsCorrectNetwork(isCorrect)
-    })
-  }, [])
+	useEffect(() => {
+		isCorrectNetworkConnected().then((isCorrect) => {
+			setIsCorrectNetwork(isCorrect);
+		});
+	}, []);
 
-  const [protect, setProtect] = React.useState<IProtectedActions>(
-    {} as IProtectedActions
-  )
+	const [protect, setProtect] = React.useState<IProtectedActions>(
+		{} as IProtectedActions,
+	);
 
-  const [escrowBalance, setEscrowBalance] =
-    React.useState<IBalanceWithTokenUSD>()
+	const [escrowBalance, setEscrowBalance] =
+		React.useState<IBalanceWithTokenUSD>();
 
-  const getBalance = async () => {
-    try {
-      setIsLoading(true)
-      setLoadingMessage('Getting Escrow information')
+	const getBalance = async () => {
+		try {
+			setIsLoading(true);
+			setLoadingMessage("Getting Escrow information");
 
-      const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
-        Number(props.escrowId)
-      )
+			const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
+				Number(props.escrowId),
+			);
 
-      const exchangeValues = await getExchangeRates([_escrowBalance.tokenSymbol!])
+			const exchangeValues = await getExchangeRates([
+				_escrowBalance.tokenSymbol!,
+			]);
 
-      const exchangeValue = exchangeValues[_escrowBalance.tokenSymbol!]
+			const exchangeValue = exchangeValues[_escrowBalance.tokenSymbol!];
 
-      if (exchangeValue) {
-        _escrowBalance.amountInUSD = formatAmountToUSD(
-          _escrowBalance.amountBN,
-          exchangeValue
-        )
-      } else {
-        _escrowBalance.amountInUSD = 'n/a (error)'
-      }
+			if (exchangeValue) {
+				_escrowBalance.amountInUSD = formatAmountToUSD(
+					_escrowBalance.amountBN,
+					exchangeValue,
+				);
+			} else {
+				_escrowBalance.amountInUSD = "n/a (error)";
+			}
 
-      setEscrowBalance(_escrowBalance)
+			setEscrowBalance(_escrowBalance);
 
-      setProtect({
-        canDoClaim: true
-      })
+			setProtect({
+				canDoClaim: true,
+			});
 
-      if (_escrowBalance.connectedUser === 'other') {
-        setProtect({
-          canDoClaim: false
-        })
-      }
+			if (_escrowBalance.connectedUser === "other") {
+				setProtect({
+					canDoClaim: false,
+				});
+			}
 
-      if (
-        _escrowBalance.statusEscrow.claimed ||
-        _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
-      ) {
-        setProtect({
-          canDoClaim: false,
-          reason: 'You cannot claim this payment at this time'
-        })
-      }
-    } catch (error: any) {
-      toast(error, 'error')
-      onModalClose()
-    } finally {
-      setLoadingMessage('')
-      setIsLoading(false)
-    }
-  }
+			if (
+				_escrowBalance.statusEscrow.claimed ||
+				_escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
+			) {
+				setProtect({
+					canDoClaim: false,
+					reason: "You cannot claim this payment at this time",
+				});
+			}
+		} catch (error: any) {
+			toast(error, "error");
+			onModalClose();
+		} finally {
+			setLoadingMessage("");
+			setIsLoading(false);
+		}
+	};
 
-  React.useEffect(() => {
-    getBalance()
-  }, [props.escrowId])
+	React.useEffect(() => {
+		getBalance();
+	}, [props.escrowId]);
 
-  const renderClaimableBalance = React.useCallback(() => {
-      if(isCorrectNetwork){
-        if (isLoading || !escrowBalance) {
-          return (
-            <tr>
-              <td>Loading...</td>
-            </tr>
-          )
-        }
+	const renderClaimableBalance = React.useCallback(() => {
+		if (isCorrectNetwork) {
+			if (isLoading || !escrowBalance) {
+				return (
+					<tr>
+						<td>Loading...</td>
+					</tr>
+				);
+			}
 
-        const amount = Number(escrowBalance.displayableAmount)
-        const decimals = displayDecimals(escrowBalance.tokenSymbol!)
-        const symbol = escrowBalance.tokenSymbol || 'ERR'
+			const amount = Number(escrowBalance.displayableAmount);
+			const decimals = displayDecimals(escrowBalance.tokenSymbol!);
+			const symbol = escrowBalance.tokenSymbol || "ERR";
 
-        return (
-          <tr>
-            <td>
-              {amount.toFixed(decimals)} <Symbol>{symbol}</Symbol>
-            </td>
-            <td>
-              {'$'}
-              {escrowBalance.amountInUSD}
-            </td>
-          </tr>
-        )
-    }
-  }, [escrowBalance, isLoading, isCorrectNetwork])
+			return (
+				<tr>
+					<td>
+						{amount.toFixed(decimals)} <Symbol>{symbol}</Symbol>
+					</td>
+					<td>
+						{"$"}
+						{escrowBalance.amountInUSD}
+					</td>
+				</tr>
+			);
+		}
+	}, [escrowBalance, isLoading, isCorrectNetwork]);
 
-  const claimCallbacks: IClaimTransactionCallbacks = {
-    connectingWallet: () => {
-      setIsLoading(true)
-      setLoadingMessage('Connecting')
-      props.callbacks?.connectingWallet && props.callbacks.connectingWallet()
-    },
-    connected: () => {
-      setLoadingMessage('Connected')
-      props.callbacks?.connected && props.callbacks.connected()
-    },
-    broadcasting: () => {
-      setLoadingMessage('Waiting for approval')
-      props.callbacks?.broadcasting && props.callbacks.broadcasting()
-    },
-    broadcasted: (payload: IClaimTransactionPayload) => {
-      props.callbacks?.broadcasted && props.callbacks.broadcasted(payload)
-      setLoadingMessage('Waiting confirmation')
-    },
-    confirmed: (payload: IClaimTransactionPayload) => {
-      props.callbacks?.confirmed && props.callbacks.confirmed(payload)
+	const claimCallbacks: IClaimTransactionCallbacks = {
+		connectingWallet: () => {
+			setIsLoading(true);
+			setLoadingMessage("Connecting");
+			props.callbacks.connectingWallet?.();
+		},
+		connected: () => {
+			setLoadingMessage("Connected");
+			props.callbacks.connected?.();
+		},
+		broadcasting: () => {
+			setLoadingMessage("Waiting for approval");
+			props.callbacks.broadcasting?.();
+		},
+		broadcasted: (payload: IClaimTransactionPayload) => {
+			props.callbacks.broadcasted?.(payload);
+			setLoadingMessage("Waiting confirmation");
+		},
+		confirmed: (payload: IClaimTransactionPayload) => {
+			props.callbacks.confirmed?.(payload);
 
-      toast('Claimed', 'success')
+			toast("Claimed", "success");
 
-      setSuccess(payload.transactionHash)
-      setIsLoading(false)
-    }
-  }
+			setSuccess(payload.transactionHash);
+			setIsLoading(false);
+		},
+	};
 
-  const onClaim = () => {
-    claim(Number(props.escrowId), claimCallbacks).catch(e => {
-      setIsLoading(false)
-      toast(e, 'error')
-    })
-  }
+	const onClaim = () => {
+		claim(Number(props.escrowId), claimCallbacks).catch((e) => {
+			setIsLoading(false);
+			toast(e, "error");
+		});
+	};
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork)
-    setIsCorrectNetwork(await isCorrectNetworkConnected())
-  }
-  
-  const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />
-    }
+	const onNetworkSwitch = async () => {
+		await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
+		setIsCorrectNetwork(await isCorrectNetworkConnected());
+	};
 
-    if (!escrowBalance) {
-      return null
-    }
-    if (!isLoading && !protect.canDoClaim) {
-      return <Forbidden onClose={onModalClose} description={protect.reason} />
-    }
+	const ModalBody = () => {
+		if (!isCorrectNetwork) {
+			return <IncorrectNetwork onClick={onNetworkSwitch} />;
+		}
 
-    return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Currency</th>
-            <th>USD Value</th>
-          </tr>
-        </thead>
-        <tbody>{renderClaimableBalance()}</tbody>
-      </Table>
-    )
-  }
+		if (!escrowBalance) {
+			return null;
+		}
+		if (!(isLoading || protect.canDoClaim)) {
+			return <Forbidden onClose={onModalClose} description={protect.reason} />;
+		}
 
-  const ModalFooter = () => {
-    if (!escrowBalance || !isCorrectNetwork || !isLoading && !protect.canDoClaim) {
-      return null
-    }
+		return (
+			<Table>
+				<thead>
+					<tr>
+						<th>Currency</th>
+						<th>USD Value</th>
+					</tr>
+				</thead>
+				<tbody>{renderClaimableBalance()}</tbody>
+			</Table>
+		);
+	};
 
-    let buttonChildren
-    let buttonOnClick
+	const ModalFooter = () => {
+		if (
+			!(escrowBalance && isCorrectNetwork && (isLoading || protect.canDoClaim))
+		) {
+			return null;
+		}
 
-    if (!error && !success) {
-      buttonChildren = `Confirm`
-      buttonOnClick = onClaim
-    } else if (success) {
-      buttonChildren = 'Close'
-      buttonOnClick = onModalClose
-    } else {
-      buttonChildren = 'Retry'
-      buttonOnClick = onClaim
-    }
+		let buttonChildren;
+		let buttonOnClick;
 
-    return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
-        {buttonChildren}
-      </Button>
-    )
-  }
+		if (!(error || success)) {
+			buttonChildren = "Confirm";
+			buttonOnClick = onClaim;
+		} else if (success) {
+			buttonChildren = "Close";
+			buttonOnClick = onModalClose;
+		} else {
+			buttonChildren = "Retry";
+			buttonOnClick = onClaim;
+		}
 
-  return (
-    <ScopedModal
-      title="Claim Payment"
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
-  )
+		return (
+			<Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+				{buttonChildren}
+			</Button>
+		);
+	};
+
+	return (
+		<ScopedModal
+			title="Claim Payment"
+			body={<ModalBody />}
+			footer={<ModalFooter />}
+			onClose={onModalClose}
+			isLoading={isLoading}
+			loadingMessage={loadingMessage}
+		/>
+	);
 }

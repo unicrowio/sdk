@@ -1,13 +1,13 @@
-import { UnicrowDispute__factory } from '@unicrowio/ethers-types'
+import { UnicrowDispute__factory } from "@unicrowio/ethers-types";
 
-import { autoSwitchNetwork, getWeb3Provider } from '../wallet'
-import { getContractAddress } from '../config'
+import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
+import { getContractAddress } from "../config";
 import {
-  ChallengeParsedPayload,
-  IChallengeTransactionCallbacks
-} from '../typing'
-import { errorHandler } from './errorHandler'
-import { parseChallenge } from 'parsers/eventChallenge'
+	ChallengeParsedPayload,
+	IChallengeTransactionCallbacks,
+} from "../typing";
+import { errorHandler } from "./errorHandler";
+import { parseChallenge } from "parsers/eventChallenge";
 
 /**
  * Performs a challenge and returns its data.
@@ -18,42 +18,41 @@ import { parseChallenge } from 'parsers/eventChallenge'
  * @returns {Promise<ChallengeParsedPayload>}
  */
 export const challenge = async (
-  escrowId: number,
-  callbacks?: IChallengeTransactionCallbacks
+	escrowId: number,
+	callbacks?: IChallengeTransactionCallbacks,
 ): Promise<ChallengeParsedPayload> => {
-  callbacks?.connectingWallet && callbacks.connectingWallet()
-  const provider = await getWeb3Provider()
+	callbacks.connectingWallet?.();
+	const provider = await getWeb3Provider();
 
-  if (!provider) {
-    throw new Error('Error on Challenge, Account Not connected')
-  }
+	if (!provider) {
+		throw new Error("Error on Challenge, Account Not connected");
+	}
 
-  autoSwitchNetwork(callbacks)
+	await autoSwitchNetwork(callbacks);
 
-  try {
-    callbacks?.connected && callbacks.connected()
-    const smartContract = UnicrowDispute__factory.connect(
-      getContractAddress('dispute'),
-      provider.getSigner()
-    )
+	try {
+		callbacks.connected?.();
+		const smartContract = UnicrowDispute__factory.connect(
+			getContractAddress("dispute"),
+			provider.getSigner(),
+		);
 
-    callbacks?.broadcasting && callbacks.broadcasting()
-    const challengeTx = await smartContract.challenge(escrowId)
+		callbacks.broadcasting?.();
+		const challengeTx = await smartContract.challenge(escrowId);
 
-    callbacks?.broadcasted &&
-      callbacks.broadcasted({
-        transactionHash: challengeTx.hash
-      })
+		callbacks.broadcasted?.({
+			transactionHash: challengeTx.hash,
+		});
 
-    const receiptTx = await challengeTx.wait()
+		const receiptTx = await challengeTx.wait();
 
-    const parsedPayload = parseChallenge(receiptTx)
+		const parsedPayload = parseChallenge(receiptTx);
 
-    callbacks?.confirmed && callbacks.confirmed(parsedPayload)
+		callbacks.confirmed?.(parsedPayload);
 
-    return parsedPayload
-  } catch (error) {
-    const errorMessage = errorHandler(error)
-    throw new Error(errorMessage)
-  }
-}
+		return parsedPayload;
+	} catch (error) {
+		const errorMessage = errorHandler(error);
+		throw new Error(errorMessage);
+	}
+};

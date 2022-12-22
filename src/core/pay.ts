@@ -1,31 +1,31 @@
-import { ERC20__factory, Unicrow__factory } from '@unicrowio/ethers-types'
+import { ERC20__factory, Unicrow__factory } from "@unicrowio/ethers-types";
 import {
-  NULL_ARBITRATOR_ADDRESS,
-  ZERO_FEE_VALUE,
-  NULL_MARKETPLACE_ADDRESS,
-  ETH_ADDRESS
-} from '../helpers/constants'
-import { getContractAddress } from '../config'
+	NULL_ARBITRATOR_ADDRESS,
+	ZERO_FEE_VALUE,
+	NULL_MARKETPLACE_ADDRESS,
+	ETH_ADDRESS,
+} from "../helpers/constants";
+import { getContractAddress } from "../config";
 import {
-  IPaymentProps,
-  IPayTransactionCallbacks,
-  PayParsedPayload
-} from '../typing'
-import { getBalance } from './getBalance'
-import { getTokenInfo } from '../core/getTokenInfo'
-import { errorHandler } from './errorHandler'
+	IPaymentProps,
+	IPayTransactionCallbacks,
+	PayParsedPayload,
+} from "../typing";
+import { getBalance } from "./getBalance";
+import { getTokenInfo } from "../core/getTokenInfo";
+import { errorHandler } from "./errorHandler";
 
 import {
-  getWeb3Provider,
-  getWalletAccount,
-  autoSwitchNetwork
-} from '../wallet/index'
-import { EscrowInputStruct } from '@unicrowio/ethers-types/src/Unicrow'
+	getWeb3Provider,
+	getWalletAccount,
+	autoSwitchNetwork,
+} from "../wallet/index";
+import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
 
-import { validateParameters } from '../helpers/validateParameters'
-import { parsePay } from 'parsers/eventPay'
-import { checkBalance, parse } from '../helpers'
-import { BigNumberish } from 'ethers'
+import { validateParameters } from "../helpers/validateParameters";
+import { parsePay } from "parsers/eventPay";
+import { checkBalance, parse } from "../helpers";
+import { BigNumberish } from "ethers";
 
 /**
  * Deposits a payment into an escrow and returns its data.
@@ -68,8 +68,8 @@ import { BigNumberish } from 'ethers'
  * @returns {Promise<PayParsedPayload>}
  */
 export const pay = async (
-  paymentProps: IPaymentProps,
-  callbacks?: IPayTransactionCallbacks
+	paymentProps: IPaymentProps,
+	callbacks?: IPayTransactionCallbacks,
 ): Promise<PayParsedPayload> => {
   const {
     amount,
@@ -90,7 +90,7 @@ export const pay = async (
     throw new Error('Wallet not connected')
   }
 
-  autoSwitchNetwork(callbacks)
+  await autoSwitchNetwork(callbacks)
 
   callbacks?.connected && callbacks.connected()
 
