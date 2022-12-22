@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode } from "react";
 
-import styled from 'styled-components'
-import { CloseIcon } from './icons/Close'
-import { Loading } from './Loading'
+import styled from "styled-components";
+import { CloseIcon } from "./icons/Close";
+import { Loading } from "./Loading";
 
 export const ModalWrapper = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ export const ModalWrapper = styled.div`
   right: 0;
 
   background: rgba(233, 234, 237, 0.7);
-`
+`;
 
 export const StyledModalContent = styled.div`
   background-color: #fdfcff;
@@ -34,17 +34,17 @@ export const StyledModalContent = styled.div`
   border-radius: 24px;
 
   padding: 32px;
-`
+`;
 
 export const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 const CloseIconWrapper = styled.div`
   cursor: pointer;
-`
+`;
 
 export const ModalHeaderTitle = styled.div`
   font-family: 'Bai Jamjuree';
@@ -52,7 +52,7 @@ export const ModalHeaderTitle = styled.div`
   font-size: 24px;
   line-height: 24px;
   color: #444c5e;
-`
+`;
 
 export const ModalBody = styled.div`
   display: flex;
@@ -61,19 +61,19 @@ export const ModalBody = styled.div`
   flex: 1;
   gap: 24px;
   min-height: 100px;
-`
+`;
 
 export const ModalEmptyBody = styled(ModalBody)`
   flex: 1;
   min-height: 360px;
-`
+`;
 
 export const ModalFooter = styled.footer`
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-`
+`;
 
 export const ModalLoading = styled.div`
   position: fixed;
@@ -89,7 +89,7 @@ export const ModalLoading = styled.div`
   align-items: center;
   filter: opacity(95%);
   background: rgba(233, 234, 237, 0.7);
-`
+`;
 
 export const ModalLoadingMessage = styled.p`
   z-index: 999;
@@ -103,38 +103,38 @@ export const ModalLoadingMessage = styled.p`
   color: #6259ff;
 
   text-align: center;
-`
+`;
 
 export type TModalProps = {
-  isLoading?: boolean
-  loadingMessage?: string
-  children?: ReactNode
-}
+	isLoading?: boolean;
+	loadingMessage?: string;
+	children?: ReactNode;
+};
 
 export const Modal = ({
-  isLoading = false,
-  loadingMessage = '',
-  children
+	isLoading = false,
+	loadingMessage = "",
+	children,
 }: TModalProps) => {
-  return (
-    <ModalWrapper>
-      <StyledModalContent>
-        {children}
-        {isLoading && (
-          <ModalLoading>
-            <div>
-              <Loading />
-              <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
-            </div>
-          </ModalLoading>
-        )}
-      </StyledModalContent>
-    </ModalWrapper>
-  )
-}
+	return (
+		<ModalWrapper>
+			<StyledModalContent>
+				{children}
+				{isLoading && (
+					<ModalLoading>
+						<div>
+							<Loading />
+							<ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
+						</div>
+					</ModalLoading>
+				)}
+			</StyledModalContent>
+		</ModalWrapper>
+	);
+};
 
 export const ModalHeaderClose = ({ ...props }) => (
-  <CloseIconWrapper {...props}>
-    <CloseIcon />
-  </CloseIconWrapper>
-)
+	<CloseIconWrapper {...props}>
+		<CloseIcon />
+	</CloseIconWrapper>
+);
