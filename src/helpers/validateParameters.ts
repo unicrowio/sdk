@@ -1,7 +1,7 @@
 import { IPaymentProps } from '../typing'
 import { validateAddress, validateEns } from './validateAddress'
 
-interface AddressesToCheck {
+export interface AddressesToCheck {
   arbitrator?: string
   marketplace?: string
   seller?: string

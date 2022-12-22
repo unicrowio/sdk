@@ -28,6 +28,8 @@ import { formatAmount } from '../../helpers/formatAmount'
 import { MARKER } from '../../config/marker'
 import { IncorrectNetwork } from 'ui/components/IncorrectNetwork'
 import { DefaultNetwork } from 'config/init'
+import { validateEns } from 'helpers/validateAddress'
+import { AddressesToCheck } from 'helpers/validateParameters'
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -51,6 +53,12 @@ export function PayModal(props: IPaymentModalProps) {
   const [walletUser, setWalletUser] = React.useState<string | null>(null)
   const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true)
 
+  const [parties, setParties] = React.useState<AddressesToCheck>({
+    seller: props.paymentProps.seller,
+    arbitrator: props.paymentProps.arbitrator,
+    marketplace: props.paymentProps.marketplace,
+  })
+
   React.useEffect(() => {
     setIsLoading(true)
     isCorrectNetworkConnected().then(isCorrect => {
@@ -58,6 +66,13 @@ export function PayModal(props: IPaymentModalProps) {
     })
     getWalletAccount().then(account => {
       setWalletUser(account)
+    })
+    validateEns({
+      seller: props.paymentProps.seller,
+      arbitrator: props.paymentProps.arbitrator,
+      marketplace: props.paymentProps.marketplace,
+    }).then(addresses => {
+      setParties(addresses)
     })
     getTokenInfo(props.paymentProps.tokenAddress)
       .then(setTokenInfo)
@@ -135,7 +150,7 @@ export function PayModal(props: IPaymentModalProps) {
         <ContainerDataDisplayer>
           <DataDisplayer
             label="Seller ETH Address"
-            value={addressWithYou(props.paymentProps.seller, walletUser!)}
+            value={addressWithYou(props.paymentProps.seller, walletUser!, parties.seller)}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}
           />
@@ -165,7 +180,7 @@ export function PayModal(props: IPaymentModalProps) {
             <>
               <DataDisplayer
                 label="Arbitrator"
-                value={reduceAddress(props.paymentProps.arbitrator)}
+                value={reduceAddress(props.paymentProps.arbitrator, parties.arbitrator)}
                 copy={props.paymentProps.arbitrator}
                 marker={MARKER.arbitrator}
               />
@@ -183,7 +198,7 @@ export function PayModal(props: IPaymentModalProps) {
               ADDRESS_ZERO.toLowerCase() && (
               <DataDisplayer
                 label="Marketplace Address"
-                value={reduceAddress(props.paymentProps.marketplace)}
+                value={reduceAddress(props.paymentProps.marketplace, parties.marketplace)}
                 copy={props.paymentProps.marketplace}
                 marker={MARKER.marketplace}
               />

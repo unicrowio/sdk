@@ -20,8 +20,6 @@ export const validateEns = async (addresses: ValidAddressProps) => {
       }
    }))
     
-    console.log({ addrs })
-
   return addrs
 } 
 
