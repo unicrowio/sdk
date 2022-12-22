@@ -124,10 +124,12 @@ export const pay = async (
 
   try {
     const addrs = await validateParameters(data);
-
+    
     Object.entries(addrs.common).forEach(([key, value]) => {
       paymentProps[key] = value;
     });
+
+    paymentProps.ensAddresses = addrs.ens;
 
   } catch (error: any) {
     toast(error, 'error');

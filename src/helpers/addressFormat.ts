@@ -1,21 +1,21 @@
 import { ADDRESS_ZERO } from "./constants";
 import { isSameAddress } from "./isSameAddress";
 
-export const reduceAddress = (address: string, nonEnsAddress?: string) => {
+export const reduceAddress = (address: string, ensAddress?: string) => {
   if (address === ADDRESS_ZERO) return '-';
 
   // it's an ens
-  if (address.includes('.')) {
+  if (ensAddress && ensAddress.includes('.')) {
 
-    const start = nonEnsAddress.substring(0, 6)
+    const start = address.substring(0, 6)
     const middle = '...'
-    const end = nonEnsAddress.substring(nonEnsAddress.length - 4)
+    const end = address.substring(address.length - 4)
 
-    const loading = nonEnsAddress.includes(".")
+    const loading = address.includes(".")
 
     if(loading) return `${address} (loading...)`
     
-    return `${address} (${start}${middle}${end})`
+    return `${ensAddress} (${start}${middle}${end})`
   }
 
 	const start = address.substring(0, 6);

@@ -20,11 +20,14 @@ export const validateEns = async (addresses: ValidAddressProps): Promise<AddrsTo
 
   await Promise.all(Object.entries(addresses).map(async (obj) => {
       if(!obj[1]) return;
+
       if (obj[1] && obj[1].includes('eth')) {
-        addrs.ens[obj[0]] = await ensToAddress(obj[1])
-      }  else {
-        addrs.common[obj[0]] = obj[1]
-      }
+		addrs.ens[obj[0]] = obj[1]
+        addrs.common[obj[0]] = await ensToAddress(obj[1])
+		return;
+      } 
+
+	  addrs.common[obj[0]] = obj[1]
    }))
     
   return addrs
