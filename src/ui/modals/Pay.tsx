@@ -55,13 +55,14 @@ export function PayModal(props: IPaymentModalProps) {
   React.useEffect(() => {
     setIsLoading(true);
 
-	startListeningNetwork((network) => {
-		setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-	})
+    startListeningNetwork((network) => {
+      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+    })
 
     isCorrectNetworkConnected().then((isCorrect) => {
       setIsCorrectNetwork(isCorrect);
     });
+    
     getWalletAccount().then((account) => {
       setWalletUser(account);
     });

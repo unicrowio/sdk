@@ -4,6 +4,12 @@ import { BigNumber as BigNumberJs } from "bignumber.js";
 
 export type tTokenSymbol = "DAI" | "USDT" | "USDC" | "ETH" | string;
 
+interface IEnsAddresses {
+	seller?: string;
+	arbitrator?: string;
+	marketplace?: string;
+}
+
 /**
  * Only symbol and address of a token (no decimals i.e. rounding precision)
  *
@@ -19,24 +25,26 @@ export interface IToken {
  *
  */
 export interface IPaymentProps {
-  /** Amount in token */
-  amount: string | BigNumberJs | number;
-  /** Whom is the payment for */
-  seller: string;
-  /** Initial challenge period (in seconds) */
-  challengePeriod: number;
-  /** address of the token used in the payment */
-  tokenAddress?: string;
-  /** address of a marketplace that has facilitated the payment */
-  marketplace?: string;
-  /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
-  marketplaceFee?: number;
-  /** Address of the arbitrator. null for no arbitrator */
-  arbitrator?: string | null;
-  /** Arbitrator's fee in bips. Can be 0 */
-  arbitratorFee?: number;
-  /** By how much will the challenge period get extended after a challenge (in seconds) */
-  challengePeriodExtension?: number;
+	/** Amount in token */
+	amount: string | BigNumberJs | number;
+	/** Whom is the payment for */
+	seller: string;
+	/** Initial challenge period (in seconds) */
+	challengePeriod: number;
+	/** address of the token used in the payment */
+	tokenAddress?: string;
+	/** address of a marketplace that has facilitated the payment */
+	marketplace?: string;
+	/** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
+	marketplaceFee?: number;
+	/** Address of the arbitrator. null for no arbitrator */
+	arbitrator?: string | null;
+	/** Arbitrator's fee in bips. Can be 0 */
+	arbitratorFee?: number;
+	/** By how much will the challenge period get extended after a challenge (in seconds) */
+	challengePeriodExtension?: number;
+	/** ENS Addresses */
+	ensAddresses?: IEnsAddresses;
 }
 
 export interface IArbitratorData {
