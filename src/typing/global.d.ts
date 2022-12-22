@@ -15,6 +15,7 @@ declare module globalThis {
 	var arbitrum: string | undefined;
 	var arbitrumTestnet: string | undefined;
 	var development: string | undefined;
+	var mainnetRPCUrl: string | undefined;
 	var defaultNetwork: Network = {};
 	var autoSwitchNetwork: boolean;
 }

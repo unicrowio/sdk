@@ -1,4 +1,4 @@
-import { networks as DefaultNetworks } from "../wallet/networks";
+import { MAINNET_RPC_URL, networks as DefaultNetworks } from "../wallet/networks";
 
 export type DefaultNetwork = "arbitrum" | "arbitrumTestnet" | "development";
 
@@ -14,12 +14,14 @@ interface IConfig {
 	networks?: Networks;
 	defaultNetwork?: DefaultNetwork;
 	autoSwitchNetwork?: boolean;
+	mainnetRPCUrl?: string;
 }
 
 function initNetworks({
 	networks,
 	defaultNetwork = "arbitrum",
 	autoSwitchNetwork = false,
+	mainnetRPCUrl
 }: IConfig) {
 	const fallbacks = {
 		arbitrum:
@@ -53,6 +55,7 @@ function initNetworks({
 	};
 
 	globalThis.autoSwitchNetwork = autoSwitchNetwork;
+	globalThis.mainnetRPCUrl = mainnetRPCUrl || MAINNET_RPC_URL;
 }
 
 export default initNetworks;
