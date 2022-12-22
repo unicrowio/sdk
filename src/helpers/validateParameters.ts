@@ -1,47 +1,37 @@
 import { IPaymentProps } from "../typing";
-import { validateAddress } from "./validateAddress";
+import { validateAddress, validateEns, AddressToReturn } from "./validateAddress";
 
-interface AddressesToCheck {
-  arbitrator?: string;
-  marketplace?: string;
-  seller: string;
-  tokenAddress?: string;
+export interface AddressesToCheck {
+	arbitrator?: string;
+	marketplace?: string;
+	seller?: string;
+	tokenAddress?: string;
 }
 
-export const validateParameters = (data: IPaymentProps) => {
-  const {
-    seller,
-    arbitrator,
-    marketplace,
-    amount,
-    challengePeriod,
-    challengePeriodExtension,
-    arbitratorFee,
-    marketplaceFee,
-    tokenAddress,
-  } = data;
+export const validateParameters = async (data: IPaymentProps) => {
+	const {
+		seller,
+		arbitrator,
+		marketplace,
+		amount,
+		challengePeriod,
+		challengePeriodExtension,
+		arbitratorFee,
+		marketplaceFee,
+		tokenAddress,
+	} = data;
 
-  const addressesToCheck: AddressesToCheck = {
-    seller,
-  };
+	const addrs: AddressToReturn = await validateEns({
+		seller,
+		arbitrator,
+		marketplace,
+	});
 
-  if (arbitrator) {
-    addressesToCheck.arbitrator = arbitrator;
-  }
-
-  if (marketplace) {
-    addressesToCheck.marketplace = marketplace;
-  }
-
-  if (tokenAddress) {
-    addressesToCheck.tokenAddress = tokenAddress;
-  }
-
-  try {
-    validateAddress({ ...addressesToCheck });
-  } catch (e: any) {
-    throw new Error(e.message);
-  }
+	try {
+		validateAddress({ ...addrs.common, tokenAddress });
+	} catch (e: any) {
+		throw new Error(e.message);
+	}
 
   if (amount <= 0) {
     throw new Error("Invalid amount");
@@ -66,10 +56,12 @@ export const validateParameters = (data: IPaymentProps) => {
     throw new Error("Invalid arbitrator fee");
   }
 
-  if (
-    Number.isNaN(marketplaceFee) ||
-    (typeof marketplaceFee !== "undefined" && marketplaceFee < 0)
-  ) {
-    throw new Error("Invalid marketplace fee");
-  }
+	if (
+		Number.isNaN(marketplaceFee) ||
+		(typeof marketplaceFee !== "undefined" && marketplaceFee < 0)
+	) {
+		throw new Error("Invalid marketplace fee");
+	}
+
+	return addrs;
 };

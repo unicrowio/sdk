@@ -71,140 +71,142 @@ export const pay = async (
   paymentProps: IPaymentProps,
   callbacks?: IPayTransactionCallbacks,
 ): Promise<PayParsedPayload> => {
-  const {
-    amount,
-    tokenAddress = ETH_ADDRESS,
-    seller,
-    challengePeriod,
-    marketplace,
-    marketplaceFee = ZERO_FEE_VALUE,
-    arbitrator,
-    arbitratorFee = ZERO_FEE_VALUE,
-    challengePeriodExtension = 0,
-  } = paymentProps;
+	const {
+		amount,
+		tokenAddress = ETH_ADDRESS,
+		seller,
+		challengePeriod,
+		marketplace,
+		marketplaceFee = ZERO_FEE_VALUE,
+		arbitrator,
+		arbitratorFee = ZERO_FEE_VALUE,
+		challengePeriodExtension = 0,
+	} = paymentProps;
 
-  callbacks.connectingWallet?.();
-  const provider = await getWeb3Provider();
+	callbacks?.connectingWallet && callbacks.connectingWallet();
+	const provider = await getWeb3Provider();
 
-  if (!provider) {
-    throw new Error("Wallet not connected");
-  }
+	if (!provider) {
+		throw new Error("Wallet not connected");
+	}
 
-  await autoSwitchNetwork(callbacks);
+	await autoSwitchNetwork(callbacks);
 
-  callbacks.connected?.();
+	callbacks?.connected && callbacks.connected();
 
-  const providerSigner = provider.getSigner();
+	const providerSigner = provider.getSigner();
 
-  const tokenInfo = await getTokenInfo(tokenAddress);
+	const tokenInfo = await getTokenInfo(tokenAddress);
 
-  if (!tokenInfo) {
-    throw new Error("Could not get token info");
-  }
+	if (!tokenInfo) {
+		throw new Error("Could not get token info");
+	}
 
-  const walletUser = await getWalletAccount();
+	const walletUser = await getWalletAccount();
 
-  const UNICROW_ADDRESS = getContractAddress("unicrow");
+	const UNICROW_ADDRESS = getContractAddress("unicrow");
 
-  let bigNumberAmount: BigNumberish;
-  if (tokenAddress === ETH_ADDRESS) {
-    bigNumberAmount = parse(amount, 18);
-    const balance = await getBalance(tokenAddress);
-    checkBalance(balance, bigNumberAmount);
-  } else {
-    const token = ERC20__factory.connect(tokenAddress, providerSigner);
-    const tokenDecimalNumber = await token.decimals();
+	let bigNumberAmount: BigNumberish;
+	if (tokenAddress === ETH_ADDRESS) {
+		bigNumberAmount = parse(amount, 18);
+		const balance = await getBalance(tokenAddress);
+		checkBalance(balance, bigNumberAmount);
+	} else {
+		const token = ERC20__factory.connect(tokenAddress, providerSigner);
+		const tokenDecimalNumber = await token.decimals();
 
-    bigNumberAmount = parse(amount, tokenDecimalNumber);
-    const balance = await getBalance(tokenAddress);
-    checkBalance(balance, bigNumberAmount);
+		bigNumberAmount = parse(amount, tokenDecimalNumber);
+		const balance = await getBalance(tokenAddress);
+		checkBalance(balance, bigNumberAmount);
 
-    const alreadyAllowedAmount = await token.allowance(
-      walletUser!,
-      UNICROW_ADDRESS,
-    );
+		const alreadyAllowedAmount = await token.allowance(
+			walletUser!,
+			UNICROW_ADDRESS,
+		);
 
-    // Checking with equals because previous allowance value was not related to this new transaction.
-    // TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
-    if (alreadyAllowedAmount.lt(bigNumberAmount)) {
-      // Allowing as close as we can to infinity
-      const approveTx = await token.approve(UNICROW_ADDRESS, bigNumberAmount);
-      // This transaction supposed to be mined very fast
-      await approveTx.wait();
-    }
-  }
+		// Checking with equals because previous allowance value was not related to this new transaction.
+		// TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
+		if (alreadyAllowedAmount.lt(bigNumberAmount)) {
+			// Allowing as close as we can to infinity
+			const approveTx = await token.approve(UNICROW_ADDRESS, bigNumberAmount);
+			// This transaction supposed to be mined very fast
+			await approveTx.wait();
+		}
+	}
 
-  const smartContract = Unicrow__factory.connect(
-    UNICROW_ADDRESS,
-    providerSigner,
-  );
+	const smartContract = Unicrow__factory.connect(
+		UNICROW_ADDRESS,
+		providerSigner,
+	);
 
-  callbacks.broadcasting?.();
+	callbacks?.broadcasting && callbacks.broadcasting();
 
-  // solidity doesn't work with decimal points
-  const marketplaceFeeValue = 100 * marketplaceFee;
-  const arbitratorFeeValue = 100 * arbitratorFee;
-  const _arbitrator = arbitrator || NULL_ARBITRATOR_ADDRESS;
-  const marketplaceAddress = marketplace || NULL_MARKETPLACE_ADDRESS;
+	// solidity doesn't work with decimal points
+	const marketplaceFeeValue = 100 * marketplaceFee;
+	const arbitratorFeeValue = 100 * arbitratorFee;
+	const marketplaceAddress = marketplace || NULL_MARKETPLACE_ADDRESS;
 
-  validateParameters({
-    seller,
-    arbitrator,
-    arbitratorFee: paymentProps.arbitratorFee,
-    marketplace: marketplaceAddress,
-    marketplaceFee: marketplaceFeeValue,
-    challengePeriod: paymentProps.challengePeriod,
-    challengePeriodExtension: paymentProps.challengePeriodExtension,
-    tokenAddress,
-    amount,
-  });
+	const addrs = await validateParameters({
+		seller,
+		arbitrator,
+		arbitratorFee: paymentProps.arbitratorFee,
+		marketplace: marketplaceAddress,
+		marketplaceFee: marketplaceFeeValue,
+		challengePeriod: paymentProps.challengePeriod,
+		challengePeriodExtension: paymentProps.challengePeriodExtension,
+		tokenAddress,
+		amount,
+	});
 
-  const payInput: EscrowInputStruct = {
-    seller,
-    marketplace: marketplaceAddress,
-    marketplaceFee: marketplaceFeeValue,
-    currency: tokenAddress,
-    challengePeriod,
-    challengeExtension: challengePeriodExtension,
-    amount: bigNumberAmount,
-  };
+	const _arbitrator = addrs.common.arbitrator || NULL_ARBITRATOR_ADDRESS;
 
-  try {
-    let payTx: any;
+	const payInput: EscrowInputStruct = {
+		seller: addrs.common.seller,
+		marketplace: addrs.common.marketplace,
+		marketplaceFee: marketplaceFeeValue,
+		currency: tokenAddress,
+		challengePeriod,
+		challengeExtension: challengePeriodExtension,
+		amount: bigNumberAmount,
+	};
 
-    const isETH = tokenAddress === ETH_ADDRESS;
-    // { value: bigNumberAmount } should be passed only in case of Ethers
-    if (isETH) {
-      payTx = await smartContract.pay(
-        payInput,
-        _arbitrator,
-        arbitratorFeeValue,
-        {
-          value: bigNumberAmount,
-        },
-      );
-    } else {
-      payTx = await smartContract.pay(
-        payInput,
-        _arbitrator,
-        arbitratorFeeValue,
-      );
-    }
+	try {
+		let payTx: any;
 
-    callbacks.broadcasted?.({
-      transactionHash: payTx.hash,
-      buyer: walletUser!,
-    });
+		const isETH = tokenAddress === ETH_ADDRESS;
+		// { value: bigNumberAmount } should be passed only in case of Ethers
+		if (isETH) {
+			payTx = await smartContract.pay(
+				payInput,
+				_arbitrator,
+				arbitratorFeeValue,
+				{
+					value: bigNumberAmount,
+				},
+			);
+		} else {
+			payTx = await smartContract.pay(
+				payInput,
+				_arbitrator,
+				arbitratorFeeValue,
+			);
+		}
 
-    const receiptTx = await payTx.wait();
+		callbacks?.broadcasted &&
+			callbacks.broadcasted({
+				transactionHash: payTx.hash,
+				buyer: walletUser!,
+			});
 
-    const parsedPayload = parsePay(receiptTx.events);
+		const receiptTx = await payTx.wait();
 
-    callbacks.confirmed?.(parsedPayload);
+		const parsedPayload = parsePay(receiptTx.events);
 
-    return parsedPayload;
-  } catch (error) {
-    const errorMessage = errorHandler(error);
-    throw new Error(errorMessage);
-  }
+		callbacks?.confirmed && callbacks.confirmed(parsedPayload);
+
+		return parsedPayload;
+	} catch (error) {
+		const errorMessage = errorHandler(error);
+		throw new Error(errorMessage);
+	}
 };

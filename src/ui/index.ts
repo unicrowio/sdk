@@ -120,26 +120,31 @@ export const pay = async (
   paymentProps: IPaymentProps,
   callbacks?: IPayTransactionCallbacks,
 ) => {
-  const data = paymentProps;
+	const data = paymentProps;
 
-  try {
-    validateParameters(data);
-  } catch (error: any) {
-    console.error(error);
-    toast(error, "error");
-    return;
-  }
+	try {
+		const addrs = await validateParameters(data);
 
-  const deferredPromise = new Deferred<string>();
+		Object.entries(addrs.common).forEach(([key, value]) => {
+			paymentProps[key] = value;
+		});
 
-  const paymentModalProps: IPaymentModalProps = {
-    paymentProps: paymentProps,
-    callbacks,
-    deferredPromise,
-  };
+		paymentProps.ensAddresses = addrs.ens;
+	} catch (error: any) {
+		toast(error, "error");
+		return;
+	}
 
-  renderModal(PayModal, paymentModalProps);
-  return deferredPromise.promise;
+	const deferredPromise = new Deferred<string>();
+
+	const paymentModalProps: IPaymentModalProps = {
+		paymentProps: paymentProps,
+		callbacks,
+		deferredPromise,
+	};
+
+	renderModal(PayModal, paymentModalProps);
+	return deferredPromise.promise;
 };
 
 /**

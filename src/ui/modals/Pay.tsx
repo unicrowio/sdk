@@ -29,206 +29,224 @@ import { MARKER } from "../../config/marker";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "config/init";
 
+import { AddressesToCheck } from "helpers/validateParameters";
+
 export function PayModal(props: IPaymentModalProps) {
-  const {
-    success,
-    setSuccess,
-    isLoading,
-    setIsLoading,
-    loadingMessage,
-    setLoadingMessage,
-    error,
-    onModalClose,
-  } = useModalStates({ deferredPromise: props.deferredPromise });
+	const {
+		success,
+		setSuccess,
+		isLoading,
+		setIsLoading,
+		loadingMessage,
+		setLoadingMessage,
+		error,
+		onModalClose,
+	} = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [modalTitle, setModalTitle] = React.useState("Payment");
-  const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
-    EscrowStatus.UNPAID,
-  );
-  const [tokenInfo, setTokenInfo] = React.useState<ITokenInfo>();
-  const [buyer, setBuyer] = React.useState<string | null>();
+	const [modalTitle, setModalTitle] = React.useState("Payment");
+	const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
+		EscrowStatus.UNPAID,
+	);
+	const [tokenInfo, setTokenInfo] = React.useState<ITokenInfo>();
+	const [buyer, setBuyer] = React.useState<string | null>();
 
-  const [walletUser, setWalletUser] = React.useState<string | null>(null);
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
+	const [walletUser, setWalletUser] = React.useState<string | null>(null);
+	const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
-  React.useEffect(() => {
-    setIsLoading(true);
-    isCorrectNetworkConnected().then((isCorrect) => {
-      setIsCorrectNetwork(isCorrect);
-    });
-    getWalletAccount().then((account) => {
-      setWalletUser(account);
-    });
-    getTokenInfo(props.paymentProps.tokenAddress)
-      .then(setTokenInfo)
-      .catch(() => {
-        onModalClose();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setLoadingMessage("");
-      });
-  }, []);
+	const [parties, setParties] = React.useState<AddressesToCheck>({
+		seller: props.paymentProps.seller,
+		arbitrator: props.paymentProps.arbitrator,
+		marketplace: props.paymentProps.marketplace,
+	});
 
-  const payCallbacks: IPayTransactionCallbacks = {
-    connectingWallet: () => {
-      setIsLoading(true);
-      setLoadingMessage("Connecting");
-      props.callbacks.connectingWallet?.();
-    },
-    connected: () => {
-      setLoadingMessage("Connected");
-      props.callbacks.connected?.();
-    },
-    broadcasting: () => {
-      setLoadingMessage("Waiting for approval");
-      props.callbacks.broadcasting?.();
-    },
-    broadcasted: (payload: IPayTransactionPayload) => {
-      props.callbacks.broadcasted?.(payload);
-      setLoadingMessage("Waiting confirmation");
-    },
-    confirmed: (payload: IPayTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+	React.useEffect(() => {
+		setIsLoading(true);
+		isCorrectNetworkConnected().then((isCorrect) => {
+			setIsCorrectNetwork(isCorrect);
+		});
+		getWalletAccount().then((account) => {
+			setWalletUser(account);
+		});
+		getTokenInfo(props.paymentProps.tokenAddress)
+			.then(setTokenInfo)
+			.catch(() => {
+				onModalClose();
+			})
+			.finally(() => {
+				setIsLoading(false);
+				setLoadingMessage("");
+			});
+	}, []);
 
-      toast("Payment Sent", "success");
-      setModalTitle("Payment Sent");
+	const payCallbacks: IPayTransactionCallbacks = {
+		connectingWallet: () => {
+			setIsLoading(true);
+			setLoadingMessage("Connecting");
+			props.callbacks?.connectingWallet && props.callbacks.connectingWallet();
+		},
+		connected: () => {
+			setLoadingMessage("Connected");
+			props.callbacks?.connected && props.callbacks.connected();
+		},
+		broadcasting: () => {
+			setLoadingMessage("Waiting for approval");
+			props.callbacks?.broadcasting && props.callbacks.broadcasting();
+		},
+		broadcasted: (payload: IPayTransactionPayload) => {
+			props.callbacks?.broadcasted && props.callbacks.broadcasted(payload);
+			setLoadingMessage("Waiting confirmation");
+		},
+		confirmed: (payload: IPayTransactionPayload) => {
+			props.callbacks?.confirmed && props.callbacks.confirmed(payload);
 
-      setBuyer(payload.buyer);
-      setPaymentStatus(EscrowStatus.PAID);
+			toast("Payment Sent", "success");
+			setModalTitle("Payment Sent");
 
-      setSuccess(payload.transactionHash);
+			setBuyer(payload.buyer);
+			setPaymentStatus(EscrowStatus.PAID);
 
-      setIsLoading(false);
-    },
-  };
+			setSuccess(payload.transactionHash);
 
-  const onPayClick = () => {
-    pay(props.paymentProps, payCallbacks).catch((e) => {
-      setIsLoading(false);
-      toast(e, "error");
-    });
-  };
+			setIsLoading(false);
+		},
+	};
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
+	const onPayClick = () => {
+		pay(props.paymentProps, payCallbacks).catch((e) => {
+			setIsLoading(false);
+			toast(e, "error");
+		});
+	};
 
-  const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
+	const onNetworkSwitch = async () => {
+		await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
+		setIsCorrectNetwork(await isCorrectNetworkConnected());
+	};
 
-    return (
-      <>
-        <Amount
-          amount={formatAmount(
-            props.paymentProps.amount,
-            tokenInfo?.decimals || 18,
-            tokenInfo?.symbol || "ERR",
-          )}
-          tokenSymbol={tokenInfo?.symbol ? tokenInfo.symbol : "ERR"}
-          status={paymentStatus}
-        />
-        <Subtitle>Payment Summary</Subtitle>
-        <ContainerDataDisplayer>
-          <DataDisplayer
-            label="Seller ETH Address"
-            value={addressWithYou(props.paymentProps.seller, walletUser!)}
-            copy={props.paymentProps.seller}
-            marker={MARKER.seller}
-          />
-          {buyer && (
-            <DataDisplayer
-              label="Buyer"
-              value={addressWithYou(buyer, walletUser!)}
-              copy={buyer}
-              marker={MARKER.buyer}
-            />
-          )}
-          <DataDisplayer
-            label="Challenge Period"
-            value={displayChallengePeriod(props.paymentProps.challengePeriod)}
-            marker={MARKER.challengePeriod}
-          />
-          {props.paymentProps.challengePeriodExtension && (
-            <DataDisplayer
-              label="Challenge Period Extension"
-              value={displayChallengePeriod(
-                props.paymentProps.challengePeriodExtension,
-              )}
-              marker={MARKER.challengePeriodExtension}
-            />
-          )}
-          {props.paymentProps.arbitrator && (
-            <>
-              <DataDisplayer
-                label="Arbitrator"
-                value={reduceAddress(props.paymentProps.arbitrator)}
-                copy={props.paymentProps.arbitrator}
-                marker={MARKER.arbitrator}
-              />
-              <DataDisplayer
-                label="Arbitrator Fee"
-                value={`${
-                  props.paymentProps.arbitratorFee?.toString() || "... "
-                }%`}
-                marker={MARKER.arbitratorFee}
-              />
-            </>
-          )}
-          {props.paymentProps.marketplace &&
-            props.paymentProps.marketplace?.toLowerCase() !==
-              ADDRESS_ZERO.toLowerCase() && (
-              <DataDisplayer
-                label="Marketplace Address"
-                value={reduceAddress(props.paymentProps.marketplace)}
-                copy={props.paymentProps.marketplace}
-                marker={MARKER.marketplace}
-              />
-            )}
-        </ContainerDataDisplayer>
-      </>
-    );
-  };
+	const ModalBody = () => {
+		if (!isCorrectNetwork) {
+			return <IncorrectNetwork onClick={onNetworkSwitch} />;
+		}
 
-  const ModalFooter = () => {
-    if (!isCorrectNetwork) {
-      return null;
-    }
+		return (
+			<>
+				<Amount
+					amount={formatAmount(
+						props.paymentProps.amount,
+						tokenInfo?.decimals || 18,
+						tokenInfo?.symbol || "ERR",
+					)}
+					tokenSymbol={tokenInfo?.symbol ? tokenInfo.symbol : "ERR"}
+					status={paymentStatus}
+				/>
+				<Subtitle>Payment Summary</Subtitle>
+				<ContainerDataDisplayer>
+					<DataDisplayer
+						label="Seller ETH Address"
+						value={addressWithYou(
+							props.paymentProps.seller,
+							walletUser!,
+							props.paymentProps.ensAddresses.seller,
+						)}
+						copy={props.paymentProps.seller}
+						marker={MARKER.seller}
+					/>
+					{buyer && (
+						<DataDisplayer
+							label="Buyer"
+							value={addressWithYou(buyer, walletUser!)}
+							copy={buyer}
+							marker={MARKER.buyer}
+						/>
+					)}
+					<DataDisplayer
+						label="Challenge Period"
+						value={displayChallengePeriod(props.paymentProps.challengePeriod)}
+						marker={MARKER.challengePeriod}
+					/>
+					{props.paymentProps.challengePeriodExtension && (
+						<DataDisplayer
+							label="Challenge Period Extension"
+							value={displayChallengePeriod(
+								props.paymentProps.challengePeriodExtension,
+							)}
+							marker={MARKER.challengePeriodExtension}
+						/>
+					)}
+					{props.paymentProps.arbitrator && (
+						<>
+							<DataDisplayer
+								label="Arbitrator"
+								value={reduceAddress(
+									props.paymentProps.arbitrator,
+									props.paymentProps.ensAddresses.arbitrator,
+								)}
+								copy={props.paymentProps.arbitrator}
+								marker={MARKER.arbitrator}
+							/>
+							<DataDisplayer
+								label="Arbitrator Fee"
+								value={`${
+									props.paymentProps.arbitratorFee?.toString() || "... "
+								}%`}
+								marker={MARKER.arbitratorFee}
+							/>
+						</>
+					)}
+					{props.paymentProps.marketplace &&
+						props.paymentProps.marketplace?.toLowerCase() !==
+							ADDRESS_ZERO.toLowerCase() && (
+							<DataDisplayer
+								label="Marketplace Address"
+								value={reduceAddress(
+									props.paymentProps.marketplace,
+									props.paymentProps.ensAddresses.marketplace,
+								)}
+								copy={props.paymentProps.marketplace}
+								marker={MARKER.marketplace}
+							/>
+						)}
+				</ContainerDataDisplayer>
+			</>
+		);
+	};
 
-    let buttonChildren;
-    let buttonOnClick;
+	const ModalFooter = () => {
+		if (!isCorrectNetwork) {
+			return null;
+		}
 
-    if (!(error || success)) {
-      buttonChildren = `Pay ${props.paymentProps.amount} ${
-        tokenInfo ? tokenInfo.symbol : "-"
-      }`;
-      buttonOnClick = onPayClick;
-    } else if (success) {
-      buttonChildren = "Close";
-      buttonOnClick = onModalClose;
-    } else {
-      buttonChildren = "Retry";
-      buttonOnClick = onPayClick;
-    }
+		let buttonChildren;
+		let buttonOnClick;
 
-    return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
-        {buttonChildren}
-      </Button>
-    );
-  };
+		if (!error && !success) {
+			buttonChildren = `Pay ${props.paymentProps.amount} ${
+				tokenInfo ? tokenInfo.symbol : "-"
+			}`;
+			buttonOnClick = onPayClick;
+		} else if (success) {
+			buttonChildren = "Close";
+			buttonOnClick = onModalClose;
+		} else {
+			buttonChildren = "Retry";
+			buttonOnClick = onPayClick;
+		}
 
-  return (
-    <ScopedModal
-      title={modalTitle}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
-  );
+		return (
+			<Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+				{buttonChildren}
+			</Button>
+		);
+	};
+
+	return (
+		<ScopedModal
+			title={modalTitle}
+			body={<ModalBody />}
+			footer={<ModalFooter />}
+			onClose={onModalClose}
+			isLoading={isLoading}
+			loadingMessage={loadingMessage}
+		/>
+	);
 }
