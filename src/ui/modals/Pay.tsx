@@ -21,6 +21,7 @@ import { toast } from "../components/notification/toast";
 import {
   getWalletAccount,
   isCorrectNetworkConnected,
+  startListeningNetwork,
   switchNetwork,
 } from "../../wallet";
 import { ADDRESS_ZERO } from "../../helpers/constants";
@@ -53,6 +54,11 @@ export function PayModal(props: IPaymentModalProps) {
 
   React.useEffect(() => {
     setIsLoading(true);
+
+	startListeningNetwork((network) => {
+		setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+	})
+
     isCorrectNetworkConnected().then((isCorrect) => {
       setIsCorrectNetwork(isCorrect);
     });

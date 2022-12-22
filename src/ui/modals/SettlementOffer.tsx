@@ -20,7 +20,7 @@ import { InputText, ScopedModal, Stack } from "../components";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { getEscrowData } from "../../core/getEscrowData";
-import { isCorrectNetworkConnected, switchNetwork } from "wallet";
+import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
 import { DefaultNetwork } from "config/init";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
@@ -127,6 +127,10 @@ export function SettlementOfferModal({
   };
 
   React.useEffect(() => {
+    startListeningNetwork((network) => {
+      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+    })
+
     if (escrowData) {
       setEscrow(escrowData);
     }

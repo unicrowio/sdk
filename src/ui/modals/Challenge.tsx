@@ -29,7 +29,7 @@ import { Forbidden } from "../components/Forbidden";
 import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
-import { isCorrectNetworkConnected, switchNetwork } from "wallet";
+import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
 import { DefaultNetwork } from "config/init";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { SpinnerIcon } from "../components/icons/Spinner";
@@ -123,6 +123,10 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   React.useEffect(() => {
+    startListeningNetwork((network) => {
+      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+    })
+
     loadData();
   }, []);
 
