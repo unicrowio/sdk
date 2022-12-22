@@ -8,7 +8,7 @@ import { getHost } from "../config";
  * @returns {ethers.providers.JsonRpcProvider}
  */
 export const getJsonRpcProvider = () => {
-  const provider = new ethers.providers.JsonRpcProvider(getHost());
+  const provider = new ethers.providers.JsonRpcProvider(getHost(), 'any');
 
   if (!provider) {
     throw new Error("Could not get provider");
