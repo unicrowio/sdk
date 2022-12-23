@@ -8,14 +8,13 @@ import {
 import { parseEscrowData } from "./parseEscrowData";
 import { buildQuery } from "./queryBuilder";
 
-
 /**
  * List of the Payments from Indexer.
  *
  * @param client: GraphQLClient
  * @param query: TPaymentListQueryParams
  * @param pagination?: IPage - if not provided, return the first 20 records by default
- * 
+ *
  * @returns {Promise<IGetPaymentListResponse>}
  */
 export const getPaymentList = async (
