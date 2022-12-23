@@ -143,7 +143,7 @@ export const autoSwitchNetwork = async (callbacks?, force: boolean = false) => {
       await switchNetwork(globalThis.defaultNetwork.name);
       callbacks.switchingNetwork?.();
     } else {
-      throw new Error("Unsupported network”");
+      throw new Error("Unsupported network");
     }
   }
 };
@@ -201,6 +201,7 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
 
   return new ethers.providers.Web3Provider(
     ethereum as unknown as ExternalProvider,
+    'any'
   );
 };
 

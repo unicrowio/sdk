@@ -21,6 +21,7 @@ import { toast } from "../components/notification/toast";
 import {
   getWalletAccount,
   isCorrectNetworkConnected,
+  startListeningNetwork,
   switchNetwork,
 } from "../../wallet";
 import { ADDRESS_ZERO } from "../../helpers/constants";
@@ -28,7 +29,6 @@ import { formatAmount } from "../../helpers/formatAmount";
 import { MARKER } from "../../config/marker";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "config/init";
-
 import { AddressesToCheck } from "helpers/validateParameters";
 
 export function PayModal(props: IPaymentModalProps) {
@@ -53,17 +53,17 @@ export function PayModal(props: IPaymentModalProps) {
   const [walletUser, setWalletUser] = React.useState<string | null>(null);
   const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
-  const [parties, setParties] = React.useState<AddressesToCheck>({
-    seller: props.paymentProps.seller,
-    arbitrator: props.paymentProps.arbitrator,
-    marketplace: props.paymentProps.marketplace,
-  });
-
   React.useEffect(() => {
     setIsLoading(true);
+
+    startListeningNetwork((network) => {
+      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+    })
+
     isCorrectNetworkConnected().then((isCorrect) => {
       setIsCorrectNetwork(isCorrect);
     });
+    
     getWalletAccount().then((account) => {
       setWalletUser(account);
     });
@@ -82,22 +82,22 @@ export function PayModal(props: IPaymentModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks?.connectingWallet && props.callbacks.connectingWallet();
+      props.callbacks.connectingWallet?.();
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks?.connected && props.callbacks.connected();
+      props.callbacks.connected?.();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks?.broadcasting && props.callbacks.broadcasting();
+      props.callbacks.broadcasting?.();
     },
     broadcasted: (payload: IPayTransactionPayload) => {
-      props.callbacks?.broadcasted && props.callbacks.broadcasted(payload);
+      props.callbacks.broadcasted?.(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IPayTransactionPayload) => {
-      props.callbacks?.confirmed && props.callbacks.confirmed(payload);
+      props.callbacks.confirmed?.(payload);
 
       toast("Payment Sent", "success");
       setModalTitle("Payment Sent");
@@ -219,7 +219,7 @@ export function PayModal(props: IPaymentModalProps) {
     let buttonChildren;
     let buttonOnClick;
 
-    if (!error && !success) {
+    if (!(error || success)) {
       buttonChildren = `Pay ${props.paymentProps.amount} ${
         tokenInfo ? tokenInfo.symbol : "-"
       }`;

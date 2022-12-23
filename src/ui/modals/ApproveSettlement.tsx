@@ -30,7 +30,7 @@ import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
 
 import { MARKER } from "../../config/marker";
-import { isCorrectNetworkConnected, switchNetwork } from "wallet";
+import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
 import { DefaultNetwork } from "config/init";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
@@ -174,6 +174,10 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   };
 
   React.useEffect(() => {
+    startListeningNetwork((network) => {
+      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+    })
+
     loadData();
   }, []);
 
