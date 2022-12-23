@@ -11,7 +11,7 @@ import { buildQuery } from "./queryBuilder";
 export const getPaymentList = async (
   client: GraphQLClient,
   query: TPaymentListQueryParams,
-  pagination: IPage,
+  pagination?: IPage,
 ): Promise<IGetPaymentListResponse> => {
   const queryString = buildQuery({ query, pagination });
 
