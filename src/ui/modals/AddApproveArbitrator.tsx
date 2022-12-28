@@ -12,7 +12,11 @@ import { getEscrowData } from "../../core/getEscrowData";
 import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../helpers/constants";
 import { Forbidden } from "../components/Forbidden";
-import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
+import {
+  isCorrectNetworkConnected,
+  startListeningNetwork,
+  switchNetwork,
+} from "wallet";
 import { DefaultNetwork } from "config/init";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
@@ -127,7 +131,7 @@ export const AddApproveArbitrator = ({
   React.useEffect(() => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    })
+    });
 
     loadData();
   }, []);
