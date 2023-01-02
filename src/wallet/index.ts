@@ -141,7 +141,7 @@ export const autoSwitchNetwork = async (callbacks?, force: boolean = false) => {
   if (!isCorrectNetwork) {
     if (globalThis.autoSwitchNetwork || force) {
       await switchNetwork(globalThis.defaultNetwork.name);
-      callbacks.switchingNetwork?.();
+      callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {
       throw new Error("Unsupported network");
     }
