@@ -137,8 +137,6 @@ export const pay = async (
 
   const deferredPromise = new Deferred<string>();
 
-  console.log({ callbacks })
-
   const paymentModalProps: IPaymentModalProps = {
     paymentProps: paymentProps,
     callbacks,

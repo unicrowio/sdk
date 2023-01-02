@@ -27,15 +27,6 @@ import { parsePay } from "parsers/eventPay";
 import { checkBalance, parse } from "../helpers";
 import { BigNumberish } from "ethers";
 
-const DEFAULT_CALLBACKS = {
-  connectingWallet: (payload?: any) => {},
-  connected: (payload?: any) => {},
-  switchingNetwork: (payload: any) => {},
-  broadcasting: (payload: any) => {},
-  broadcasted: (payload: any) => {},
-  confirmed: (payload: any) => {}
-}
-
 /**
  * Deposits a payment into an escrow and returns its data.
  *
