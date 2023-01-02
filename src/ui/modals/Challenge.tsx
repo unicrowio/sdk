@@ -138,7 +138,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks.connectingWallet?.();
+      props.callbacks && props.callbacks.connectingWallet && props.callbacks.connectingWallet()
     },
     connected: () => {
       setLoadingMessage("Connected");
@@ -146,14 +146,14 @@ export function ChallengeModal(props: IChallengeModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks.broadcasting?.();
+      props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IChallengeTransactionPayload) => {
-      props.callbacks.broadcasted?.(payload);
+      props.callbacks && props.callbacks.broadcasted && props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IChallengeTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
 
       toast("Challenged", "success");
 

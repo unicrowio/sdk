@@ -23,7 +23,7 @@ export const approveSettlement = async (
   callbacks?: ISettlementApproveTransactionCallbacks,
 ): Promise<ApproveSettlementParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {
@@ -41,7 +41,7 @@ export const approveSettlement = async (
       [splitBuyer * 100, splitSeller * 100],
     );
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: approveOfferTx.hash,
       splitBuyer,
       splitSeller,
@@ -51,7 +51,7 @@ export const approveSettlement = async (
 
     const parsedPayload = parseApproveSettlement(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

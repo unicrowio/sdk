@@ -17,7 +17,7 @@ export const claim = async (
   escrowId: number,
   callbacks?: IClaimTransactionCallbacks,
 ): Promise<ClaimParsedPayload> => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {
@@ -35,9 +35,9 @@ export const claim = async (
 
   try {
     const claimTx = await smartContract.claim(escrowId);
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: claimTx.hash,
     });
 
@@ -45,7 +45,7 @@ export const claim = async (
 
     const parsedPayload = parseClaim(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

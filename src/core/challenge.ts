@@ -21,7 +21,7 @@ export const challenge = async (
   escrowId: number,
   callbacks?: IChallengeTransactionCallbacks,
 ): Promise<ChallengeParsedPayload> => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {
@@ -37,10 +37,10 @@ export const challenge = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const challengeTx = await smartContract.challenge(escrowId);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: challengeTx.hash,
     });
 
@@ -48,7 +48,7 @@ export const challenge = async (
 
     const parsedPayload = parseChallenge(receiptTx);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

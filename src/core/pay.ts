@@ -69,7 +69,7 @@ import { BigNumberish } from "ethers";
  */
 export const pay = async (
   paymentProps: IPaymentProps,
-  callbacks?: IPayTransactionCallbacks,
+  callbacks?: IPayTransactionCallbacks
 ): Promise<PayParsedPayload> => {
   const {
     amount,
@@ -83,7 +83,8 @@ export const pay = async (
     challengePeriodExtension = 0,
   } = paymentProps;
 
-  callbacks?.connectingWallet && callbacks.connectingWallet();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
+
   const provider = await getWeb3Provider();
 
   if (!provider) {
@@ -92,7 +93,7 @@ export const pay = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks?.connected && callbacks.connected();
+  callbacks && callbacks.connected && callbacks.connected();
 
   const providerSigner = provider.getSigner();
 
@@ -139,7 +140,7 @@ export const pay = async (
     providerSigner,
   );
 
-  callbacks?.broadcasting && callbacks.broadcasting();
+  callbacks && callbacks.broadcasting && callbacks.broadcasting();
 
   // solidity doesn't work with decimal points
   const marketplaceFeeValue = 100 * marketplaceFee;
@@ -192,8 +193,7 @@ export const pay = async (
       );
     }
 
-    callbacks?.broadcasted &&
-      callbacks.broadcasted({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
         transactionHash: payTx.hash,
         buyer: walletUser!,
       });
@@ -202,7 +202,7 @@ export const pay = async (
 
     const parsedPayload = parsePay(receiptTx.events);
 
-    callbacks?.confirmed && callbacks.confirmed(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 
     return parsedPayload;
   } catch (error) {

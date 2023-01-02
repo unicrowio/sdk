@@ -159,14 +159,14 @@ export function SettlementOfferModal({
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      callbacks.connectingWallet?.();
+      callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      callbacks.broadcasting?.();
+      callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: ISettlementTransactionPayload) => {
-      callbacks.broadcasted?.(payload);
+      callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: OfferSettlementParsedPayload) => {

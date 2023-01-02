@@ -23,7 +23,7 @@ export const arbitrate = async (
   callbacks?: IArbitrationTransactionCallbacks,
 ): Promise<ArbitrateParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {
@@ -37,7 +37,7 @@ export const arbitrate = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
     // the order matters split_ [buyer, seller]
     const arbitrateTx = await crowArbitratorContract.arbitrate(escrowId, [
@@ -45,7 +45,7 @@ export const arbitrate = async (
       splitSeller * 100,
     ]);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: arbitrateTx.hash,
       splitBuyer,
       splitSeller,
@@ -55,7 +55,7 @@ export const arbitrate = async (
 
     const parsedPayload = parseArbitrate(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

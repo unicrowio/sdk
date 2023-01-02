@@ -24,7 +24,7 @@ export const offerSettlement = async (
   callbacks?: ISettlementOfferTransactionCallbacks,
 ): Promise<OfferSettlementParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {
@@ -38,13 +38,13 @@ export const offerSettlement = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const settlementTx = await crowDisputeContract.offerSettlement(escrowId, [
       splitBuyer * 100,
       splitSeller * 100,
     ]);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: settlementTx.hash,
       splitBuyer,
       splitSeller,
@@ -54,7 +54,7 @@ export const offerSettlement = async (
 
     const parsedPayload = parseOfferSettlement(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

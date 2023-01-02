@@ -24,7 +24,7 @@ export const claimMultiple = async (
   escrowIds: number[],
   callbacks?: IClaimTransactionCallbacks,
 ): Promise<MultipleClaimParsedPayload> => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {
@@ -43,9 +43,9 @@ export const claimMultiple = async (
   try {
     // FIX-ME: No need to get signer if the contract reference is initialized globally
     const claimTx = await smartContract.claimMultiple(escrowIds);
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: claimTx.hash,
     });
 
@@ -53,7 +53,7 @@ export const claimMultiple = async (
 
     const parsedPayload = parseMultipleClaim(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

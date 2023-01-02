@@ -25,7 +25,7 @@ export const approveArbitrator = async (
   callbacks?: IArbitrationTransactionCallbacks,
 ): Promise<ApproveArbitratorParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {
@@ -39,7 +39,7 @@ export const approveArbitrator = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
     const approveArbiterTx = await crowArbitratorContract.approveArbitrator(
       escrowId,
@@ -47,7 +47,7 @@ export const approveArbitrator = async (
       percentageToBips([arbitratorFee])[0],
     );
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: approveArbiterTx.hash,
       arbitrator,
       arbitratorFee,
@@ -57,7 +57,7 @@ export const approveArbitrator = async (
 
     const parsedPayload = parseApproveArbitrator(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

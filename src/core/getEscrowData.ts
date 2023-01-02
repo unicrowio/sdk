@@ -211,7 +211,7 @@ export const getEscrowData = async (
     throw new Error("Error on Getting Escrow Data, Account Not connected");
   }
 
-  autoSwitchNetwork();
+  await autoSwitchNetwork();
 
   const Unicrow = Unicrow__factory.connect(
     getContractAddress("unicrow"),
