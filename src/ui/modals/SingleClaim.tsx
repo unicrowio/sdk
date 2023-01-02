@@ -153,7 +153,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
       props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IClaimTransactionPayload) => {
-      props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);
+      props.callbacks && props.callbacks.broadcasted && props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IClaimTransactionPayload) => {

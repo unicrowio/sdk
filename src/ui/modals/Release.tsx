@@ -135,7 +135,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IReleasedTransactionPayload) => {
-      props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);
+      props.callbacks && props.callbacks.broadcasted && props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IReleasedTransactionPayload) => {

@@ -144,7 +144,7 @@ export function RefundModal(props: IRefundModalProps) {
       props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IRefundTransactionPayload) => {
-      props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);
+      props.callbacks && props.callbacks.broadcasted && props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IRefundTransactionPayload) => {
