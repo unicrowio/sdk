@@ -27,7 +27,11 @@ import { useModalStates } from "ui/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/components/DataDisplayer";
 import { addressWithYou } from "helpers/addressFormat";
 import { useCountdownChallengePeriod } from "ui/hooks";
-import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
+import {
+  isCorrectNetworkConnected,
+  startListeningNetwork,
+  switchNetwork,
+} from "wallet";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "../../config/init";
 
@@ -120,7 +124,7 @@ export function RefundModal(props: IRefundModalProps) {
   React.useEffect(() => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    })
+    });
 
     loadData();
   }, []);

@@ -201,7 +201,7 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
 
   return new ethers.providers.Web3Provider(
     ethereum as unknown as ExternalProvider,
-    'any'
+    "any",
   );
 };
 

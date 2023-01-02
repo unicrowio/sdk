@@ -58,12 +58,12 @@ export function PayModal(props: IPaymentModalProps) {
 
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    })
+    });
 
     isCorrectNetworkConnected().then((isCorrect) => {
       setIsCorrectNetwork(isCorrect);
     });
-    
+
     getWalletAccount().then((account) => {
       setWalletUser(account);
     });

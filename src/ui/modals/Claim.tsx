@@ -17,7 +17,11 @@ import {
   formatAmountToUSD,
   getExchangeRates,
 } from "../../helpers";
-import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
+import {
+  isCorrectNetworkConnected,
+  startListeningNetwork,
+  switchNetwork,
+} from "wallet";
 import { DefaultNetwork } from "config/init";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
@@ -47,7 +51,7 @@ export function ClaimModal(props: IClaimModalProps) {
   useEffect(() => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    })
+    });
 
     isCorrectNetworkConnected().then((isCorrect) => {
       setIsCorrectNetwork(isCorrect);

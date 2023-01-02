@@ -21,7 +21,11 @@ import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "ui/hooks";
 import { displayChallengePeriod } from "helpers";
-import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
+import {
+  isCorrectNetworkConnected,
+  startListeningNetwork,
+  switchNetwork,
+} from "wallet";
 import { DefaultNetwork } from "config/init";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
@@ -111,7 +115,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
   React.useEffect(() => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    })
+    });
 
     loadData();
   }, []);

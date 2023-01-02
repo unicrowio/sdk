@@ -74,6 +74,8 @@ const buildQuery = ({
             }
           }
     `;
+  } else {
+    sentences.push("limit: 20, offset: 0");
   }
 
   // TODO: Make me customizable

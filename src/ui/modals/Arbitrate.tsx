@@ -12,7 +12,11 @@ import { IArbitrateModalProps, IGetEscrowData } from "../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
-import { isCorrectNetworkConnected, startListeningNetwork, switchNetwork } from "wallet";
+import {
+  isCorrectNetworkConnected,
+  startListeningNetwork,
+  switchNetwork,
+} from "wallet";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "config/init";
 
@@ -74,7 +78,7 @@ export const Arbitrate = ({
   React.useEffect(() => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    })
+    });
 
     loadData();
   }, []);
