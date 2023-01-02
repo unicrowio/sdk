@@ -170,7 +170,7 @@ export function ClaimModal(props: IClaimModalProps) {
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IClaimTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
 
       toast("Claimed", "success");
 

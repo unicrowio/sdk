@@ -97,7 +97,7 @@ export function PayModal(props: IPaymentModalProps) {
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IPayTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
 
       toast("Payment Sent", "success");
       setModalTitle("Payment Sent");

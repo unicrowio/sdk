@@ -148,7 +148,7 @@ export function RefundModal(props: IRefundModalProps) {
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IRefundTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
 
       toast("Refunded", "success");
       setPaymentStatus(EscrowStatus.REFUNDED);

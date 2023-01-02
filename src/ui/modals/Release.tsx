@@ -139,7 +139,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IReleasedTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
 
       toast("Released", "success");
       setPaymentStatus(EscrowStatus.RELEASED);

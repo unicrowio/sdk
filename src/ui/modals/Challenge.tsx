@@ -153,7 +153,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IChallengeTransactionPayload) => {
-      props.callbacks.confirmed?.(payload);
+      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
 
       toast("Challenged", "success");
 
