@@ -44,7 +44,7 @@ export const offerSettlement = async (
       splitSeller * 100,
     ]);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: settlementTx.hash,
       splitBuyer,
       splitSeller,

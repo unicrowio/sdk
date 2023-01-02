@@ -40,7 +40,7 @@ export const challenge = async (
     callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const challengeTx = await smartContract.challenge(escrowId);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: challengeTx.hash,
     });
 

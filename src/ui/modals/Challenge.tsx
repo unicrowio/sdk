@@ -149,7 +149,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: IChallengeTransactionPayload) => {
-      props.callbacks.broadcasted?.(payload);
+      props.callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IChallengeTransactionPayload) => {

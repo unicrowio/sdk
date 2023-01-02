@@ -47,7 +47,7 @@ export const proposeArbitrator = async (
       arbitratorFee * 100,
     );
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: proposeArbitratorTx.hash,
       arbitrator,
       arbitratorFee,

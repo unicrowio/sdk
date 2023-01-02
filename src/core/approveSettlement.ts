@@ -41,7 +41,7 @@ export const approveSettlement = async (
       [splitBuyer * 100, splitSeller * 100],
     );
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: approveOfferTx.hash,
       splitBuyer,
       splitSeller,

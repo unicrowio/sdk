@@ -197,7 +197,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         callbacks && callbacks.broadcasting && callbacks.broadcasting()
       },
       broadcasted: (payload: ISettlementTransactionPayload) => {
-        callbacks.broadcasted?.(payload);
+        callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
         setLoadingMessage("Waiting confirmation");
       },
       confirmed: (payload: ApproveSettlementParsedPayload) => {

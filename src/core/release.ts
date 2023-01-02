@@ -37,7 +37,7 @@ export const release = async (
     callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const releaseTx = await Unicrow.release(escrowId);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: releaseTx.hash,
     });
 

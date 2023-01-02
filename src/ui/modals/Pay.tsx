@@ -93,7 +93,7 @@ export function PayModal(props: IPaymentModalProps) {
       props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IPayTransactionPayload) => {
-      props.callbacks.broadcasted?.(payload);
+      props.callbacks && callbacks.broadcasted && props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IPayTransactionPayload) => {

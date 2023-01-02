@@ -47,7 +47,7 @@ export const approveArbitrator = async (
       percentageToBips([arbitratorFee])[0],
     );
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: approveArbiterTx.hash,
       arbitrator,
       arbitratorFee,

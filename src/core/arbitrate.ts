@@ -45,7 +45,7 @@ export const arbitrate = async (
       splitSeller * 100,
     ]);
 
-    callbacks.broadcasted?.({
+    callbacks && callbacks.broadcasted && callbacks.broadcasted({
       transactionHash: arbitrateTx.hash,
       splitBuyer,
       splitSeller,

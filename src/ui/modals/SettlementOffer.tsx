@@ -166,7 +166,7 @@ export function SettlementOfferModal({
       callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: ISettlementTransactionPayload) => {
-      callbacks.broadcasted?.(payload);
+      callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: OfferSettlementParsedPayload) => {
