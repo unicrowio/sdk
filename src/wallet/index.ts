@@ -2,8 +2,8 @@ import EventEmitter from "events";
 import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
-import { DefaultNetwork } from "../config/config";
-import config from "../config/config";
+import { DefaultNetwork } from "../config/setup";
+import config from "../config/setup";
 
 let currentWallet: string | null = null;
 let accountChangedListener: EventEmitter | null = null;

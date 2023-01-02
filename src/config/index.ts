@@ -1,5 +1,5 @@
 import { networks } from "../wallet/networks";
-import config from "./config";
+import config from "./setup";
 
 export const getHost = (host = "default"): string => {
   if (host === "default") {

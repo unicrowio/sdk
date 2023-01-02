@@ -35,7 +35,7 @@ import {
   startListeningNetwork,
   switchNetwork,
 } from "wallet";
-import { DefaultNetwork } from "config/config";
+import { DefaultNetwork } from "config/setup";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 
 const ContainerButtons = styled.div`

@@ -33,7 +33,7 @@ import {
   switchNetwork,
 } from "wallet";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
-import { DefaultNetwork } from "../../config/config";
+import { DefaultNetwork } from "../../config/setup";
 
 type IProtectedActions = {
   canRefund: boolean;
