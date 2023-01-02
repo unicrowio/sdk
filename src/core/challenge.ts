@@ -48,7 +48,7 @@ export const challenge = async (
 
     const parsedPayload = parseChallenge(receiptTx);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

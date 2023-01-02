@@ -53,7 +53,7 @@ export const claimMultiple = async (
 
     const parsedPayload = parseMultipleClaim(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

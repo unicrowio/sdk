@@ -45,7 +45,7 @@ export const claim = async (
 
     const parsedPayload = parseClaim(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

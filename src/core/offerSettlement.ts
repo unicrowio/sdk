@@ -54,7 +54,7 @@ export const offerSettlement = async (
 
     const parsedPayload = parseOfferSettlement(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {

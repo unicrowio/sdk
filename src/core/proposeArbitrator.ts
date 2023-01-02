@@ -57,7 +57,7 @@ export const proposeArbitrator = async (
 
     const parsedPayload = parseProposalArbitrator(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayload);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
 
     return parsedPayload;
   } catch (error) {
