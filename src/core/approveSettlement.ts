@@ -23,7 +23,7 @@ export const approveSettlement = async (
   callbacks?: ISettlementApproveTransactionCallbacks,
 ): Promise<ApproveSettlementParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {

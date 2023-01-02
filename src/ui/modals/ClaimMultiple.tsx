@@ -36,7 +36,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks.connectingWallet?.();
+      props.callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     },
     connected: () => {
       setLoadingMessage("Connected");

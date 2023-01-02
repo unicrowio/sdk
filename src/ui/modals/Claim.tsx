@@ -155,7 +155,7 @@ export function ClaimModal(props: IClaimModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks.connectingWallet?.();
+      props.callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     },
     connected: () => {
       setLoadingMessage("Connected");

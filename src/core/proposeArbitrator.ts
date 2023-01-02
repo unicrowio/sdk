@@ -26,7 +26,7 @@ export const proposeArbitrator = async (
   try {
     validateAddress({ arbitrator });
 
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {

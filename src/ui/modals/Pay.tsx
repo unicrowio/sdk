@@ -82,7 +82,7 @@ export function PayModal(props: IPaymentModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks.connectingWallet?.();
+      props.callbacks && props.callbacks.connectingWallet && props.callbacks.connectingWallet()
     },
     connected: () => {
       setLoadingMessage("Connected");
@@ -90,7 +90,7 @@ export function PayModal(props: IPaymentModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
+      props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IPayTransactionPayload) => {
       props.callbacks.broadcasted?.(payload);

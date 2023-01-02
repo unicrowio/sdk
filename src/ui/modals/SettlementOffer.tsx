@@ -159,7 +159,7 @@ export function SettlementOfferModal({
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      callbacks.connectingWallet?.();
+      callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

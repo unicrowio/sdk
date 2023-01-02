@@ -16,7 +16,7 @@ export const refund = async (
   escrowId: number,
   callbacks?: IRefundTransactionCallbacks,
 ) => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {

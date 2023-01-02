@@ -190,7 +190,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       connectingWallet: () => {
         setIsLoading(true);
         setLoadingMessage("Connecting");
-        callbacks.connectingWallet?.();
+        callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
       },
       broadcasting: () => {
         setLoadingMessage("Waiting for approval");

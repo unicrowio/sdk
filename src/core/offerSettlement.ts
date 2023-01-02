@@ -24,7 +24,7 @@ export const offerSettlement = async (
   callbacks?: ISettlementOfferTransactionCallbacks,
 ): Promise<OfferSettlementParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {

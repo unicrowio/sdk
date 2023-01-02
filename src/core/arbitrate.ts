@@ -23,7 +23,7 @@ export const arbitrate = async (
   callbacks?: IArbitrationTransactionCallbacks,
 ): Promise<ArbitrateParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {

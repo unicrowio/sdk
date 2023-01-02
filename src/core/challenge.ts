@@ -21,7 +21,7 @@ export const challenge = async (
   escrowId: number,
   callbacks?: IChallengeTransactionCallbacks,
 ): Promise<ChallengeParsedPayload> => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {

@@ -25,7 +25,7 @@ export const approveArbitrator = async (
   callbacks?: IArbitrationTransactionCallbacks,
 ): Promise<ApproveArbitratorParsedPayload> => {
   try {
-    callbacks.connectingWallet?.();
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
     const provider = await getWeb3Provider();
 
     if (!provider) {

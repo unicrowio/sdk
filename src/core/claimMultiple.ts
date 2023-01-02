@@ -24,7 +24,7 @@ export const claimMultiple = async (
   escrowIds: number[],
   callbacks?: IClaimTransactionCallbacks,
 ): Promise<MultipleClaimParsedPayload> => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {

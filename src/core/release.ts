@@ -16,7 +16,7 @@ export const release = async (
   escrowId: number,
   callbacks?: IReleaseTransactionCallbacks,
 ): Promise<ReleaseParsedPayload> => {
-  callbacks.connectingWallet?.();
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
   const provider = await getWeb3Provider();
 
   if (!provider) {
