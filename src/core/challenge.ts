@@ -37,7 +37,7 @@ export const challenge = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const challengeTx = await smartContract.challenge(escrowId);
 
     callbacks.broadcasted?.({

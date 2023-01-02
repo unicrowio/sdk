@@ -163,7 +163,7 @@ export function SettlementOfferModal({
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      callbacks.broadcasting?.();
+      callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: ISettlementTransactionPayload) => {
       callbacks.broadcasted?.(payload);

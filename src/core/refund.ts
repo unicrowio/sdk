@@ -34,7 +34,7 @@ export const refund = async (
 
   try {
     const refundTx = await smartContract.refund(escrowId);
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     callbacks.broadcasted?.({
       transactionHash: refundTx.hash,
     });

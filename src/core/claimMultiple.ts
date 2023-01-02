@@ -43,7 +43,7 @@ export const claimMultiple = async (
   try {
     // FIX-ME: No need to get signer if the contract reference is initialized globally
     const claimTx = await smartContract.claimMultiple(escrowIds);
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
     callbacks.broadcasted?.({
       transactionHash: claimTx.hash,

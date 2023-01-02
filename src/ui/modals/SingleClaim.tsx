@@ -150,7 +150,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks.broadcasting?.();
+      props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: IClaimTransactionPayload) => {
       props.callbacks.broadcasted?.(payload);

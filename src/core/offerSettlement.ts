@@ -38,7 +38,7 @@ export const offerSettlement = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const settlementTx = await crowDisputeContract.offerSettlement(escrowId, [
       splitBuyer * 100,
       splitSeller * 100,

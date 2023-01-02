@@ -35,7 +35,7 @@ export const claim = async (
 
   try {
     const claimTx = await smartContract.claim(escrowId);
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
     callbacks.broadcasted?.({
       transactionHash: claimTx.hash,

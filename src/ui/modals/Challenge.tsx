@@ -146,7 +146,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks.broadcasting?.();
+      props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: IChallengeTransactionPayload) => {
       props.callbacks.broadcasted?.(payload);

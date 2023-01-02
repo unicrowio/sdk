@@ -90,7 +90,7 @@ export function PayModal(props: IPaymentModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks.broadcasting?.();
+      props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: IPayTransactionPayload) => {
       props.callbacks.broadcasted?.(payload);

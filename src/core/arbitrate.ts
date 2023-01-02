@@ -37,7 +37,7 @@ export const arbitrate = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
     // the order matters split_ [buyer, seller]
     const arbitrateTx = await crowArbitratorContract.arbitrate(escrowId, [

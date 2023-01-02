@@ -39,7 +39,7 @@ export const approveArbitrator = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
 
     const approveArbiterTx = await crowArbitratorContract.approveArbitrator(
       escrowId,

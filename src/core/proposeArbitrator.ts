@@ -40,7 +40,7 @@ export const proposeArbitrator = async (
       provider.getSigner(),
     );
 
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const proposeArbitratorTx = await crowArbitratorContract.proposeArbitrator(
       escrowId,
       arbitrator,

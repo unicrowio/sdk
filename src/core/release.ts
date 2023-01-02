@@ -34,7 +34,7 @@ export const release = async (
 
   try {
     // FIX-ME: No need to get signer if the contract reference is initialized globally
-    callbacks.broadcasting?.();
+    callbacks && callbacks.broadcasting && callbacks.broadcasting()
     const releaseTx = await Unicrow.release(escrowId);
 
     callbacks.broadcasted?.({
