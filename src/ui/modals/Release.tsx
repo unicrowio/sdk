@@ -132,7 +132,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && props.callbacks.broadcasting && callbacks.broadcasting()
+      props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IReleasedTransactionPayload) => {
       props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);

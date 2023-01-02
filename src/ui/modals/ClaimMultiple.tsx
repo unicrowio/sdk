@@ -44,7 +44,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && props.callbacks.broadcasting && callbacks.broadcasting()
+      props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
     },
     broadcasted: (payload: IClaimTransactionPayload) => {
       props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);
