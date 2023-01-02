@@ -133,7 +133,7 @@ export function RefundModal(props: IRefundModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
+      props.callbacks && props.callbacks.connectingWallet && props.callbacks.connectingWallet()
     },
     connected: () => {
       setLoadingMessage("Connected");
@@ -141,10 +141,10 @@ export function RefundModal(props: IRefundModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
+      props.callbacks && props.callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: IRefundTransactionPayload) => {
-      props.callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
+      props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IRefundTransactionPayload) => {

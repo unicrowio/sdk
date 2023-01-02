@@ -124,7 +124,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
+      props.callbacks && props.callbacks.connectingWallet && props.callbacks.connectingWallet()
     },
     connected: () => {
       setLoadingMessage("Connected");
@@ -132,10 +132,10 @@ export function ReleaseModal(props: IReleaseModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && callbacks.broadcasting && callbacks.broadcasting()
+      props.callbacks && props.callbacks.broadcasting && callbacks.broadcasting()
     },
     broadcasted: (payload: IReleasedTransactionPayload) => {
-      props.callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
+      props.callbacks && props.callbacks.broadcasted && callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IReleasedTransactionPayload) => {
