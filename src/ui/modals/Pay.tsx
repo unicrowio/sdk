@@ -28,7 +28,7 @@ import { ADDRESS_ZERO } from "../../helpers/constants";
 import { formatAmount } from "../../helpers/formatAmount";
 import { MARKER } from "../../config/marker";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
-import { DefaultNetwork } from "config/init";
+import { DefaultNetwork } from "config/config";
 import { AddressesToCheck } from "helpers/validateParameters";
 
 export function PayModal(props: IPaymentModalProps) {

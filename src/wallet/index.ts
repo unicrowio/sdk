@@ -2,8 +2,8 @@ import EventEmitter from "events";
 import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
-import { DefaultNetwork } from "../config/init";
-import initNetworks from "../config/init";
+import { DefaultNetwork } from "../config/config";
+import config from "../config/config";
 
 let currentWallet: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
@@ -129,7 +129,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   const connected = await getNetwork();
 
   if (connected.chainId === chainId) {
-    initNetworks({ defaultNetwork: name });
+    config({ defaultNetwork: name });
   }
 
   return name;

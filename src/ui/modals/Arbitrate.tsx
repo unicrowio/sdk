@@ -18,7 +18,7 @@ import {
   switchNetwork,
 } from "wallet";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
-import { DefaultNetwork } from "config/init";
+import { DefaultNetwork } from "config/config";
 
 /**
  * Arbitrator should arbitrate the escrow payment

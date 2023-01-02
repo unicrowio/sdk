@@ -18,7 +18,7 @@ interface IConfig {
   mainnetRPCUrl?: string;
 }
 
-function initNetworks({
+function config({
   networks,
   defaultNetwork = "arbitrum",
   autoSwitchNetwork = false,
@@ -59,4 +59,4 @@ function initNetworks({
   globalThis.mainnetRPCUrl = mainnetRPCUrl || getHost("mainnet");
 }
 
-export default initNetworks;
+export default config;
