@@ -797,7 +797,7 @@ export type IGetConnectedUser = {
  * All data of an escrow incl. info about the arbitrator, settlement and current user.
  *
  */
-export interface IGetEscrowData extends IEscrowData {
+export interface IGetEscrowData extends Omit<IEscrowData, 'tokenAddress'>  {
   /** interface with tokenAddress, decimals, symbol */
   token: ITokenInfo;
   /** interface with arbitrator, consensusSeller, consensusBuyer, arbitrated, arbitratorFee */

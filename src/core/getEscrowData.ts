@@ -238,6 +238,9 @@ export const getEscrowData = async (
     marketplace: escrow?.marketplace,
   });
 
+  // duplicated with object token  
+  delete escrow.tokenAddress
+
   return {
     ...escrow,
     token,
