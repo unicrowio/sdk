@@ -9,6 +9,9 @@
       },
       "complexity": {
         "useOptionalChain": "off"
+      }, 
+      "performance" : {
+        "noDelete": "off"
       }
     }
   },

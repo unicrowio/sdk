@@ -1,10 +1,10 @@
 import { networks } from "../wallet/networks";
-import initNetworks from "./init";
+import config from "./setup";
 
 export const getHost = (host = "default"): string => {
-  if (host == "default") {
+  if (host === "default") {
     return globalThis?.defaultNetwork?.rpcUrl || networks?.arbitrum?.rpcUrls[0];
-  } else if (host == "mainnet") {
+  } else if (host === "mainnet") {
     return (
       globalThis?.mainnetRPCUrl ||
       "https://purple-distinguished-vineyard.quiknode.pro/360bd2d54ace2ca5b775f1bf8325875fcd77204f/"
@@ -44,7 +44,7 @@ export const getContractAddress = (address: tGetAddress): string => {
   return addressMap[address];
 };
 
-initNetworks({
+config({
   autoSwitchNetwork: false,
   defaultNetwork: "arbitrum",
 });
