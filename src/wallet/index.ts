@@ -150,7 +150,17 @@ export const autoSwitchNetwork = async (callbacks?, force: boolean = false) => {
 
 export const getNetwork = async (): Promise<ethers.providers.Network> => {
   const provider = await getWeb3Provider();
-  return provider.getNetwork();
+
+  let network = await provider.getNetwork();
+
+  if(network.chainId === 5777) {
+    network = {
+      ...network,
+      name: "development",
+    }
+  } 
+
+  return network;
 };
 
 export const getSupportedNetworks: () => {
