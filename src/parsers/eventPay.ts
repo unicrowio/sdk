@@ -37,7 +37,8 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
     : 0;
 
-  const marketplace = _marketplace.toString() === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplace =
+    _marketplace.toString() === ADDRESS_ZERO ? null : _marketplace.toString();
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
