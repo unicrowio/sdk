@@ -34,3 +34,9 @@ export const BUYER = "buyer";
 export const SELLER = "seller";
 
 export const ZERO = new BigNumber(0);
+
+export const CHAIN_ID = {
+  arbitrumOne: 42161,
+  arbitrumGoerli: 421613,
+  development: 5777
+}

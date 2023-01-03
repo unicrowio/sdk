@@ -34,8 +34,8 @@ export const parseRelease = (events: any[]): ReleaseParsedPayload => {
 
   const [consensusBuyer, consensusSeller] = consensus;
 
-  const marketplace =
-    _marketplace.toString() === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplace: string =
+    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   return {

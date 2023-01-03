@@ -2,8 +2,8 @@ import EventEmitter from "events";
 import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
-import { DefaultNetwork } from "../config/setup";
-import config from "../config/setup";
+import config, { DefaultNetwork } from "../config/setup";
+import { CHAIN_ID } from "helpers";
 
 let currentWallet: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
@@ -153,7 +153,7 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
 
   let network = await provider.getNetwork();
 
-  if (network.chainId === 5777) {
+  if (network.chainId === CHAIN_ID.development) {
     network = {
       ...network,
       name: "development",

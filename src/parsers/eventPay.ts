@@ -31,14 +31,14 @@ export const parsePay = (events: any[]): PayParsedPayload => {
   ] = escrow;
 
   // parsers
-  const arbitrator =
-    _arbitrator.toString() === ADDRESS_ZERO ? null : _arbitrator.toString();
+  const arbitrator: string =
+    _arbitrator === ADDRESS_ZERO ? null : _arbitrator.toString();
   const arbitratorFee = arbitrator
     ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
     : 0;
 
-  const marketplace =
-    _marketplace.toString() === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplace: string =
+    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
