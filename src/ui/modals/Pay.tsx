@@ -88,7 +88,7 @@ export function PayModal(props: IPaymentModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks.connected?.();
+      props.callbacks && callbacks.connected && callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

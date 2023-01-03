@@ -25,7 +25,7 @@ export const release = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks.connected?.();
+  callbacks && callbacks.connected && callbacks.connected();
 
   const Unicrow = Unicrow__factory.connect(
     getContractAddress("unicrow"),
@@ -47,7 +47,7 @@ export const release = async (
 
     const parsedPayloadReleased = parseRelease(receiptTx.events);
 
-    callbacks.confirmed?.(parsedPayloadReleased);
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayloadReleased);
 
     return parsedPayloadReleased;
   } catch (error) {
