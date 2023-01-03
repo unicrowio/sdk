@@ -1,10 +1,7 @@
 import { BigNumber } from "ethers";
 import { BigNumber as BigNumberJs } from "bignumber.js";
 import { getContractAddress } from "../config";
-import {
-  ADDRESS_ZERO,
-  consensus,
-} from "../helpers/constants";
+import { ADDRESS_ZERO, consensus } from "../helpers/constants";
 import { calculateStatus } from "./calculateStatus";
 import {
   IArbitratorInfo,

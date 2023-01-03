@@ -5,12 +5,7 @@ import {
   EscrowStatusView,
   IEscrowData,
 } from "../typing";
-import {
-  isSameAddress,
-  BUYER,
-  ADDRESS_ZERO,
-  SELLER,
-} from "../helpers";
+import { isSameAddress, BUYER, ADDRESS_ZERO, SELLER } from "../helpers";
 
 export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
   /**
@@ -58,8 +53,7 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
     amount: new BigNumber(item.amount),
 
     // Addresses
-    marketplace:
-      item.marketplace === ADDRESS_ZERO ? null : item.marketplace,
+    marketplace: item.marketplace === ADDRESS_ZERO ? null : item.marketplace,
     buyer: item.buyer,
     seller: item.seller,
     tokenAddress: item.currency,

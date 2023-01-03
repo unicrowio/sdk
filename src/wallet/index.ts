@@ -153,12 +153,12 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
 
   let network = await provider.getNetwork();
 
-  if(network.chainId === 5777) {
+  if (network.chainId === 5777) {
     network = {
       ...network,
       name: "development",
-    }
-  } 
+    };
+  }
 
   return network;
 };

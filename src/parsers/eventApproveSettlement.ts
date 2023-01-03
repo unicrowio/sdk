@@ -25,8 +25,8 @@ export const parseApproveSettlement = (
     challengeExtension,
     seller,
     challengePeriodStart,
-    marketplace,
-    marketplaceFee,
+    _marketplace,
+    _marketplaceFee,
     challengePeriodEnd,
     currency,
     claimed,
@@ -40,6 +40,9 @@ export const parseApproveSettlement = (
 
   const [consensusBuyer, consensusSeller] = consensus;
 
+  const marketplace = _marketplace.toString() === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
+
   return {
     name: _event.event,
     transactionHash: _event.transactionHash,
@@ -51,9 +54,8 @@ export const parseApproveSettlement = (
     challengePeriodExtension: Number(challengeExtension?.toString()),
     challengePeriodStart: toDate(challengePeriodStart),
     challengePeriodEnd: toDate(challengePeriodEnd),
-    marketplace:
-      marketplace.toString() === ADDRESS_ZERO ? null : marketplace.toString(),
-    marketplaceFee: bipsToPercentage([marketplaceFee.toString()])[0],
+    marketplace,
+    marketplaceFee,
     currency: currency.toString(),
     claimed: !!claimed,
     consensusBuyer,
