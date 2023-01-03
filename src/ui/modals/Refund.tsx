@@ -133,7 +133,9 @@ export function RefundModal(props: IRefundModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks && props.callbacks.connectingWallet && props.callbacks.connectingWallet()
+      props.callbacks &&
+        props.callbacks.connectingWallet &&
+        props.callbacks.connectingWallet();
     },
     connected: () => {
       setLoadingMessage("Connected");
@@ -141,14 +143,20 @@ export function RefundModal(props: IRefundModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
+      props.callbacks &&
+        props.callbacks.broadcasting &&
+        props.callbacks.broadcasting();
     },
     broadcasted: (payload: IRefundTransactionPayload) => {
-      props.callbacks && props.callbacks.broadcasted && props.callbacks.broadcasted(payload);
+      props.callbacks &&
+        props.callbacks.broadcasted &&
+        props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IRefundTransactionPayload) => {
-      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
+      props.callbacks &&
+        props.callbacks.confirmed &&
+        props.callbacks.confirmed(payload);
 
       toast("Refunded", "success");
       setPaymentStatus(EscrowStatus.REFUNDED);

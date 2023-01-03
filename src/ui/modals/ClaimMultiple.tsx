@@ -36,7 +36,9 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     connectingWallet: () => {
       setIsLoading(true);
       setLoadingMessage("Connecting");
-      props.callbacks && props.callbacks.connectingWallet && props.callbacks.connectingWallet()
+      props.callbacks &&
+        props.callbacks.connectingWallet &&
+        props.callbacks.connectingWallet();
     },
     connected: () => {
       setLoadingMessage("Connected");
@@ -44,14 +46,20 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
-      props.callbacks && props.callbacks.broadcasting && props.callbacks.broadcasting()
+      props.callbacks &&
+        props.callbacks.broadcasting &&
+        props.callbacks.broadcasting();
     },
     broadcasted: (payload: IClaimTransactionPayload) => {
-      props.callbacks && props.callbacks.broadcasted && props.callbacks.broadcasted(payload);
+      props.callbacks &&
+        props.callbacks.broadcasted &&
+        props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: IClaimTransactionPayload) => {
-      props.callbacks && props.callbacks.confirmed && props.callbacks.confirmed(payload);
+      props.callbacks &&
+        props.callbacks.confirmed &&
+        props.callbacks.confirmed(payload);
 
       toast("Claimed", "success");
 

@@ -69,7 +69,7 @@ import { BigNumberish } from "ethers";
  */
 export const pay = async (
   paymentProps: IPaymentProps,
-  callbacks?: IPayTransactionCallbacks
+  callbacks?: IPayTransactionCallbacks,
 ): Promise<PayParsedPayload> => {
   const {
     amount,
@@ -193,7 +193,9 @@ export const pay = async (
       );
     }
 
-    callbacks && callbacks.broadcasted && callbacks.broadcasted({
+    callbacks &&
+      callbacks.broadcasted &&
+      callbacks.broadcasted({
         transactionHash: payTx.hash,
         buyer: walletUser!,
       });

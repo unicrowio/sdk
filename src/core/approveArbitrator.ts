@@ -25,7 +25,7 @@ export const approveArbitrator = async (
   callbacks?: IArbitrationTransactionCallbacks,
 ): Promise<ApproveArbitratorParsedPayload> => {
   try {
-    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
     const provider = await getWeb3Provider();
 
     if (!provider) {
@@ -39,7 +39,7 @@ export const approveArbitrator = async (
       provider.getSigner(),
     );
 
-    callbacks && callbacks.broadcasting && callbacks.broadcasting()
+    callbacks && callbacks.broadcasting && callbacks.broadcasting();
 
     const approveArbiterTx = await crowArbitratorContract.approveArbitrator(
       escrowId,
@@ -47,17 +47,19 @@ export const approveArbitrator = async (
       percentageToBips([arbitratorFee])[0],
     );
 
-    callbacks && callbacks.broadcasted && callbacks.broadcasted({
-      transactionHash: approveArbiterTx.hash,
-      arbitrator,
-      arbitratorFee,
-    });
+    callbacks &&
+      callbacks.broadcasted &&
+      callbacks.broadcasted({
+        transactionHash: approveArbiterTx.hash,
+        arbitrator,
+        arbitratorFee,
+      });
 
     const receiptTx = await approveArbiterTx.wait();
 
     const parsedPayload = parseApproveArbitrator(receiptTx.events);
 
-    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 
     return parsedPayload;
   } catch (error) {

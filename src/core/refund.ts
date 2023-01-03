@@ -16,7 +16,7 @@ export const refund = async (
   escrowId: number,
   callbacks?: IRefundTransactionCallbacks,
 ) => {
-  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
   const provider = await getWeb3Provider();
 
   if (!provider) {
@@ -34,10 +34,12 @@ export const refund = async (
 
   try {
     const refundTx = await smartContract.refund(escrowId);
-    callbacks && callbacks.broadcasting && callbacks.broadcasting()
-    callbacks && callbacks.broadcasted && callbacks.broadcasted({
-      transactionHash: refundTx.hash,
-    });
+    callbacks && callbacks.broadcasting && callbacks.broadcasting();
+    callbacks &&
+      callbacks.broadcasted &&
+      callbacks.broadcasted({
+        transactionHash: refundTx.hash,
+      });
 
     await refundTx.wait();
 

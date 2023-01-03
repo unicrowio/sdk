@@ -26,7 +26,7 @@ export const proposeArbitrator = async (
   try {
     validateAddress({ arbitrator });
 
-    callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
+    callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
     const provider = await getWeb3Provider();
 
     if (!provider) {
@@ -40,24 +40,26 @@ export const proposeArbitrator = async (
       provider.getSigner(),
     );
 
-    callbacks && callbacks.broadcasting && callbacks.broadcasting()
+    callbacks && callbacks.broadcasting && callbacks.broadcasting();
     const proposeArbitratorTx = await crowArbitratorContract.proposeArbitrator(
       escrowId,
       arbitrator,
       arbitratorFee * 100,
     );
 
-    callbacks && callbacks.broadcasted && callbacks.broadcasted({
-      transactionHash: proposeArbitratorTx.hash,
-      arbitrator,
-      arbitratorFee,
-    });
+    callbacks &&
+      callbacks.broadcasted &&
+      callbacks.broadcasted({
+        transactionHash: proposeArbitratorTx.hash,
+        arbitrator,
+        arbitratorFee,
+      });
 
     const receiptTx = await proposeArbitratorTx.wait();
 
     const parsedPayload = parseProposalArbitrator(receiptTx.events);
 
-    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload)
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 
     return parsedPayload;
   } catch (error) {

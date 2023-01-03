@@ -16,7 +16,7 @@ export const release = async (
   escrowId: number,
   callbacks?: IReleaseTransactionCallbacks,
 ): Promise<ReleaseParsedPayload> => {
-  callbacks && callbacks.connectingWallet && callbacks.connectingWallet()
+  callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
   const provider = await getWeb3Provider();
 
   if (!provider) {
@@ -34,12 +34,14 @@ export const release = async (
 
   try {
     // FIX-ME: No need to get signer if the contract reference is initialized globally
-    callbacks && callbacks.broadcasting && callbacks.broadcasting()
+    callbacks && callbacks.broadcasting && callbacks.broadcasting();
     const releaseTx = await Unicrow.release(escrowId);
 
-    callbacks && callbacks.broadcasted && callbacks.broadcasted({
-      transactionHash: releaseTx.hash,
-    });
+    callbacks &&
+      callbacks.broadcasted &&
+      callbacks.broadcasted({
+        transactionHash: releaseTx.hash,
+      });
 
     const receiptTx = await releaseTx.wait();
 
