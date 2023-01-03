@@ -32,8 +32,6 @@ export const validateParameters = async (data: IPaymentProps) => {
     marketplace,
   });
 
-  console.log({ tokenAddress })
-
   try {
     validateAddress({ ...addrs.common, tokenAddress });
   } catch (e: any) {
