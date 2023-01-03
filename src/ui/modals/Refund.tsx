@@ -231,16 +231,17 @@ export function RefundModal(props: IRefundModalProps) {
               />
             </>
           )}
-          <DataDisplayer
-            copy={escrowData.marketplace}
-            label="Marketplace Address"
-            value={
-              escrowData.marketplace
-                ? reduceAddress(escrowData.marketplace)
-                : " - "
-            }
-            marker={MARKER.marketplace}
-          />
+          {escrowData?.marketplace && (
+            <DataDisplayer
+              label="Marketplace Address"
+              value={reduceAddress(
+                escrowData.marketplace,
+                escrowData.ensAddresses.marketplace,
+              )}
+              copy={escrowData.marketplace}
+              marker={MARKER.marketplace}
+            />
+          )}
         </ContainerDataDisplayer>
       </>
     );
