@@ -1,4 +1,4 @@
-import { bipsToPercentage, toDate } from "../helpers";
+import { ADDRESS_ZERO, bipsToPercentage, toDate } from "../helpers";
 import { ArbitrateParsedPayload } from "../typing";
 import { getEventByName } from "./common";
 
@@ -46,7 +46,8 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     challengePeriodExtension: Number(challengeExtension?.toString()),
     challengePeriodStart: toDate(challengePeriodStart),
     challengePeriodEnd: toDate(challengePeriodEnd),
-    marketplace: marketplace.toString(),
+    marketplace:
+      marketplace.toString() === ADDRESS_ZERO ? null : marketplace.toString(),
     marketplaceFee: bipsToPercentage([marketplaceFee.toString()])[0],
     currency: currency.toString(),
     claimed: !!claimed,
