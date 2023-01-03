@@ -22,7 +22,7 @@ const fetchTokenInfo = async (tokenAddress: string) => {
  * @returns {Promise<ITokenInfo>}
  */
 export const getTokenInfo = async (
-  tokenAddress = null,
+  tokenAddress = ETH_ADDRESS,
 ): Promise<ITokenInfo> => {
   if (isSameAddress(tokenAddress, ETH_ADDRESS)) {
     return {

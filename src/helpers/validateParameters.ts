@@ -1,4 +1,5 @@
 import { IPaymentProps } from "../typing";
+import { ETH_ADDRESS } from "./constants";
 import {
   validateAddress,
   validateEns,
@@ -22,7 +23,7 @@ export const validateParameters = async (data: IPaymentProps) => {
     challengePeriodExtension,
     arbitratorFee,
     marketplaceFee,
-    tokenAddress,
+    tokenAddress = ETH_ADDRESS,
   } = data;
 
   const addrs: AddressToReturn = await validateEns({
