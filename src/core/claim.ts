@@ -26,7 +26,7 @@ export const claim = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks.connected?.();
+  callbacks && callbacks.connected && callbacks.connected();
 
   const smartContract = UnicrowClaim__factory.connect(
     getContractAddress("claim"),

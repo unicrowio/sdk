@@ -31,7 +31,7 @@ export const challenge = async (
   await autoSwitchNetwork(callbacks);
 
   try {
-    callbacks.connected?.();
+    callbacks && callbacks.connected && callbacks.connected();
     const smartContract = UnicrowDispute__factory.connect(
       getContractAddress("dispute"),
       provider.getSigner(),

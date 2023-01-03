@@ -25,7 +25,7 @@ export const refund = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks.connected?.();
+  callbacks && callbacks.connected && callbacks.connected();
 
   const smartContract = Unicrow__factory.connect(
     getContractAddress("unicrow"),
