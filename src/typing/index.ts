@@ -161,6 +161,9 @@ export interface IEscrowData {
   latestSettlementOfferAddress?: string;
   latestSettlementOfferSeller?: number;
   latestSettlementOfferBuyer?: number;
+
+  /** ENS Addresses */
+  ensAddresses?: IEnsAddresses;
 }
 
 export interface IEscrowDataWithTokenInfo extends IEscrowData {
