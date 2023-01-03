@@ -47,10 +47,11 @@ interface Props {
   value: ReactNode;
   copy?: string | null;
   marker?: string;
+  hide?: boolean;
 }
 
-export const DataDisplayer = ({ label, value, copy, marker }: Props) => {
-  return (
+export const DataDisplayer = ({ label, value, copy, marker, hide }: Props) => {
+  return hide ? <></> : (
     <DataDisplayerWrapper>
       <DataDisplayerLabel>
         <>

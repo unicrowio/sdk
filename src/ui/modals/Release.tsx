@@ -216,17 +216,16 @@ export function ReleaseModal(props: IReleaseModalProps) {
             value={displayChallengePeriod(escrowData.challengePeriod)}
             marker={MARKER.challengePeriodExtension}
           />
-          {escrowData?.marketplace && (
-            <DataDisplayer
-              label="Marketplace Address"
-              value={reduceAddress(
-                escrowData.marketplace,
-                escrowData.ensAddresses.marketplace,
-              )}
-              copy={escrowData.marketplace}
-              marker={MARKER.marketplace}
-            />
-          )}
+          <DataDisplayer
+            label="Marketplace Address"
+            hide={!escrowData?.marketplace}
+            value={reduceAddress(
+              escrowData.marketplace,
+              escrowData.ensAddresses.marketplace,
+            )}
+            copy={escrowData.marketplace}
+            marker={MARKER.marketplace}
+          />
         </ContainerDataDisplayer>
       </>
     );
