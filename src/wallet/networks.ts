@@ -1,4 +1,4 @@
-import { CHAIN_ID } from "helpers";
+import { CHAIN_ID } from "../helpers";
 const arbitrumRpcUrl = globalThis.arbitrum || "https://arb1.arbitrum.io/rpc";
 const arbitrumTestnetmRpcUrl =
   globalThis.arbitrumTestnet || "https://goerli-rollup.arbitrum.io/rpc";
