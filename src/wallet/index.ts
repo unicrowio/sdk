@@ -73,9 +73,6 @@ export const connect = async (): Promise<string | null> => {
 
     handleAccountsChanged(_accounts);
 
-    // true = forces switch to correct network even if network got configured to not autoswitch
-    autoSwitchNetwork({}, true);
-
     if (_accounts && _accounts.length > 0) {
       currentWallet = _accounts[0];
       return _accounts[0];
@@ -159,6 +156,7 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
       name: "development",
     }
   } 
+
 
   return network;
 };
