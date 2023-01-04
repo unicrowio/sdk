@@ -51,7 +51,9 @@ interface Props {
 }
 
 export const DataDisplayer = ({ label, value, copy, marker, hide }: Props) => {
-  return hide ? <></> : (
+  return hide ? (
+    <></>
+  ) : (
     <DataDisplayerWrapper>
       <DataDisplayerLabel>
         <>

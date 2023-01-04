@@ -47,7 +47,9 @@ export const release = async (
 
     const parsedPayloadReleased = parseRelease(receiptTx.events);
 
-    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayloadReleased);
+    callbacks &&
+      callbacks.confirmed &&
+      callbacks.confirmed(parsedPayloadReleased);
 
     return parsedPayloadReleased;
   } catch (error) {

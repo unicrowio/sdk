@@ -157,7 +157,6 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
     };
   }
 
-
   return network;
 };
 
@@ -182,7 +181,7 @@ export const isSupportedNetworkConnected = async (): Promise<boolean> => {
 export const startListening = (
   onChangeWalletCallback: (walletAddress: string | null) => void,
 ) => {
-  const ethereum = checkIsWalletInstalled();
+  checkIsWalletInstalled();
   _onChangeWalletCallbacks.push(onChangeWalletCallback);
 
   registerAccountChangedListener();
