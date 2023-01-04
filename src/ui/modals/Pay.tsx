@@ -187,7 +187,7 @@ export function PayModal(props: IPaymentModalProps) {
                 label="Arbitrator"
                 value={reduceAddress(
                   props.paymentProps.arbitrator,
-                  props.paymentProps.ensAddresses.arbitrator,
+                  props.paymentProps.ensAddresses?.arbitrator,
                 )}
                 copy={props.paymentProps.arbitrator}
                 marker={MARKER.arbitrator}
@@ -208,7 +208,7 @@ export function PayModal(props: IPaymentModalProps) {
                 label="Marketplace Address"
                 value={reduceAddress(
                   props.paymentProps.marketplace,
-                  props.paymentProps.ensAddresses.marketplace,
+                  props.paymentProps.ensAddresses?.marketplace,
                 )}
                 copy={props.paymentProps.marketplace}
                 marker={MARKER.marketplace}

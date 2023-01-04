@@ -240,7 +240,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
             label="Marketplace Address"
             value={reduceAddress(
               escrowData.marketplace,
-              escrowData.ensAddresses.marketplace,
+              escrowData.ensAddresses?.marketplace,
             )}
             copy={escrowData.marketplace}
             marker={MARKER.marketplace}
