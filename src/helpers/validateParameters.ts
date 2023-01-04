@@ -61,6 +61,18 @@ export const validateParameters = async (data: IPaymentProps) => {
     throw new Error("Invalid arbitrator fee");
   }
 
+  // if (
+  //   !arbitrator && arbitratorFee > 0
+  // ) {
+  //   throw new Error("Arbitrator fee must be 0 if arbitrator address is not defined");
+  // }
+
+  if (
+    !marketplace && marketplaceFee > 0
+  ) {
+    throw new Error("Marketplace fee must be 0 if marketplace address is not defined");
+  }
+
   if (
     Number.isNaN(marketplaceFee) ||
     (typeof marketplaceFee !== "undefined" && marketplaceFee < 0)
