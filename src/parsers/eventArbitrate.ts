@@ -35,7 +35,7 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     amount_arbitrator,
   ] = amounts;
 
-  const marketplace: string | null  =
+  const marketplace: string | null =
     _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
