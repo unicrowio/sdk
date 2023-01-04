@@ -15,19 +15,13 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     challenge_period,
   ] = _event.args;
 
-  const arbitrator =
-    _arbitrator.toString() === ADDRESS_ZERO ? null : _arbitrator.toString();
-  const arbitratorFee = arbitrator
-    ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
-    : 0;
-
   const [
     buyer,
     challengeExtension,
     seller,
     challengePeriodStart,
-    marketplace,
-    marketplaceFee,
+    _marketplace,
+    _marketplaceFee,
     challengePeriodEnd,
     currency,
     claimed,
@@ -35,6 +29,17 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     splits,
     amount,
   ] = escrow;
+
+  // parsers
+  const arbitrator: string =
+    _arbitrator === ADDRESS_ZERO ? null : _arbitrator.toString();
+  const arbitratorFee = arbitrator
+    ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
+    : 0;
+
+  const marketplace: string | null =
+    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
     bipsToPercentage(splits);
@@ -73,9 +78,8 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     challengePeriodExtension: Number(challengeExtension?.toString()),
     challengePeriodStart: toDate(challengePeriodStart),
     challengePeriodEnd: toDate(challengePeriodEnd),
-    marketplace:
-      marketplace.toString() === ADDRESS_ZERO ? null : marketplace.toString(),
-    marketplaceFee: bipsToPercentage([marketplaceFee.toString()])[0],
+    marketplace,
+    marketplaceFee,
     currency: currency.toString(),
     claimed: !!claimed,
     consensusBuyer,

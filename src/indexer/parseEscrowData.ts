@@ -5,12 +5,7 @@ import {
   EscrowStatusView,
   IEscrowData,
 } from "../typing";
-import {
-  isSameAddress,
-  BUYER,
-  NULL_MARKETPLACE_ADDRESS,
-  SELLER,
-} from "../helpers";
+import { isSameAddress, BUYER, ADDRESS_ZERO, SELLER } from "../helpers";
 
 export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
   /**
@@ -23,9 +18,9 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
       EscrowStatus[item.status] === EscrowStatus.CHALLENGED ||
       EscrowStatus[item.status] === EscrowStatus.REFUNDED
     ) {
-      const isBuyerlatestChallenge =
+      const isBuyerLatestChallenge =
         Math.abs(item.consensus_seller) === Math.abs(item.consensus_buyer);
-      latestChallenge = isBuyerlatestChallenge ? BUYER : SELLER;
+      latestChallenge = isBuyerLatestChallenge ? BUYER : SELLER;
     }
 
     return latestChallenge;
@@ -58,8 +53,7 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
     amount: new BigNumber(item.amount),
 
     // Addresses
-    marketplace:
-      item.marketplace === NULL_MARKETPLACE_ADDRESS ? null : item.marketplace,
+    marketplace: item.marketplace === ADDRESS_ZERO ? null : item.marketplace,
     buyer: item.buyer,
     seller: item.seller,
     tokenAddress: item.currency,

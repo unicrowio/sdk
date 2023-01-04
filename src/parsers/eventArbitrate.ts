@@ -1,4 +1,4 @@
-import { bipsToPercentage, toDate } from "../helpers";
+import { ADDRESS_ZERO, bipsToPercentage, toDate } from "../helpers";
 import { ArbitrateParsedPayload } from "../typing";
 import { getEventByName } from "./common";
 
@@ -12,8 +12,8 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     challengeExtension,
     seller,
     challengePeriodStart,
-    marketplace,
-    marketplaceFee,
+    _marketplace,
+    _marketplaceFee,
     challengePeriodEnd,
     currency,
     claimed,
@@ -35,6 +35,10 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     amount_arbitrator,
   ] = amounts;
 
+  const marketplace: string | null =
+    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
+
   return {
     name: _event.event,
     transactionHash: _event.transactionHash,
@@ -46,8 +50,8 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     challengePeriodExtension: Number(challengeExtension?.toString()),
     challengePeriodStart: toDate(challengePeriodStart),
     challengePeriodEnd: toDate(challengePeriodEnd),
-    marketplace: marketplace.toString(),
-    marketplaceFee: bipsToPercentage([marketplaceFee.toString()])[0],
+    marketplace,
+    marketplaceFee,
     currency: currency.toString(),
     claimed: !!claimed,
     consensusBuyer,

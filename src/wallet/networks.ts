@@ -1,3 +1,4 @@
+import { CHAIN_ID } from "../helpers";
 const arbitrumRpcUrl = globalThis.arbitrum || "https://arb1.arbitrum.io/rpc";
 const arbitrumTestnetmRpcUrl =
   globalThis.arbitrumTestnet || "https://goerli-rollup.arbitrum.io/rpc";
@@ -19,7 +20,7 @@ export type UnicrowNetwork = {
 
 export const networks: { [name: string]: UnicrowNetwork } = {
   arbitrum: {
-    chainId: 42161,
+    chainId: CHAIN_ID.arbitrumOne,
     chainName: "Arbitrum One",
     displayName: "Arbitrum",
     nativeCurrency: {
@@ -31,7 +32,7 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     blockExplorerUrls: ["https://arbiscan.io/"],
   },
   arbitrumTestnet: {
-    chainId: 421613,
+    chainId: CHAIN_ID.arbitrumGoerli,
     chainName: "Arbitrum Goerli",
     displayName: "Arbitrum Testnet",
     nativeCurrency: {
@@ -43,7 +44,7 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     blockExplorerUrls: ["https://goerli-rollup-explorer.arbitrum.io"],
   },
   development: {
-    chainId: 5777,
+    chainId: CHAIN_ID.development,
     chainName: "Unicrow Testnet",
     displayName: "Unicrow Testnet",
     nativeCurrency: {

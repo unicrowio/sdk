@@ -1,11 +1,7 @@
 import { BigNumber } from "ethers";
 import { BigNumber as BigNumberJs } from "bignumber.js";
 import { getContractAddress } from "../config";
-import {
-  ADDRESS_ZERO,
-  NULL_MARKETPLACE_ADDRESS,
-  consensus,
-} from "../helpers/constants";
+import { ADDRESS_ZERO, consensus } from "../helpers/constants";
 import { calculateStatus } from "./calculateStatus";
 import {
   IArbitratorInfo,
@@ -122,7 +118,7 @@ const parseEscrow = (
     escrowId,
     amount: amountBigNumberJs,
     // Addresses
-    marketplace: marketplace === NULL_MARKETPLACE_ADDRESS ? null : marketplace,
+    marketplace: marketplace === ADDRESS_ZERO ? null : marketplace,
     buyer,
     seller,
     tokenAddress,

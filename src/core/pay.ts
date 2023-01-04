@@ -1,8 +1,7 @@
 import { ERC20__factory, Unicrow__factory } from "@unicrowio/ethers-types";
 import {
-  NULL_ARBITRATOR_ADDRESS,
+  ADDRESS_ZERO,
   ZERO_FEE_VALUE,
-  NULL_MARKETPLACE_ADDRESS,
   ETH_ADDRESS,
 } from "../helpers/constants";
 import { getContractAddress } from "../config";
@@ -145,7 +144,7 @@ export const pay = async (
   // solidity doesn't work with decimal points
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
-  const marketplaceAddress = marketplace || NULL_MARKETPLACE_ADDRESS;
+  const marketplaceAddress = marketplace || ADDRESS_ZERO;
 
   const addrs = await validateParameters({
     seller,
@@ -159,7 +158,7 @@ export const pay = async (
     amount,
   });
 
-  const _arbitrator = addrs.common.arbitrator || NULL_ARBITRATOR_ADDRESS;
+  const _arbitrator = addrs.common.arbitrator || ADDRESS_ZERO;
 
   const payInput: EscrowInputStruct = {
     seller: addrs.common.seller,

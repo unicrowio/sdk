@@ -7,8 +7,6 @@ export const ONE_DAY_IN_SEC = 86400;
 
 export const ZERO_FEE_VALUE = 0;
 
-export const NULL_MARKETPLACE_ADDRESS = ADDRESS_ZERO;
-export const NULL_ARBITRATOR_ADDRESS = ADDRESS_ZERO;
 export const ETH_ADDRESS = ADDRESS_ZERO;
 
 export enum consensus {
@@ -36,3 +34,9 @@ export const BUYER = "buyer";
 export const SELLER = "seller";
 
 export const ZERO = new BigNumber(0);
+
+export const CHAIN_ID = {
+  arbitrumOne: 42161,
+  arbitrumGoerli: 421613,
+  development: 5777,
+};
