@@ -46,15 +46,11 @@ export function ClaimModal(props: IClaimModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(false);
 
   useEffect(() => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
-    isCorrectNetworkConnected().then((isCorrect) => {
-      setIsCorrectNetwork(isCorrect);
     });
   }, []);
 
@@ -68,6 +64,11 @@ export function ClaimModal(props: IClaimModalProps) {
   const getBalance = async () => {
     try {
       setIsLoading(true);
+
+      if (!isCorrectNetwork) {
+        await onNetworkSwitch();
+      }
+
       setLoadingMessage("Getting Escrow information");
 
       const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
@@ -120,8 +121,10 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   React.useEffect(() => {
-    getBalance();
-  }, [props.escrowId]);
+    if (props.escrowId && !escrowBalance) {
+      getBalance();
+    }
+  }, [props.escrowId, escrowBalance]);
 
   const renderClaimableBalance = React.useCallback(() => {
     if (isCorrectNetwork) {
@@ -195,8 +198,8 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
     setIsCorrectNetwork(await isCorrectNetworkConnected());
+    if (!isCorrectNetwork) await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
   };
 
   const ModalBody = () => {
