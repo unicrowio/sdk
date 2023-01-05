@@ -85,7 +85,7 @@ export const connect = async (): Promise<string | null> => {
 
 export const switchNetwork = async (name: DefaultNetwork) => {
   const ethereum = checkIsWalletInstalled();
-  const { chainName, rpcUrls, chainId, nativeCurrency } = networks[name];
+  const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } = networks[name];
 
   registerAccountChangedListener();
 
@@ -94,6 +94,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
     chainName,
     rpcUrls,
     nativeCurrency,
+    blockExplorerUrls
   };
 
   const switchParams: any = { chainId: addParams.chainId };
