@@ -130,7 +130,9 @@ export function ReleaseModal(props: IReleaseModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && props.callbacks.connected && props.callbacks.connected();
+      props.callbacks &&
+        props.callbacks.connected &&
+        props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

@@ -179,7 +179,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
     token,
     arbitration,
     settlement,
-  })
+  });
 
   return {
     escrow,
@@ -234,7 +234,8 @@ export const getEscrowData = async (
     allEscrowData,
   );
 
-  const marketplace = escrow.marketplace === ADDRESS_ZERO ? null : escrow.marketplace;
+  const marketplace =
+    escrow.marketplace === ADDRESS_ZERO ? null : escrow.marketplace;
 
   const { connectedUser, connectedWallet } = await getConnectedUser({
     buyer: escrow.buyer === ADDRESS_ZERO ? null : escrow.buyer,
@@ -242,7 +243,7 @@ export const getEscrowData = async (
     arbitrator: arbitration?.arbitrator,
     marketplace: escrow?.marketplace,
   });
-  
+
   // duplicated with object token
   delete escrow.tokenAddress;
 

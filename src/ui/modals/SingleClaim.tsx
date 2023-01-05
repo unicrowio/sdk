@@ -148,7 +148,9 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && props.callbacks.connected && props.callbacks.connected();
+      props.callbacks &&
+        props.callbacks.connected &&
+        props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

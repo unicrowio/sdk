@@ -1,3 +1,4 @@
 import { ADDRESS_ZERO } from "./constants";
 
-export const nullOrValue = (value: any) => value === ADDRESS_ZERO ? null : value.toString();
+export const nullOrValue = (value: any) =>
+  value === ADDRESS_ZERO ? null : value.toString();

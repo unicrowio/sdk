@@ -139,7 +139,7 @@ export interface IEscrowData {
   marketplace: string | null;
   buyer: string;
   seller: string;
-  token: ITokenInfo
+  token: ITokenInfo;
 
   challengePeriod: number;
   challengePeriodStart: Date;
@@ -391,7 +391,7 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   token: {
     /** Token used in the payment (null for ETH) */
     address: string | null;
-  },
+  };
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */

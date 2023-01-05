@@ -42,7 +42,9 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && props.callbacks.connected && props.callbacks.connected();
+      props.callbacks &&
+        props.callbacks.connected &&
+        props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
