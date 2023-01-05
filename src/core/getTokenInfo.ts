@@ -26,7 +26,7 @@ export const getTokenInfo = async (
 ): Promise<ITokenInfo> => {
   if (isSameAddress(tokenAddress, ETH_ADDRESS)) {
     return {
-      tokenAddress,
+      address: tokenAddress,
       symbol: "ETH",
       decimals: 18,
     };
