@@ -7,7 +7,7 @@ import {
 } from "../typing";
 import { errorHandler } from "./errorHandler";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
-import { parseOfferSettlement } from "parsers/eventOfferSettlement";
+import { parseOfferSettlement } from "../parsers/eventOfferSettlement";
 
 /**
  * Sends an offer to settle the payment arbitrarily between the buyer and the seller. The other party must confirm

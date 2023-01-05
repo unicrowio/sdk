@@ -24,7 +24,7 @@ import {
 } from "../wallet/index";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
 
-import { parsePay } from "parsers/eventPay";
+import { parsePay } from "../parsers/eventPay";
 import { BigNumberish } from "ethers";
 
 /**

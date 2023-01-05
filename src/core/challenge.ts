@@ -7,7 +7,7 @@ import {
   IChallengeTransactionCallbacks,
 } from "../typing";
 import { errorHandler } from "./errorHandler";
-import { parseChallenge } from "parsers/eventChallenge";
+import { parseChallenge } from "../parsers/eventChallenge";
 
 /**
  * Performs a challenge and returns its data.
