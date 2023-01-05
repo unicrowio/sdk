@@ -46,7 +46,8 @@ export function ClaimModal(props: IClaimModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(false);
+  const [isCorrectNetwork, setIsCorrectNetwork] =
+    React.useState<boolean>(false);
 
   useEffect(() => {
     startListeningNetwork((network) => {
@@ -199,7 +200,8 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const onNetworkSwitch = async () => {
     setIsCorrectNetwork(await isCorrectNetworkConnected());
-    if (!isCorrectNetwork) await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
+    if (!isCorrectNetwork)
+      await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
   };
 
   const ModalBody = () => {
