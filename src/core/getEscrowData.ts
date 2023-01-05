@@ -21,6 +21,7 @@ import {
 } from "../wallet";
 
 import { bipsToPercentage, isSameAddress } from "../helpers";
+import { nullOrValue } from "./../helpers/nullOrValue";
 import {
   DataStructOutput,
   SettlementStructOutput,
@@ -121,7 +122,9 @@ const parseEscrow = (
     marketplace: marketplace === ADDRESS_ZERO ? null : marketplace,
     buyer,
     seller,
-    token: { address: tokenAddress },
+    token: {
+      address: tokenAddress,
+    },
     // Splits
     splitMarketplace,
     splitBuyer,
@@ -173,13 +176,6 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
     data.escrow,
     settlement?.latestSettlementOfferAddress,
   );
-
-  console.log({
-    escrow,
-    token,
-    arbitration,
-    settlement,
-  });
 
   return {
     escrow,
@@ -234,8 +230,7 @@ export const getEscrowData = async (
     allEscrowData,
   );
 
-  const marketplace =
-    escrow.marketplace === ADDRESS_ZERO ? null : escrow.marketplace;
+  const marketplace = nullOrValue(escrow.marketplace);
 
   const { connectedUser, connectedWallet } = await getConnectedUser({
     buyer: escrow.buyer === ADDRESS_ZERO ? null : escrow.buyer,
@@ -247,15 +242,6 @@ export const getEscrowData = async (
   // duplicated with object token
   delete escrow.tokenAddress;
 
-  console.log({
-    ...escrow,
-    token,
-    arbitration,
-    settlement,
-    connectedUser,
-    connectedWallet,
-  });
-
   return {
     ...escrow,
     token,
@@ -263,6 +249,6 @@ export const getEscrowData = async (
     settlement,
     connectedUser,
     connectedWallet,
-    marketplace,
+    marketplace
   };
 };
