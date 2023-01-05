@@ -121,7 +121,7 @@ const parseEscrow = (
     marketplace: marketplace === ADDRESS_ZERO ? null : marketplace,
     buyer,
     seller,
-    tokenAddress,
+    token: { address: tokenAddress },
     // Splits
     splitMarketplace,
     splitBuyer,
@@ -150,14 +150,14 @@ const parseToken = (data: TokenStruct): ITokenInfo | null => {
   // is ETH
   if (data.address_ === ADDRESS_ZERO)
     return {
-      tokenAddress: ADDRESS_ZERO,
+      address: ADDRESS_ZERO,
       decimals: 18,
       symbol: "ETH",
     };
 
   // is ERC-20
   return {
-    tokenAddress: data.address_,
+    address: data.address_,
     symbol: data.symbol,
     decimals: Number(data.decimals),
   };
@@ -173,6 +173,13 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
     data.escrow,
     settlement?.latestSettlementOfferAddress,
   );
+
+  console.log({
+    escrow,
+    token,
+    arbitration,
+    settlement,
+  })
 
   return {
     escrow,
@@ -227,15 +234,26 @@ export const getEscrowData = async (
     allEscrowData,
   );
 
+  const marketplace = escrow.marketplace === ADDRESS_ZERO ? null : escrow.marketplace;
+
   const { connectedUser, connectedWallet } = await getConnectedUser({
     buyer: escrow.buyer === ADDRESS_ZERO ? null : escrow.buyer,
     seller: escrow.seller,
     arbitrator: arbitration?.arbitrator,
     marketplace: escrow?.marketplace,
   });
-
+  
   // duplicated with object token
   delete escrow.tokenAddress;
+
+  console.log({
+    ...escrow,
+    token,
+    arbitration,
+    settlement,
+    connectedUser,
+    connectedWallet,
+  });
 
   return {
     ...escrow,
@@ -244,5 +262,6 @@ export const getEscrowData = async (
     settlement,
     connectedUser,
     connectedWallet,
+    marketplace,
   };
 };

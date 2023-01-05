@@ -165,7 +165,7 @@ export function ClaimModal(props: IClaimModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && callbacks.connected && callbacks.connected();
+      props.callbacks && props.callbacks.connected && props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

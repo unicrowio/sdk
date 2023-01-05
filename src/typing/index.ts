@@ -123,10 +123,10 @@ export interface EscrowStatusView {
  *
  */
 export interface ITokenInfo {
-  tokenAddress: string;
-  symbol: string;
+  address?: string;
+  symbol?: string;
   /** Number of token decimals. To get "human readable" format, divide the amount by pow(10, decimals) */
-  decimals: number;
+  decimals?: number;
 }
 
 export interface IEscrowData {
@@ -139,7 +139,7 @@ export interface IEscrowData {
   marketplace: string | null;
   buyer: string;
   seller: string;
-  tokenAddress: string;
+  token: ITokenInfo
 
   challengePeriod: number;
   challengePeriodStart: Date;
@@ -388,8 +388,10 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   marketplace: string;
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
-  /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  token: {
+    /** Token used in the payment (null for ETH) */
+    address: string | null;
+  },
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */

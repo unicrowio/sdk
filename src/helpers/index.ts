@@ -16,3 +16,4 @@ export { parse } from "./toBigNumber";
 export { getExchangeRates } from "./getExchangeRates";
 export * from "./constants";
 export { reduceAddress, addressWithYou } from "./addressFormat";
+export { nullOrValue } from "./nullOrValue";
