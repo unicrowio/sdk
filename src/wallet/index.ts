@@ -85,7 +85,7 @@ export const connect = async (): Promise<string | null> => {
 
 export const switchNetwork = async (name: DefaultNetwork) => {
   const ethereum = checkIsWalletInstalled();
-  const { chainName, rpcUrls, chainId, nativeCurrency } = networks[name];
+  const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } = networks[name];
 
   registerAccountChangedListener();
 
@@ -94,6 +94,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
     chainName,
     rpcUrls,
     nativeCurrency,
+    blockExplorerUrls
   };
 
   const switchParams: any = { chainId: addParams.chainId };
@@ -106,21 +107,28 @@ export const switchNetwork = async (name: DefaultNetwork) => {
    * https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods
    */
   try {
-    await ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [addParams],
+    // check if the chain to connect to is installed
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [switchParams], // chainId must be in hexadecimal numbers
     });
-  } catch (addError) {
-    console.log(addError);
-  }
+  } catch (error) {
+    // This error code indicates that the chain has not been added to MetaMask
+    // if it is not, then install it into the user MetaMask
+    if (error.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            addParams
+          ],
+        });
+      } catch (addError) {
+        throw new Error("User rejected network addition");
+      }
+    }
 
-  try {
-    await ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [switchParams],
-    });
-  } catch (switchError) {
-    console.log(switchError);
+    throw new Error("User rejected network switch");
   }
 
   const connected = await getNetwork();
