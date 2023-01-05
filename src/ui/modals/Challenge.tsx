@@ -18,15 +18,19 @@ import {
   DataDisplayer,
 } from "../../ui/components/DataDisplayer";
 import { useModalStates } from "../../ui/hooks/useModalStates";
-import { addressWithYou, reduceAddress } from ".../../helpers/addressFormat";
+import {
+  addressWithYou,
+  reduceAddress,
+  displayableAmount,
+  BUYER,
+  SELLER,
+  displayChallengePeriod,
+} from ".../../helpers";
 import { toast } from "../components/notification/toast";
 import { challenge } from "../../core/challenge";
-import { displayableAmount } from "../../helpers/displayAmount";
 import { getEscrowData } from "../../core/getEscrowData";
-import { BUYER, SELLER } from "../../helpers/constants";
 import styled from "styled-components";
 import { Forbidden } from "../components/Forbidden";
-import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import {

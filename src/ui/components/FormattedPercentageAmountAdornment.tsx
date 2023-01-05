@@ -1,5 +1,5 @@
 import { ITokenInfo } from "../../typing";
-import { displayableAmountBN } from "../../helpers/displayAmount";
+import { displayableAmountBN } from "../../helpers";
 import BigNumber from "bignumber.js";
 import React from "react";
 

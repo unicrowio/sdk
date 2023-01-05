@@ -1,5 +1,10 @@
 import { ChallengeParsedPayload } from "../typing";
-import { ADDRESS_ZERO, bipsToPercentage, toDate } from "../helpers";
+import {
+  ADDRESS_ZERO,
+  bipsToPercentage,
+  nullOrValue,
+  toDate,
+} from "../helpers";
 import { getEventByName } from "./common";
 
 export const parseChallenge = (tx: any): ChallengeParsedPayload => {
@@ -27,8 +32,7 @@ export const parseChallenge = (tx: any): ChallengeParsedPayload => {
 
   const [consensusBuyer, consensusSeller] = consensus;
 
-  const marketplace: string | null =
-    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplace: string | null = nullOrValue(_marketplace);
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   return {

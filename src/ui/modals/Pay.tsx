@@ -14,9 +14,13 @@ import {
   ContainerDataDisplayer,
 } from "../../ui/components/DataDisplayer";
 import { useModalStates } from "../../ui/hooks/useModalStates";
-import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
-
-import { addressWithYou, reduceAddress } from "../../helpers/addressFormat";
+import {
+  displayChallengePeriod,
+  addressWithYou,
+  reduceAddress,
+  ADDRESS_ZERO,
+  formatAmount,
+} from "../../helpers";
 import { toast } from "../components/notification/toast";
 import {
   getWalletAccount,
@@ -24,12 +28,9 @@ import {
   startListeningNetwork,
   switchNetwork,
 } from "../../wallet";
-import { ADDRESS_ZERO } from "../../helpers/constants";
-import { formatAmount } from "../../helpers/formatAmount";
 import { MARKER } from "../../config/marker";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "config/setup";
-import { AddressesToCheck } from "helpers/validateParameters";
 
 export function PayModal(props: IPaymentModalProps) {
   const {

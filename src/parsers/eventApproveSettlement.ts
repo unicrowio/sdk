@@ -1,5 +1,5 @@
 import { ApproveSettlementParsedPayload } from "../typing";
-import { ADDRESS_ZERO, bipsToPercentage, toDate } from "../helpers";
+import { bipsToPercentage, toDate, nullOrValue } from "../helpers";
 import { getEventByName } from "./common";
 
 export const parseApproveSettlement = (
@@ -40,8 +40,7 @@ export const parseApproveSettlement = (
 
   const [consensusBuyer, consensusSeller] = consensus;
 
-  const marketplace: string | null =
-    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplace: string | null = nullOrValue(_marketplace);
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   return {

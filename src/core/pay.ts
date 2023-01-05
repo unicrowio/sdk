@@ -3,7 +3,10 @@ import {
   ADDRESS_ZERO,
   ZERO_FEE_VALUE,
   ETH_ADDRESS,
-} from "../helpers/constants";
+  validateParameters,
+  checkBalance,
+  parse,
+} from "../helpers";
 import { getContractAddress } from "../config";
 import {
   IPaymentProps,
@@ -21,9 +24,7 @@ import {
 } from "../wallet/index";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
 
-import { validateParameters } from "../helpers/validateParameters";
 import { parsePay } from "parsers/eventPay";
-import { checkBalance, parse } from "../helpers";
 import { BigNumberish } from "ethers";
 
 /**

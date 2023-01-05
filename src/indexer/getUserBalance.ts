@@ -1,9 +1,9 @@
 import {
+  calculateSplit,
+  groupBy,
   displayableAmount,
   displayableAmountBN,
-} from "../helpers/displayAmount";
-import { calculateSplit } from "../helpers/calculateSplit";
-import { groupBy } from "../helpers/groupBy";
+} from "../helpers";
 import { GraphQLClient } from "graphql-request";
 import { getTokenInfo } from "../core";
 import {

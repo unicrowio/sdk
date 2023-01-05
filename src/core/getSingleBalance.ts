@@ -1,8 +1,8 @@
-import { getSplitFromLoggedUser } from "../helpers/calculateSplit";
 import {
+  getSplitFromLoggedUser,
   displayableAmount,
   displayableAmountBN,
-} from "../helpers/displayAmount";
+} from "../helpers";
 import BigNumber from "bignumber.js";
 import { IBalanceWithTokenInfo } from "../typing";
 import { getEscrowData } from "./getEscrowData";

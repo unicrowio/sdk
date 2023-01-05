@@ -6,7 +6,7 @@ import {
 } from "../typing";
 import { errorHandler } from "./errorHandler";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
-import { validateAddress } from "../helpers/validateAddress";
+import { validateAddress } from "../helpers";
 import { parseProposalArbitrator } from "parsers/eventProposalArbitrator";
 
 /**

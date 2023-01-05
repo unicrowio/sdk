@@ -1,5 +1,4 @@
-import { isSameAddress } from "../helpers";
-import { ADDRESS_ZERO, BUYER, SELLER } from "../helpers/constants";
+import { isSameAddress, ADDRESS_ZERO, BUYER, SELLER } from "../helpers";
 import { EscrowStatus, ICalculateStatusParams, IEscrowStatus } from "../typing";
 
 const whoMadeLatestSettlementOffer = (

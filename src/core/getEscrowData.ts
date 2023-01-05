@@ -1,7 +1,13 @@
 import { BigNumber } from "ethers";
 import { BigNumber as BigNumberJs } from "bignumber.js";
 import { getContractAddress } from "../config";
-import { ADDRESS_ZERO, consensus } from "../helpers/constants";
+import {
+  ADDRESS_ZERO,
+  consensus,
+  nullOrValue,
+  bipsToPercentage,
+  isSameAddress,
+} from "../helpers";
 import { calculateStatus } from "./calculateStatus";
 import {
   IArbitratorInfo,
@@ -20,8 +26,6 @@ import {
   autoSwitchNetwork,
 } from "../wallet";
 
-import { bipsToPercentage, isSameAddress } from "../helpers";
-import { nullOrValue } from "./../helpers/nullOrValue";
 import {
   DataStructOutput,
   SettlementStructOutput,
@@ -96,7 +100,7 @@ const parseEscrow = (
   const splitMarketplace: number = percentageMarketplace;
 
   const claimed = Boolean(data.claimed);
-  const marketplace: string = data.marketplace.toString();
+  const marketplace: string | null = nullOrValue(data.marketplace);
 
   const amountBigNumberJs = new BigNumberJs(amount.toString());
 
@@ -119,7 +123,7 @@ const parseEscrow = (
     escrowId,
     amount: amountBigNumberJs,
     // Addresses
-    marketplace: marketplace === ADDRESS_ZERO ? null : marketplace,
+    marketplace,
     buyer,
     seller,
     token: {
@@ -233,7 +237,7 @@ export const getEscrowData = async (
   const marketplace = nullOrValue(escrow.marketplace);
 
   const { connectedUser, connectedWallet } = await getConnectedUser({
-    buyer: escrow.buyer === ADDRESS_ZERO ? null : escrow.buyer,
+    buyer: nullOrValue(escrow.buyer),
     seller: escrow.seller,
     arbitrator: arbitration?.arbitrator,
     marketplace: escrow?.marketplace,
@@ -249,6 +253,6 @@ export const getEscrowData = async (
     settlement,
     connectedUser,
     connectedWallet,
-    marketplace
+    marketplace,
   };
 };
