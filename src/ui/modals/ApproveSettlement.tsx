@@ -24,8 +24,7 @@ import {
   DataDisplayer,
 } from "../components/DataDisplayer";
 import { renderModal } from "..";
-import { displayableAmount } from "../../helpers/displayAmount";
-import { BUYER, SELLER } from "../../helpers/constants";
+import { displayableAmount, BUYER, SELLER } from "../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
 

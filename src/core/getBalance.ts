@@ -4,7 +4,7 @@ import {
   getWalletAccount,
   autoSwitchNetwork,
 } from "../wallet";
-import { ETH_ADDRESS } from "../helpers/constants";
+import { ETH_ADDRESS } from "../helpers";
 import { BigNumber } from "ethers";
 
 /**

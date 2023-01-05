@@ -1,11 +1,11 @@
-import { ITokenInfo } from "../../typing";
-import { displayableAmountBN } from "../../helpers/displayAmount";
+import { IToken } from "../../typing";
+import { displayableAmountBN } from "../../helpers";
 import BigNumber from "bignumber.js";
 import React from "react";
 
 type PropsTypes = {
   amount: BigNumber; // ERC20 | Ether
-  tokenInfo: ITokenInfo;
+  tokenInfo: IToken;
   percentage: string;
 };
 

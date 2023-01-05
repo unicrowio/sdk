@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO, bipsToPercentage, toDate } from "../helpers";
+import { nullOrValue, bipsToPercentage, toDate } from "../helpers";
 import { ArbitrateParsedPayload } from "../typing";
 import { getEventByName } from "./common";
 
@@ -35,8 +35,7 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     amount_arbitrator,
   ] = amounts;
 
-  const marketplace: string | null =
-    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
+  const marketplace: string | null = nullOrValue(_marketplace);
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   return {

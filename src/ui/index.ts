@@ -1,4 +1,4 @@
-import { tag } from "../helpers/tag";
+import { tag, ROOT_UNICROW_SDK_ELEMENT, validateParameters } from "../helpers";
 import { jss } from "../ui/jss";
 import {
   GetResponseUserBalance,
@@ -23,7 +23,6 @@ import {
 } from "../typing";
 import ReactDOM from "react-dom";
 import React, { FunctionComponent } from "react";
-import { ROOT_UNICROW_SDK_ELEMENT } from "../helpers/constants";
 import Deferred from "../helpers/deferred";
 import {
   RefundModal,
@@ -37,7 +36,6 @@ import {
   ApproveSettlementModal,
   SettlementOfferModal,
 } from "./modals";
-import { validateParameters } from "../helpers/validateParameters";
 import { toast } from "./components/notification/toast";
 
 // load Google font Inter

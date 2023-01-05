@@ -5,7 +5,7 @@ import {
   IPaymentModalProps,
   IPayTransactionCallbacks,
   IPayTransactionPayload,
-  ITokenInfo,
+  IToken,
 } from "../../typing";
 import { pay } from "../../core/pay";
 import { Subtitle, ScopedModal, Amount, Button } from "../../ui/components";
@@ -14,9 +14,13 @@ import {
   ContainerDataDisplayer,
 } from "../../ui/components/DataDisplayer";
 import { useModalStates } from "../../ui/hooks/useModalStates";
-import { displayChallengePeriod } from "../../helpers/displayChallengePeriod";
-
-import { addressWithYou, reduceAddress } from "../../helpers/addressFormat";
+import {
+  displayChallengePeriod,
+  addressWithYou,
+  reduceAddress,
+  ADDRESS_ZERO,
+  formatAmount,
+} from "../../helpers";
 import { toast } from "../components/notification/toast";
 import {
   getWalletAccount,
@@ -24,12 +28,9 @@ import {
   startListeningNetwork,
   switchNetwork,
 } from "../../wallet";
-import { ADDRESS_ZERO } from "../../helpers/constants";
-import { formatAmount } from "../../helpers/formatAmount";
 import { MARKER } from "../../config/marker";
 import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { DefaultNetwork } from "config/setup";
-import { AddressesToCheck } from "helpers/validateParameters";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -47,7 +48,7 @@ export function PayModal(props: IPaymentModalProps) {
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
   );
-  const [tokenInfo, setTokenInfo] = React.useState<ITokenInfo>();
+  const [tokenInfo, setTokenInfo] = React.useState<IToken>();
   const [buyer, setBuyer] = React.useState<string | null>();
 
   const [walletUser, setWalletUser] = React.useState<string | null>(null);

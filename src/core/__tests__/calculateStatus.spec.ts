@@ -1,4 +1,4 @@
-import { BUYER, SELLER } from "../../helpers/constants";
+import { BUYER, SELLER } from "../../helpers";
 import { EscrowStatus, ICalculateStatusParams } from "../../typing";
 import { calculateStatus } from "../calculateStatus";
 

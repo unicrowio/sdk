@@ -12,15 +12,18 @@ import {
 } from "../../ui/components/DataDisplayer";
 import { Button, Subtitle, Amount, ScopedModal } from "../../ui/components";
 import { useModalStates } from "../../ui/hooks/useModalStates";
-import { addressWithYou, reduceAddress } from "../../helpers/addressFormat";
 import { toast } from "../components/notification/toast";
 import { release } from "../../core/release";
-import { displayableAmount } from "../../helpers/displayAmount";
 import { getEscrowData } from "../../core/getEscrowData";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "ui/hooks";
-import { displayChallengePeriod } from "helpers";
+import {
+  displayChallengePeriod,
+  addressWithYou,
+  reduceAddress,
+  displayableAmount,
+} from "helpers";
 import {
   isCorrectNetworkConnected,
   startListeningNetwork,
@@ -130,7 +133,9 @@ export function ReleaseModal(props: IReleaseModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && callbacks.connected && callbacks.connected();
+      props.callbacks &&
+        props.callbacks.connected &&
+        props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

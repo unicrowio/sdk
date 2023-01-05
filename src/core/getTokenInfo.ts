@@ -1,15 +1,14 @@
 import { ERC20__factory } from "@unicrowio/ethers-types";
-import { ETH_ADDRESS } from "../helpers/constants";
-import { ITokenInfo } from "../typing";
+import { ETH_ADDRESS, isSameAddress } from "../helpers";
+import { IToken } from "../typing";
 import { getJsonRpcProvider } from "./getJsonRpcProvider";
-import { isSameAddress } from "../helpers";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
   const provider = await getJsonRpcProvider();
   const token = ERC20__factory.connect(tokenAddress, provider!);
 
   return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
-    tokenAddress,
+    address: tokenAddress,
     symbol: results[0],
     decimals: results[1],
   }));
@@ -19,21 +18,21 @@ const fetchTokenInfo = async (tokenAddress: string) => {
  *
  * @throws Error
  * If token info doesn't exist on this address or the token address couldn't be parsed.
- * @returns {Promise<ITokenInfo>}
+ * @returns {Promise<IToken>}
  */
 export const getTokenInfo = async (
   tokenAddress = ETH_ADDRESS,
-): Promise<ITokenInfo> => {
+): Promise<IToken> => {
   if (isSameAddress(tokenAddress, ETH_ADDRESS)) {
     return {
-      tokenAddress,
+      address: tokenAddress,
       symbol: "ETH",
       decimals: 18,
     };
   }
 
   const storedValue = window.localStorage.getItem(tokenAddress);
-  let tokenInfo: ITokenInfo | null = null;
+  let tokenInfo: IToken | null = null;
 
   // There was some value stored
   if (storedValue) {

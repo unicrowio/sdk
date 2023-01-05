@@ -6,8 +6,8 @@ import {
 } from "../typing";
 import { errorHandler } from "./errorHandler";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
-import { validateAddress } from "../helpers/validateAddress";
-import { parseProposalArbitrator } from "parsers/eventProposalArbitrator";
+import { validateAddress } from "../helpers";
+import { parseProposalArbitrator } from "../parsers/eventProposalArbitrator";
 
 /**
  * One of the parties (buyer or seller) can call this to propose an arbitrator

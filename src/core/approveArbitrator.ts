@@ -8,7 +8,7 @@ import {
 import { errorHandler } from "./errorHandler";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
 import { percentageToBips } from "../helpers";
-import { parseApproveArbitrator } from "parsers/eventApproveArbitrator";
+import { parseApproveArbitrator } from "../parsers/eventApproveArbitrator";
 
 /**
  * Approves an arbitrator proposed by another party (i.e. by seller if buyer proposed, by buyer if seller proposed).

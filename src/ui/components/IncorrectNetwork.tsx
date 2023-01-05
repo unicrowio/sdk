@@ -1,7 +1,7 @@
 import React from "react";
 
 import ActionForbidden from "../../assets/ActionForbiddenAsset";
-import { transformSVGInBase64 } from "../../helpers/transformSVGInBase64";
+import { transformSVGInBase64 } from "../../helpers";
 import { Button } from ".";
 import styled from "styled-components";
 

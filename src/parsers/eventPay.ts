@@ -1,5 +1,5 @@
 import { PayParsedPayload } from "../typing";
-import { bipsToPercentage, toDate, ADDRESS_ZERO } from "../helpers";
+import { bipsToPercentage, toDate, nullOrValue } from "../helpers";
 import { getEventByName } from "./common";
 import { calculateAmounts } from "../core";
 
@@ -31,14 +31,14 @@ export const parsePay = (events: any[]): PayParsedPayload => {
   ] = escrow;
 
   // parsers
-  const arbitrator: string =
-    _arbitrator === ADDRESS_ZERO ? null : _arbitrator.toString();
+  const arbitrator: string | null = nullOrValue(_arbitrator);
+  const marketplace: string | null = nullOrValue(_marketplace);
+  const token_address: string | null = nullOrValue(currency);
+
   const arbitratorFee = arbitrator
     ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
     : 0;
 
-  const marketplace: string | null =
-    _marketplace === ADDRESS_ZERO ? null : _marketplace.toString();
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
@@ -80,7 +80,9 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     challengePeriodEnd: toDate(challengePeriodEnd),
     marketplace,
     marketplaceFee,
-    currency: currency.toString(),
+    token: {
+      address: token_address,
+    },
     claimed: !!claimed,
     consensusBuyer,
     consensusSeller,

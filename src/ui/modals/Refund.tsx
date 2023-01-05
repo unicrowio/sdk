@@ -18,6 +18,7 @@ import {
   displayableAmount,
   SELLER,
   displayChallengePeriod,
+  addressWithYou,
 } from "../../helpers";
 import { toast } from "../../ui/components/notification/toast";
 import { refund, getEscrowData } from "../../core";
@@ -25,7 +26,6 @@ import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useModalStates } from "ui/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/components/DataDisplayer";
-import { addressWithYou } from "helpers/addressFormat";
 import { useCountdownChallengePeriod } from "ui/hooks";
 import {
   isCorrectNetworkConnected,
@@ -139,7 +139,9 @@ export function RefundModal(props: IRefundModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && callbacks.connected && callbacks.connected();
+      props.callbacks &&
+        props.callbacks.connected &&
+        props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

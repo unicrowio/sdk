@@ -10,7 +10,7 @@ import { IArbitrateModalProps, IGetEscrowData } from "../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { getEscrowData } from "../../core/getEscrowData";
 import { ScopedModal } from "../components";
-import { BUYER, SELLER } from "../../helpers/constants";
+import { BUYER, SELLER } from "../../helpers";
 import { Forbidden } from "../components/Forbidden";
 import {
   isCorrectNetworkConnected,

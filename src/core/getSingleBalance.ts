@@ -1,8 +1,8 @@
-import { getSplitFromLoggedUser } from "../helpers/calculateSplit";
 import {
+  getSplitFromLoggedUser,
   displayableAmount,
   displayableAmountBN,
-} from "../helpers/displayAmount";
+} from "../helpers";
 import BigNumber from "bignumber.js";
 import { IBalanceWithTokenInfo } from "../typing";
 import { getEscrowData } from "./getEscrowData";
@@ -38,7 +38,7 @@ export const getSingleBalance = async (
   const amountBN = new BigNumber(amount);
 
   const balance: IBalanceWithTokenInfo = {
-    tokenAddress: escrowData.token.tokenAddress,
+    tokenAddress: escrowData.token.address,
     tokenSymbol: escrowData.token.symbol,
     decimals: escrowData.token.decimals,
     status: "Ready to claim",

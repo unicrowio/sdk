@@ -3,7 +3,7 @@ import { getContractAddress } from "../config";
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from "../typing";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
 import { errorHandler } from "./errorHandler";
-import { parseRelease } from "parsers/eventRelease";
+import { parseRelease } from "../parsers/eventRelease";
 
 /**
  * Release the escrow to the seller and to all other parties that charge a fee from it.

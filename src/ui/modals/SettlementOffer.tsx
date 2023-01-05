@@ -12,7 +12,7 @@ import { useModalStates } from "../../ui/hooks/useModalStates";
 import styled from "styled-components";
 import { offerSettlement } from "../../core/offerSettlement";
 import { toast } from "../components/notification/toast";
-import { SELLER, BUYER } from "../../helpers/constants";
+import { SELLER, BUYER } from "../../helpers";
 import { FormattedPercentageAmountAdornment } from "../../ui/components/FormattedPercentageAmountAdornment";
 import { renderModal } from "..";
 import { ApproveSettlementModal } from "./ApproveSettlement";

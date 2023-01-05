@@ -4,7 +4,7 @@ import {
   IClaimMultipleModalProps,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
-  ITokenInfo,
+  IToken,
 } from "../../typing";
 import { Button, Table, ScopedModal, Symbol } from "../components";
 import { useModalStates } from "../hooks/useModalStates";
@@ -42,7 +42,9 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     },
     connected: () => {
       setLoadingMessage("Connected");
-      props.callbacks && callbacks.connected && callbacks.connected();
+      props.callbacks &&
+        props.callbacks.connected &&
+        props.callbacks.connected();
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -77,7 +79,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
   const renderReadyForClaim = React.useCallback(() => {
     return props.balances.readyForClaim.map((balance: IBalanceWithTokenUSD) => {
-      const [rowTokenInfo, setRowTokenInfo] = React.useState<ITokenInfo>();
+      const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
       const [tokenInfoLoading, setTokenInfoLoading] =
         React.useState<boolean>(false);
 

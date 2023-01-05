@@ -1,7 +1,13 @@
 import { BigNumber } from "ethers";
 import { BigNumber as BigNumberJs } from "bignumber.js";
 import { getContractAddress } from "../config";
-import { ADDRESS_ZERO, consensus } from "../helpers/constants";
+import {
+  ADDRESS_ZERO,
+  consensus,
+  nullOrValue,
+  bipsToPercentage,
+  isSameAddress,
+} from "../helpers";
 import { calculateStatus } from "./calculateStatus";
 import {
   IArbitratorInfo,
@@ -10,7 +16,7 @@ import {
   IGetConnectedUser,
   IGetEscrowData,
   ISettlement,
-  ITokenInfo,
+  IToken,
 } from "../typing";
 
 import { Unicrow__factory } from "@unicrowio/ethers-types";
@@ -20,7 +26,6 @@ import {
   autoSwitchNetwork,
 } from "../wallet";
 
-import { bipsToPercentage, isSameAddress } from "../helpers";
 import {
   DataStructOutput,
   SettlementStructOutput,
@@ -95,7 +100,7 @@ const parseEscrow = (
   const splitMarketplace: number = percentageMarketplace;
 
   const claimed = Boolean(data.claimed);
-  const marketplace: string = data.marketplace.toString();
+  const marketplace: string | null = nullOrValue(data.marketplace);
 
   const amountBigNumberJs = new BigNumberJs(amount.toString());
 
@@ -118,10 +123,12 @@ const parseEscrow = (
     escrowId,
     amount: amountBigNumberJs,
     // Addresses
-    marketplace: marketplace === ADDRESS_ZERO ? null : marketplace,
+    marketplace,
     buyer,
     seller,
-    tokenAddress,
+    token: {
+      address: tokenAddress,
+    },
     // Splits
     splitMarketplace,
     splitBuyer,
@@ -146,18 +153,18 @@ const parseSettlement = (data: SettlementStructOutput): ISettlement | null => {
   };
 };
 
-const parseToken = (data: TokenStruct): ITokenInfo | null => {
+const parseToken = (data: TokenStruct): IToken | null => {
   // is ETH
   if (data.address_ === ADDRESS_ZERO)
     return {
-      tokenAddress: ADDRESS_ZERO,
+      address: ADDRESS_ZERO,
       decimals: 18,
       symbol: "ETH",
     };
 
   // is ERC-20
   return {
-    tokenAddress: data.address_,
+    address: data.address_,
     symbol: data.symbol,
     decimals: Number(data.decimals),
   };
@@ -167,7 +174,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
   const arbitration: IArbitratorInfo | null = parseArbitration(data.arbitrator);
 
   const settlement: ISettlement | null = parseSettlement(data.settlement);
-  const token: ITokenInfo | null = parseToken(data.token);
+  const token: IToken | null = parseToken(data.token);
   const escrow: IEscrowData = parseEscrow(
     escrowId,
     data.escrow,
@@ -227,8 +234,10 @@ export const getEscrowData = async (
     allEscrowData,
   );
 
+  const marketplace = nullOrValue(escrow.marketplace);
+
   const { connectedUser, connectedWallet } = await getConnectedUser({
-    buyer: escrow.buyer === ADDRESS_ZERO ? null : escrow.buyer,
+    buyer: nullOrValue(escrow.buyer),
     seller: escrow.seller,
     arbitrator: arbitration?.arbitrator,
     marketplace: escrow?.marketplace,
@@ -244,5 +253,6 @@ export const getEscrowData = async (
     settlement,
     connectedUser,
     connectedWallet,
+    marketplace,
   };
 };

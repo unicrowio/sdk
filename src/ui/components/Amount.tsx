@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Chip } from "../../ui/components/Chip";
-import { formatAmount } from "../../helpers/formatAmount";
+import { formatAmount } from "../../helpers";
 
 const Style = styled.div`
   display: flex;
