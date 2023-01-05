@@ -11,13 +11,15 @@ interface IEnsAddresses {
 }
 
 /**
- * Only symbol and address of a token (no decimals i.e. rounding precision)
+ * Properties of a token, incl. decimals as in its rounding precision.
  *
  */
 export interface IToken {
   /** 'DAI' | 'USDT' | 'USDC' | 'ETH' | string  */
-  symbol: tTokenSymbol;
-  address: string;
+  symbol?: tTokenSymbol;
+  address?: string;
+  /** Number of token decimals. To get "human readable" format, divide the amount by pow(10, decimals) */
+  decimals?: number;
 }
 
 /**
@@ -118,16 +120,6 @@ export interface EscrowStatusView {
   latest_settlement_offer_buyer?: number;
 }
 
-/**
- * Properties of a token, incl. decimals as in its rounding precision.
- *
- */
-export interface ITokenInfo {
-  address?: string;
-  symbol?: string;
-  /** Number of token decimals. To get "human readable" format, divide the amount by pow(10, decimals) */
-  decimals?: number;
-}
 
 export interface IEscrowData {
   amount: BigNumberJs; // ERC20 | Ether
@@ -139,7 +131,7 @@ export interface IEscrowData {
   marketplace: string | null;
   buyer: string;
   seller: string;
-  token: ITokenInfo;
+  token: IToken;
 
   challengePeriod: number;
   challengePeriodStart: Date;
@@ -167,7 +159,7 @@ export interface IEscrowData {
 }
 
 export interface IEscrowDataWithTokenInfo extends IEscrowData {
-  tokenInfo: ITokenInfo;
+  tokenInfo: IToken;
 }
 
 export interface GenericParsedTxPayload {
@@ -804,7 +796,7 @@ export type IGetConnectedUser = {
  */
 export interface IGetEscrowData extends Omit<IEscrowData, "tokenAddress"> {
   /** interface with tokenAddress, decimals, symbol */
-  token: ITokenInfo;
+  token: IToken;
   /** interface with arbitrator, consensusSeller, consensusBuyer, arbitrated, arbitratorFee */
   arbitration: IArbitratorInfo | null;
   /** interface with latestSettlementOfferAddress, latestSettlementOfferBuyer, latestSettlementOfferSeller */

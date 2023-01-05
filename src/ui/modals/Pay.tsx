@@ -5,7 +5,7 @@ import {
   IPaymentModalProps,
   IPayTransactionCallbacks,
   IPayTransactionPayload,
-  ITokenInfo,
+  IToken,
 } from "../../typing";
 import { pay } from "../../core/pay";
 import { Subtitle, ScopedModal, Amount, Button } from "../../ui/components";
@@ -48,7 +48,7 @@ export function PayModal(props: IPaymentModalProps) {
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
   );
-  const [tokenInfo, setTokenInfo] = React.useState<ITokenInfo>();
+  const [tokenInfo, setTokenInfo] = React.useState<IToken>();
   const [buyer, setBuyer] = React.useState<string | null>();
 
   const [walletUser, setWalletUser] = React.useState<string | null>(null);

@@ -9,7 +9,7 @@ import { getTokenInfo } from "../core";
 import {
   EscrowStatusView,
   GetResponseUserBalance,
-  ITokenInfo,
+  IToken,
   IBalance,
 } from "../typing";
 import { buildBalanceQuery } from "./queryBalance";
@@ -69,7 +69,7 @@ export const getUserBalance = async (
     const _amount = new BigNumber(item.amount).div(100);
     const tokenInfo = tokensInfo.find(
       (t) => t.tokenAddress === item.tokenSymbol,
-    ) as ITokenInfo;
+    ) as IToken;
     return {
       ...item,
       total: _amount,

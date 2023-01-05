@@ -16,7 +16,7 @@ import {
   IGetConnectedUser,
   IGetEscrowData,
   ISettlement,
-  ITokenInfo,
+  IToken,
 } from "../typing";
 
 import { Unicrow__factory } from "@unicrowio/ethers-types";
@@ -153,7 +153,7 @@ const parseSettlement = (data: SettlementStructOutput): ISettlement | null => {
   };
 };
 
-const parseToken = (data: TokenStruct): ITokenInfo | null => {
+const parseToken = (data: TokenStruct): IToken | null => {
   // is ETH
   if (data.address_ === ADDRESS_ZERO)
     return {
@@ -174,7 +174,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
   const arbitration: IArbitratorInfo | null = parseArbitration(data.arbitrator);
 
   const settlement: ISettlement | null = parseSettlement(data.settlement);
-  const token: ITokenInfo | null = parseToken(data.token);
+  const token: IToken | null = parseToken(data.token);
   const escrow: IEscrowData = parseEscrow(
     escrowId,
     data.escrow,
