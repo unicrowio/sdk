@@ -3,7 +3,7 @@ import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
 import config, { DefaultNetwork } from "../config/setup";
-import { CHAIN_ID } from "../helpers"
+import { CHAIN_ID } from "../helpers";
 
 let currentWallet: string | null = null;
 let accountChangedListener: EventEmitter | null = null;

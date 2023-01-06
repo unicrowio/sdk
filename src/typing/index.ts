@@ -120,7 +120,6 @@ export interface EscrowStatusView {
   latest_settlement_offer_buyer?: number;
 }
 
-
 export interface IEscrowData {
   amount: BigNumberJs; // ERC20 | Ether
   escrowId: number;
