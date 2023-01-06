@@ -36,7 +36,9 @@ export const getUserBalance = async (
       const group = groupByPending[key];
       const total = calculateSplit(group, walletUserAddress);
       return {
-        tokenSymbol: key,
+        token: {
+          address: key,
+        },
         status: "Pending",
         amount: total.toString(),
       };
@@ -48,7 +50,9 @@ export const getUserBalance = async (
       const group = groupByReady[key];
       const total = calculateSplit(group, walletUserAddress);
       return {
-        tokenSymbol: key,
+        token: {
+          address: key,
+        },
         status: "Ready to claim",
         amount: total.toString(),
       };
@@ -56,8 +60,8 @@ export const getUserBalance = async (
     .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
 
   const tokensAddress = [];
-  for await (const balance of [...pendingData, ...readyData]) {
-    const tokenInfo = await getTokenInfo(balance.tokenSymbol);
+  for (const balance of [...pendingData, ...readyData]) {
+    const tokenInfo = await getTokenInfo(balance.token.address);
     tokensAddress.push(tokenInfo);
   }
 
@@ -68,14 +72,15 @@ export const getUserBalance = async (
   const resolve = (item: any) => {
     const _amount = new BigNumber(item.amount).div(100);
     const tokenInfo = tokensInfo.find(
-      (t) => t.tokenAddress === item.tokenSymbol,
+      (t) => t.address === item.token.address,
     ) as IToken;
+   
     return {
       ...item,
+      token: {...tokenInfo},
       total: _amount,
       displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
       amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
-      ...tokenInfo,
     };
   };
 
