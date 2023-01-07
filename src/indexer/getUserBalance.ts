@@ -74,10 +74,10 @@ export const getUserBalance = async (
     const tokenInfo = tokensInfo.find(
       (t) => t.address === item.token.address,
     ) as IToken;
-   
+
     return {
       ...item,
-      token: {...tokenInfo},
+      token: { ...tokenInfo },
       total: _amount,
       displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
       amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
