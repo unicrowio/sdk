@@ -669,7 +669,7 @@ export type tConnectedUser =
 export interface IBalance {
   amount: string;
   amountInUSD?: string;
-  tokenSymbol: tTokenSymbol;
+  token?: IToken;
   status: "Pending" | "Ready to claim";
 }
 
@@ -683,9 +683,6 @@ export interface IBalanceResponse {
  *
  */
 export interface IBalanceWithTokenInfo extends IBalance {
-  tokenAddress?: string;
-  /** the rounding precision of a token */
-  decimals?: number;
   /** amount converted to human readable form */
   displayableAmount: string | BigNumberJs;
   /** helper field used when calculating with other BigNumber fields */

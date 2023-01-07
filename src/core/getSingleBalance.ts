@@ -38,9 +38,11 @@ export const getSingleBalance = async (
   const amountBN = new BigNumber(amount);
 
   const balance: IBalanceWithTokenInfo = {
-    tokenAddress: escrowData.token.address,
-    tokenSymbol: escrowData.token.symbol,
-    decimals: escrowData.token.decimals,
+    token: {
+      address: escrowData.token.address,
+      symbol: escrowData.token.symbol,
+      decimals: escrowData.token.decimals,
+    },
     status: "Ready to claim",
     amount: amountBN.toString(),
     amountBN: displayableAmountBN(amountBN, escrowData.token.decimals),
