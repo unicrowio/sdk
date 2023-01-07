@@ -683,8 +683,6 @@ export interface IBalanceResponse {
  *
  */
 export interface IBalanceWithTokenInfo extends IBalance {
-  /** the rounding precision of a token */
-  decimals?: number;
   /** amount converted to human readable form */
   displayableAmount: string | BigNumberJs;
   /** helper field used when calculating with other BigNumber fields */
