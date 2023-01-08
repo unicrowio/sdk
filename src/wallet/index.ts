@@ -221,10 +221,12 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
   // TODO: merge this with checkIsWalletInstalled
   const ethereum = checkIsWalletInstalled();
 
-  return ethereum ? new ethers.providers.Web3Provider(
-    ethereum as unknown as ExternalProvider,
-    "any",
-  ) : null;
+  return ethereum
+    ? new ethers.providers.Web3Provider(
+        ethereum as unknown as ExternalProvider,
+        "any",
+      )
+    : null;
 };
 
 const checkIsWalletInstalled = () => {
