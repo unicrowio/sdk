@@ -64,10 +64,10 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
         );
 
         const exchangeValues = await getExchangeRates([
-          _escrowBalance.tokenSymbol!,
+          _escrowBalance.token.symbol!,
         ]);
 
-        const exchangeValue = exchangeValues[_escrowBalance.tokenSymbol!];
+        const exchangeValue = exchangeValues[_escrowBalance.token.symbol!];
 
         if (exchangeValue) {
           _escrowBalance.amountInUSD = formatAmountToUSD(
@@ -123,7 +123,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     }
 
     const amount = Number(escrowBalance.displayableAmount);
-    const decimals = displayDecimals(escrowBalance.tokenSymbol!);
+    const decimals = displayDecimals(escrowBalance.token.symbol!);
 
     return (
       <tr>
