@@ -44,7 +44,7 @@ npm install @unicrowio/sdk
 
 1. Create [Access Token](https://www.npmjs.com/settings/unicrowio/packages)
 2. Run in the terminal: `npm config set '//registry.npmjs.org/:_authToken' "YOUR_ACCESS_TOKEN"` 
-3. Take a look at the version of the "@unicrowio/sdk" on [package.json](./package.json)
+3. Take a look at the version of the "@unicrowio/sdk" on package.json.
 
 
 ---
