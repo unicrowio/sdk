@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { ZERO } from "../helpers";
+import { ZERO } from "../helpers/constants";
 import {
   CalculateAmountsInput,
   CalculateFunction,
@@ -13,8 +13,8 @@ const calculatePercentage = (n1: number, n2: number) => {
   return n1 > 0 ? new BigNumber(n1).multipliedBy(n2).dividedBy(100) : ZERO;
 };
 
-const calculateShares = (newSplit: tSplits, amount: number) =>{
-  const b = {
+const calculateShares = (newSplit: tSplits, amount: number) =>
+  ({
     amountBuyer: calculatePercentage(
       newSplit.splitBuyer.toNumber(),
       amount,
@@ -35,14 +35,7 @@ const calculateShares = (newSplit: tSplits, amount: number) =>{
       newSplit.splitArbitrator.toNumber(),
       amount,
     ).toNumber(),
-  } as tShares;
-  
-
-  console.log({ newSplit, amount, b })
-
-  return b
-
-}
+  }) as tShares;
 
 const zeroSplits = () => {
   return {
