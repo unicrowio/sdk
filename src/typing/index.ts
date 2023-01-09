@@ -379,10 +379,8 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   marketplace: string;
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
-  token: {
-    /** Token used in the payment (null for ETH) */
-    address: string | null;
-  };
+  /** Token used in the payment (null for ETH) */
+  tokenAddress: string | null;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */

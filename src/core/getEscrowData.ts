@@ -158,6 +158,8 @@ const parseToken = (data: TokenStruct): IToken | null => {
   if (data.address_ === ADDRESS_ZERO)
     return {
       address: null,
+      decimals: 18,
+      symbol: "ETH",
     };
 
   // is ERC-20
