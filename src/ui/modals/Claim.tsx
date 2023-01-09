@@ -66,10 +66,6 @@ export function ClaimModal(props: IClaimModalProps) {
     try {
       setIsLoading(true);
 
-      if (!isCorrectNetwork) {
-        await onNetworkSwitch();
-      }
-
       setLoadingMessage("Getting Escrow information");
 
       const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(

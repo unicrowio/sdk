@@ -13,8 +13,8 @@ const calculatePercentage = (n1: number, n2: number) => {
   return n1 > 0 ? new BigNumber(n1).multipliedBy(n2).dividedBy(100) : ZERO;
 };
 
-const calculateShares = (newSplit: tSplits, amount: number) =>
-  ({
+const calculateShares = (newSplit: tSplits, amount: number) =>{
+  const b = {
     amountBuyer: calculatePercentage(
       newSplit.splitBuyer.toNumber(),
       amount,
@@ -35,7 +35,14 @@ const calculateShares = (newSplit: tSplits, amount: number) =>
       newSplit.splitArbitrator.toNumber(),
       amount,
     ).toNumber(),
-  }) as tShares;
+  } as tShares;
+  
+
+  console.log({ newSplit, amount, b })
+
+  return b
+
+}
 
 const zeroSplits = () => {
   return {
