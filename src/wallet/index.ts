@@ -236,8 +236,10 @@ const checkIsWalletInstalled = () => {
   // Have to check the ethereum binding on the window object to see if it's installed
   const { ethereum } = window;
 
-  if (!ethereum?.isMetaMask) {
+  try {
     // is there a more agnostic way to check? I know otherwallets use isMetaMask too, but perhaps there are better flags
+    const check = ethereum.isMetaMask;
+  } catch (e) {
     return null;
   }
 
