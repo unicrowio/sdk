@@ -222,11 +222,11 @@ export function ReleaseModal(props: IReleaseModalProps) {
             marker={MARKER.challengePeriodExtension}
           />
           <DataDisplayer
-            label="Marketplace Address"
             hide={!escrowData?.marketplace}
+            label="Marketplace Address"
             value={reduceAddress(
               escrowData.marketplace,
-              escrowData.ensAddresses.marketplace,
+              escrowData.ensAddresses?.marketplace,
             )}
             copy={escrowData.marketplace}
             marker={MARKER.marketplace}
