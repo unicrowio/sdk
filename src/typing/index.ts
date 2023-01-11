@@ -472,7 +472,9 @@ export interface IPayTransactionPayload {
   challengePeriodEnd?: Date;
   marketplace?: string;
   marketplaceFee?: number;
-  currency?: string;
+  token?: {
+    address: string;
+  };
   claimed?: boolean;
   consensusBuyer?: number;
   consensusSeller?: number;
