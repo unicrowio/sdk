@@ -41,7 +41,7 @@ const handleChainChanged = (networkId: string) => {
 const registerChainChangedListener = () => {
   const ethereum = checkIsWalletInstalled();
 
-  if (!chainChangedListener) {
+  if (ethereum && !chainChangedListener) {
     chainChangedListener = ethereum!.on("chainChanged", (networkId) => {
       console.info("chainChanged", networkId);
       handleChainChanged(networkId);
@@ -52,7 +52,7 @@ const registerChainChangedListener = () => {
 const registerAccountChangedListener = () => {
   const ethereum = checkIsWalletInstalled();
 
-  if (!accountChangedListener) {
+  if (ethereum && !accountChangedListener) {
     accountChangedListener = ethereum!.on(
       "accountsChanged",
       (accounts: any) => {
@@ -67,6 +67,7 @@ export const connect = async (): Promise<string | null> => {
     registerAccountChangedListener();
 
     const ethereum = checkIsWalletInstalled();
+    if (!ethereum) return null;
     const _accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -84,7 +85,7 @@ export const connect = async (): Promise<string | null> => {
 };
 
 export const switchNetwork = async (name: DefaultNetwork) => {
-  checkIsWalletInstalled();
+  if (!checkIsWalletInstalled()) return null;
   const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
     networks[name];
 
@@ -155,6 +156,13 @@ export const autoSwitchNetwork = async (callbacks?, force: boolean = false) => {
 export const getNetwork = async (): Promise<ethers.providers.Network> => {
   const provider = await getWeb3Provider();
 
+  if (provider === null) {
+    return {
+      chainId: 0,
+      name: "unknown",
+    };
+  }
+
   let network = await provider.getNetwork();
 
   if (network.chainId === CHAIN_ID.development) {
@@ -213,10 +221,12 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
   // TODO: merge this with checkIsWalletInstalled
   const ethereum = checkIsWalletInstalled();
 
-  return new ethers.providers.Web3Provider(
-    ethereum as unknown as ExternalProvider,
-    "any",
-  );
+  return ethereum
+    ? new ethers.providers.Web3Provider(
+        ethereum as unknown as ExternalProvider,
+        "any",
+      )
+    : null;
 };
 
 const checkIsWalletInstalled = () => {
@@ -226,9 +236,11 @@ const checkIsWalletInstalled = () => {
   // Have to check the ethereum binding on the window object to see if it's installed
   const { ethereum } = window;
 
-  if (!ethereum?.isMetaMask) {
+  try {
     // is there a more agnostic way to check? I know otherwallets use isMetaMask too, but perhaps there are better flags
-    throw new Error("Please Install a web3 browser wallet");
+    const check = ethereum.isMetaMask;
+  } catch (e) {
+    return null;
   }
 
   return ethereum;
