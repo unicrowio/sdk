@@ -4,7 +4,7 @@ import { IToken } from "../typing";
 import { getJsonRpcProvider } from "./getJsonRpcProvider";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
-  const provider = await getJsonRpcProvider();
+  const provider = getJsonRpcProvider();
   const token = ERC20__factory.connect(tokenAddress, provider!);
 
   return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
