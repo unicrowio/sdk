@@ -66,10 +66,6 @@ export function ClaimModal(props: IClaimModalProps) {
     try {
       setIsLoading(true);
 
-      if (!isCorrectNetwork) {
-        await onNetworkSwitch();
-      }
-
       setLoadingMessage("Getting Escrow information");
 
       const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
@@ -77,10 +73,10 @@ export function ClaimModal(props: IClaimModalProps) {
       );
 
       const exchangeValues = await getExchangeRates([
-        _escrowBalance.tokenSymbol!,
+        _escrowBalance.token.symbol!,
       ]);
 
-      const exchangeValue = exchangeValues[_escrowBalance.tokenSymbol!];
+      const exchangeValue = exchangeValues[_escrowBalance.token.symbol!];
 
       if (exchangeValue) {
         _escrowBalance.amountInUSD = formatAmountToUSD(
@@ -138,8 +134,8 @@ export function ClaimModal(props: IClaimModalProps) {
       }
 
       const amount = Number(escrowBalance.displayableAmount);
-      const decimals = displayDecimals(escrowBalance.tokenSymbol!);
-      const symbol = escrowBalance.tokenSymbol || "ERR";
+      const decimals = displayDecimals(escrowBalance.token.symbol!);
+      const symbol = escrowBalance.token.symbol || "ERR";
 
       return (
         <tr>
