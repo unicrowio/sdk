@@ -37,6 +37,6 @@ export const ZERO = new BigNumber(0);
 
 export const CHAIN_ID = {
   arbitrumOne: 42161,
-  arbitrumGoerli: 421613,
+  goerli: 5,
   development: 5777,
 };
