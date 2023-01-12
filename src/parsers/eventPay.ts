@@ -23,7 +23,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     _marketplace,
     _marketplaceFee,
     challengePeriodEnd,
-    token,
+    currency,
     claimed,
     consensus,
     splits,
@@ -33,7 +33,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
   // parsers
   const arbitrator: string | null = nullOrValue(_arbitrator);
   const marketplace: string | null = nullOrValue(_marketplace);
-  const token_address: string | null = nullOrValue(token?.address);
+  const tokenAddress: string | null = nullOrValue(currency);
 
   const arbitratorFee = arbitrator
     ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
@@ -81,7 +81,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     marketplace,
     marketplaceFee,
     token: {
-      address: token_address,
+      address: tokenAddress,
     },
     claimed: !!claimed,
     consensusBuyer,
