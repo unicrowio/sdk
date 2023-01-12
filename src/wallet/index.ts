@@ -85,7 +85,7 @@ export const connect = async (): Promise<string | null> => {
 };
 
 export const switchNetwork = async (name: DefaultNetwork) => {
-  checkIsWalletInstalled();
+  if (!checkIsWalletInstalled()) return null;
   const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
     networks[name];
 
