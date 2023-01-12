@@ -157,7 +157,7 @@ const parseToken = (data: TokenStruct): IToken | null => {
   // is ETH
   if (data.address_ === ADDRESS_ZERO)
     return {
-      address: ADDRESS_ZERO,
+      address: null,
       decimals: 18,
       symbol: "ETH",
     };

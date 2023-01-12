@@ -80,9 +80,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     challengePeriodEnd: toDate(challengePeriodEnd),
     marketplace,
     marketplaceFee,
-    token: {
-      address: token_address,
-    },
+    tokenAddress: token_address,
     claimed: !!claimed,
     consensusBuyer,
     consensusSeller,
