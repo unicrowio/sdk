@@ -1,6 +1,6 @@
 {
   "name": "@unicrowio/sdk",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "author": "Unicrow Dev Team <hi@unicrowio.com>",
   "license": "ISC",
   "description": "Universal Escrow SDK",
