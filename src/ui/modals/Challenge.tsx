@@ -171,9 +171,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
       toast("Challenged", "success");
 
-      setPaymentStatus(
-        `${EscrowStatus.CHALLENGED} by ${escrowData?.connectedUser}`,
-      );
+      setPaymentStatus(`${EscrowStatus.CHALLENGED} by you`);
       setSuccess(payload.transactionHash);
       setIsLoading(false);
     },
