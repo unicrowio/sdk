@@ -104,7 +104,12 @@ export function ChallengeModal(props: IChallengeModalProps) {
           }
           setEscrowData(data);
 
+          console.log({ data })
+
           if (data.status.state === EscrowStatus.CHALLENGED) {
+
+            console.log({ connectedUser: data.connectedUser })
+
             const who =
               data.status.latestChallengeBy === data.connectedUser
                 ? "you"
@@ -137,6 +142,12 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
     loadData();
   }, []);
+
+  console.log({ escrowData, props })
+
+  // React.useEffect(() => {
+    
+  // }, []) 
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -172,7 +183,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       toast("Challenged", "success");
 
       setPaymentStatus(
-        `${EscrowStatus.CHALLENGED} by ${escrowData?.connectedUser}`,
+        `${EscrowStatus.CHALLENGED} by you`,
       );
       setSuccess(payload.transactionHash);
       setIsLoading(false);
