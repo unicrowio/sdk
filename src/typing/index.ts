@@ -380,7 +380,7 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  token: IToken;
+  tokenAddress?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -470,7 +470,7 @@ export interface IPayTransactionPayload {
   challengePeriodEnd?: Date;
   marketplace?: string;
   marketplaceFee?: number;
-  token?: IToken;
+  tokenAddress?: string;
   claimed?: boolean;
   consensusBuyer?: number;
   consensusSeller?: number;
