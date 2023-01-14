@@ -1,9 +1,9 @@
 import React from "react";
-
-import ActionForbidden from "../../assets/ActionForbiddenAsset";
-import { transformSVGInBase64 } from "../../helpers";
+import { ActionForbidden } from "../../assets/ActionForbidden";
+import { ActionForbiddenFirefox } from "../../assets/ActionForbiddenFirefox";
 import { Button } from ".";
 import styled from "styled-components";
+import { useBrowserCheck } from "helpers";
 
 interface IIncorrectNetworkProps {
   onClick: () => void;
@@ -50,11 +50,11 @@ export const IncorrectNetwork = ({
   onClick,
   title = "Incorrect Network",
   description = "Please, connect to the network below",
-  image = transformSVGInBase64(ActionForbidden),
 }: IIncorrectNetworkProps) => {
+  const { isFirefox } = useBrowserCheck();
   return (
     <Container>
-      <Image src={image} alt="Wrong network" />
+      {isFirefox ? <ActionForbiddenFirefox /> : <ActionForbidden />}
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>

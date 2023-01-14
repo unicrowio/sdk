@@ -1,9 +1,10 @@
 import React from "react";
 
-import ActionForbidden from "../../assets/ActionForbiddenAsset";
-import { transformSVGInBase64 } from "../../helpers";
+import { ActionForbidden } from "../../assets/ActionForbidden";
+import { ActionForbiddenFirefox } from "../../assets/ActionForbiddenFirefox";
 import { Button } from ".";
 import styled from "styled-components";
+import { useBrowserCheck } from "helpers";
 
 interface IForbiddenProps {
   onClose: () => void;
@@ -50,11 +51,11 @@ export const Forbidden = ({
   onClose,
   title = "Action Forbidden",
   description = " You are neither buyer nor seller in this payment",
-  image = transformSVGInBase64(ActionForbidden),
 }: IForbiddenProps) => {
+  const { isFirefox } = useBrowserCheck();
   return (
     <Container>
-      <Image src={image} alt="Forbidden" />
+      {isFirefox ? <ActionForbiddenFirefox /> : <ActionForbidden />}
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>
