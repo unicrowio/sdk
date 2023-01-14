@@ -1,5 +1,4 @@
-import * as React from "react"
-import { SVGProps } from "react"
+import React, { SVGProps } from "react";
 
 export const ActionForbiddenFirefox = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -67,4 +66,4 @@ export const ActionForbiddenFirefox = (props: SVGProps<SVGSVGElement>) => (
       </linearGradient>
     </defs>
   </svg>
-)
+);

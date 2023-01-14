@@ -1,5 +1,4 @@
-import * as React from "react"
-import { SVGProps } from "react"
+import React, { SVGProps } from "react";
 
 export const ActionForbidden = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -192,4 +191,4 @@ export const ActionForbidden = (props: SVGProps<SVGSVGElement>) => (
       </filter>
     </defs>
   </svg>
-)
+);
