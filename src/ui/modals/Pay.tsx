@@ -22,15 +22,9 @@ import {
   formatAmount,
 } from "../../helpers";
 import { toast } from "../components/notification/toast";
-import {
-  getWalletAccount,
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "../../wallet";
+import { getWalletAccount } from "../../wallet";
 import { MARKER } from "../../config/marker";
-import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
-import { DefaultNetwork } from "config/setup";
+import { useNetworkCheck } from "./../hooks/useNetworkCheck";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -44,6 +38,8 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { BodyWithNetworkCheck, FooterWithNetworkCheck } = useNetworkCheck();
+
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
@@ -52,18 +48,9 @@ export function PayModal(props: IPaymentModalProps) {
   const [buyer, setBuyer] = React.useState<string | null>();
 
   const [walletUser, setWalletUser] = React.useState<string | null>(null);
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     setIsLoading(true);
-
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
-    isCorrectNetworkConnected().then((isCorrect) => {
-      setIsCorrectNetwork(isCorrect);
-    });
 
     getWalletAccount().then((account) => {
       setWalletUser(account);
@@ -129,17 +116,8 @@ export function PayModal(props: IPaymentModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
-    return (
+    return BodyWithNetworkCheck(
       <>
         <Amount
           amount={formatAmount(
@@ -218,15 +196,11 @@ export function PayModal(props: IPaymentModalProps) {
               />
             )}
         </ContainerDataDisplayer>
-      </>
+      </>,
     );
   };
 
   const ModalFooter = () => {
-    if (!isCorrectNetwork) {
-      return null;
-    }
-
     let buttonChildren;
     let buttonOnClick;
 
@@ -243,10 +217,10 @@ export function PayModal(props: IPaymentModalProps) {
       buttonOnClick = onPayClick;
     }
 
-    return (
+    return FooterWithNetworkCheck(
       <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </Button>
+      </Button>,
     );
   };
 
