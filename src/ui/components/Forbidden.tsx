@@ -1,10 +1,8 @@
 import React from "react";
 
 import { ActionForbidden } from "../../assets/ActionForbidden";
-import { ActionForbiddenFirefox } from "../../assets/ActionForbiddenFirefox";
 import { Button } from ".";
 import styled from "styled-components";
-import { useBrowserCheck } from "helpers";
 
 interface IForbiddenProps {
   onClose: () => void;
@@ -18,12 +16,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-`;
-
-const Image = styled.img`
-  width: 236px;
-  height: 236px;
-  margin: 0;
 `;
 
 const Title = styled.h1`
@@ -52,10 +44,9 @@ export const Forbidden = ({
   title = "Action Forbidden",
   description = " You are neither buyer nor seller in this payment",
 }: IForbiddenProps) => {
-  const { isFirefox } = useBrowserCheck();
   return (
     <Container>
-      {isFirefox ? <ActionForbiddenFirefox /> : <ActionForbidden />}
+      <ActionForbidden />
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>

@@ -1,9 +1,7 @@
 import React from "react";
 import { ActionForbidden } from "../../assets/ActionForbidden";
-import { ActionForbiddenFirefox } from "../../assets/ActionForbiddenFirefox";
 import { Button } from ".";
 import styled from "styled-components";
-import { useBrowserCheck } from "helpers";
 
 interface IIncorrectNetworkProps {
   onClick: () => void;
@@ -17,12 +15,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-`;
-
-const Image = styled.img`
-  width: 236px;
-  height: 236px;
-  margin: 0;
 `;
 
 const Title = styled.h1`
@@ -51,10 +43,9 @@ export const IncorrectNetwork = ({
   title = "Incorrect Network",
   description = "Please, connect to the network below",
 }: IIncorrectNetworkProps) => {
-  const { isFirefox } = useBrowserCheck();
   return (
     <Container>
-      {isFirefox ? <ActionForbiddenFirefox /> : <ActionForbidden />}
+      <ActionForbidden />
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>
