@@ -1,7 +1,5 @@
 import React from "react";
-
-import ActionForbidden from "../../assets/ActionForbiddenAsset";
-import { transformSVGInBase64 } from "../../helpers";
+import {ActionForbidden} from "../assets/ActionForbidden";
 import { Button } from ".";
 import styled from "styled-components";
 
@@ -50,11 +48,10 @@ export const Forbidden = ({
   onClose,
   title = "Action Forbidden",
   description = " You are neither buyer nor seller in this payment",
-  image = transformSVGInBase64(ActionForbidden),
 }: IForbiddenProps) => {
   return (
     <Container>
-      <Image src={image} alt="Forbidden" />
+      <ActionForbidden />
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>

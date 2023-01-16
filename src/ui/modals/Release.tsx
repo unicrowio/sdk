@@ -12,7 +12,7 @@ import {
 } from "../../ui/components/DataDisplayer";
 import { Button, Subtitle, Amount, ScopedModal } from "../../ui/components";
 import { useModalStates } from "../../ui/hooks/useModalStates";
-import { toast } from "../components/notification/toast";
+import { toast } from "../notification/toast";
 import { release } from "../../core/release";
 import { getEscrowData } from "../../core/getEscrowData";
 import { Forbidden } from "../components/Forbidden";

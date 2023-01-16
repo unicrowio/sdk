@@ -21,7 +21,7 @@ import {
   ADDRESS_ZERO,
   formatAmount,
 } from "../../helpers";
-import { toast } from "../components/notification/toast";
+import { toast } from "../notification/toast";
 import {
   getWalletAccount,
   isCorrectNetworkConnected,

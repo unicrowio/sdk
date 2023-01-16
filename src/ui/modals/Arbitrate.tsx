@@ -7,7 +7,7 @@ import {
   ScopedModal,
 } from "../../ui/components";
 import { arbitrate, getEscrowData } from "../../core";
-import { toast } from "../../ui/components/notification/toast";
+import { toast } from "../notification/toast";
 import { IArbitrateModalProps, IGetEscrowData } from "../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";

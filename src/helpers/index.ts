@@ -1,5 +1,4 @@
 export { countdownChallengePeriod } from "./countdownChallengePeriod";
-export { transformSVGInBase64 } from "./transformSVGInBase64";
 export { isValidAddress } from "./isValidAddress";
 export { displayChallengePeriod } from "./displayChallengePeriod";
 export {

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { QuestionMarker } from "../../assets/QuestionCircle";
+import { QuestionMarker } from "../assets/QuestionCircle";
 
 const Tooltip = styled.div`
   position: relative;

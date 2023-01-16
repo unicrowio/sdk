@@ -1,5 +1,5 @@
-import { jss } from "../../../ui/jss";
-import { tag } from "../../../helpers";
+import { jss } from "../config/jss";
+import { tag } from "../../helpers";
 
 const svgs = {
   success:

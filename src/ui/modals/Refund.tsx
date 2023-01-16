@@ -20,7 +20,7 @@ import {
   displayChallengePeriod,
   addressWithYou,
 } from "../../helpers";
-import { toast } from "../../ui/components/notification/toast";
+import { toast } from "../notification/toast";
 import { refund, getEscrowData } from "../../core";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";

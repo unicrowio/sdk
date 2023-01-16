@@ -1,5 +1,4 @@
-import * as React from "react";
-import { SVGProps } from "react";
+import React, { SVGProps } from "react";
 
 export const CloseIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg

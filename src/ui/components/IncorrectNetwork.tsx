@@ -1,7 +1,5 @@
 import React from "react";
-
-import ActionForbidden from "../../assets/ActionForbiddenAsset";
-import { transformSVGInBase64 } from "../../helpers";
+import { ActionForbidden } from "../assets/ActionForbidden";
 import { Button } from ".";
 import styled from "styled-components";
 
@@ -50,11 +48,10 @@ export const IncorrectNetwork = ({
   onClick,
   title = "Incorrect Network",
   description = "Please, connect to the network below",
-  image = transformSVGInBase64(ActionForbidden),
 }: IIncorrectNetworkProps) => {
   return (
     <Container>
-      <Image src={image} alt="Wrong network" />
+      <ActionForbidden />
       <Title>{title}</Title>
       <Description>{description}</Description>
       <ButtonContainer>

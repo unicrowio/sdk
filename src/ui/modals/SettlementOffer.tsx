@@ -11,7 +11,7 @@ import { Button } from "../../ui/components/Button";
 import { useModalStates } from "../../ui/hooks/useModalStates";
 import styled from "styled-components";
 import { offerSettlement } from "../../core/offerSettlement";
-import { toast } from "../components/notification/toast";
+import { toast } from "../notification/toast";
 import { SELLER, BUYER } from "../../helpers";
 import { FormattedPercentageAmountAdornment } from "../../ui/components/FormattedPercentageAmountAdornment";
 import { renderModal } from "..";

@@ -8,7 +8,7 @@ import {
   ModalHeaderClose,
   ModalHeaderTitle,
 } from "../../ui/components/Modal";
-import { CloseIcon } from "../../ui/components/icons/Close";
+import { CloseIcon } from "../assets/Close";
 
 type ScopedModalProps = {
   title: ReactNode;

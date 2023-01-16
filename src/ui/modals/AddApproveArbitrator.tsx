@@ -4,7 +4,7 @@ import { Button } from "../../ui/components/Button";
 import { Stack } from "../../ui/components/Stack";
 import { approveArbitrator } from "../../core/approveArbitrator";
 import { proposeArbitrator } from "../../core/proposeArbitrator";
-import { toast } from "../../ui/components/notification/toast";
+import { toast } from "../notification/toast";
 import { FormattedPercentageAmountAdornment } from "../../ui/components/FormattedPercentageAmountAdornment";
 import { IArbitrateModalProps, IGetEscrowData } from "../../typing";
 import { useModalStates } from "../hooks/useModalStates";

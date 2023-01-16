@@ -26,7 +26,7 @@ import {
   SELLER,
   displayChallengePeriod,
 } from ".../../helpers";
-import { toast } from "../components/notification/toast";
+import { toast } from "../notification/toast";
 import { challenge } from "../../core/challenge";
 import { getEscrowData } from "../../core/getEscrowData";
 import styled from "styled-components";

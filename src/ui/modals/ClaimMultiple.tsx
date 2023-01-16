@@ -8,7 +8,7 @@ import {
 } from "../../typing";
 import { Button, Table, ScopedModal, Symbol } from "../components";
 import { useModalStates } from "../hooks/useModalStates";
-import { toast } from "../components/notification/toast";
+import { toast } from "../notification/toast";
 import { claimMultiple, getTokenInfo } from "../../core";
 import {
   displayDecimals,
@@ -128,7 +128,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
             {balance.amountBN
               .toNumber()
               .toFixed(displayDecimals(balance.token.symbol!))}{" "}
-            <Symbol>{rowTokenInfo.symbol}</Symbol>
+            <TokenSymbol>{rowTokenInfo.symbol}</Symbol>
           </td>
           <td>
             {"$"}

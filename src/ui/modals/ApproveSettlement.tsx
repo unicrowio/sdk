@@ -16,7 +16,7 @@ import {
   ScopedModal,
 } from "../../ui/components";
 import { useModalStates } from "../../ui/hooks/useModalStates";
-import { toast } from "../components/notification/toast";
+import { toast } from "../notification/toast";
 import styled from "styled-components";
 import { approveSettlement, getEscrowData } from "../../core";
 import {
@@ -251,7 +251,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
             value={
               <span>
                 {labelAmountSplit?.buyer.amount}{" "}
-                <Symbol>{labelAmountSplit?.buyer.symbol}</Symbol> (
+                <TokenSymbol>{labelAmountSplit?.buyer.symbol}</Symbol> (
                 {labelAmountSplit?.buyer.percentage}%)
               </span>
             }
@@ -262,7 +262,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
             value={
               <span>
                 {labelAmountSplit?.seller.amount}{" "}
-                <Symbol>
+                <TokenSymbol>
                   {labelAmountSplit?.seller.symbol}
                   {escrow.connectedUser === SELLER && "*"}
                 </Symbol>{" "}

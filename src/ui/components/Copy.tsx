@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { CopyIcon } from "../../ui/components/icons/Copy";
-import { toast } from "../../ui/components/notification/toast";
+import { toast } from "../notification/toast";
 
 type CopyToClipboardProps = {
   content: string | ReactNode;
@@ -8,6 +8,7 @@ type CopyToClipboardProps = {
 };
 export const CopyToClipboard = ({ content, copy }: CopyToClipboardProps) => {
   return (
+    // rome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <span
       style={{ cursor: "pointer", height: "auto", width: "auto" }}
       className="span-clipboard"
