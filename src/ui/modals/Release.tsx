@@ -217,11 +217,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
           <DataDisplayer label={labelChallengePeriod} value={countdown} />
           <DataDisplayer
-            label="Challenge Period Extension"
-            value={displayChallengePeriod(escrowData.challengePeriod)}
-            marker={MARKER.challengePeriodExtension}
-          />
-          <DataDisplayer
             hide={!escrowData?.marketplace}
             label="Marketplace Address"
             value={reduceAddress(
