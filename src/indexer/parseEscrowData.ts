@@ -5,7 +5,7 @@ import {
   EscrowStatusView,
   IEscrowData,
 } from "../typing";
-import { isSameAddress, BUYER, nullOrValue, SELLER } from "../helpers";
+import { isSameAddress, BUYER, nullOrValue, SELLER, toDate } from "../helpers";
 
 export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
   /**
@@ -37,8 +37,8 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
   const state = EscrowStatus[item.status];
 
   return {
-    challengePeriodStart: new Date(item.challenge_period_start),
-    challengePeriodEnd: new Date(item.challenge_period_end),
+    challengePeriodStart: toDate(item.challenge_period_start),
+    challengePeriodEnd: toDate(item.challenge_period_start),
     challengePeriod: item.challenge_period,
     status: {
       state,
@@ -70,7 +70,7 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
     consensusSeller: item.consensus_seller,
 
     // item.paid_at comes as seconds
-    createdAt: new Date(item.paid_at * 1000),
+    createdAt: toDate(item.paid_at),
 
     // Settlement
     latestSettlementOfferAddress: item.latest_settlement_offer_address,
