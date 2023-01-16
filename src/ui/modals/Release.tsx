@@ -18,12 +18,7 @@ import { getEscrowData } from "../../core/getEscrowData";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "ui/hooks";
-import {
-  displayChallengePeriod,
-  addressWithYou,
-  reduceAddress,
-  displayableAmount,
-} from "helpers";
+import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import {
   isCorrectNetworkConnected,
   startListeningNetwork,
