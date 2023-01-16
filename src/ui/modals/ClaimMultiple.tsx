@@ -6,7 +6,7 @@ import {
   IClaimTransactionPayload,
   IToken,
 } from "../../typing";
-import { Button, Table, ScopedModal, Symbol } from "../components";
+import { Button, Table, ScopedModal, TokenSymbol } from "../components";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { claimMultiple, getTokenInfo } from "../../core";
@@ -128,7 +128,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
             {balance.amountBN
               .toNumber()
               .toFixed(displayDecimals(balance.token.symbol!))}{" "}
-            <TokenSymbol>{rowTokenInfo.symbol}</Symbol>
+            <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
           </td>
           <td>
             {"$"}

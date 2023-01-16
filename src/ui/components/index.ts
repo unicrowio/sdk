@@ -10,6 +10,6 @@ export { ScopedModal } from "./ScopedModal";
 export { Stack } from "./Stack";
 export { Modal } from "./Modal";
 export { Table } from "./Table";
-export { Symbol } from "./Symbol";
+export { TokenSymbol } from "./TokenSymbol";
 export { DataDisplayer } from "./DataDisplayer";
 export { Subtitle } from "./Subtitle";

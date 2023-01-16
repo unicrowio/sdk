@@ -11,7 +11,7 @@ import {
 import {
   Subtitle,
   Amount,
-  Symbol,
+  TokenSymbol,
   Button,
   ScopedModal,
 } from "../../ui/components";
@@ -23,7 +23,7 @@ import {
   ContainerDataDisplayer,
   DataDisplayer,
 } from "../components/DataDisplayer";
-import { renderModal } from "..";
+import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
@@ -57,7 +57,7 @@ const LabelFees = styled.p`
 `;
 
 export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
-  const { escrowData, escrowId, callbacks, deferredPromise } = props;
+  const { escrowId, callbacks, deferredPromise } = props;
   const {
     success,
     setSuccess,
@@ -251,7 +251,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
             value={
               <span>
                 {labelAmountSplit?.buyer.amount}{" "}
-                <TokenSymbol>{labelAmountSplit?.buyer.symbol}</Symbol> (
+                <TokenSymbol>{labelAmountSplit?.buyer.symbol}</TokenSymbol> (
                 {labelAmountSplit?.buyer.percentage}%)
               </span>
             }
@@ -265,7 +265,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
                 <TokenSymbol>
                   {labelAmountSplit?.seller.symbol}
                   {escrow.connectedUser === SELLER && "*"}
-                </Symbol>{" "}
+                </TokenSymbol>{" "}
                 ({labelAmountSplit?.seller.percentage}%)
               </span>
             }

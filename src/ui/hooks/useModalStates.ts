@@ -1,6 +1,6 @@
 import Deferred from "../../helpers/deferred";
 import { Dispatch, useState } from "react";
-import { umountModal } from "../../ui";
+import { umountModal } from "../config/render";
 
 export type TUseModalStates = {
   isLoading: boolean;

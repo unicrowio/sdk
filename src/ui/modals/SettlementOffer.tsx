@@ -14,7 +14,7 @@ import { offerSettlement } from "../../core/offerSettlement";
 import { toast } from "../notification/toast";
 import { SELLER, BUYER } from "../../helpers";
 import { FormattedPercentageAmountAdornment } from "../../ui/components/FormattedPercentageAmountAdornment";
-import { renderModal } from "..";
+import { renderModal } from "../config/render";
 import { ApproveSettlementModal } from "./ApproveSettlement";
 import { InputText, ScopedModal, Stack } from "../components";
 import { AdornmentContent } from "../components/InputText";

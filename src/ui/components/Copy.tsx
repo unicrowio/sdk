@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { CopyIcon } from "../../ui/components/icons/Copy";
+import { CopyIcon } from "../../ui/assets/Copy";
 import { toast } from "../notification/toast";
 
 type CopyToClipboardProps = {

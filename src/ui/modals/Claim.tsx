@@ -7,7 +7,7 @@ import {
   IClaimModalProps,
 } from "../../typing";
 import { useModalStates } from "../hooks";
-import { Button, Table, ScopedModal, Symbol } from "../components";
+import { Button, Table, ScopedModal, TokenSymbol } from "../components";
 import { toast } from "../notification/toast";
 import { Forbidden } from "../components/Forbidden";
 import { getSingleBalance, claim } from "../../core";
@@ -140,7 +140,7 @@ export function ClaimModal(props: IClaimModalProps) {
       return (
         <tr>
           <td>
-            {amount.toFixed(decimals)} <TokenSymbol>{symbol}</Symbol>
+            {amount.toFixed(decimals)} <TokenSymbol>{symbol}</TokenSymbol>
           </td>
           <td>
             {"$"}

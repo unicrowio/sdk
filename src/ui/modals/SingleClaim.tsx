@@ -9,11 +9,10 @@ import {
 import { useModalStates } from "../../ui/hooks";
 import { toast } from "../notification/toast";
 
-import { ScopedModal, Symbol, Table, Button } from "../components";
+import { ScopedModal, TokenSymbol, Table, Button } from "../components";
 import { Forbidden } from "../components/Forbidden";
-import { getSingleBalance, singleClaim } from "../../core";
+import { getSingleBalance, claim } from "../../core";
 import {
-  displayableAmountBN,
   displayDecimals,
   formatAmountToUSD,
   getExchangeRates,
@@ -128,7 +127,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     return (
       <tr>
         <td>
-          {amount.toFixed(decimals)} <TokenSymbol>{decimals}</Symbol>
+          {amount.toFixed(decimals)} <TokenSymbol>{decimals}</TokenSymbol>
         </td>
         <td>
           {"$"}
@@ -177,7 +176,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
   };
 
   const onSingleClaim = () => {
-    singleClaim(props.escrowId, claimCallbacks).catch((e) => {
+    claim(props.escrowId, claimCallbacks).catch((e) => {
       setIsLoading(false);
       toast(e, "error");
     });

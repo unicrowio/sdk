@@ -37,7 +37,6 @@ export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
   const state = EscrowStatus[item.status];
 
   return {
-
     challengePeriodStart: toDate(item.challenge_period_start),
     challengePeriodEnd: toDate(item.challenge_period_start),
     challengePeriod: item.challenge_period,

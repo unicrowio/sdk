@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Symbol = styled.span`
+export const TokenSymbol = styled.span`
   font-family: 'Work Sans';
   font-style: normal;
   font-weight: 600;
