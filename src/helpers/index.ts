@@ -1,5 +1,4 @@
 export { countdownChallengePeriod } from "./countdownChallengePeriod";
-export { useBrowserCheck } from "./useBrowserCheck";
 export { isValidAddress } from "./isValidAddress";
 export { displayChallengePeriod } from "./displayChallengePeriod";
 export {
