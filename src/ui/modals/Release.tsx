@@ -19,7 +19,6 @@ import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "ui/hooks";
 import {
-  displayChallengePeriod,
   addressWithYou,
   reduceAddress,
   displayableAmount,

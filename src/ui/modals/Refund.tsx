@@ -17,7 +17,6 @@ import {
   reduceAddress,
   displayableAmount,
   SELLER,
-  displayChallengePeriod,
   addressWithYou,
 } from "../../helpers";
 import { toast } from "../../ui/components/notification/toast";
