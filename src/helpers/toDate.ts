@@ -11,5 +11,8 @@ So the fields:
 challenge_period_start, challenge_period_end, paid_at, release_at, ...etc_at,
 should use this function to parse the seconds in valid date.
 */
-export const toDate = (seconds: BigNumber) =>
-  new Date(seconds.toNumber() * 1000);
+
+export const toDate = (seconds: BigNumber | number) =>
+  BigNumber.isBigNumber(seconds)
+    ? new Date(seconds.toNumber() * 1000)
+    : new Date(seconds * 1000);

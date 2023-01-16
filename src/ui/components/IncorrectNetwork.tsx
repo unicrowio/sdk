@@ -17,12 +17,6 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const Image = styled.img`
-  width: 236px;
-  height: 236px;
-  margin: 0;
-`;
-
 const Title = styled.h1`
   font-size: 34px;
   font-weight: 700;

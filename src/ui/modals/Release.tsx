@@ -18,12 +18,7 @@ import { getEscrowData } from "../../core/getEscrowData";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "ui/hooks";
-import {
-  displayChallengePeriod,
-  addressWithYou,
-  reduceAddress,
-  displayableAmount,
-} from "helpers";
+import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import {
   isCorrectNetworkConnected,
   startListeningNetwork,
@@ -216,11 +211,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
           />
 
           <DataDisplayer label={labelChallengePeriod} value={countdown} />
-          <DataDisplayer
-            label="Challenge Period Extension"
-            value={displayChallengePeriod(escrowData.challengePeriod)}
-            marker={MARKER.challengePeriodExtension}
-          />
           <DataDisplayer
             hide={!escrowData?.marketplace}
             label="Marketplace Address"
