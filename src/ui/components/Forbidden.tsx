@@ -1,5 +1,5 @@
 import React from "react";
-import {ActionForbidden} from "../assets/ActionForbidden";
+import { ActionForbidden } from "../assets/ActionForbidden";
 import { Button } from ".";
 import styled from "styled-components";
 
