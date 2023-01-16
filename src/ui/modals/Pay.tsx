@@ -134,7 +134,7 @@ export function PayModal(props: IPaymentModalProps) {
             label="Seller ETH Address"
             value={addressWithYou(
               props.paymentProps.seller,
-              walletUser!,
+              walletUser,
               props.paymentProps.ensAddresses.seller,
             )}
             copy={props.paymentProps.seller}
@@ -143,7 +143,7 @@ export function PayModal(props: IPaymentModalProps) {
           {buyer && (
             <DataDisplayer
               label="Buyer"
-              value={addressWithYou(buyer, walletUser!)}
+              value={addressWithYou(buyer, walletUser)}
               copy={buyer}
               marker={MARKER.buyer}
             />
@@ -153,7 +153,7 @@ export function PayModal(props: IPaymentModalProps) {
             value={displayChallengePeriod(props.paymentProps.challengePeriod)}
             marker={MARKER.challengePeriod}
           />
-          {props.paymentProps.challengePeriodExtension && (
+          {props.paymentProps.challengePeriodExtension > 0 && (
             <DataDisplayer
               label="Challenge Period Extension"
               value={displayChallengePeriod(
