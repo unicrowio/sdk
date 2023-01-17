@@ -15,13 +15,7 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 /**
  * Approve the Arbitrator proposed
@@ -44,6 +38,8 @@ export const AddApproveArbitrator = ({
     isLoading,
   } = useModalStates({ deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
   );
@@ -55,19 +51,13 @@ export const AddApproveArbitrator = ({
     "initial" | "new" | "edit" | "view" | "added" | "editing"
   >("initial");
 
-  const [title, setTitle] = React.useState<string>("");
-
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
+  const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
 
   const loadData = async () => {
-    try {
-      setTitle("Arbitrator Proposal");
-      setIsLoading(true);
+    if (isCorrectNetwork) {
+      try {
+        setIsLoading(true);
 
-      const isCorrect = await isCorrectNetworkConnected();
-      setIsCorrectNetwork(isCorrect);
-
-      if (isCorrect) {
         setLoadingMessage("Getting Arbitration information");
         const escrow: IGetEscrowData = await getEscrowData(escrowId);
         setEscrowData(escrow);
@@ -120,22 +110,18 @@ export const AddApproveArbitrator = ({
         setArbitrator(escrow.arbitration.arbitrator);
         setArbitratorFee(escrow.arbitration.arbitratorFee.toString());
         setAction("edit");
+      } catch (error: any) {
+        console.error(error);
+        toast(error.message, "error");
+        onModalClose();
+      } finally {
+        setLoadingMessage("");
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      console.error(error);
-      toast(error.message, "error");
-      onModalClose();
-    } finally {
-      setLoadingMessage("");
-      setIsLoading(false);
     }
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     loadData();
   }, []);
 
@@ -189,11 +175,11 @@ export const AddApproveArbitrator = ({
     }
   };
 
-  const renderFooter = () => {
+  const ModalFooter = () => {
     const isBuyer = escrowData?.connectedUser === BUYER;
     const isSeller = escrowData?.connectedUser === SELLER;
 
-    if (!(isCorrectNetwork && escrowData && (isBuyer || isSeller))) {
+    if (!(escrowData && (isBuyer || isSeller))) {
       return null;
     }
 
@@ -300,18 +286,7 @@ export const AddApproveArbitrator = ({
     return null;
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
-  const renderBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
-    if (!escrowData) return null;
-
+  const ModalBody = () => {
     if (
       escrowData.connectedUser !== BUYER &&
       escrowData.connectedUser !== SELLER
@@ -364,8 +339,8 @@ export const AddApproveArbitrator = ({
     <form autoComplete="off" onSubmit={handleSubmit}>
       <ScopedModal
         title={title}
-        body={renderBody()}
-        footer={renderFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}

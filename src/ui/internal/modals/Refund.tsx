@@ -25,13 +25,7 @@ import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
-import { DefaultNetwork } from "../../../config/setup";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 
 type IProtectedActions = {
@@ -51,6 +45,8 @@ export function RefundModal(props: IRefundModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
   );
@@ -62,20 +58,13 @@ export function RefundModal(props: IRefundModalProps) {
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
   >();
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
   const loadData = async () => {
-    const isCorrect = await isCorrectNetworkConnected();
-    setIsCorrectNetwork(isCorrect);
-
-    if (isCorrect) {
+    if (isCorrectNetwork) {
       setIsLoading(true);
-      isCorrectNetworkConnected().then((isCorrect) => {
-        setIsCorrectNetwork(isCorrect);
-      });
       setLoadingMessage("Getting Escrow information");
       getEscrowData(props.escrowId)
         .then(async (data: IGetEscrowData) => {
@@ -121,10 +110,6 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     loadData();
   }, []);
 
@@ -174,16 +159,7 @@ export function RefundModal(props: IRefundModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (!escrowData) {
       return null;
     }
@@ -241,21 +217,18 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!isCorrectNetwork) {
+    if (!(isLoading || protect.canRefund)) {
       return null;
     }
 
-    if (!(isLoading || protect.canRefund)) {
+    if (!escrowData) {
       return null;
     }
 
     let buttonChildren;
     let buttonOnClick;
 
-    if (!escrowData) {
-      buttonChildren = "Confirm Refund";
-      buttonOnClick = () => "";
-    } else if (!(error || success)) {
+    if (!(error || success)) {
       buttonChildren = "Confirm Refund";
       buttonOnClick = onRefund;
     } else if (success) {
@@ -273,39 +246,11 @@ export function RefundModal(props: IRefundModalProps) {
     );
   };
 
-  const renderBody = () => {
-    if (!isCorrectNetwork) {
-      return <ModalBody />;
-    }
-
-    if (isCorrectNetwork && escrowData) {
-      return <ModalBody />;
-    }
-
-    if (isCorrectNetwork && !escrowData) {
-      return null;
-    }
-
-    return <ModalBody />;
-  };
-
-  const renderFooter = () => {
-    if (!isCorrectNetwork) {
-      return null;
-    }
-
-    if (!(isCorrectNetwork || escrowData)) {
-      return null;
-    }
-
-    return <ModalFooter />;
-  };
-
   return (
     <ScopedModal
       title={"Refund Payment"}
-      body={renderBody()}
-      footer={renderFooter()}
+      body={<ModalBody />}
+      footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}

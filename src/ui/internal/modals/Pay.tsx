@@ -24,16 +24,10 @@ import {
   ADDRESS_ZERO,
   formatAmount,
 } from "../../../helpers";
+import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
-import {
-  getWalletAccount,
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "../../../wallet";
+import { getWalletAccount } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
-import { DefaultNetwork } from "config/setup";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -55,18 +49,9 @@ export function PayModal(props: IPaymentModalProps) {
   const [buyer, setBuyer] = React.useState<string | null>();
 
   const [walletUser, setWalletUser] = React.useState<string | null>(null);
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     setIsLoading(true);
-
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
-    isCorrectNetworkConnected().then((isCorrect) => {
-      setIsCorrectNetwork(isCorrect);
-    });
 
     getWalletAccount().then((account) => {
       setWalletUser(account);
@@ -132,16 +117,7 @@ export function PayModal(props: IPaymentModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     return (
       <>
         <Amount
@@ -159,7 +135,7 @@ export function PayModal(props: IPaymentModalProps) {
             label="Seller ETH Address"
             value={addressWithYou(
               props.paymentProps.seller,
-              walletUser!,
+              walletUser,
               props.paymentProps.ensAddresses.seller,
             )}
             copy={props.paymentProps.seller}
@@ -168,7 +144,7 @@ export function PayModal(props: IPaymentModalProps) {
           {buyer && (
             <DataDisplayer
               label="Buyer"
-              value={addressWithYou(buyer, walletUser!)}
+              value={addressWithYou(buyer, walletUser)}
               copy={buyer}
               marker={MARKER.buyer}
             />
@@ -178,7 +154,7 @@ export function PayModal(props: IPaymentModalProps) {
             value={displayChallengePeriod(props.paymentProps.challengePeriod)}
             marker={MARKER.challengePeriod}
           />
-          {props.paymentProps.challengePeriodExtension && (
+          {props.paymentProps.challengePeriodExtension > 0 && (
             <DataDisplayer
               label="Challenge Period Extension"
               value={displayChallengePeriod(
@@ -226,10 +202,6 @@ export function PayModal(props: IPaymentModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!isCorrectNetwork) {
-      return null;
-    }
-
     let buttonChildren;
     let buttonOnClick;
 

@@ -23,13 +23,8 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 
 type IProtectedActions = {
   canRelease: boolean;
@@ -48,6 +43,8 @@ export function ReleaseModal(props: IReleaseModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
   );
@@ -55,7 +52,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
   >();
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   const [protect, setProtect] = React.useState<IProtectedActions>(
     {} as IProtectedActions,
@@ -65,10 +61,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     useCountdownChallengePeriod(escrowData);
 
   const loadData = async () => {
-    const isCorrect = await isCorrectNetworkConnected();
-    setIsCorrectNetwork(isCorrect);
-
-    if (isCorrect) {
+    if (isCorrectNetwork) {
       setIsLoading(true);
       setLoadingMessage("Getting Escrow information");
       getEscrowData(props.escrowId)
@@ -115,10 +108,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     loadData();
   }, []);
 
@@ -167,16 +156,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (!escrowData) {
       return null;
     }
@@ -231,17 +211,18 @@ export function ReleaseModal(props: IReleaseModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(isCorrectNetwork && (isLoading || protect.canRelease))) {
+    if (!escrowData) {
+      return null;
+    }
+
+    if (!(isLoading || protect.canRelease)) {
       return null;
     }
 
     let buttonChildren;
     let buttonOnClick;
 
-    if (!escrowData) {
-      buttonChildren = "Confirm Release";
-      buttonOnClick = () => "";
-    } else if (!(error || success)) {
+    if (!(error || success)) {
       buttonChildren = "Confirm Release";
       buttonOnClick = onRelease;
     } else if (success) {
@@ -259,27 +240,11 @@ export function ReleaseModal(props: IReleaseModalProps) {
     );
   };
 
-  const renderBody = () => {
-    if (isCorrectNetwork && !escrowData) {
-      return null;
-    }
-
-    return <ModalBody />;
-  };
-
-  const renderFooter = () => {
-    if (!(isCorrectNetwork && (isCorrectNetwork || escrowData))) {
-      return null;
-    }
-
-    return <ModalFooter />;
-  };
-
   return (
     <ScopedModal
       title={"Release Payment"}
-      body={renderBody()}
-      footer={renderFooter()}
+      body={<ModalBody />}
+      footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}
