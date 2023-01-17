@@ -74,7 +74,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
-    >();
+  >();
 
   const {
     buttonLabel,
