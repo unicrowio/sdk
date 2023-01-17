@@ -4,9 +4,9 @@ import {
   ApproveSettlementParsedPayload,
   ISettlementApproveTransactionCallbacks,
 } from "../typing";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./internal/errorHandler";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
-import { parseApproveSettlement } from "../parsers/eventApproveSettlement";
+import { parseApproveSettlement } from "./internal/parsers/eventApproveSettlement";
 
 /**
  * Sends an offer to settle the payment between the buyer and the seller.

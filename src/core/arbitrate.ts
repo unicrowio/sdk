@@ -4,9 +4,9 @@ import {
   ArbitrateParsedPayload,
   IArbitrationTransactionCallbacks,
 } from "../typing";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./internal/errorHandler";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
-import { parseArbitrate } from "../parsers/eventArbitrate";
+import { parseArbitrate } from "./internal/parsers/eventArbitrate";
 
 /**
  * Performs and arbitration and returns its data.

@@ -3,8 +3,16 @@ import BigNumber from "bignumber.js";
 /**
 convert to date getting the BigNumber timestamp without milliseconds and
 converting it to date with milliseconds
+
+Every timestamp that come from the blockchain should be passed by this function
+The blockchain provide the timestamp without the milleseconds.
+
+So the fields:
+challenge_period_start, challenge_period_end, paid_at, release_at, ...etc_at,
+should use this function to parse the seconds in valid date.
 */
-export const toDate = (sec: BigNumber | number) =>
-  BigNumber.isBigNumber(sec)
-    ? new Date(sec.toNumber() * 1000)
-    : new Date(sec * 1000);
+
+export const toDate = (seconds: BigNumber | number) =>
+  BigNumber.isBigNumber(seconds)
+    ? new Date(seconds.toNumber() * 1000)
+    : new Date(seconds * 1000);

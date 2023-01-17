@@ -28,8 +28,6 @@ export enum split {
   DEV,
 }
 
-export const ROOT_UNICROW_SDK_ELEMENT = "rootUnicrowSDkElement";
-
 export const BUYER = "buyer";
 export const SELLER = "seller";
 

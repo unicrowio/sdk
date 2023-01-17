@@ -1,7 +1,7 @@
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import { bipsToPercentage } from "../helpers";
-import { getJsonRpcProvider } from "./getJsonRpcProvider";
+import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
 /**
  * Retrieves information about the fee of Crow and returns its percentage.

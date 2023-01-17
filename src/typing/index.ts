@@ -1,4 +1,4 @@
-import { IQuery } from "../indexer/queryBuilder";
+import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 import { BigNumber as BigNumberJs } from "bignumber.js";
 

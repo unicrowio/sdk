@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
-import { InputText } from "../components/InputText";
+import { InputText } from "../internal/components/InputText";
 
 it("should render", () => {
   render(<InputText />);

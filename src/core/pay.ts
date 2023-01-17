@@ -15,7 +15,7 @@ import {
 } from "../typing";
 import { getBalance } from "./getBalance";
 import { getTokenInfo } from "../core/getTokenInfo";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./internal/errorHandler";
 
 import {
   getWeb3Provider,
@@ -24,7 +24,7 @@ import {
 } from "../wallet/index";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
 
-import { parsePay } from "../parsers/eventPay";
+import { parsePay } from "./internal/parsers/eventPay";
 import { BigNumberish } from "ethers";
 
 /**

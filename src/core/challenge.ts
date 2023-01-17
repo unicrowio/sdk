@@ -6,8 +6,8 @@ import {
   ChallengeParsedPayload,
   IChallengeTransactionCallbacks,
 } from "../typing";
-import { errorHandler } from "./errorHandler";
-import { parseChallenge } from "../parsers/eventChallenge";
+import { errorHandler } from "./internal/errorHandler";
+import { parseChallenge } from "./internal/parsers/eventChallenge";
 
 /**
  * Performs a challenge and returns its data.
