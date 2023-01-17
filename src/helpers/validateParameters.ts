@@ -42,7 +42,11 @@ export const validateParameters = async (data: IPaymentProps) => {
     throw new Error("Invalid amount");
   }
 
-  if (!Number.isInteger(challengePeriod) || challengePeriod < 0 || challengePeriod >= 71582788) {
+  if (
+    !Number.isInteger(challengePeriod) ||
+    challengePeriod < 0 ||
+    challengePeriod >= 71582788
+  ) {
     throw new Error("Invalid challenge period");
   }
 
