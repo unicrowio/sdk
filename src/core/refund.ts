@@ -2,7 +2,7 @@ import { getContractAddress } from "../config";
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { IRefundTransactionCallbacks } from "../typing";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./internal/errorHandler";
 
 /**
  * Refunds 100% of the buyer payment (all fees are waived), returns transactions' hash.

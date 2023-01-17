@@ -3,8 +3,8 @@ import {
   ISettlementOfferModalProps,
   ISettlementOfferTransactionCallbacks,
 } from "typing";
-import { renderModal } from "ui/config/render";
-import { SettlementOfferModal } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { SettlementOfferModal } from "ui/internal/modals";
 
 /**
  * Renders a modal to offer a settlement proposal (either by buyer or seller).

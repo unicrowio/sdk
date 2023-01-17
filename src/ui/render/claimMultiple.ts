@@ -4,8 +4,8 @@ import {
   IClaimMultipleModalProps,
   IClaimTransactionCallbacks,
 } from "typing";
-import { renderModal } from "ui/config/render";
-import { ClaimMultipleModal } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { ClaimMultipleModal } from "ui/internal/modals";
 
 /**
  * Renders a modal to claim a given amount to different wallets (?) from the payment. //TODO clarify

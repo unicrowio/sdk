@@ -1,7 +1,7 @@
 import Deferred from "helpers/deferred";
 import { IChallengeModalProps, IChallengeTransactionCallbacks } from "typing";
-import { renderModal } from "ui/config/render";
-import { ChallengeModal } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { ChallengeModal } from "ui/internal/modals";
 
 /**
  * Renders a modal to challenge a payment (either by buyer or seller).

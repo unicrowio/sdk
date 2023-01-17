@@ -4,10 +4,10 @@ import {
   IArbitrationTransactionCallbacks,
   ProposalArbitratorParsedPayload,
 } from "../typing";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./internal/errorHandler";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
 import { validateAddress } from "../helpers";
-import { parseProposalArbitrator } from "../parsers/eventProposalArbitrator";
+import { parseProposalArbitrator } from "./internal/parsers/eventProposalArbitrator";
 
 /**
  * One of the parties (buyer or seller) can call this to propose an arbitrator

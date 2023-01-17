@@ -5,9 +5,9 @@ import {
   IPaymentProps,
   IPayTransactionCallbacks,
 } from "typing";
-import { toast } from "ui/notification/toast";
-import { renderModal } from "ui/config/render";
-import { PayModal } from "ui/modals";
+import { toast } from "ui/internal/notification/toast";
+import { renderModal } from "ui/internal/config/render";
+import { PayModal } from "ui/internal/modals";
 
 /**
  * Renders payment modal with given payment params.

@@ -1,7 +1,7 @@
 import Deferred from "helpers/deferred";
 import { IReleaseModalProps, IReleaseTransactionCallbacks } from "typing";
-import { renderModal } from "ui/config/render";
-import { ReleaseModal } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { ReleaseModal } from "ui/internal/modals";
 
 /**
  * Renders a modal to release the payment.

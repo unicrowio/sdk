@@ -3,8 +3,8 @@ import {
   IArbitrationModalProps,
   IArbitrationTransactionCallbacks,
 } from "typing";
-import { renderModal } from "ui/config/render";
-import { Arbitrate } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { Arbitrate } from "ui/internal/modals";
 
 /**
  * Renders a modal to propose an arbitration (only visible for arbitrator as agreed by both escrow parties).

@@ -2,8 +2,8 @@ import { getContractAddress } from "../config";
 import { UnicrowClaim__factory } from "@unicrowio/ethers-types";
 import { IClaimTransactionCallbacks, ClaimParsedPayload } from "../typing";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
-import { errorHandler } from "./errorHandler";
-import { parseClaim } from "../parsers/eventClaim";
+import { errorHandler } from "./internal/errorHandler";
+import { parseClaim } from "./internal/parsers/eventClaim";
 
 /**
  * Claims a single payment from the escrow. To save everyone's gas costs, it claims balances and fees

@@ -3,8 +3,8 @@ import {
   ISettlementApproveModalProps,
   ISettlementApproveTransactionCallbacks,
 } from "typing";
-import { renderModal } from "ui/config/render";
-import { ApproveSettlementModal } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { ApproveSettlementModal } from "ui/internal/modals";
 
 /**
  * Renders a modal to approve a settlement proposal (either by buyer or seller).

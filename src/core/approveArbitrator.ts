@@ -5,10 +5,10 @@ import {
   ApproveArbitratorParsedPayload,
   IArbitrationTransactionCallbacks,
 } from "../typing";
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./internal/errorHandler";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
 import { percentageToBips } from "../helpers";
-import { parseApproveArbitrator } from "../parsers/eventApproveArbitrator";
+import { parseApproveArbitrator } from "./internal/parsers/eventApproveArbitrator";
 
 /**
  * Approves an arbitrator proposed by another party (i.e. by seller if buyer proposed, by buyer if seller proposed).

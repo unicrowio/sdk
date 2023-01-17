@@ -1,7 +1,7 @@
 import { ERC20__factory } from "@unicrowio/ethers-types";
 import { ETH_ADDRESS, isSameAddress } from "../helpers";
 import { IToken } from "../typing";
-import { getJsonRpcProvider } from "./getJsonRpcProvider";
+import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
   const provider = getJsonRpcProvider();

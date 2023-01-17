@@ -1,7 +1,7 @@
 import Deferred from "helpers/deferred";
 import { IRefundModalProps, IRefundTransactionCallbacks } from "typing";
-import { renderModal } from "ui/config/render";
-import { RefundModal } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { RefundModal } from "ui/internal/modals";
 
 /**
  * Renders a modal to release the payment (can only be done by seller).

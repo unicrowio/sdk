@@ -3,8 +3,8 @@ import {
   IArbitrationModalProps,
   IArbitrationTransactionCallbacks,
 } from "typing";
-import { renderModal } from "ui/config/render";
-import { AddApproveArbitrator } from "ui/modals";
+import { renderModal } from "ui/internal/config/render";
+import { AddApproveArbitrator } from "ui/internal/modals";
 
 /**
  * Renders a modal to propose an arbitrator for a payment (either by buyer or seller).

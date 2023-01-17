@@ -5,8 +5,8 @@ import {
   IClaimTransactionCallbacks,
 } from "../typing";
 import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
-import { errorHandler } from "./errorHandler";
-import { parseMultipleClaim } from "../parsers/eventClaimMultiple";
+import { errorHandler } from "./internal/errorHandler";
+import { parseMultipleClaim } from "./internal/parsers/eventClaimMultiple";
 
 /**
  * Claim multiple escrow payments at the same time. To save everyone's gas costs, it claims balances and fees
