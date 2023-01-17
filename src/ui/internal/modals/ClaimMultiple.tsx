@@ -15,6 +15,7 @@ import {
   formatAmountToUSD,
   getExchangeRates,
 } from "../../../helpers";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 type IBalanceWithTokenUSD = IBalanceWithTokenInfo & {
   amountInUSD?: string;
@@ -31,6 +32,8 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
+
+  const { isCorrectNetwork } = useNetworkCheck();
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -84,26 +87,28 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         React.useState<boolean>(false);
 
       React.useEffect(() => {
-        setTokenInfoLoading(true);
-        getTokenInfo(balance.token.address)
-          .then(setRowTokenInfo)
-          .finally(() => {
-            setTokenInfoLoading(false);
+        if (isCorrectNetwork) {
+          setTokenInfoLoading(true);
+          getTokenInfo(balance.token.address)
+            .then(setRowTokenInfo)
+            .finally(() => {
+              setTokenInfoLoading(false);
+            });
+
+          getExchangeRates([balance.token.symbol!]).then((exchangeValues) => {
+            const symbol = balance.token.symbol as string;
+            const exchangeValue = exchangeValues[symbol];
+
+            if (exchangeValue) {
+              balance.amountInUSD = formatAmountToUSD(
+                balance.amountBN,
+                exchangeValue,
+              );
+            } else {
+              balance.amountInUSD = "n/a (error)";
+            }
           });
-
-        getExchangeRates([balance.token.symbol!]).then((exchangeValues) => {
-          const symbol = balance.token.symbol as string;
-          const exchangeValue = exchangeValues[symbol];
-
-          if (exchangeValue) {
-            balance.amountInUSD = formatAmountToUSD(
-              balance.amountBN,
-              exchangeValue,
-            );
-          } else {
-            balance.amountInUSD = "n/a (error)";
-          }
-        });
+        }
       }, []);
 
       if (tokenInfoLoading) {

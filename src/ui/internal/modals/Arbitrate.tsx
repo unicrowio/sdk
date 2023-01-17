@@ -12,13 +12,7 @@ import { IArbitrateModalProps, IGetEscrowData } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
-import { DefaultNetwork } from "config/setup";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -41,20 +35,18 @@ export const Arbitrate = ({
     setLoadingMessage,
   } = useModalStates({ deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   const loadData = async () => {
-    try {
-      setIsLoading(true);
+    if (isCorrectNetwork) {
+      try {
+        setIsLoading(true);
 
-      const isCorrect = await isCorrectNetworkConnected();
-      setIsCorrectNetwork(isCorrect);
-
-      if (isCorrect) {
         setLoadingMessage("Getting Arbitration information");
 
         const escrowData: IGetEscrowData = await getEscrowData(escrowId);
@@ -64,22 +56,18 @@ export const Arbitrate = ({
           setBuyerValue(escrowData.splitBuyer.toString());
           setSellerValue(escrowData.splitSeller.toString());
         }
+      } catch (error: any) {
+        console.error(error);
+        toast(error.message, "error");
+        onModalClose();
+      } finally {
+        setLoadingMessage("");
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      console.error(error);
-      toast(error.message, "error");
-      onModalClose();
-    } finally {
-      setLoadingMessage("");
-      setIsLoading(false);
     }
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     loadData();
   }, []);
 
@@ -121,16 +109,7 @@ export const Arbitrate = ({
     }
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
-  const renderBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
+  const ModalBody = () => {
     if (!escrow) return null;
 
     if (escrow.connectedUser !== "arbitrator") {
@@ -198,8 +177,8 @@ export const Arbitrate = ({
     );
   };
 
-  const renderFooter = () => {
-    if (!(isCorrectNetwork && escrow && escrow.arbitration)) {
+  const ModalFooter = () => {
+    if (!escrow?.arbitration) {
       return null;
     }
 
@@ -234,8 +213,8 @@ export const Arbitrate = ({
     <form autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
-        body={renderBody()}
-        footer={renderFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}

@@ -33,13 +33,8 @@ import styled from "styled-components";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
+
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 
 const InfoContainer = styled.div`
@@ -54,9 +49,7 @@ const InfoText = styled.p`
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
-
   text-align: center;
-
   color: #322ca2;
 `;
 
@@ -72,6 +65,8 @@ export function ChallengeModal(props: IChallengeModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+  const isMountedRef = React.useRef(false);
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
   );
@@ -79,7 +74,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
   >();
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
 
   const {
     buttonLabel,
@@ -90,16 +84,12 @@ export function ChallengeModal(props: IChallengeModalProps) {
   } = useCountdownChallengePeriod(escrowData);
 
   const loadData = async () => {
-    const isCorrect = await isCorrectNetworkConnected();
-    setIsCorrectNetwork(isCorrect);
-
-    if (isCorrect) {
+    if (isCorrectNetwork) {
       setIsLoading(true);
       setLoadingMessage("Getting Escrow information");
-      let isMounted = true;
       getEscrowData(props.escrowId)
         .then(async (data: IGetEscrowData) => {
-          if (!isMounted) {
+          if (!isMountedRef.current) {
             return;
           }
           setEscrowData(data);
@@ -123,19 +113,15 @@ export function ChallengeModal(props: IChallengeModalProps) {
           setLoadingMessage("");
           setIsLoading(false);
         });
-
-      return () => {
-        isMounted = false;
-      };
     }
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     loadData();
+
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
@@ -184,16 +170,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (!escrowData) {
       return null;
     }
@@ -267,7 +244,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData.connectedUser === BUYER; // SIGNED AS BUYER
 
-    if (!(isCorrectNetwork && escrowData && (isBuyer || isSeller))) {
+    if (!(escrowData && (isBuyer || isSeller))) {
       return null;
     }
 
@@ -330,27 +307,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
     );
   };
 
-  const renderBody = () => {
-    if (isCorrectNetwork && !escrowData) {
-      return null;
-    }
-
-    return <ModalBody />;
-  };
-
-  const renderFooter = () => {
-    if (!(isCorrectNetwork && (isCorrectNetwork || escrowData))) {
-      return null;
-    }
-
-    return <ModalFooter />;
-  };
-
   return (
     <ScopedModal
       title={"Challenge"}
-      body={renderBody()}
-      footer={renderFooter()}
+      body={<ModalBody />}
+      footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}
