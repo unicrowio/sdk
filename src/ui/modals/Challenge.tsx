@@ -122,7 +122,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
     return () => {
       isMountedRef.current = false;
-    }
+    };
   }, []);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
