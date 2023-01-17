@@ -20,13 +20,7 @@ import { InputText, ScopedModal, Stack } from "../components";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { getEscrowData } from "../../core/getEscrowData";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
+import { useNetworkCheck } from "./../hooks/useNetworkCheck";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -73,6 +67,8 @@ export function SettlementOfferModal({
     onModalClose,
   } = useModalStates({ deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const _splitBuyer = escrowData?.settlement?.latestSettlementOfferBuyer || "";
   const _splitSeller =
     escrowData?.settlement?.latestSettlementOfferSeller || "";
@@ -94,13 +90,8 @@ export function SettlementOfferModal({
     return ["Buyer should get back", "You should receive"];
   }, [escrow]);
 
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
-
   const loadData = async () => {
-    const isCorrect = await isCorrectNetworkConnected();
-    setIsCorrectNetwork(isCorrect);
-
-    if (isCorrect) {
+    if (isCorrectNetwork) {
       setIsLoading(true);
       setLoadingMessage("Getting Escrow information");
       getEscrowData(escrowId)
@@ -131,10 +122,6 @@ export function SettlementOfferModal({
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     if (escrowData) {
       setEscrow(escrowData);
     }
@@ -224,11 +211,6 @@ export function SettlementOfferModal({
     }
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const renderButtons = () => {
     if (error) {
       return (
@@ -259,10 +241,6 @@ export function SettlementOfferModal({
   };
 
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (
       !isLoading &&
       escrow &&
@@ -278,6 +256,10 @@ export function SettlementOfferModal({
           description="The payment is already claimed"
         />
       );
+    }
+
+    if (!escrow) {
+      return null;
     }
 
     return (
@@ -349,7 +331,7 @@ export function SettlementOfferModal({
   };
 
   const ModalFooter = () => {
-    if (!(isCorrectNetwork && escrow) || escrow.status.claimed) {
+    if (!escrow?.status.claimed) {
       return null;
     }
 
@@ -360,28 +342,12 @@ export function SettlementOfferModal({
     );
   };
 
-  const renderBody = () => {
-    if (isCorrectNetwork && !escrow) {
-      return null;
-    }
-
-    return <ModalBody />;
-  };
-
-  const renderFooter = () => {
-    if (!(isCorrectNetwork && (isCorrectNetwork || escrow))) {
-      return null;
-    }
-
-    return <ModalFooter />;
-  };
-
   return (
     <form autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={"Settlement Offer"}
-        body={renderBody()}
-        footer={renderFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}

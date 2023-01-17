@@ -33,14 +33,8 @@ import styled from "styled-components";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
 import { SpinnerIcon } from "../components/icons/Spinner";
+import { useNetworkCheck } from "./../hooks/useNetworkCheck";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -72,14 +66,15 @@ export function ChallengeModal(props: IChallengeModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
   );
 
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
-  >();
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
+    >();
 
   const {
     buttonLabel,
@@ -90,10 +85,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
   } = useCountdownChallengePeriod(escrowData);
 
   const loadData = async () => {
-    const isCorrect = await isCorrectNetworkConnected();
-    setIsCorrectNetwork(isCorrect);
-
-    if (isCorrect) {
+    if (isCorrectNetwork) {
       setIsLoading(true);
       setLoadingMessage("Getting Escrow information");
       let isMounted = true;
@@ -131,10 +123,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   React.useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-
     loadData();
   }, []);
 
@@ -184,16 +172,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (!escrowData) {
       return null;
     }
@@ -267,7 +246,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData.connectedUser === BUYER; // SIGNED AS BUYER
 
-    if (!(isCorrectNetwork && escrowData && (isBuyer || isSeller))) {
+    if (!(escrowData && (isBuyer || isSeller))) {
       return null;
     }
 
@@ -330,27 +309,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
     );
   };
 
-  const renderBody = () => {
-    if (isCorrectNetwork && !escrowData) {
-      return null;
-    }
-
-    return <ModalBody />;
-  };
-
-  const renderFooter = () => {
-    if (!(isCorrectNetwork && (isCorrectNetwork || escrowData))) {
-      return null;
-    }
-
-    return <ModalFooter />;
-  };
-
   return (
     <ScopedModal
       title={"Challenge"}
-      body={renderBody()}
-      footer={renderFooter()}
+      body={<ModalBody />}
+      footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}

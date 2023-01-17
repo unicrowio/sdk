@@ -13,14 +13,11 @@ import { ScopedModal, Symbol, Table, Button } from "../components";
 import { Forbidden } from "../components/Forbidden";
 import { getSingleBalance, singleClaim } from "../../core";
 import {
-  displayableAmountBN,
   displayDecimals,
   formatAmountToUSD,
   getExchangeRates,
 } from "../../helpers";
-import { isCorrectNetworkConnected, switchNetwork } from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
+import { useNetworkCheck } from "./../hooks/useNetworkCheck";
 
 type IBalanceWithTokenUSD = IBalanceWithTokenInfo & {
   amountInUSD?: string;
@@ -43,6 +40,9 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork, BodyWithNetworkCheck, FooterWithNetworkCheck } =
+    useNetworkCheck();
+
   const [protect, setProtect] = React.useState<IProtectedActions>(
     {} as IProtectedActions,
   );
@@ -50,13 +50,9 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
   const [escrowBalance, setEscrowBalance] =
     React.useState<IBalanceWithTokenUSD>();
 
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean>(true);
-
   const getBalance = async () => {
-    try {
-      const isCorrect = await isCorrectNetworkConnected();
-      setIsCorrectNetwork(isCorrect);
-      if (isCorrect) {
+    if (isCorrectNetwork) {
+      try {
         setIsLoading(true);
         setLoadingMessage("Getting Escrow information");
         const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
@@ -99,13 +95,13 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
             reason: "You cannot claim this payment at this time",
           });
         }
+      } catch (error: any) {
+        toast(error, "error");
+        onModalClose();
+      } finally {
+        setLoadingMessage("");
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      toast(error, "error");
-      onModalClose();
-    } finally {
-      setLoadingMessage("");
-      setIsLoading(false);
     }
   };
 
@@ -183,16 +179,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (!escrowBalance) {
       return null;
     }
@@ -201,7 +188,7 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
       return <Forbidden onClose={onModalClose} description={protect.reason} />;
     }
 
-    return (
+    return BodyWithNetworkCheck(
       <Table>
         <thead>
           <tr>
@@ -210,14 +197,12 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
           </tr>
         </thead>
         <tbody>{renderClaimableBalance()}</tbody>
-      </Table>
+      </Table>,
     );
   };
 
   const ModalFooter = () => {
-    if (
-      !(isCorrectNetwork && escrowBalance && (isLoading || protect.canDoClaim))
-    ) {
+    if (!(escrowBalance && (isLoading || protect.canDoClaim))) {
       return null;
     }
 
@@ -235,10 +220,10 @@ export function SingleClaimModal(props: ISingleClaimModalProps) {
       buttonOnClick = onSingleClaim;
     }
 
-    return (
+    return FooterWithNetworkCheck(
       <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </Button>
+      </Button>,
     );
   };
 

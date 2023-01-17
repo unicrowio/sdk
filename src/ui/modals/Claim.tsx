@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   EscrowStatus,
   IBalanceWithTokenInfo,
@@ -12,18 +12,11 @@ import { toast } from "../components/notification/toast";
 import { Forbidden } from "../components/Forbidden";
 import { getSingleBalance, claim } from "../../core";
 import {
-  displayableAmountBN,
   displayDecimals,
   formatAmountToUSD,
   getExchangeRates,
 } from "../../helpers";
-import {
-  isCorrectNetworkConnected,
-  startListeningNetwork,
-  switchNetwork,
-} from "wallet";
-import { DefaultNetwork } from "config/setup";
-import { IncorrectNetwork } from "ui/components/IncorrectNetwork";
+import { useNetworkCheck } from "./../hooks/useNetworkCheck";
 
 type IBalanceWithTokenUSD = IBalanceWithTokenInfo & {
   amountInUSD?: string;
@@ -46,14 +39,7 @@ export function ClaimModal(props: IClaimModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [isCorrectNetwork, setIsCorrectNetwork] =
-    React.useState<boolean>(false);
-
-  useEffect(() => {
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
-    });
-  }, []);
+  const { isCorrectNetwork } = useNetworkCheck();
 
   const [protect, setProtect] = React.useState<IProtectedActions>(
     {} as IProtectedActions,
@@ -63,57 +49,58 @@ export function ClaimModal(props: IClaimModalProps) {
     React.useState<IBalanceWithTokenUSD>();
 
   const getBalance = async () => {
-    try {
-      setIsLoading(true);
+    if (isCorrectNetwork) {
+      try {
+        setIsLoading(true);
+        setLoadingMessage("Getting Escrow information");
 
-      setLoadingMessage("Getting Escrow information");
-
-      const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
-        Number(props.escrowId),
-      );
-
-      const exchangeValues = await getExchangeRates([
-        _escrowBalance.token.symbol!,
-      ]);
-
-      const exchangeValue = exchangeValues[_escrowBalance.token.symbol!];
-
-      if (exchangeValue) {
-        _escrowBalance.amountInUSD = formatAmountToUSD(
-          _escrowBalance.amountBN,
-          exchangeValue,
+        const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
+          Number(props.escrowId),
         );
-      } else {
-        _escrowBalance.amountInUSD = "n/a (error)";
-      }
 
-      setEscrowBalance(_escrowBalance);
+        const exchangeValues = await getExchangeRates([
+          _escrowBalance.token.symbol!,
+        ]);
 
-      setProtect({
-        canDoClaim: true,
-      });
+        const exchangeValue = exchangeValues[_escrowBalance.token.symbol!];
 
-      if (_escrowBalance.connectedUser === "other") {
+        if (exchangeValue) {
+          _escrowBalance.amountInUSD = formatAmountToUSD(
+            _escrowBalance.amountBN,
+            exchangeValue,
+          );
+        } else {
+          _escrowBalance.amountInUSD = "n/a (error)";
+        }
+
+        setEscrowBalance(_escrowBalance);
+
         setProtect({
-          canDoClaim: false,
+          canDoClaim: true,
         });
-      }
 
-      if (
-        _escrowBalance.statusEscrow.claimed ||
-        _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
-      ) {
-        setProtect({
-          canDoClaim: false,
-          reason: "You cannot claim this payment at this time",
-        });
+        if (_escrowBalance.connectedUser === "other") {
+          setProtect({
+            canDoClaim: false,
+          });
+        }
+
+        if (
+          _escrowBalance.statusEscrow.claimed ||
+          _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
+        ) {
+          setProtect({
+            canDoClaim: false,
+            reason: "You cannot claim this payment at this time",
+          });
+        }
+      } catch (error: any) {
+        toast(error, "error");
+        onModalClose();
+      } finally {
+        setLoadingMessage("");
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      toast(error, "error");
-      onModalClose();
-    } finally {
-      setLoadingMessage("");
-      setIsLoading(false);
     }
   };
 
@@ -196,17 +183,7 @@ export function ClaimModal(props: IClaimModalProps) {
     });
   };
 
-  const onNetworkSwitch = async () => {
-    setIsCorrectNetwork(await isCorrectNetworkConnected());
-    if (!isCorrectNetwork)
-      await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-  };
-
   const ModalBody = () => {
-    if (!isCorrectNetwork) {
-      return <IncorrectNetwork onClick={onNetworkSwitch} />;
-    }
-
     if (!escrowBalance) {
       return null;
     }
@@ -228,9 +205,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (
-      !(escrowBalance && isCorrectNetwork && (isLoading || protect.canDoClaim))
-    ) {
+    if (!(escrowBalance && (isLoading || protect.canDoClaim))) {
       return null;
     }
 

@@ -117,7 +117,7 @@ export function PayModal(props: IPaymentModalProps) {
   };
 
   const ModalBody = () => {
-    return BodyWithNetworkCheck(
+    return (
       <>
         <Amount
           amount={formatAmount(
@@ -196,7 +196,7 @@ export function PayModal(props: IPaymentModalProps) {
               />
             )}
         </ContainerDataDisplayer>
-      </>,
+      </>
     );
   };
 
@@ -217,18 +217,18 @@ export function PayModal(props: IPaymentModalProps) {
       buttonOnClick = onPayClick;
     }
 
-    return FooterWithNetworkCheck(
+    return (
       <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
-      </Button>,
+      </Button>
     );
   };
 
   return (
     <ScopedModal
       title={modalTitle}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
+      body={BodyWithNetworkCheck(<ModalBody />)}
+      footer={FooterWithNetworkCheck(<ModalFooter />)}
       onClose={onModalClose}
       isLoading={isLoading}
       loadingMessage={loadingMessage}

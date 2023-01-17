@@ -9,6 +9,7 @@ import {
   ModalHeaderTitle,
 } from "../../ui/components/Modal";
 import { CloseIcon } from "../../ui/components/icons/Close";
+import { useNetworkCheck } from "./../hooks/useNetworkCheck";
 
 type ScopedModalProps = {
   title: ReactNode;
@@ -22,6 +23,8 @@ type ScopedModalProps = {
 export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,
 ): JSX.Element => {
+  const { BodyWithNetworkCheck } = useNetworkCheck();
+
   return (
     <Modal isLoading={props.isLoading} loadingMessage={props.loadingMessage}>
       <ModalHeader>
@@ -31,13 +34,17 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
         </ModalHeaderClose>
       </ModalHeader>
 
-      {props.body ? (
-        <ModalBody>
-          {props.body}
-          <ModalFooter>{props.footer}</ModalFooter>
-        </ModalBody>
-      ) : (
-        <ModalEmptyBody />
+      {BodyWithNetworkCheck(
+        props.body ? (
+          <ModalBody>
+            <>
+              {props.body}
+              <ModalFooter>{props.footer}</ModalFooter>
+            </>
+          </ModalBody>
+        ) : (
+          <ModalEmptyBody />
+        ),
       )}
     </Modal>
   );
