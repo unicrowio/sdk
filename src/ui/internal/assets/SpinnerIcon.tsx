@@ -1,6 +1,6 @@
 import React, { SVGProps } from "react";
 
-export const Spinner = (props: SVGProps<SVGSVGElement>) => (
+export const SpinnerIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width={24}
     height={24}

@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { toast } from "ui/internal/notification/toast";
-import { CopyIcon } from "../../../ui/internal/assets/Copy";
+import { CopyIcon } from "../assets/CopyIcon";
 
 type CopyToClipboardProps = {
   content: string | ReactNode;

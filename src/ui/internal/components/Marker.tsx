@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { QuestionMarker } from "../assets/QuestionCircle";
+import { QuestionMarkerIcon } from "../assets/QuestionMarkerIcon";
 
 const Tooltip = styled.div`
   position: relative;
@@ -58,7 +58,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 export const Marker = ({ text, ...rest }: Props) => {
   return (
     <Tooltip {...rest}>
-      <QuestionMarker />
+      <QuestionMarkerIcon />
       <span>{text}</span>
     </Tooltip>
   );

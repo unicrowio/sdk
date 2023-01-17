@@ -40,7 +40,7 @@ import {
 } from "wallet";
 import { DefaultNetwork } from "config/setup";
 import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
-import { Spinner as SpinnerIcon } from "../assets/Spinner";
+import { SpinnerIcon } from "../assets/SpinnerIcon";
 
 const InfoContainer = styled.div`
   display: flex;

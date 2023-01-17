@@ -1,6 +1,6 @@
 import React, { SVGProps } from "react";
 
-export const QuestionMarker = (props: SVGProps<SVGSVGElement>) => (
+export const QuestionMarkerIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     className="svg-icon"
     style={{

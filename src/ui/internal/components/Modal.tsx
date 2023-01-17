@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 import styled from "styled-components";
-import { CloseIcon } from "../assets/Close";
+import { CloseIcon } from "../assets/CloseIcon";
 import { Loading } from "./Loading";
 
 export const ModalWrapper = styled.div`
