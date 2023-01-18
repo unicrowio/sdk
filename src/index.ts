@@ -5,7 +5,7 @@ import * as indexer from "./indexer";
 import * as helpers from "./helpers";
 import { config } from "./config";
 
-export * as typing from "./typing";
+export * from "./typing";
 
 export { core, ui, wallet, indexer, helpers, config };
 
