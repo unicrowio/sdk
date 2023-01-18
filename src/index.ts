@@ -3,7 +3,7 @@ import * as ui from "./ui";
 import * as wallet from "./wallet";
 import * as indexer from "./indexer";
 import * as helpers from "./helpers";
-import * as config from "./config";
+import { config } from "./config";
 
 export * as typing from "./typing";
 
