@@ -1,29 +1,13 @@
-import { getHost } from "./index";
+import { getHost } from "./getHost";
+import { IConfig } from "../typing";
 import { networks as DefaultNetworks } from "../wallet/networks";
 
-export type DefaultNetwork = "arbitrum" | "goerli" | "development";
-
-type Network = {
-  rpcUrl: string;
-};
-
-type Networks = {
-  [key in DefaultNetwork]?: Network;
-};
-
-interface IConfig {
-  networks?: Networks;
-  defaultNetwork?: DefaultNetwork;
-  autoSwitchNetwork?: boolean;
-  mainnetRPCUrl?: string;
-}
-
-function config({
+export const setupNetwork = ({
   networks,
   defaultNetwork = "arbitrum",
   autoSwitchNetwork = false,
   mainnetRPCUrl,
-}: IConfig) {
+}: IConfig) => {
   const fallbacks = {
     arbitrum:
       networks?.arbitrum?.rpcUrl || DefaultNetworks.arbitrum?.rpcUrls[0],
@@ -54,6 +38,9 @@ function config({
 
   globalThis.autoSwitchNetwork = autoSwitchNetwork;
   globalThis.mainnetRPCUrl = mainnetRPCUrl || getHost("mainnet");
-}
+};
 
-export default config;
+setupNetwork({
+  autoSwitchNetwork: false,
+  defaultNetwork: "arbitrum",
+});

@@ -892,4 +892,21 @@ export type tSplits = {
 
 export type CalculateFunction = CalculateAmountsInput;
 
+export type DefaultNetwork = "arbitrum" | "goerli" | "development";
+
+export type Network = {
+  rpcUrl: string;
+};
+
+export type Networks = {
+  [key in DefaultNetwork]?: Network;
+};
+
+export interface IConfig {
+  networks?: Networks;
+  defaultNetwork?: DefaultNetwork;
+  autoSwitchNetwork?: boolean;
+  mainnetRPCUrl?: string;
+}
+
 export default {};
