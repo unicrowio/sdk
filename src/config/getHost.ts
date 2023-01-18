@@ -1,4 +1,4 @@
-import { networks } from "wallet/networks";
+import { networks } from "../wallet/networks";
 
 const quiknodeUnicrowUrl =
   "https://purple-distinguished-vineyard.quiknode.pro/360bd2d54ace2ca5b775f1bf8325875fcd77204f/";

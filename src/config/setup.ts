@@ -1,5 +1,5 @@
-import { getHost } from "config/getHost";
-import { IConfig } from "typing";
+import { getHost } from "./getHost";
+import { IConfig } from "../typing";
 import { networks as DefaultNetworks } from "../wallet/networks";
 
 export const setupNetwork = ({

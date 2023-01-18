@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
 import { CHAIN_ID } from "../helpers";
 import { DefaultNetwork } from "typing";
-import { config } from "config";
+import { config } from "../config";
 
 let currentWallet: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
