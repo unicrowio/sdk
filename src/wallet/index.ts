@@ -229,7 +229,7 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
     : null;
 };
 
-const checkIsWalletInstalled = () => {
+export const checkIsWalletInstalled = () => {
   if (typeof window === "undefined") {
     throw new Error("Should run through Browser");
   }

@@ -10,6 +10,9 @@ import {
 } from "../../../ui/internal/components/Modal";
 import { CloseIcon } from "../assets/CloseIcon";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { checkIsWalletInstalled } from "../../../wallet";
+import { ModalError } from "./ModalError";
+import { metamaskUrl } from "../../../helpers/constants";
 
 type ScopedModalProps = {
   title: ReactNode;
@@ -24,6 +27,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,
 ): JSX.Element => {
   const { BodyWithNetworkCheck } = useNetworkCheck();
+  const metamaskInstalled = checkIsWalletInstalled() !== null;
 
   return (
     <Modal isLoading={props.isLoading} loadingMessage={props.loadingMessage}>
@@ -34,17 +38,21 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
         </ModalHeaderClose>
       </ModalHeader>
 
-      {BodyWithNetworkCheck(
-        props.body ? (
-          <ModalBody>
-            <>
-              {props.body}
-              <ModalFooter>{props.footer}</ModalFooter>
-            </>
-          </ModalBody>
-        ) : (
-          <ModalEmptyBody />
-        ),
+      {metamaskInstalled ? (
+        BodyWithNetworkCheck(
+          props.body ? (
+            <ModalBody>
+              <>
+                {props.body}
+                <ModalFooter>{props.footer}</ModalFooter>
+              </>
+            </ModalBody>
+          ) : (
+            <ModalEmptyBody />
+          ),
+        )
+      ) : (
+          <ModalError onClick={() => window.open(metamaskUrl)} errorType="noMetaMask" />
       )}
     </Modal>
   );
