@@ -31,7 +31,7 @@ import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChall
 interface IProtectedActions {
   canRefund: boolean;
   reason?: string;
-};
+}
 
 export function RefundModal(props: IRefundModalProps) {
   const {

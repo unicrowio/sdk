@@ -29,7 +29,7 @@ import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePerio
 interface IProtectedActions {
   canRelease: boolean;
   reason?: string;
-};
+}
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {

@@ -20,12 +20,12 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
-};
+}
 
 interface IProtectedActions {
   canDoClaim: boolean;
   reason?: string;
-};
+}
 
 export function ClaimModal(props: IClaimModalProps) {
   const {

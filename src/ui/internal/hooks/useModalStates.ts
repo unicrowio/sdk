@@ -12,7 +12,7 @@ export interface TUseModalStates {
   success: string | null;
   setSuccess: Dispatch<any>;
   onModalClose: VoidFunction;
-};
+}
 
 export const useModalStates = ({
   deferredPromise,

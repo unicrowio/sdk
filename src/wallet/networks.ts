@@ -16,7 +16,7 @@ export interface UnicrowNetwork {
   };
   rpcUrls: string[];
   blockExplorerUrls?: string[];
-};
+}
 
 export const networks: { [name: string]: UnicrowNetwork } = {
   arbitrum: {

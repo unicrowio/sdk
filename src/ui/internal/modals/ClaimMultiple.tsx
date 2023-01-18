@@ -19,7 +19,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
-};
+}
 
 export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   const {

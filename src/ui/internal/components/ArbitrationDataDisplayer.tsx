@@ -6,7 +6,7 @@ import { IGetEscrowData } from "typing";
 
 interface Props {
   data: IGetEscrowData;
-};
+}
 
 export const ArbitrationDataDisplayer = ({ data }: Props) => {
   const { arbitrator: arbitration, connectedUser } = data;

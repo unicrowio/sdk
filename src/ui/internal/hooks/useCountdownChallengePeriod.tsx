@@ -8,7 +8,7 @@ interface CountdownChallengePeriodProps {
   labelChallengePeriod: string;
   countdown: string;
   shouldWaitOtherParty: boolean;
-};
+}
 
 export const useCountdownChallengePeriod = (
   escrow: IGetEscrowData | null,
