@@ -3,11 +3,10 @@ import { ActionForbidden } from "../assets/ActionForbidden";
 import { Button } from ".";
 import styled from "styled-components";
 
-interface IIncorrectNetworkProps {
-  onClick: () => void;
-  title?: string;
-  description?: string;
-  image?: string;
+interface IModalErrorProps {
+  type: "noMetaMask" | "wrongNetwork";
+  onClick: VoidFunction;
+  error?: Record<"title" | "buttonTitle" | "description", string>;
 }
 
 const Container = styled.div`
@@ -38,11 +37,22 @@ const ButtonContainer = styled.div`
   width: 100%;
 `;
 
-export const IncorrectNetwork = ({
-  onClick,
-  title = "Incorrect Network",
-  description = "Please, connect to the network below",
-}: IIncorrectNetworkProps) => {
+export const ModalError = ({ type, onClick, error }: IModalErrorProps) => {
+  const errors = {
+    noMetaMask: {
+      title: "No wallet installed",
+      buttonTitle: "Install MetaMask",
+      description: "Please, install MetaMask, the most popular web3 wallet",
+    },
+    wrongNetwork: {
+      title: "Incorrect Network",
+      buttonTitle: `Connect to ${globalThis.defaultNetwork.displayName}`,
+      description: "Please, connect to the network below",
+    },
+  };
+
+  const { title, buttonTitle, description } = error || errors[type];
+
   return (
     <Container>
       <ActionForbidden />
@@ -50,7 +60,7 @@ export const IncorrectNetwork = ({
       <Description>{description}</Description>
       <ButtonContainer>
         <Button fullWidth onClick={onClick}>
-          Connect to {globalThis.defaultNetwork.displayName}
+          {buttonTitle}
         </Button>
       </ButtonContainer>
     </Container>

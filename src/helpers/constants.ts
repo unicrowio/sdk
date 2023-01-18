@@ -38,3 +38,5 @@ export const CHAIN_ID = {
   goerli: 5,
   development: 5777,
 };
+
+export const metamaskUrl = "https://metamask.io/download/";
