@@ -1,10 +1,10 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 
-type ChipWrapperProps = {
+interface ChipWrapperProps {
   color: string;
   children: ReactNode;
-};
+}
 
 const ChipWrapper = styled.div<ChipWrapperProps>`
   height: 36px;
@@ -17,9 +17,9 @@ const ChipWrapper = styled.div<ChipWrapperProps>`
   background: ${(props: ChipWrapperProps) => props.color};
 `;
 
-type ChipContentProps = {
+interface ChipContentProps {
   color: string;
-};
+}
 
 const ChipContent = styled.div<ChipContentProps>`
   padding: 6px 10px;

@@ -3,11 +3,11 @@ import { displayableAmountBN } from "../../../helpers";
 import BigNumber from "bignumber.js";
 import React from "react";
 
-type PropsTypes = {
+interface PropsTypes {
   amount: BigNumber; // ERC20 | Ether
   tokenInfo: IToken;
   percentage: string;
-};
+}
 
 export const FormattedPercentageAmountAdornment = ({
   amount,

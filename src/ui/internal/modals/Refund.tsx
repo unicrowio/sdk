@@ -27,11 +27,7 @@ import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
-
-type IProtectedActions = {
-  canRefund: boolean;
-  reason?: string;
-};
+import { ModalAction } from "../components/Modal";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -51,8 +47,8 @@ export function RefundModal(props: IRefundModalProps) {
     null,
   );
 
-  const [protect, setProtect] = React.useState<IProtectedActions>(
-    {} as IProtectedActions,
+  const [modalAction, setModalAction] = React.useState<ModalAction>(
+    {} as ModalAction,
   );
 
   const [paymentStatus, setPaymentStatus] = React.useState<
@@ -70,23 +66,23 @@ export function RefundModal(props: IRefundModalProps) {
         .then(async (data: IGetEscrowData) => {
           setEscrowData(data);
           if (data.connectedUser !== SELLER) {
-            setProtect({
-              canRefund: false,
+            setModalAction({
+              isForbidden: false,
               reason: "Only the seller can release the payment",
             });
             return;
           }
 
           if (data.status.claimed) {
-            setProtect({
-              canRefund: false,
+            setModalAction({
+              isForbidden: false,
               reason: "The payment cannot be refunded via Unicrow anymore",
             });
             return;
           }
 
-          setProtect({
-            canRefund: true,
+          setModalAction({
+            isForbidden: true,
           });
 
           if (data.status.state === EscrowStatus.CHALLENGED) {
@@ -164,8 +160,10 @@ export function RefundModal(props: IRefundModalProps) {
       return null;
     }
 
-    if (!(isLoading || protect.canRefund)) {
-      return <Forbidden onClose={onModalClose} description={protect.reason} />;
+    if (!(isLoading || modalAction.isForbidden)) {
+      return (
+        <Forbidden onClose={onModalClose} description={modalAction.reason} />
+      );
     }
 
     const isExpired = escrowData.challengePeriodEnd.getTime() <= Date.now();
@@ -217,7 +215,7 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(isLoading || protect.canRefund)) {
+    if (!(isLoading || modalAction.isForbidden)) {
       return null;
     }
 

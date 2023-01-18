@@ -105,11 +105,16 @@ export const ModalLoadingMessage = styled.p`
   text-align: center;
 `;
 
-export type TModalProps = {
+export interface TModalProps {
   isLoading?: boolean;
   loadingMessage?: string;
   children?: ReactNode;
-};
+}
+
+export interface ModalAction {
+  isForbidden: boolean;
+  reason?: string;
+}
 
 export const Modal = ({
   isLoading = false,
@@ -119,15 +124,17 @@ export const Modal = ({
   return (
     <ModalWrapper>
       <StyledModalContent>
-        {children}
-        {isLoading && (
-          <ModalLoading>
-            <div>
-              <Loading />
-              <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
-            </div>
-          </ModalLoading>
-        )}
+        <>
+          {children}
+          {isLoading && (
+            <ModalLoading>
+              <div>
+                <Loading />
+                <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
+              </div>
+            </ModalLoading>
+          )}
+        </>
       </StyledModalContent>
     </ModalWrapper>
   );

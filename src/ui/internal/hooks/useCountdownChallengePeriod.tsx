@@ -2,13 +2,13 @@ import { BUYER, SELLER, countdownChallengePeriod } from "../../../helpers";
 import React, { useEffect } from "react";
 import { IGetEscrowData } from "typing";
 
-type CountdownChallengePeriodProps = {
+interface CountdownChallengePeriodProps {
   buttonLabel: string;
   disableButton: boolean;
   labelChallengePeriod: string;
   countdown: string;
   shouldWaitOtherParty: boolean;
-};
+}
 
 export const useCountdownChallengePeriod = (
   escrow: IGetEscrowData | null,

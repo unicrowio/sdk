@@ -4,9 +4,9 @@ import { DataDisplayer } from "./DataDisplayer";
 import { MARKER } from "../../../config/marker";
 import { IGetEscrowData } from "typing";
 
-type Props = {
+interface Props {
   data: IGetEscrowData;
-};
+}
 
 export const ArbitrationDataDisplayer = ({ data }: Props) => {
   const { arbitrator: arbitration, connectedUser } = data;

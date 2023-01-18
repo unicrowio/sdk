@@ -14,14 +14,14 @@ import { checkIsWalletInstalled } from "../../../wallet";
 import { ModalError } from "./ModalError";
 import { metamaskUrl } from "../../../helpers/constants";
 
-type ScopedModalProps = {
-  title: ReactNode;
+interface ScopedModalProps {
+  title: string;
   body: ReactNode;
-  footer: ReactNode;
+  footer: string;
   isLoading: boolean;
   loadingMessage: string;
   onClose?: () => any;
-};
+}
 
 export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,

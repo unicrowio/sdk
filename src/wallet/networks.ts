@@ -5,7 +5,7 @@ const arbitrumTestnetmRpcUrl =
 const developmentRpcUrl =
   globalThis.development || "https://rpc-net.unicrow.io";
 
-export type UnicrowNetwork = {
+export interface UnicrowNetwork {
   chainId: number;
   chainName: string;
   displayName: string;
@@ -16,7 +16,7 @@ export type UnicrowNetwork = {
   };
   rpcUrls: string[];
   blockExplorerUrls?: string[];
-};
+}
 
 export const networks: { [name: string]: UnicrowNetwork } = {
   arbitrum: {

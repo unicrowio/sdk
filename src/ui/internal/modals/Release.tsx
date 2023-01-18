@@ -25,11 +25,7 @@ import { MARKER } from "../../../config/marker";
 import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
-
-type IProtectedActions = {
-  canRelease: boolean;
-  reason?: string;
-};
+import { ModalAction } from "../components/Modal";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {
@@ -53,8 +49,8 @@ export function ReleaseModal(props: IReleaseModalProps) {
     string | undefined
   >();
 
-  const [protect, setProtect] = React.useState<IProtectedActions>(
-    {} as IProtectedActions,
+  const [modalAction, setModalAction] = React.useState<ModalAction>(
+    {} as ModalAction,
   );
 
   const { labelChallengePeriod, countdown } =
@@ -69,16 +65,16 @@ export function ReleaseModal(props: IReleaseModalProps) {
           setEscrowData(data);
 
           if (data.connectedUser !== "buyer") {
-            setProtect({
-              canRelease: false,
+            setModalAction({
+              isForbidden: false,
               reason: "Only the buyer can release the payment",
             });
             return;
           }
 
           if (data.status.claimed) {
-            setProtect({
-              canRelease: false,
+            setModalAction({
+              isForbidden: false,
               reason: "The payment is already claimed",
             });
             return;
@@ -92,8 +88,8 @@ export function ReleaseModal(props: IReleaseModalProps) {
             );
           }
 
-          setProtect({
-            canRelease: true,
+          setModalAction({
+            isForbidden: true,
           });
         })
         .catch((e) => {
@@ -161,8 +157,10 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (!(isLoading || protect.canRelease)) {
-      return <Forbidden onClose={onModalClose} description={protect.reason} />;
+    if (!(isLoading || modalAction.isForbidden)) {
+      return (
+        <Forbidden onClose={onModalClose} description={modalAction.reason} />
+      );
     }
 
     return (
@@ -215,7 +213,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (!(isLoading || protect.canRelease)) {
+    if (!(isLoading || modalAction.isForbidden)) {
       return null;
     }
 

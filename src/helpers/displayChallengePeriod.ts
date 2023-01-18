@@ -1,11 +1,11 @@
 import { DateTime } from "luxon";
 
-type IDiff = {
+interface IDiff {
   days: number;
   hours: number;
   minutes: number;
   seconds: number;
-};
+}
 
 const formatDate = (diff: IDiff): string => {
   const { days, hours, minutes, seconds } = diff;
@@ -26,8 +26,6 @@ const formatDate = (diff: IDiff): string => {
     } ${seconds > 0 ? (seconds === 1 ? "second" : "seconds") : ""}`;
   } else if (seconds > 0) {
     formattedString = `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
-  } else {
-    formattedString = "-";
   }
 
   return formattedString;

@@ -13,14 +13,16 @@ const Text = styled.span`
   color: #252e47;
 `;
 
-export type TSubtitleProps = {
+export interface TSubtitleProps {
   children: ReactNode;
-};
+}
 
 export const Subtitle = (props: TSubtitleProps) => {
   return (
     <Container>
-      <Text>{props.children}</Text>
+      <Text>
+        <>{props.children}</>
+      </Text>
     </Container>
   );
 };
