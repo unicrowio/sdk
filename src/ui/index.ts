@@ -4,5 +4,7 @@ export * from "./render/refund";
 export * from "./render/claimMultiple";
 export * from "./render/challenge";
 export * from "./render/approveSettlement";
+export * from "./render/addApproveArbitrator";
+export * from "./render/settlementOffer";
 export * from "./render/arbitrate";
 export * from "./render/claim";
