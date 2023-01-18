@@ -4,7 +4,7 @@ import {
   startListeningNetwork,
   switchNetwork,
 } from "wallet";
-import { IncorrectNetwork } from "ui/internal/components/IncorrectNetwork";
+import { ModalError } from "ui/internal/components/ModalError";
 import { DefaultNetwork } from "config/setup";
 
 export const useNetworkCheck = () => {
@@ -35,7 +35,7 @@ export const useNetworkCheck = () => {
       return isCorrectNetwork ? (
         Body
       ) : (
-        <IncorrectNetwork onClick={onNetworkSwitch} />
+        <ModalError type='wrongNetwork' onClick={onNetworkSwitch} />
       );
     },
     [isCorrectNetwork],
