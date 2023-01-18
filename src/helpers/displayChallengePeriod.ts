@@ -1,11 +1,11 @@
 import { DateTime } from "luxon";
 
-type IDiff = {
+interface IDiff {
   days: number;
   hours: number;
   minutes: number;
   seconds: number;
-};
+}
 
 const formatDate = (diff: IDiff): string => {
   const { days, hours, minutes, seconds } = diff;

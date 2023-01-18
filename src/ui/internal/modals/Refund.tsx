@@ -28,7 +28,7 @@ import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 
-type IProtectedActions = {
+interface IProtectedActions {
   canRefund: boolean;
   reason?: string;
 };

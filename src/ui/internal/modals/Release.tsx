@@ -26,7 +26,7 @@ import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 
-type IProtectedActions = {
+interface IProtectedActions {
   canRelease: boolean;
   reason?: string;
 };

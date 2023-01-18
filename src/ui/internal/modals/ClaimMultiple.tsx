@@ -17,7 +17,7 @@ import {
 } from "../../../helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
-type IBalanceWithTokenUSD = IBalanceWithTokenInfo & {
+interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
 };
 

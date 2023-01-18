@@ -1,11 +1,13 @@
 export const STABLE_COINS = ["DAI", "USDC", "USDT"];
 
-type IResult = { [key: string]: number | undefined };
+interface IResult {
+  [key: string]: number | undefined;
+}
 
-type IGeckoRespObj = {
+interface IGeckoRespObj {
   [key: string]: { usd: number | undefined };
   ethereum: { usd: number | undefined };
-};
+}
 
 const API_COINGECKO =
   "https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=";

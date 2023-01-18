@@ -2,7 +2,7 @@ import Deferred from "../../../helpers/deferred";
 import { Dispatch, useState } from "react";
 import { umountModal } from "../config/render";
 
-export type TUseModalStates = {
+export interface TUseModalStates {
   isLoading: boolean;
   setIsLoading: Dispatch<boolean>;
   loadingMessage: string;
@@ -11,7 +11,7 @@ export type TUseModalStates = {
   setError: Dispatch<any>;
   success: string | null;
   setSuccess: Dispatch<any>;
-  onModalClose: () => any;
+  onModalClose: VoidFunction;
 };
 
 export const useModalStates = ({

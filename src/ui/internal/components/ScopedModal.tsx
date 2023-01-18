@@ -11,14 +11,14 @@ import {
 import { CloseIcon } from "../assets/CloseIcon";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
-type ScopedModalProps = {
+interface ScopedModalProps {
   title: string;
   body: ReactNode;
   footer: string;
   isLoading: boolean;
   loadingMessage: string;
   onClose?: () => any;
-};
+}
 
 export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,

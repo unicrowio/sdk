@@ -2,10 +2,10 @@ import React, { ReactNode } from "react";
 import { toast } from "ui/internal/notification/toast";
 import { CopyIcon } from "../assets/CopyIcon";
 
-type CopyToClipboardProps = {
+interface CopyToClipboardProps {
   content: string | ReactNode;
   copy: string;
-};
+}
 export const CopyToClipboard = ({ content, copy }: CopyToClipboardProps) => {
   return (
     // rome-ignore lint/a11y/useKeyWithClickEvents: <explanation>

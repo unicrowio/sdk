@@ -172,20 +172,20 @@ export interface GenericParsedTxPayload {
  * The data sent by the user when he approves an arbitrator for a payment.
  *
  */
-export type ApproveArbitratorParsedPayload = GenericParsedTxPayload & {
+export interface ApproveArbitratorParsedPayload extends GenericParsedTxPayload {
   /** Address of the arbitrator. null for no arbitrator */
   arbitrator: string | null;
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee: number;
   /** Has the escrow been decided by the arbitrator, false if value === null // TODO: verify if true */
   statusArbitration: "ArbitratorApproved";
-};
+}
 
 /**
  * The data sent by the user when he approves a payment settlement.
  *
  */
-export type ApproveSettlementParsedPayload = GenericParsedTxPayload & {
+export interface ApproveSettlementParsedPayload extends GenericParsedTxPayload {
   /* The date when payment has been settled at */
   settledAt: Date;
   /** How much was the buyer offered in the latest settlement offer */
@@ -234,12 +234,12 @@ export type ApproveSettlementParsedPayload = GenericParsedTxPayload & {
   amountProtocol: string;
   /** Arbitrator's final share in percentage incl. fees */
   amountArbitrator: string;
-};
+}
 
 /**
  * The data sent by an arbitrator when he makes his arbitration proposal.
  */
-export type ArbitrateParsedPayload = GenericParsedTxPayload & {
+export interface ArbitrateParsedPayload extends GenericParsedTxPayload {
   settledAt: Date;
   /** Who sent the payment */
   buyer: string;
@@ -283,13 +283,13 @@ export type ArbitrateParsedPayload = GenericParsedTxPayload & {
   amountProtocol: string;
   /** Arbitrator's final share in percentage incl. fees */
   amountArbitrator: string;
-};
+}
 
 /**
  * The data sent either by the buyer or seller when they challenge a payment.
  *
  */
-export type ChallengeParsedPayload = GenericParsedTxPayload & {
+export interface ChallengeParsedPayload extends GenericParsedTxPayload {
   /* The date when payment has been challenged at */
   challengedAt: Date;
   /** Who sent the payment */
@@ -320,43 +320,43 @@ export type ChallengeParsedPayload = GenericParsedTxPayload & {
   splitProtocol: number;
   /** Amount in token */
   amount: string;
-};
+}
 
-export type ClaimParsedPayload = GenericParsedTxPayload & {
+export interface ClaimParsedPayload extends GenericParsedTxPayload {
   amountBuyer: string;
   amountSeller: string;
   amountMarketplace: string;
   amountProtocol: string;
   amountArbitrator: string;
-};
+}
 
 /**
  * The data sent by either the buyer or seller when he claims an escrow.
  *
  */
-export type MultipleClaimParsedPayload = GenericParsedTxPayload & {
+export interface MultipleClaimParsedPayload extends GenericParsedTxPayload {
   /** The data for a single claim of an escrow share. (array with amountBuyer, amountSeller, amountMarketplace, amountProtocol, amountArbitrator) */
   payload: ClaimParsedPayload[];
-};
+}
 
 /**
  * The data sent by either the buyer or seller when he proposes an escrow settlement.
  *
  */
-export type OfferSettlementParsedPayload = GenericParsedTxPayload & {
+export interface OfferSettlementParsedPayload extends GenericParsedTxPayload {
   /* The date when payment has been offered at */
   settlementOfferAt: Date;
   latestSettlementOfferBuyer: number;
   latestSettlementOfferSeller: number;
   /** address of who sent the latest settlement offer. */
   latestSettlementOfferAddress: string;
-};
+}
 
 /**
  * The data sent by either buyer or seller when he initalizes a new payment.
  *
  */
-export type PayParsedPayload = GenericParsedTxPayload & {
+export interface PayParsedPayload extends GenericParsedTxPayload {
   /* The date when payment has been paid at */
   paidAt: Date;
   /** Address of the arbitrator */
@@ -403,13 +403,14 @@ export type PayParsedPayload = GenericParsedTxPayload & {
   amountArbitrator: string;
   /** Protocol fee (bips) */
   amountProtocol: string;
-};
+}
 
 /**
  * The data sent by either the buyer or seller when he proposes an arbitrator for an escrow.
  *
  */
-export type ProposalArbitratorParsedPayload = GenericParsedTxPayload & {
+export interface ProposalArbitratorParsedPayload
+  extends GenericParsedTxPayload {
   /** Address of the arbitrator. null for no arbitrator */
   arbitrator: string | null;
   /** Arbitrator's fee in bips. Can be 0 */
@@ -418,9 +419,9 @@ export type ProposalArbitratorParsedPayload = GenericParsedTxPayload & {
   proposer: string;
   /** status of the arbitration  */
   statusArbitration: "ArbitratorProposed";
-};
+}
 
-export type ReleaseParsedPayload = GenericParsedTxPayload & {
+export interface ReleaseParsedPayload extends GenericParsedTxPayload {
   releasedAt: Date;
   buyer: string;
   seller: string;
@@ -443,7 +444,7 @@ export type ReleaseParsedPayload = GenericParsedTxPayload & {
   amountMarketplace: string;
   amountProtocol: string;
   amountArbitrator: string;
-};
+}
 
 export interface IGenericTransactionCallbacks {
   connectingWallet?: (payload?: any) => void;
@@ -497,7 +498,7 @@ export interface IPayTransactionCallbacks extends IGenericTransactionCallbacks {
   confirmed?: (data: IPayTransactionPayload) => void;
 }
 
-export type IReleasedTransactionPayload = ReleaseParsedPayload;
+export interface IReleasedTransactionPayload extends ReleaseParsedPayload {}
 
 export interface IReleasedTransactionBroadcastPayload {
   transactionHash: string;
@@ -717,7 +718,7 @@ export interface IClaimModalProps {
   callbacks?: IClaimTransactionCallbacks;
 }
 
-export type TPaymentListQueryParams = IQuery;
+export interface TPaymentListQueryParams extends IQuery {}
 
 export interface IPage {
   limit: number;
@@ -777,12 +778,12 @@ export interface IArbitratorInfo {
   arbitratorFee: number;
 }
 
-export type IGetConnectedUser = {
+export interface IGetConnectedUser {
   buyer: string;
   seller: string;
   arbitrator: string | null;
   marketplace: string | null;
-};
+}
 
 /**
  * All data of an escrow incl. info about the arbitrator, settlement and current user.
@@ -846,7 +847,7 @@ export interface ICalculateStatusParams {
  * The info needed for calculating the share of each party of an escrow.
  *
  */
-export type CalculateAmountsInput = {
+export interface CalculateAmountsInput {
   amount: number;
   /** Buyer's share, and fees, in bips */
   splitBuyer: number;
@@ -858,13 +859,13 @@ export type CalculateAmountsInput = {
   splitMarketplace: number;
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee?: number;
-};
+}
 
 /**
  * The amounts for each party of an escrow.
  *
  */
-export type tShares = {
+export interface tShares {
   /** Buyer's final share in percentage incl. fees */
   amountBuyer: number;
   /** Seller's final share in percentage incl. fees */
@@ -875,9 +876,9 @@ export type tShares = {
   amountMarketplace: number;
   /** Arbitrator's final share in percentage incl. fees */
   amountArbitrator: number;
-};
+}
 
-export type tSplits = {
+export interface tSplits {
   /** Buyer's final share in percentage incl. fees */
   splitBuyer: BigNumberJs;
   /** Seller's final share in percentage incl. fees */
@@ -888,8 +889,8 @@ export type tSplits = {
   splitMarketplace: BigNumberJs;
   /** Arbitrator's final share in percentage incl. fees */
   splitArbitrator: BigNumberJs;
-};
+}
 
-export type CalculateFunction = CalculateAmountsInput;
+export interface CalculateFunction extends CalculateAmountsInput {}
 
 export default {};

@@ -105,11 +105,11 @@ export const ModalLoadingMessage = styled.p`
   text-align: center;
 `;
 
-export type TModalProps = {
+export interface TModalProps {
   isLoading?: boolean;
   loadingMessage?: string;
   children?: ReactNode;
-};
+}
 
 export const Modal = ({
   isLoading = false,
