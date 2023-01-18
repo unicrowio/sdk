@@ -35,7 +35,7 @@ export const useNetworkCheck = () => {
       return isCorrectNetwork ? (
         Body
       ) : (
-          <ModalError type='wrongNetwork' onClick={onNetworkSwitch} />
+        <ModalError type='wrongNetwork' onClick={onNetworkSwitch} />
       );
     },
     [isCorrectNetwork],
