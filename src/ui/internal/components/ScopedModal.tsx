@@ -54,7 +54,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
       ) : (
         <ModalError
           onClick={() => window.open(metamaskUrl)}
-          errorType="noMetaMask"
+          type="noMetaMask"
         />
       )}
     </Modal>
