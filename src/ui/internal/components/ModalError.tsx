@@ -40,7 +40,7 @@ const ButtonContainer = styled.div`
 export const ModalError = ({
   errorType = "error",
   onClick,
-  error
+  error,
 }: IModalErrorProps) => {
   const errors = {
     noMetaMask: {

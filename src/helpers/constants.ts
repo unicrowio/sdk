@@ -39,4 +39,4 @@ export const CHAIN_ID = {
   development: 5777,
 };
 
-export const metamaskUrl = 'https://metamask.io/download/';
+export const metamaskUrl = "https://metamask.io/download/";

@@ -32,7 +32,11 @@ export const useNetworkCheck = () => {
         }
       };
 
-      return isCorrectNetwork ? Body : <ModalError errorType='wrongNetwork' onClick={onNetworkSwitch} />;
+      return isCorrectNetwork ? (
+        Body
+      ) : (
+        <ModalError errorType='wrongNetwork' onClick={onNetworkSwitch} />
+      );
     },
     [isCorrectNetwork],
   );
