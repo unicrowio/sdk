@@ -4,9 +4,9 @@ import { Button } from ".";
 import styled from "styled-components";
 
 interface IModalErrorProps {
-  type: 'noMetaMask' | 'wrongNetwork';
+  type: "noMetaMask" | "wrongNetwork";
   onClick: VoidFunction;
-  error?: Record<'title' | 'buttonTitle' | 'description', string>;
+  error?: Record<"title" | "buttonTitle" | "description", string>;
 }
 
 const Container = styled.div`
@@ -37,11 +37,7 @@ const ButtonContainer = styled.div`
   width: 100%;
 `;
 
-export const ModalError = ({
-  type,
-  onClick,
-  error,
-}: IModalErrorProps) => {
+export const ModalError = ({ type, onClick, error }: IModalErrorProps) => {
   const errors = {
     noMetaMask: {
       title: "No wallet installed",
