@@ -4,9 +4,9 @@ import { Button } from ".";
 import styled from "styled-components";
 
 interface IModalErrorProps {
-  errorType: string;
-  onClick: () => void;
-  error?: Object;
+  type: 'noMetaMask' | 'wrongNetwork';
+  onClick: VoidFunction;
+  error?: Record<'title' | 'buttonTitle' | 'description', string>;
 }
 
 const Container = styled.div`
@@ -38,7 +38,7 @@ const ButtonContainer = styled.div`
 `;
 
 export const ModalError = ({
-  errorType = "error",
+  type,
   onClick,
   error,
 }: IModalErrorProps) => {
@@ -55,7 +55,7 @@ export const ModalError = ({
     },
   };
 
-  const { title, buttonTitle, description } = error || errors[errorType];
+  const { title, buttonTitle, description } = error || errors[type];
 
   return (
     <Container>
