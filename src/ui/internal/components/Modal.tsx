@@ -111,6 +111,11 @@ export interface TModalProps {
   children?: ReactNode;
 }
 
+export interface ModalAction {
+  isForbidden: boolean;
+  reason?: string;
+}
+
 export const Modal = ({
   isLoading = false,
   loadingMessage = "",

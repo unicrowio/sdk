@@ -17,14 +17,10 @@ import {
   getExchangeRates,
 } from "../../../helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { ModalAction } from "../components/Modal";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
-}
-
-interface IProtectedActions {
-  canDoClaim: boolean;
-  reason?: string;
 }
 
 export function ClaimModal(props: IClaimModalProps) {
@@ -41,8 +37,8 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const { isCorrectNetwork } = useNetworkCheck();
 
-  const [protect, setProtect] = React.useState<IProtectedActions>(
-    {} as IProtectedActions,
+  const [modalAction, setModalAction] = React.useState<ModalAction>(
+    {} as ModalAction,
   );
 
   const [escrowBalance, setEscrowBalance] =
@@ -75,13 +71,13 @@ export function ClaimModal(props: IClaimModalProps) {
 
         setEscrowBalance(_escrowBalance);
 
-        setProtect({
-          canDoClaim: true,
+        setModalAction({
+          isForbidden: true,
         });
 
         if (_escrowBalance.connectedUser === "other") {
-          setProtect({
-            canDoClaim: false,
+          setModalAction({
+            isForbidden: false,
           });
         }
 
@@ -89,8 +85,8 @@ export function ClaimModal(props: IClaimModalProps) {
           _escrowBalance.statusEscrow.claimed ||
           _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
         ) {
-          setProtect({
-            canDoClaim: false,
+          setModalAction({
+            isForbidden: false,
             reason: "You cannot claim this payment at this time",
           });
         }
@@ -187,8 +183,10 @@ export function ClaimModal(props: IClaimModalProps) {
     if (!escrowBalance) {
       return null;
     }
-    if (!(isLoading || protect.canDoClaim)) {
-      return <Forbidden onClose={onModalClose} description={protect.reason} />;
+    if (!(isLoading || modalAction.isForbidden)) {
+      return (
+        <Forbidden onClose={onModalClose} description={modalAction.reason} />
+      );
     }
 
     return (
@@ -205,7 +203,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(escrowBalance && (isLoading || protect.canDoClaim))) {
+    if (!(escrowBalance && (isLoading || modalAction.isForbidden))) {
       return null;
     }
 
