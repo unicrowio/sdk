@@ -26,8 +26,6 @@ const formatDate = (diff: IDiff): string => {
     } ${seconds > 0 ? (seconds === 1 ? "second" : "seconds") : ""}`;
   } else if (seconds > 0) {
     formattedString = `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
-  } else {
-    formattedString = "-";
   }
 
   return formattedString;
