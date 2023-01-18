@@ -119,15 +119,17 @@ export const Modal = ({
   return (
     <ModalWrapper>
       <StyledModalContent>
-        {children}
-        {isLoading && (
-          <ModalLoading>
-            <div>
-              <Loading />
-              <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
-            </div>
-          </ModalLoading>
-        )}
+        <>
+          {children}
+          {isLoading && (
+            <ModalLoading>
+              <div>
+                <Loading />
+                <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
+              </div>
+            </ModalLoading>
+          )}
+        </>
       </StyledModalContent>
     </ModalWrapper>
   );

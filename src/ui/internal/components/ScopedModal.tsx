@@ -12,9 +12,9 @@ import { CloseIcon } from "../assets/CloseIcon";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 type ScopedModalProps = {
-  title: ReactNode;
+  title: string;
   body: ReactNode;
-  footer: ReactNode;
+  footer: string;
   isLoading: boolean;
   loadingMessage: string;
   onClose?: () => any;

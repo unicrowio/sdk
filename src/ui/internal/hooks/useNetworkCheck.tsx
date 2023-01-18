@@ -23,21 +23,16 @@ export const useNetworkCheck = () => {
     });
   }, []);
 
-  const BodyWithNetworkCheck = React.useCallback(
-    (Body: JSX.Element) => {
-      const onNetworkSwitch = async () => {
-        setIsCorrectNetwork(await isCorrectNetworkConnected());
-        if (!isCorrectNetwork) {
-          await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
-        }
-      };
+  const onNetworkSwitch = React.useCallback(async () => {
+    setIsCorrectNetwork(await isCorrectNetworkConnected());
+    if (!isCorrectNetwork) {
+      await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
+    }
+  }, [isCorrectNetwork]);
 
-      return isCorrectNetwork ? (
-        Body
-      ) : (
-        <IncorrectNetwork onClick={onNetworkSwitch} />
-      );
-    },
+  const BodyWithNetworkCheck = React.useCallback(
+    (Body: JSX.Element) =>
+      isCorrectNetwork ? Body : <IncorrectNetwork onClick={onNetworkSwitch} />,
     [isCorrectNetwork],
   );
 
