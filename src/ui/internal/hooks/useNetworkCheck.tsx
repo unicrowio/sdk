@@ -32,7 +32,11 @@ export const useNetworkCheck = () => {
 
   const BodyWithNetworkCheck = React.useCallback(
     (Body: JSX.Element) =>
-      isCorrectNetwork ? Body : <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />,
+      isCorrectNetwork ? (
+        Body
+      ) : (
+        <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />
+      ),
     [isCorrectNetwork],
   );
 
