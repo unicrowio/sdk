@@ -122,6 +122,9 @@ export function PayModal(props: IPaymentModalProps) {
     });
   };
 
+  console.log('pwe', 'tokenInfo', tokenInfo)
+  console.log('pwe', ' props.paymentProps.ensAddresses?.seller', props.paymentProps.ensAddresses?.seller)
+  console.log('pwe', 'props', props)
   const ModalBody = () => {
     return (
       <>
@@ -141,7 +144,7 @@ export function PayModal(props: IPaymentModalProps) {
             value={addressWithYou(
               props.paymentProps.seller,
               walletUser,
-              props.paymentProps.ensAddresses.seller,
+              props.paymentProps.ensAddresses?.seller,
             )}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}
