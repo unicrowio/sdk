@@ -68,7 +68,7 @@ export function RefundModal(props: IRefundModalProps) {
           if (data.connectedUser !== SELLER) {
             setModalAction({
               isForbidden: false,
-              reason: "Only the seller can release the payment",
+              reason: "Only the seller can refund the payment",
             });
             return;
           }
