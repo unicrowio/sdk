@@ -3,7 +3,6 @@ import { calculateAmounts } from "../core";
 import { IGetEscrowData } from "../typing";
 import { isSameAddress } from "./isSameAddress";
 
-
 // Get buyer or seller split based on logged in user participation
 export const getSplitFromLoggedUser = (
   current: IGetEscrowData,
