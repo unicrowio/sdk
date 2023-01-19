@@ -30,7 +30,7 @@ export const useNetworkCheck = () => {
     }
   }, [isCorrectNetwork]);
 
-  const BodyWithNetworkCheck = React.useCallback(
+  const WithNetworkCheck = React.useCallback(
     (Body: JSX.Element) =>
       isCorrectNetwork ? (
         Body
@@ -42,6 +42,6 @@ export const useNetworkCheck = () => {
 
   return {
     isCorrectNetwork,
-    BodyWithNetworkCheck,
+    WithNetworkCheck,
   };
 };

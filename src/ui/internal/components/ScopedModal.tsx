@@ -17,7 +17,7 @@ import { metamaskUrl } from "../../../helpers/constants";
 interface ScopedModalProps {
   title: string;
   body: ReactNode;
-  footer: string;
+  footer: ReactNode;
   isLoading: boolean;
   loadingMessage: string;
   onClose?: () => any;
@@ -26,8 +26,27 @@ interface ScopedModalProps {
 export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,
 ): JSX.Element => {
-  const { BodyWithNetworkCheck } = useNetworkCheck();
+  const { WithNetworkCheck } = useNetworkCheck();
   const metamaskInstalled = checkIsWalletInstalled() !== null;
+
+  const BodyWithFooter = React.useCallback(
+    () =>
+      WithNetworkCheck(
+        props.body ? (
+          <ModalBody>
+            <>
+              {props.body}
+              <ModalFooter>
+                <>{props.footer}</>
+              </ModalFooter>
+            </>
+          </ModalBody>
+        ) : (
+          <ModalEmptyBody />
+        ),
+      ),
+    [props.body, props.footer, WithNetworkCheck],
+  );
 
   return (
     <Modal isLoading={props.isLoading} loadingMessage={props.loadingMessage}>
@@ -39,18 +58,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
       </ModalHeader>
 
       {metamaskInstalled ? (
-        BodyWithNetworkCheck(
-          props.body ? (
-            <ModalBody>
-              <>
-                {props.body}
-                <ModalFooter>{props.footer}</ModalFooter>
-              </>
-            </ModalBody>
-          ) : (
-            <ModalEmptyBody />
-          ),
-        )
+        <BodyWithFooter />
       ) : (
         <ModalError
           onClick={() => window.open(metamaskUrl)}
