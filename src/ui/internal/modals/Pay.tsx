@@ -141,7 +141,7 @@ export function PayModal(props: IPaymentModalProps) {
             value={addressWithYou(
               props.paymentProps.seller,
               walletUser,
-              props.paymentProps.ensAddresses.seller,
+              props.paymentProps.ensAddresses?.seller,
             )}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}

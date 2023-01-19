@@ -28,7 +28,7 @@ export const ArbitrationDataDisplayer = ({ data }: Props) => {
           label="Arbitrator"
           value={reduceAddress(
             arbitration.arbitrator,
-            arbitration.ensAddresses.arbitrator,
+            arbitration.ensAddresses?.arbitrator,
           )}
           copy={arbitration.arbitrator}
           marker={MARKER.arbitrator}
