@@ -5,7 +5,7 @@ import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
 /**
  * Retrieves information about the fee of Crow and returns its percentage.
- * If you need to use as BIPS, multiply by 100.
+ * If you need to have it as bips, multiply by 100.
  *
  * @returns {number}
  */
