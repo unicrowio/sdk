@@ -17,6 +17,7 @@ interface IEnsAddresses {
 export interface IToken {
   /** 'DAI' | 'USDT' | 'USDC' | 'ETH' | string  */
   symbol?: tTokenSymbol;
+  /** ERC20 address of the token */
   address?: string;
   /** Number of token decimals. To get "human readable" format, divide the amount by pow(10, decimals) */
   decimals?: number;
@@ -33,7 +34,7 @@ export interface IPaymentProps {
   seller: string;
   /** Initial challenge period (in seconds) */
   challengePeriod: number;
-  /** address of the token used in the payment */
+  /** ERC20 address of the token used in the payment */
   tokenAddress?: string;
   /** address of a marketplace that has facilitated the payment */
   marketplace?: string;
@@ -162,9 +163,13 @@ export interface IEscrowDataWithTokenInfo extends IEscrowData {
 }
 
 export interface GenericParsedTxPayload {
+  /** name of the transaction's event/type */
   name: string;
+  /** the hash coming from the executed transaction in the blockchain */
   transactionHash: string;
+  /** the block number within which the executed transaction has been added */
   blockNumber: number;
+  /** the id of concerning escrow */
   escrowId: number;
 }
 
@@ -186,7 +191,7 @@ export interface ApproveArbitratorParsedPayload extends GenericParsedTxPayload {
  *
  */
 export interface ApproveSettlementParsedPayload extends GenericParsedTxPayload {
-  /* The date when payment has been settled at */
+  /** The date when payment has been settled at */
   settledAt: Date;
   /** How much was the buyer offered in the latest settlement offer */
   latestSettlementOfferBuyer: number;
@@ -290,7 +295,7 @@ export interface ArbitrateParsedPayload extends GenericParsedTxPayload {
  *
  */
 export interface ChallengeParsedPayload extends GenericParsedTxPayload {
-  /* The date when payment has been challenged at */
+  /** The date when payment has been challenged at */
   challengedAt: Date;
   /** Who sent the payment */
   buyer: string;
@@ -314,19 +319,28 @@ export interface ChallengeParsedPayload extends GenericParsedTxPayload {
   consensusBuyer: number;
   /** Seller's agreement on the arbitrator */
   consensusSeller: number;
+  /** Buyer's share and fees, in bips */
   splitBuyer: number;
+  /** Seller's share and fees, in bips */
   splitSeller: number;
+  /** Marketplace's share and fees, in bips */
   splitMarketplace: number;
+  /** Protocol's share and fees, in bips */
   splitProtocol: number;
   /** Amount in token */
   amount: string;
 }
 
 export interface ClaimParsedPayload extends GenericParsedTxPayload {
+  /** Current buyer's split based on the latest action on the escrow */
   amountBuyer: string;
+  /** Current seller's split based on the latest action on the escrow */
   amountSeller: string;
+  /** Marketplace fee (bips) */
   amountMarketplace: string;
+  /** Protocol fee (bips) */
   amountProtocol: string;
+  /** Arbitrator fee (bips) */
   amountArbitrator: string;
 }
 
@@ -344,9 +358,11 @@ export interface MultipleClaimParsedPayload extends GenericParsedTxPayload {
  *
  */
 export interface OfferSettlementParsedPayload extends GenericParsedTxPayload {
-  /* The date when payment has been offered at */
+  /** The date when payment has been offered at */
   settlementOfferAt: Date;
+  /** The percentage of how much the buyer would receive by the settlement. */
   latestSettlementOfferBuyer: number;
+  /** The percentage of how much the seller would receive by the settlement. */
   latestSettlementOfferSeller: number;
   /** address of who sent the latest settlement offer. */
   latestSettlementOfferAddress: string;
@@ -357,7 +373,7 @@ export interface OfferSettlementParsedPayload extends GenericParsedTxPayload {
  *
  */
 export interface PayParsedPayload extends GenericParsedTxPayload {
-  /* The date when payment has been paid at */
+  /** The date when payment has been paid at */
   paidAt: Date;
   /** Address of the arbitrator */
   arbitrator: string;
@@ -379,7 +395,7 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   marketplace: string;
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
-  /** Token used in the payment (null for ETH) */
+  /** ERC20 address of the token used in the payment (null for ETH) */
   tokenAddress?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
@@ -387,9 +403,13 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   consensusBuyer: number;
   /** Seller's agreement on the arbitrator */
   consensusSeller: number;
+  /** Buyer's share and fees, in bips */
   splitBuyer: number;
+  /** Seller's share and fees, in bips */
   splitSeller: number;
+  /** Marketplace's share and fees, in bips */
   splitMarketplace: number;
+  /** Protocol's share and fees, in bips */
   splitProtocol: number;
   /** Amount in token */
   amount: string;
@@ -422,27 +442,49 @@ export interface ProposalArbitratorParsedPayload
 }
 
 export interface ReleaseParsedPayload extends GenericParsedTxPayload {
+  /** When the payment was released */
   releasedAt: Date;
+  /** Who sent the payment */
   buyer: string;
+  /** Whom is the payment for */
   seller: string;
+  /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension: number;
+  /** When does the current challenge period start (seconds in Unix epoch) */
   challengePeriodStart: Date;
+  /** When does the current challenge period end (seconds in Unix epoch) */
   challengePeriodEnd: Date;
+  /** address of a marketplace that has facilitated the payment */
   marketplace: string;
+  /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
+  /** ERC20 address of the token used in the payment */
   currency: string;
+  /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
+  /** Buyer's agreement on the arbitrator */
   consensusBuyer: number;
+  /** Seller's agreement on the arbitrator */
   consensusSeller: number;
+  /** Buyer's share and fees, in bips */
   splitBuyer: number;
+  /** Seller's share and fees, in bips */
   splitSeller: number;
+  /** Marketplace's share and fees, in bips */
   splitMarketplace: number;
+  /** Protocol's share and fees, in bips */
   splitProtocol: number;
+  /** Amount in token */
   amount: string;
+  /** Current buyer's split based on the latest action on the escrow */
   amountBuyer: string;
+  /** Current seller's split based on the latest action on the escrow */
   amountSeller: string;
+  /** Marketplace fee (bips) */
   amountMarketplace: string;
+  /** Protocol fee (bips) */
   amountProtocol: string;
+  /** Arbitrator fee (bips) */
   amountArbitrator: string;
 }
 
@@ -832,7 +874,7 @@ export interface ICalculateStatusParams {
   consensusBuyer: number;
   /** Seller's agreement on the arbitrator */
   consensusSeller: number;
-  /** Seller's final share in percentage incl. fees */
+  /** Seller's share, and fees, in bips */
   splitSeller: number;
   /** Buyer's share, and fees, in bips */
   splitBuyer: number;
@@ -849,13 +891,13 @@ export interface ICalculateStatusParams {
  */
 export interface CalculateAmountsInput {
   amount: number;
-  /** Buyer's share, and fees, in bips */
+  /** Buyer's share and fees, in bips */
   splitBuyer: number;
-  /** Seller's share, and fees, in bips */
+  /** Seller's share and fees, in bips */
   splitSeller: number;
-  /** Protocol's share, and fees, in bips */
+  /** Protocol's share and fees, in bips */
   splitProtocol: number;
-  /** Marketplace's share, and fees, in bips */
+  /** Marketplace's share and fees, in bips */
   splitMarketplace: number;
   /** Arbitrator's fee in bips. Can be 0 */
   arbitratorFee?: number;
