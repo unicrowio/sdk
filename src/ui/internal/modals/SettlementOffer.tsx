@@ -154,7 +154,7 @@ export function SettlementOfferModal({
       setLoadingMessage("Waiting confirmation");
     },
     confirmed: (payload: OfferSettlementParsedPayload) => {
-      callbacks.confirmed?.(payload);
+      callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
       toast("Offer sent with success", "success");
 
@@ -328,10 +328,9 @@ export function SettlementOfferModal({
   };
 
   const ModalFooter = () => {
-    if (!escrow?.status.claimed) {
+    if (!escrow || escrow.status.claimed) {
       return null;
     }
-
     return (
       <ContainerModalFooter>
         <ContainerButtons>{renderButtons()}</ContainerButtons>

@@ -43,9 +43,11 @@ export const refund = async (
 
     await refundTx.wait();
 
-    callbacks.confirmed?.({
-      transactionHash: refundTx.hash,
-    });
+    callbacks &&
+      callbacks.confirmed &&
+      callbacks.confirmed({
+        transactionHash: refundTx.hash,
+      });
 
     return refundTx.hash;
   } catch (error) {
