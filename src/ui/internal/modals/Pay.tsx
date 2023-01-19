@@ -70,7 +70,7 @@ export function PayModal(props: IPaymentModalProps) {
           setLoadingMessage("");
         });
     }
-  }, []);
+  }, [isCorrectNetwork]);
 
   const payCallbacks: IPayTransactionCallbacks = {
     connectingWallet: () => {

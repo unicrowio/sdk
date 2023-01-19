@@ -69,7 +69,7 @@ export const Arbitrate = ({
 
   React.useEffect(() => {
     loadData();
-  }, []);
+  }, [isCorrectNetwork]);
 
   const confirm = (event: any) => {
     event.preventDefault();
@@ -207,6 +207,8 @@ export const Arbitrate = ({
         </Button>
       );
     }
+
+    return null;
   };
 
   return (

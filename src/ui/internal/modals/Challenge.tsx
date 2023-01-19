@@ -122,7 +122,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     return () => {
       isMountedRef.current = false;
     };
-  }, []);
+  }, [isCorrectNetwork]);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -241,8 +241,8 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   const ModalFooter = () => {
-    const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
-    const isBuyer = escrowData.connectedUser === BUYER; // SIGNED AS BUYER
+    const isSeller = escrowData?.connectedUser === SELLER; // SIGNED AS SELLER
+    const isBuyer = escrowData?.connectedUser === BUYER; // SIGNED AS BUYER
 
     if (!(escrowData && (isBuyer || isSeller))) {
       return null;
