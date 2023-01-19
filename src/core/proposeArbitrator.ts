@@ -15,7 +15,7 @@ import { parseProposalArbitrator } from "./internal/parsers/eventProposalArbitra
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ProposalArbitratorParsedPayload>}
+ * @returns {Promise<ProposalArbitratorParsedPayload>} info about the proposed arbitrator, his fee and who proposed it
  */
 export const proposeArbitrator = async (
   escrowId: number,

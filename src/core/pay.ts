@@ -65,7 +65,7 @@ import { BigNumberish } from "ethers";
  * ```
    * @throws Error
  * If account is not connected (=no provider given) or token info doesn't exist (or sth. else went wrong).
- * @returns {Promise<PayParsedPayload>}
+ * @returns {Promise<PayParsedPayload>} the payload with all info about the escrow (amounts, fees, parties etc.)
  */
 export const pay = async (
   paymentProps: IPaymentProps,

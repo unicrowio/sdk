@@ -10,7 +10,7 @@ import { errorHandler } from "./internal/errorHandler";
  * @privateRemarks Can only be called by the seller.
  * @throws Error
  * If account is not connected (=no provider given) or if called in invalid state (e.g. already claimed / not called by seller)
- * @returns {Promise<string>}
+ * @returns {Promise<string>} the hash of the transaction
  */
 export const refund = async (
   escrowId: number,

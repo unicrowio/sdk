@@ -10,7 +10,7 @@ import { parseRelease } from "./internal/parsers/eventRelease";
  *
  * @throws Error
  * If account is not connected (=no provider given) or if called in invalid state (e.g. already claimed / not called by seller)
- * @returns {Promise<ReleaseParsedPayload>}
+ * @returns {Promise<ReleaseParsedPayload>} the payload with all info about the escrow (amounts, fees, parties etc.)
  */
 export const release = async (
   escrowId: number,

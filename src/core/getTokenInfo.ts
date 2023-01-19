@@ -18,7 +18,7 @@ const fetchTokenInfo = async (tokenAddress: string) => {
  *
  * @throws Error
  * If token info doesn't exist on this address or the token address couldn't be parsed.
- * @returns {Promise<IToken>}
+ * @returns {Promise<IToken>} symbol, decimals and address of the token
  */
 export const getTokenInfo = async (
   tokenAddress = ETH_ADDRESS,

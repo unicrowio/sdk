@@ -15,7 +15,7 @@ import { parseOfferSettlement } from "./internal/parsers/eventOfferSettlement";
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<OfferSettlementParsedPayload>}
+ * @returns {Promise<OfferSettlementParsedPayload>} the percentages of the payment split between the buyer and seller, by who it was offered and when
  */
 export const offerSettlement = async (
   escrowId: number,
