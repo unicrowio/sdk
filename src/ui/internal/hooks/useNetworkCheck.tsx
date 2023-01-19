@@ -5,7 +5,7 @@ import {
   switchNetwork,
 } from "wallet";
 import { ModalError } from "ui/internal/components/ModalError";
-import { DefaultNetwork } from "config/setup";
+import { DefaultNetwork } from "typing";
 
 export const useNetworkCheck = () => {
   const [isCorrectNetwork, setIsCorrectNetwork] =
@@ -32,7 +32,7 @@ export const useNetworkCheck = () => {
 
   const BodyWithNetworkCheck = React.useCallback(
     (Body: JSX.Element) =>
-      isCorrectNetwork ? Body : <IncorrectNetwork onClick={onNetworkSwitch} />,
+      isCorrectNetwork ? Body : <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />,
     [isCorrectNetwork],
   );
 
