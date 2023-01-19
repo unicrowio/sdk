@@ -9,11 +9,11 @@ import { errorHandler } from "./internal/errorHandler";
 import { parseMultipleClaim } from "./internal/parsers/eventClaimMultiple";
 
 /**
- * Claim multiple escrow payments at the same time. To save everyone's gas costs, it claims balances and fees
- * of all parties that are eligible for a share from the escrow. The contract will check if each of the provided
- * escrows are indeed claimable and if not, will revert the transaction and return an error.
- * {@link indexer.getClaimableEscrow()} provides an easy way to get a predigested list for this function.
- * The gas cost of this grows almost linearly with each additional escrow, therefore this function will set an
+ * Claims multiple shares of an escrow at the same time. To save everyone's gas costs, it claims balances and fees
+ * for all parties that are eligible for it. The contract will check for each escrow if shares are indeed claimable.
+ * If not, the transaction will revert and return an error.
+ * {@link indexer.getClaimableEscrow()} provides an easy way to get a predigested list for this action.
+ * The gas cost of this action grows almost linearly with each additional escrow, therefore it will set an
  * appropriate gas limit if necessary.
  *
  * @throws Error

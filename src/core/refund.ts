@@ -5,7 +5,7 @@ import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
 
 /**
- * Refunds 100% of the buyer payment (all fees are waived), returns transactions' hash.
+ * Refunds 100% of the buyer payment (all fees are waived), returns its transaction hash.
  *
  * @privateRemarks Can only be called by the seller.
  * @throws Error

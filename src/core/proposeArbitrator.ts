@@ -11,7 +11,7 @@ import { parseProposalArbitrator } from "./internal/parsers/eventProposalArbitra
 
 /**
  * One of the parties (buyer or seller) can call this to propose an arbitrator
- * for an escrow that has no arbitrator defined.
+ * for an escrow that has not yet defined an arbitrator.
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.

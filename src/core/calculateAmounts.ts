@@ -113,7 +113,7 @@ const calculateSharesWithArbitration = ({
 };
 
 /**
- * Calculates how the balance in the escrow are split between all the relevant parties.
+ * Calculates how the amounts of an escrow are split between all relevant parties.
  * If settled by an arbitrator, this is considered in the calculation but not returned as share in the result.
  *
  * @returns {tShares}

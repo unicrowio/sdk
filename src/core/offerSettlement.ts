@@ -10,8 +10,8 @@ import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
 import { parseOfferSettlement } from "./internal/parsers/eventOfferSettlement";
 
 /**
- * Sends an offer to settle the payment arbitrarily between the buyer and the seller. The other party must confirm
- * the settlement in order for it to be executed.
+ * An offer sent by the buyer or seller to settle the payment without an arbitrator. The other party must confirm
+ * the settlement in order to be executed.
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.

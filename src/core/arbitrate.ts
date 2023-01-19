@@ -9,7 +9,7 @@ import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
 import { parseArbitrate } from "./internal/parsers/eventArbitrate";
 
 /**
- * Performs and arbitration and returns its data.
+ * Action performed by the previously defined/agreed on arbitrator.
  *
  * @async
  * @throws Error

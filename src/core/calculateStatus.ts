@@ -17,7 +17,7 @@ const whoMadeLatestSettlementOffer = (
 };
 
 /**
- * Retrieves Escrow status calculated based on consensus, split, expire time and claim status.
+ * Retrieves the status of an escrow, calculated based on consensus, split, expire time and claim status.
  *
  * @returns IEscrowStatus - (interface with EscrowStatus, claimed, tEscrowParty, tEscrowParty)
  */
