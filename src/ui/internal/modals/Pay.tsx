@@ -122,9 +122,6 @@ export function PayModal(props: IPaymentModalProps) {
     });
   };
 
-  console.log('pwe', 'tokenInfo', tokenInfo)
-  console.log('pwe', ' props.paymentProps.ensAddresses?.seller', props.paymentProps.ensAddresses?.seller)
-  console.log('pwe', 'props', props)
   const ModalBody = () => {
     return (
       <>
