@@ -80,69 +80,61 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
-  const renderReadyForClaim = React.useCallback(() => {
-    return props.balances.readyForClaim.map((balance: IBalanceWithTokenUSD) => {
-      const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
-      const [tokenInfoLoading, setTokenInfoLoading] =
-        React.useState<boolean>(false);
+  const TableRow = (balance: IBalanceWithTokenUSD) => {
+    const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
+    const [tokenInfoLoading, setTokenInfoLoading] =
+      React.useState<boolean>(false);
+    const [amountInUSD, setAmountInUSD] = React.useState<string>(balance.amountInUSD);
 
-      React.useEffect(() => {
-        if (isCorrectNetwork) {
-          setTokenInfoLoading(true);
-          getTokenInfo(balance.token.address)
-            .then(setRowTokenInfo)
-            .finally(() => {
-              setTokenInfoLoading(false);
-            });
-
-          getExchangeRates([balance.token.symbol!]).then((exchangeValues) => {
-            const symbol = balance.token.symbol as string;
-            const exchangeValue = exchangeValues[symbol];
-
-            if (exchangeValue) {
-              balance.amountInUSD = formatAmountToUSD(
-                balance.amountBN,
-                exchangeValue,
-              );
-            } else {
-              balance.amountInUSD = "n/a (error)";
-            }
+    React.useEffect(() => {
+      if (isCorrectNetwork) {
+        setTokenInfoLoading(true);
+        getTokenInfo(balance.token.address)
+          .then(setRowTokenInfo)
+          .finally(() => {
+            setTokenInfoLoading(false);
           });
-        }
-      }, [isCorrectNetwork]);
 
-      if (tokenInfoLoading) {
-        return (
-          <tr key={`balance-${balance.token.address}`}>
-            <td>Loading...</td>
-          </tr>
-        );
+        getExchangeRates([balance.token.symbol]).then((exchangeValues) => {
+          const symbol = balance.token.symbol as string;
+          const exchangeValue = exchangeValues[symbol];
+
+          if (exchangeValue) {
+            setAmountInUSD(formatAmountToUSD(
+              balance.amountBN,
+              exchangeValue,
+            ))
+          } else {
+            setAmountInUSD("n/a (error)");
+          }
+        });
       }
+    }, [isCorrectNetwork]);
 
-      if (!rowTokenInfo) {
-        return (
-          <tr key={`balance-${balance.token.symbol}`}>
-            <td>Error while loading Token Info</td>
-          </tr>
-        );
-      }
-
-      return (
-        <tr key={`balance-${balance.token.symbol}`}>
+    return (
+      <tr key={`balance-${balance.token.address}`}>
+        {!tokenInfoLoading && rowTokenInfo ? (
+          <>
+            <td>
+              {balance.amountBN
+                .toNumber()
+                .toFixed(displayDecimals(balance.token.symbol!))}{" "}
+              <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
+            </td>
+            <td>
+              {"$"}
+              {amountInUSD}
+            </td>
+          </>
+        ) : (
           <td>
-            {balance.amountBN
-              .toNumber()
-              .toFixed(displayDecimals(balance.token.symbol!))}{" "}
-            <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
+            {tokenInfoLoading && "Loading..."}
+            {!rowTokenInfo && "Error while loading Token Info"}
           </td>
-          <td>
-            {"$"}
-            {balance.amountInUSD}
-          </td>
-        </tr>
-      );
-    });
-  }, [props.balances.readyForClaim]);
+        )}
+      </tr>
+    );
+  };
 
   const ModalBody = () => {
     return (
@@ -153,7 +145,11 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
             <th>USD Value</th>
           </tr>
         </thead>
-        <tbody>{renderReadyForClaim()}</tbody>
+        <tbody>
+          {props.balances.readyForClaim.map((balance: IBalanceWithTokenUSD) =>
+            TableRow(balance),
+          )}
+        </tbody>
       </Table>
     );
   };
