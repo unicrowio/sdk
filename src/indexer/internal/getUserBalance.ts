@@ -15,6 +15,29 @@ import {
 import { buildBalanceQuery } from "./queryBalance";
 import BigNumber from "bignumber.js";
 
+const addTokenInfo = async (balances: IBalance[]) => {
+  const tokens: IToken[] = [];
+  for (const balance of balances) {
+    const tokenInfo = await getTokenInfo(balance.token.address);
+    tokens.push(tokenInfo);
+  }
+  return tokens;
+};
+
+const prepareResponseData = (balance: any, tokens: IToken[]) => {
+  const _amount = new BigNumber(balance.amount).div(100);
+  const tokenInfo = tokens.find((t) => t.address === balance.token.address);
+
+  return {
+    ...balance,
+    token: { ...tokenInfo },
+    total: _amount,
+    displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
+    amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
+  };
+};
+
+
 export const getUserBalance = async (
   client: GraphQLClient,
   walletUserAddress: string,
@@ -28,12 +51,12 @@ export const getUserBalance = async (
 
   const { pending, ready_for_claim } = response;
 
-  const groupByPending = groupBy(pending, (item) => item.currency);
-  const groupByReady = groupBy(ready_for_claim, (item) => item.currency);
+  const groupPendingByToken = groupBy(pending, (item) => item.currency);
+  const groupReadyByToken = groupBy(ready_for_claim, (item) => item.currency);
 
-  const pendingData: IBalance[] = Object.keys(groupByPending)
+  const pendingData: IBalance[] = Object.keys(groupPendingByToken)
     .map((key) => {
-      const group = groupByPending[key];
+      const group = groupPendingByToken[key];
       const total = calculateSplit(group, walletUserAddress);
       return {
         token: {
@@ -45,9 +68,9 @@ export const getUserBalance = async (
     })
     .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
 
-  const readyData: IBalance[] = Object.keys(groupByReady)
+  const readyData: IBalance[] = Object.keys(groupReadyByToken)
     .map((key) => {
-      const group = groupByReady[key];
+      const group = groupReadyByToken[key];
       const total = calculateSplit(group, walletUserAddress);
       return {
         token: {
@@ -59,36 +82,10 @@ export const getUserBalance = async (
     })
     .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
 
-  const tokensAddress = [];
-  for (const balance of [...pendingData, ...readyData]) {
-    const tokenInfo = await getTokenInfo(balance.token.address);
-    tokensAddress.push(tokenInfo);
-  }
-
-  const uniqueTokensAddress = new Set(tokensAddress);
-
-  const tokensInfo = await Promise.all(Array.from(uniqueTokensAddress));
-
-  const resolve = (item: any) => {
-    const _amount = new BigNumber(item.amount).div(100);
-    const tokenInfo = tokensInfo.find(
-      (t) => t.address === item.token.address,
-    ) as IToken;
-
-    return {
-      ...item,
-      token: { ...tokenInfo },
-      total: _amount,
-      displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
-      amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
-    };
-  };
-
-  const p = pendingData.map((item) => resolve(item));
-  const r = readyData.map((item) => resolve(item));
+  const tokens = await addTokenInfo([...pendingData, ...readyData]);
 
   return {
-    pending: p,
-    readyForClaim: r,
+    pending: pendingData.map((balance) => prepareResponseData(balance, tokens)),
+    readyForClaim: readyData.map((balance) => prepareResponseData(balance, tokens)),
   };
 };

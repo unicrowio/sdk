@@ -13,6 +13,9 @@ import {
   toDate,
 } from "../../helpers";
 
+/**
+ * Parser of the Escrow that come from the indexer API.
+ */
 export const parseEscrowData = (item: EscrowStatusView): IEscrowData => {
   /**
    * When consensus of the buyer is equal to the seller,
