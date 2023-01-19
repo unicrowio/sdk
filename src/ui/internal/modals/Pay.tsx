@@ -28,6 +28,7 @@ import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
 import { getWalletAccount } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -41,6 +42,8 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
+
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
@@ -51,20 +54,22 @@ export function PayModal(props: IPaymentModalProps) {
   const [walletUser, setWalletUser] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    setIsLoading(true);
+    if (isCorrectNetwork) {
+      setIsLoading(true);
 
-    getWalletAccount().then((account) => {
-      setWalletUser(account);
-    });
-    getTokenInfo(props.paymentProps.tokenAddress)
-      .then(setTokenInfo)
-      .catch(() => {
-        onModalClose();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setLoadingMessage("");
+      getWalletAccount().then((account) => {
+        setWalletUser(account);
       });
+      getTokenInfo(props.paymentProps.tokenAddress)
+        .then(setTokenInfo)
+        .catch(() => {
+          onModalClose();
+        })
+        .finally(() => {
+          setIsLoading(false);
+          setLoadingMessage("");
+        });
+    }
   }, []);
 
   const payCallbacks: IPayTransactionCallbacks = {
