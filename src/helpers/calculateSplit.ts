@@ -1,37 +1,25 @@
 import BigNumber from "bignumber.js";
 import { calculateAmounts } from "../core";
-import { EscrowStatusView } from "../typing";
+import { IGetEscrowData } from "../typing";
 import { isSameAddress } from "./isSameAddress";
 
-interface IGetSplitFromLoggedUser {
-  amount: BigNumber;
-  split_protocol: number;
-  split_buyer: number;
-  split_seller: number;
-  split_marketplace: number;
-  buyer: string;
-  seller: string;
-  marketplace: string | null;
-  arbitrator_fee?: number;
-  arbitrated: boolean;
-}
 
 // Get buyer or seller split based on logged in user participation
 export const getSplitFromLoggedUser = (
-  current: IGetSplitFromLoggedUser,
+  current: IGetEscrowData,
   walletUserAddress: string,
 ) => {
-  const isSettledByArbitrator = current.arbitrated;
+  const isSettledByArbitrator = current.arbitration.arbitrated;
 
   const { amountBuyer, amountSeller, amountArbitrator, amountMarketplace } =
     calculateAmounts(
       {
-        amount: new BigNumber(current.amount).toNumber(),
-        splitBuyer: current.split_buyer,
-        splitSeller: current.split_seller,
-        splitProtocol: current.split_protocol,
-        splitMarketplace: current.split_marketplace,
-        arbitratorFee: current.arbitrator_fee,
+        amount: current.amount.toNumber(),
+        splitBuyer: current.splitBuyer,
+        splitSeller: current.splitSeller,
+        splitProtocol: current.splitProtocol,
+        splitMarketplace: current.splitMarketplace,
+        arbitratorFee: current.arbitration.arbitratorFee,
       },
       isSettledByArbitrator,
     );
@@ -48,11 +36,15 @@ export const getSplitFromLoggedUser = (
     return amountMarketplace;
   }
 
-  return amountArbitrator;
+  if (isSameAddress(current.arbitration.arbitrator, walletUserAddress)) {
+    return amountArbitrator;
+  }
+
+  return 0; // Ther user is not a party (seller, buyer, marketplace, arbitrator)
 };
 
 export const calculateSplit = (
-  group: EscrowStatusView[],
+  group: IGetEscrowData[],
   walletUserAddress: string,
 ) =>
   group.reduce((acc, current) => {
