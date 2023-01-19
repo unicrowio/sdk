@@ -65,7 +65,7 @@ export const useCountdownChallengePeriod = (
 
   const init = () => {
     setLabelChallengePeriod("Current Challenge Period");
-    setButtonLabel?.("Confirm Challenge");
+    setButtonLabel("Confirm Challenge");
     setDisableButton(false);
     setShouldWaitOtherParty(false);
   };
