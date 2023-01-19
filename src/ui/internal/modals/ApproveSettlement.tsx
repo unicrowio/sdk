@@ -179,7 +179,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         setLoadingMessage("Waiting confirmation");
       },
       confirmed: (payload: ApproveSettlementParsedPayload) => {
-        callbacks.confirmed?.(payload);
+        callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
         toast("Accepted", "success");
 
