@@ -84,7 +84,9 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
     const [tokenInfoLoading, setTokenInfoLoading] =
       React.useState<boolean>(false);
-    const [amountInUSD, setAmountInUSD] = React.useState<string>(balance.amountInUSD);
+    const [amountInUSD, setAmountInUSD] = React.useState<string>(
+      balance.amountInUSD,
+    );
 
     React.useEffect(() => {
       if (isCorrectNetwork) {
@@ -100,10 +102,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
           const exchangeValue = exchangeValues[symbol];
 
           if (exchangeValue) {
-            setAmountInUSD(formatAmountToUSD(
-              balance.amountBN,
-              exchangeValue,
-            ))
+            setAmountInUSD(formatAmountToUSD(balance.amountBN, exchangeValue));
           } else {
             setAmountInUSD("n/a (error)");
           }
