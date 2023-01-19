@@ -21,6 +21,7 @@ export const returningValues = [
   "marketplace_fee",
   "arbitrator",
   "arbitrator_fee",
+  "arbitrator_proposer",
   "status_arbitration",
   "challenge_period",
   "challenge_period_start",
