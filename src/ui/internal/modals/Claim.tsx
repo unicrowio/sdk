@@ -44,7 +44,7 @@ export function ClaimModal(props: IClaimModalProps) {
   const [escrowBalance, setEscrowBalance] =
     React.useState<IBalanceWithTokenUSD>();
 
-  const getBalance = async () => {
+  const getBalance = React.useCallback(async () => {
     if (isCorrectNetwork) {
       try {
         setIsLoading(true);
@@ -98,13 +98,13 @@ export function ClaimModal(props: IClaimModalProps) {
         setIsLoading(false);
       }
     }
-  };
+  }, [isCorrectNetwork, props.escrowId, onModalClose]);
 
   React.useEffect(() => {
     if (props.escrowId && !escrowBalance) {
       getBalance();
     }
-  }, [props.escrowId, escrowBalance]);
+  }, [isCorrectNetwork, props.escrowId, escrowBalance]);
 
   const renderClaimableBalance = React.useCallback(() => {
     if (isCorrectNetwork) {

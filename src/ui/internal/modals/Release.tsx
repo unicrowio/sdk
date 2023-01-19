@@ -105,7 +105,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
   React.useEffect(() => {
     loadData();
-  }, []);
+  }, [isCorrectNetwork]);
 
   const releaseCallbacks: IReleaseTransactionCallbacks = {
     connectingWallet: () => {

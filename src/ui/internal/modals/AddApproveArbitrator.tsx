@@ -123,7 +123,7 @@ export const AddApproveArbitrator = ({
 
   React.useEffect(() => {
     loadData();
-  }, []);
+  }, [isCorrectNetwork]);
 
   const confirm = () => {
     setIsLoading(true);
@@ -287,9 +287,11 @@ export const AddApproveArbitrator = ({
   };
 
   const ModalBody = () => {
+    if (!escrowData) return null;
+
     if (
-      escrowData.connectedUser !== BUYER &&
-      escrowData.connectedUser !== SELLER
+      escrowData?.connectedUser !== BUYER &&
+      escrowData?.connectedUser !== SELLER
     ) {
       return <Forbidden onClose={onModalClose} />;
     }

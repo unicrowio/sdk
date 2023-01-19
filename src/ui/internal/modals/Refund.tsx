@@ -107,7 +107,7 @@ export function RefundModal(props: IRefundModalProps) {
 
   React.useEffect(() => {
     loadData();
-  }, []);
+  }, [isCorrectNetwork]);
 
   const refundCallbacks: IRefundTransactionCallbacks = {
     connectingWallet: () => {

@@ -109,7 +109,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
             }
           });
         }
-      }, []);
+      }, [isCorrectNetwork]);
 
       if (tokenInfoLoading) {
         return (

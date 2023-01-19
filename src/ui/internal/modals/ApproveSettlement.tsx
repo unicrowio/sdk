@@ -122,7 +122,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         return "Settlement Offered by Buyer";
       }
     }
-    return isCorrectNetwork ? null : "Approve Settlement";
+    return "Approve Settlement";
   }, [escrow, isCorrectNetwork]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
@@ -161,7 +161,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
   React.useEffect(() => {
     loadData();
-  }, []);
+  }, [isCorrectNetwork]);
 
   const approveSettlementOfferCallbacks: ISettlementApproveTransactionCallbacks =
     {
@@ -254,7 +254,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         </ContainerDataDisplayer>
       </>
     );
-  }, [labelSeller, labelBuyer, labelAmountSplit]);
+  }, [escrow, labelSeller, labelBuyer, labelAmountSplit]);
 
   const openNegotiateModal = async () => {
     onModalClose();
