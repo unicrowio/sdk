@@ -15,7 +15,7 @@ import { errorHandler } from "./internal/errorHandler";
 export const refund = async (
   escrowId: number,
   callbacks?: IRefundTransactionCallbacks,
-) => {
+): Promise<string> => {
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
   const provider = await getWeb3Provider();
 

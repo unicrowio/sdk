@@ -120,7 +120,7 @@ const calculateSharesWithArbitration = ({
 export const calculateAmounts = (
   data: CalculateAmountsInput,
   isSettledByArbitrator = false,
-) => {
+): tShares => {
   return isSettledByArbitrator
     ? calculateSharesWithArbitration(data)
     : calculateSharesWithoutArbitration(data);
