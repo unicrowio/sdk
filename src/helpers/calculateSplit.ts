@@ -1,58 +1,60 @@
 import BigNumber from "bignumber.js";
 import { calculateAmounts } from "../core";
-import { EscrowStatusView } from "../typing";
+import { IGetEscrowData } from "../typing";
 import { isSameAddress } from "./isSameAddress";
-
-interface IGetSplitFromLoggedUser {
-  amount: BigNumber;
-  split_protocol: number;
-  split_buyer: number;
-  split_seller: number;
-  split_marketplace: number;
-  buyer: string;
-  seller: string;
-  marketplace: string | null;
-  arbitrator_fee?: number;
-  arbitrated: boolean;
-}
 
 // Get buyer or seller split based on logged in user participation
 export const getSplitFromLoggedUser = (
-  current: IGetSplitFromLoggedUser,
+  {
+    amount,
+    splitBuyer,
+    splitSeller,
+    splitProtocol,
+    splitMarketplace,
+    arbitration,
+    seller,
+    marketplace,
+    buyer,
+  }: IGetEscrowData,
   walletUserAddress: string,
 ) => {
-  const isSettledByArbitrator = current.arbitrated;
+  const isSettledByArbitrator = arbitration?.arbitrated;
+  const arbitratorFee = arbitration?.arbitratorFee || 0;
 
   const { amountBuyer, amountSeller, amountArbitrator, amountMarketplace } =
     calculateAmounts(
       {
-        amount: new BigNumber(current.amount).toNumber(),
-        splitBuyer: current.split_buyer,
-        splitSeller: current.split_seller,
-        splitProtocol: current.split_protocol,
-        splitMarketplace: current.split_marketplace,
-        arbitratorFee: current.arbitrator_fee,
+        amount: amount.toNumber(),
+        splitBuyer,
+        splitSeller,
+        splitProtocol,
+        splitMarketplace,
+        arbitratorFee,
       },
       isSettledByArbitrator,
     );
 
-  if (isSameAddress(current.buyer, walletUserAddress)) {
+  if (isSameAddress(buyer, walletUserAddress)) {
     return amountBuyer;
   }
 
-  if (isSameAddress(current.seller, walletUserAddress)) {
+  if (isSameAddress(seller, walletUserAddress)) {
     return amountSeller;
   }
 
-  if (isSameAddress(current.marketplace, walletUserAddress)) {
+  if (isSameAddress(marketplace, walletUserAddress)) {
     return amountMarketplace;
   }
 
-  return amountArbitrator;
+  if (isSameAddress(arbitration?.arbitrator, walletUserAddress)) {
+    return amountArbitrator;
+  }
+
+  return 0; // The user is not a party or is not logged (seller, buyer, marketplace, arbitrator)
 };
 
 export const calculateSplit = (
-  group: EscrowStatusView[],
+  group: IGetEscrowData[],
   walletUserAddress: string,
 ) =>
   group.reduce((acc, current) => {

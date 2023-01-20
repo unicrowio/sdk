@@ -110,14 +110,19 @@ export interface EscrowStatusView {
 
   claimed: boolean;
 
-  paid_at: number;
-
-  arbitrated: boolean;
+  // Arbitration
+  arbitrator?: string;
   arbitrator_fee?: number;
+  arbitrated: boolean;
+  arbitrator_proposer?: string;
+  status_arbitration?: string;
 
+  // Settlement
   latest_settlement_offer_address?: string;
   latest_settlement_offer_seller?: number;
   latest_settlement_offer_buyer?: number;
+
+  paid_at: number;
 }
 
 export interface IEscrowData {
@@ -797,9 +802,9 @@ export interface IGetEscrowData extends Omit<IEscrowData, "tokenAddress"> {
   /** interface with latestSettlementOfferAddress, latestSettlementOfferBuyer, latestSettlementOfferSeller */
   settlement: ISettlement | null;
   /** user's role in the escrow ('buyer' | 'seller' | 'arbitrator' | 'marketplace' | 'other') */
-  connectedUser: tConnectedUser;
+  connectedUser?: tConnectedUser;
   /** the address of the connected user */
-  connectedWallet: string;
+  connectedWallet?: string;
 }
 
 export interface ISettlementOfferModalProps {

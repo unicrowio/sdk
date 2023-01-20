@@ -14,7 +14,51 @@ import {
 } from "../../typing";
 import { buildBalanceQuery } from "./queryBalance";
 import BigNumber from "bignumber.js";
+import { parseEscrowData } from "./parseEscrowData";
 
+const fetchTokenInfo = async (balances: IBalance[]) => {
+  const tokens: IToken[] = [];
+  for (const balance of balances) {
+    const tokenInfo = await getTokenInfo(balance.token.address);
+    tokens.push(tokenInfo);
+  }
+  return tokens;
+};
+
+const prepareResponseData = (balance: any, tokens: IToken[]) => {
+  const _amount = new BigNumber(balance.amount);
+  const tokenInfo = tokens.find((t) => t.address === balance.token.address);
+
+  return {
+    ...balance,
+    token: { ...tokenInfo },
+    total: _amount,
+    displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
+    amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
+  };
+};
+
+const mapData = (
+  _group,
+  status: "Pending" | "Ready to claim",
+  walletUserAddress: string,
+) =>
+  Object.keys(_group)
+    .map((key) => {
+      const total = calculateSplit(_group[key], walletUserAddress);
+      return {
+        token: {
+          address: key,
+        },
+        status,
+        amount: total.toString(),
+      };
+    })
+    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
+
+/*
+  Get balance from logged user
+*/
 export const getUserBalance = async (
   client: GraphQLClient,
   walletUserAddress: string,
@@ -27,68 +71,35 @@ export const getUserBalance = async (
   }>(queryString);
 
   const { pending, ready_for_claim } = response;
+  const parsedPendingData = pending.map(parseEscrowData);
+  const parsedReadyData = ready_for_claim.map(parseEscrowData);
 
-  const groupByPending = groupBy(pending, (item) => item.currency);
-  const groupByReady = groupBy(ready_for_claim, (item) => item.currency);
+  const groupPendingTokens = groupBy(
+    parsedPendingData,
+    (item) => item.token.address,
+  );
+  const groupReadyTokens = groupBy(
+    parsedReadyData,
+    (item) => item.token.address,
+  );
 
-  const pendingData: IBalance[] = Object.keys(groupByPending)
-    .map((key) => {
-      const group = groupByPending[key];
-      const total = calculateSplit(group, walletUserAddress);
-      return {
-        token: {
-          address: key,
-        },
-        status: "Pending",
-        amount: total.toString(),
-      };
-    })
-    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
+  const pendingData: IBalance[] = mapData(
+    groupPendingTokens,
+    "Pending",
+    walletUserAddress,
+  );
+  const readyData: IBalance[] = mapData(
+    groupReadyTokens,
+    "Ready to claim",
+    walletUserAddress,
+  );
 
-  const readyData: IBalance[] = Object.keys(groupByReady)
-    .map((key) => {
-      const group = groupByReady[key];
-      const total = calculateSplit(group, walletUserAddress);
-      return {
-        token: {
-          address: key,
-        },
-        status: "Ready to claim",
-        amount: total.toString(),
-      };
-    })
-    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
-
-  const tokensAddress = [];
-  for (const balance of [...pendingData, ...readyData]) {
-    const tokenInfo = await getTokenInfo(balance.token.address);
-    tokensAddress.push(tokenInfo);
-  }
-
-  const uniqueTokensAddress = new Set(tokensAddress);
-
-  const tokensInfo = await Promise.all(Array.from(uniqueTokensAddress));
-
-  const resolve = (item: any) => {
-    const _amount = new BigNumber(item.amount).div(100);
-    const tokenInfo = tokensInfo.find(
-      (t) => t.address === item.token.address,
-    ) as IToken;
-
-    return {
-      ...item,
-      token: { ...tokenInfo },
-      total: _amount,
-      displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
-      amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
-    };
-  };
-
-  const p = pendingData.map((item) => resolve(item));
-  const r = readyData.map((item) => resolve(item));
+  const tokens = await fetchTokenInfo([...pendingData, ...readyData]);
 
   return {
-    pending: p,
-    readyForClaim: r,
+    pending: pendingData.map((balance) => prepareResponseData(balance, tokens)),
+    readyForClaim: readyData.map((balance) =>
+      prepareResponseData(balance, tokens),
+    ),
   };
 };

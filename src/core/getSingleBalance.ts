@@ -16,24 +16,8 @@ export const getSingleBalance = async (
   escrowId: number,
 ): Promise<IBalanceWithTokenInfo> => {
   const escrowData = await getEscrowData(escrowId);
-  const { arbitrated = false, arbitratorFee = 0 } =
-    escrowData.arbitration || {};
 
-  const amount = getSplitFromLoggedUser(
-    {
-      amount: escrowData.amount,
-      split_buyer: escrowData.splitBuyer,
-      split_seller: escrowData.splitSeller,
-      split_protocol: escrowData.splitProtocol,
-      split_marketplace: escrowData.splitMarketplace,
-      buyer: escrowData.buyer,
-      seller: escrowData.seller,
-      marketplace: escrowData.marketplace,
-      arbitrator_fee: arbitratorFee,
-      arbitrated,
-    },
-    escrowData.connectedWallet,
-  );
+  const amount = getSplitFromLoggedUser(escrowData, escrowData.connectedWallet);
 
   const amountBN = new BigNumber(amount);
 
