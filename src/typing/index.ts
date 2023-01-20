@@ -115,6 +115,7 @@ export interface EscrowStatusView {
   arbitrator_fee?: number;
   arbitrated: boolean;
   arbitrator_proposer?: string;
+  status_arbitration?: string;
 
   // Settlement
   latest_settlement_offer_address?: string;

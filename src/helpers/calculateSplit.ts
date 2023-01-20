@@ -8,7 +8,8 @@ export const getSplitFromLoggedUser = (
   current: IGetEscrowData,
   walletUserAddress: string,
 ) => {
-  const isSettledByArbitrator = current.arbitration.arbitrated;
+  const isSettledByArbitrator = current?.arbitration?.arbitrated;
+  const arbitratorFee = current?.arbitration?.arbitratorFee || 0;
 
   const { amountBuyer, amountSeller, amountArbitrator, amountMarketplace } =
     calculateAmounts(
@@ -18,7 +19,7 @@ export const getSplitFromLoggedUser = (
         splitSeller: current.splitSeller,
         splitProtocol: current.splitProtocol,
         splitMarketplace: current.splitMarketplace,
-        arbitratorFee: current.arbitration.arbitratorFee,
+        arbitratorFee,
       },
       isSettledByArbitrator,
     );

@@ -15,7 +15,7 @@ import {
 import { calculateStatus } from "../../core/calculateStatus";
 
 const consensusArbitration = (status, proposer, seller) => {
-  if (!proposer) {
+  if (!status) {
     return { consensusBuyer: false, consensusSeller: false };
   }
 
@@ -24,12 +24,10 @@ const consensusArbitration = (status, proposer, seller) => {
   }
 
   if (seller === proposer) {
-    return { consensusBuyer: true, consensusSeller: false };
+    return { consensusBuyer: false, consensusSeller: true };
   }
 
-  if (seller === proposer) {
-    return { consensusBuyer: false, consensusSeller: true };
-  } else {
+  if (seller !== proposer) {
     return { consensusBuyer: true, consensusSeller: false };
   }
 };
@@ -118,23 +116,26 @@ export const parseEscrowData = (
     consensusSeller,
   };
 
-  const settlement: ISettlement = {
-    latestSettlementOfferAddress:
-      item.latest_settlement_offer_address !== ADDRESS_ZERO
-        ? item.latest_settlement_offer_address
-        : null,
-    latestSettlementOfferSeller: bipsToPercentage([
-      item.latest_settlement_offer_seller,
-    ])[0],
-    latestSettlementOfferBuyer: bipsToPercentage([
-      item.latest_settlement_offer_buyer,
-    ])[0],
-  };
+  let settlement: ISettlement | null = null;
+  if (item.latest_settlement_offer_address) {
+    settlement = {
+      latestSettlementOfferAddress:
+        item.latest_settlement_offer_address !== ADDRESS_ZERO
+          ? item.latest_settlement_offer_address
+          : null,
+      latestSettlementOfferSeller: bipsToPercentage([
+        item.latest_settlement_offer_seller,
+      ])[0],
+      latestSettlementOfferBuyer: bipsToPercentage([
+        item.latest_settlement_offer_buyer,
+      ])[0],
+    };
+  }
 
   let arbitration: IArbitratorInfo | null = null;
   if (item.arbitrator) {
     const arbitrationConsensus = consensusArbitration(
-      item.status,
+      item.status_arbitration,
       item.arbitrator_proposer,
       item.seller,
     );
@@ -146,8 +147,6 @@ export const parseEscrowData = (
       arbitrated: item.arbitrated,
       arbitratorFee: bipsToPercentage([item.arbitrator_fee || 0])[0],
     };
-  } else {
-    arbitration = null;
   }
 
   return {
