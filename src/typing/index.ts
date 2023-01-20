@@ -349,7 +349,7 @@ export interface ClaimParsedPayload extends GenericParsedTxPayload {
  *
  */
 export interface MultipleClaimParsedPayload extends GenericParsedTxPayload {
-  /** The data for a single claim of an escrow share. (array with amountBuyer, amountSeller, amountMarketplace, amountProtocol, amountArbitrator) */
+  /** Array of multiple escrow claims, consisting of amountBuyer, amountSeller, amountMarketplace, amountProtocol, amountArbitrator */
   payload: ClaimParsedPayload[];
 }
 
