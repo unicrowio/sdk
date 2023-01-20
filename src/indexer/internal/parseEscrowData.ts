@@ -25,9 +25,7 @@ const consensusArbitration = (status, proposer, seller) => {
 
   if (seller === proposer) {
     return { consensusBuyer: false, consensusSeller: true };
-  }
-
-  if (seller !== proposer) {
+  } else {
     return { consensusBuyer: true, consensusSeller: false };
   }
 };
@@ -38,17 +36,13 @@ const consensusArbitration = (status, proposer, seller) => {
 export const parseEscrowData = (
   item: EscrowStatusView,
 ): Omit<IGetEscrowData, "connectedUser" | "connectedWallet"> => {
-  const [
-    percentageBuyer,
-    percentageSeller,
-    percentageMarketplace,
-    percentageUnicrow,
-  ] = bipsToPercentage([
-    item.split_buyer,
-    item.split_buyer,
-    item.split_marketplace,
-    item.split_protocol,
-  ]);
+  const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
+    bipsToPercentage([
+      item.split_buyer,
+      item.split_buyer,
+      item.split_marketplace,
+      item.split_protocol,
+    ]);
 
   const amount = BigNumber.isBigNumber(item.amount)
     ? item.amount
@@ -60,12 +54,6 @@ export const parseEscrowData = (
   // Consensus
   const consensusBuyer = item.consensus_buyer;
   const consensusSeller = item.consensus_seller;
-
-  // Splits
-  const splitMarketplace = percentageMarketplace;
-  const splitBuyer = percentageBuyer;
-  const splitSeller = percentageSeller;
-  const splitProtocol = percentageUnicrow;
 
   const claimed = Boolean(item.claimed);
 
@@ -118,17 +106,18 @@ export const parseEscrowData = (
 
   let settlement: ISettlement | null = null;
   if (item.latest_settlement_offer_address) {
-    settlement = {
-      latestSettlementOfferAddress:
-        item.latest_settlement_offer_address !== ADDRESS_ZERO
-          ? item.latest_settlement_offer_address
-          : null,
-      latestSettlementOfferSeller: bipsToPercentage([
+    const [latestSettlementOfferSeller, latestSettlementOfferBuyer] =
+      bipsToPercentage([
         item.latest_settlement_offer_seller,
-      ])[0],
-      latestSettlementOfferBuyer: bipsToPercentage([
         item.latest_settlement_offer_buyer,
-      ])[0],
+      ]);
+
+    settlement = {
+      latestSettlementOfferAddress: nullOrValue(
+        item.latest_settlement_offer_address,
+      ),
+      latestSettlementOfferSeller,
+      latestSettlementOfferBuyer,
     };
   }
 

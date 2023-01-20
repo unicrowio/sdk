@@ -16,7 +16,7 @@ import { buildBalanceQuery } from "./queryBalance";
 import BigNumber from "bignumber.js";
 import { parseEscrowData } from "./parseEscrowData";
 
-const addTokenInfo = async (balances: IBalance[]) => {
+const fetchTokenInfo = async (balances: IBalance[]) => {
   const tokens: IToken[] = [];
   for (const balance of balances) {
     const tokenInfo = await getTokenInfo(balance.token.address);
@@ -53,19 +53,21 @@ export const getUserBalance = async (
   }>(queryString);
 
   const { pending, ready_for_claim } = response;
-  const parsedPending = pending.map(parseEscrowData);
-  const parsedReady = ready_for_claim.map(parseEscrowData);
+  const parsedPendingData = pending.map(parseEscrowData);
+  const parsedReadyData = ready_for_claim.map(parseEscrowData);
 
-  const groupPendingByToken = groupBy(
-    parsedPending,
+  const groupPendingTokens = groupBy(
+    parsedPendingData,
     (item) => item.token.address,
   );
-  const groupReadyByToken = groupBy(parsedReady, (item) => item.token.address);
+  const groupReadyTokens = groupBy(
+    parsedReadyData,
+    (item) => item.token.address,
+  );
 
-  const pendingData: IBalance[] = Object.keys(groupPendingByToken)
+  const pendingData: IBalance[] = Object.keys(groupPendingTokens)
     .map((key) => {
-      const group = groupPendingByToken[key];
-      const total = calculateSplit(group, walletUserAddress);
+      const total = calculateSplit(groupPendingTokens[key], walletUserAddress);
       return {
         token: {
           address: key,
@@ -76,10 +78,9 @@ export const getUserBalance = async (
     })
     .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
 
-  const readyData: IBalance[] = Object.keys(groupReadyByToken)
+  const readyData: IBalance[] = Object.keys(groupReadyTokens)
     .map((key) => {
-      const group = groupReadyByToken[key];
-      const total = calculateSplit(group, walletUserAddress);
+      const total = calculateSplit(groupReadyTokens[key], walletUserAddress);
       return {
         token: {
           address: key,
@@ -90,7 +91,7 @@ export const getUserBalance = async (
     })
     .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
 
-  const tokens = await addTokenInfo([...pendingData, ...readyData]);
+  const tokens = await fetchTokenInfo([...pendingData, ...readyData]);
 
   return {
     pending: pendingData.map((balance) => prepareResponseData(balance, tokens)),

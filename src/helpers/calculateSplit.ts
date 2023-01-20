@@ -5,42 +5,52 @@ import { isSameAddress } from "./isSameAddress";
 
 // Get buyer or seller split based on logged in user participation
 export const getSplitFromLoggedUser = (
-  current: IGetEscrowData,
+  {
+    amount,
+    splitBuyer,
+    splitSeller,
+    splitProtocol,
+    splitMarketplace,
+    arbitration,
+    seller,
+    marketplace,
+    buyer,
+  }: IGetEscrowData,
   walletUserAddress: string,
 ) => {
-  const isSettledByArbitrator = current?.arbitration?.arbitrated;
-  const arbitratorFee = current?.arbitration?.arbitratorFee || 0;
+  const isSettledByArbitrator = arbitration?.arbitrated;
+  const arbitratorFee = arbitration?.arbitratorFee || 0;
 
   const { amountBuyer, amountSeller, amountArbitrator, amountMarketplace } =
     calculateAmounts(
       {
-        amount: current.amount.toNumber(),
-        splitBuyer: current.splitBuyer,
-        splitSeller: current.splitSeller,
-        splitProtocol: current.splitProtocol,
-        splitMarketplace: current.splitMarketplace,
+        amount: amount.toNumber(),
+        splitBuyer,
+        splitSeller,
+        splitProtocol,
+        splitMarketplace,
         arbitratorFee,
       },
       isSettledByArbitrator,
     );
 
-  if (isSameAddress(current.buyer, walletUserAddress)) {
+  if (isSameAddress(buyer, walletUserAddress)) {
     return amountBuyer;
   }
 
-  if (isSameAddress(current.seller, walletUserAddress)) {
+  if (isSameAddress(seller, walletUserAddress)) {
     return amountSeller;
   }
 
-  if (isSameAddress(current.marketplace, walletUserAddress)) {
+  if (isSameAddress(marketplace, walletUserAddress)) {
     return amountMarketplace;
   }
 
-  if (isSameAddress(current.arbitration.arbitrator, walletUserAddress)) {
+  if (isSameAddress(arbitration?.arbitrator, walletUserAddress)) {
     return amountArbitrator;
   }
 
-  return 0; // Ther user is not a party (seller, buyer, marketplace, arbitrator)
+  return 0; // The user is not a party or is not logged (seller, buyer, marketplace, arbitrator)
 };
 
 export const calculateSplit = (
