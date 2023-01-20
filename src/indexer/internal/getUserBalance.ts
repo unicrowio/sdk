@@ -38,6 +38,24 @@ const prepareResponseData = (balance: any, tokens: IToken[]) => {
   };
 };
 
+const mapData = (
+  _group,
+  status: "Pending" | "Ready to claim",
+  walletUserAddress: string,
+) =>
+  Object.keys(_group)
+    .map((key) => {
+      const total = calculateSplit(_group[key], walletUserAddress);
+      return {
+        token: {
+          address: key,
+        },
+        status,
+        amount: total.toString(),
+      };
+    })
+    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
+
 /*
   Get balance from logged user
 */
@@ -65,31 +83,16 @@ export const getUserBalance = async (
     (item) => item.token.address,
   );
 
-  const pendingData: IBalance[] = Object.keys(groupPendingTokens)
-    .map((key) => {
-      const total = calculateSplit(groupPendingTokens[key], walletUserAddress);
-      return {
-        token: {
-          address: key,
-        },
-        status: "Pending",
-        amount: total.toString(),
-      };
-    })
-    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
-
-  const readyData: IBalance[] = Object.keys(groupReadyTokens)
-    .map((key) => {
-      const total = calculateSplit(groupReadyTokens[key], walletUserAddress);
-      return {
-        token: {
-          address: key,
-        },
-        status: "Ready to claim",
-        amount: total.toString(),
-      };
-    })
-    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
+  const pendingData: IBalance[] = mapData(
+    groupPendingTokens,
+    "Pending",
+    walletUserAddress,
+  );
+  const readyData: IBalance[] = mapData(
+    groupReadyTokens,
+    "Ready to claim",
+    walletUserAddress,
+  );
 
   const tokens = await fetchTokenInfo([...pendingData, ...readyData]);
 
