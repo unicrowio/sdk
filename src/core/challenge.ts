@@ -15,7 +15,7 @@ import { parseChallenge } from "./internal/parsers/eventChallenge";
  * @async
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ChallengeParsedPayload>}
+ * @returns {Promise<ChallengeParsedPayload>} array with all info about the challenge
  */
 export const challenge = async (
   escrowId: number,

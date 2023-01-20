@@ -54,7 +54,7 @@ const calculateSharesWithoutArbitration = ({
   splitSeller,
   splitMarketplace,
   arbitratorFee = 0,
-}: CalculateFunction) => {
+}: CalculateFunction): tShares => {
   const newSplit = zeroSplits();
 
   newSplit.splitProtocol = calculatePercentage(splitProtocol, splitSeller);
@@ -84,7 +84,7 @@ const calculateSharesWithArbitration = ({
   splitSeller,
   splitMarketplace,
   arbitratorFee = 0,
-}: CalculateFunction) => {
+}: CalculateFunction): tShares => {
   const newSplit = zeroSplits();
   newSplit.splitArbitrator = new BigNumber(arbitratorFee);
   newSplit.splitProtocol = calculatePercentage(splitProtocol, splitSeller);
@@ -116,7 +116,7 @@ const calculateSharesWithArbitration = ({
  * Calculates how the amounts of an escrow are split between all relevant parties.
  * If settled by an arbitrator, this is considered in the calculation but not returned as share in the result.
  *
- * @returns {tShares}
+ * @returns {tShares} the calculated shares in percentage, incl. fees
  */
 export const calculateAmounts = (
   data: CalculateAmountsInput,

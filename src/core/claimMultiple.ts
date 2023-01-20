@@ -18,7 +18,7 @@ import { parseMultipleClaim } from "./internal/parsers/eventClaimMultiple";
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<MultipleClaimParsedPayload>}
+ * @returns {Promise<MultipleClaimParsedPayload>} array with all info about multiple escrows (amounts per party)
  */
 export const claimMultiple = async (
   escrowIds: number[],

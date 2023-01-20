@@ -5,7 +5,7 @@ import { getHost } from "../../config";
  *
  * @throws Error
  * If account is not connected (=no provider given).
- * @returns {ethers.providers.JsonRpcProvider}
+ * @returns {ethers.providers.JsonRpcProvider} the json rpc provider of a given network
  */
 export const getJsonRpcProvider = () => {
   const provider = new ethers.providers.JsonRpcProvider(getHost(), "any");

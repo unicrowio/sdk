@@ -7,7 +7,7 @@ import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
  * Retrieves information about the protocol fee and returns its percentage.
  * If you need to have it in bips, multiply by 100.
  *
- * @returns {number}
+ * @returns {number} the protocol fee in percentage
  */
 export const getProtocolFee = async () => {
   const smartContract = Unicrow__factory.connect(

@@ -16,7 +16,7 @@ import { parseApproveArbitrator } from "./internal/parsers/eventApproveArbitrato
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ApproveArbitratorParsedPayload>}
+ * @returns {Promise<ApproveArbitratorParsedPayload>} payload with all info about the approved arbitration
  */
 export const approveArbitrator = async (
   escrowId: number,

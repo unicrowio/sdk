@@ -14,7 +14,7 @@ import { parseArbitrate } from "./internal/parsers/eventArbitrate";
  * @async
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ArbitrateParsedPayload>}
+ * @returns {Promise<ArbitrateParsedPayload>} payload with all info about the arbitration
  */
 export const arbitrate = async (
   escrowId: number,

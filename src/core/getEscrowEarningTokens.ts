@@ -6,7 +6,7 @@ import { IToken } from "../typing";
 /**
  * Returns a list of all escrow earning tokens.
  *
- * @returns {Promise<IToken[]>}
+ * @returns {Promise<IToken[]>} list of all escrow earning tokens
  */
 export const getEscrowEarningTokens = async (): Promise<IToken[]> => {
   // const unicrowListTokensContract = UnicrowPrimaryTokensList__factory.connect(

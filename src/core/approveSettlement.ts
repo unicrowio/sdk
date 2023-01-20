@@ -13,7 +13,7 @@ import { parseApproveSettlement } from "./internal/parsers/eventApproveSettlemen
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ApproveSettlementParsedPayload>}
+ * @returns {Promise<ApproveSettlementParsedPayload>} payload with all info about the approved offer
  */
 export const approveSettlement = async (
   escrowId: number,

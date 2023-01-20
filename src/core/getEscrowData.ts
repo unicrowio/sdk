@@ -203,7 +203,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  * - one with arbitrator added, payment settled by the arbitrator, and with token (e.g. DAI) info
  * @throws Error
  * If escrow id doesn't exist.
- * @returns {Promise<IGetEscrowData>}
+ * @returns {Promise<IGetEscrowData>} the full info of an escrow
  */
 export const getEscrowData = async (
   escrowId: number,

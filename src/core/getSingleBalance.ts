@@ -8,9 +8,9 @@ import { IBalanceWithTokenInfo } from "../typing";
 import { getEscrowData } from "./getEscrowData";
 
 /**
- * Gets balance of an escrow with its token info.
+ * Gets balance of currently logged user from an escrow.
  *
- * @returns {Promise<IBalanceWithTokenInfo>}
+ * @returns {Promise<IBalanceWithTokenInfo>} balance of an escrow with its token info
  */
 export const getSingleBalance = async (
   escrowId: number,

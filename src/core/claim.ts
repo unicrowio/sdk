@@ -11,7 +11,7 @@ import { parseClaim } from "./internal/parsers/eventClaim";
  *
  * @throws Error
  * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ClaimParsedPayload>}
+ * @returns {Promise<ClaimParsedPayload>} array with all info about the claim (amounts per party)
  */
 export const claim = async (
   escrowId: number,

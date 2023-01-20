@@ -11,7 +11,7 @@ import { BigNumber } from "ethers";
  * Checks if the user has the funds to pay for the given amount of tokens.
  * This function should be called only to verify the users' balance of ERC20 tokens.
  *
- * @returns {Promise<BigNumber>}
+ * @returns {Promise<BigNumber>} user's balance as BigNumber of the given token
  */
 export const getBalance = async (tokenAddress: string): Promise<BigNumber> => {
   const provider = await getWeb3Provider();
