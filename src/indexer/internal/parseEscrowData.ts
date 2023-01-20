@@ -86,9 +86,6 @@ export const parseEscrowData = (
     marketplace,
     buyer,
     seller,
-    token: {
-      address: item.currency,
-    },
     // Splits
     splitMarketplace,
     splitBuyer,
