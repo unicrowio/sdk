@@ -6,11 +6,7 @@ import {
   ISettlement,
   IArbitratorInfo,
 } from "../../typing";
-import {
-  nullOrValue,
-  toDate,
-  bipsToPercentage,
-} from "../../helpers";
+import { nullOrValue, toDate, bipsToPercentage } from "../../helpers";
 import { calculateStatus } from "../../core/calculateStatus";
 
 const consensusArbitration = (status, proposer, seller) => {
