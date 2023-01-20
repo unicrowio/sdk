@@ -6,12 +6,7 @@ import {
   ISettlement,
   IArbitratorInfo,
 } from "../../typing";
-import {
-  nullOrValue,
-  toDate,
-  bipsToPercentage,
-  ADDRESS_ZERO,
-} from "../../helpers";
+import { nullOrValue, toDate, bipsToPercentage } from "../../helpers";
 import { calculateStatus } from "../../core/calculateStatus";
 
 const consensusArbitration = (status, proposer, seller) => {
@@ -39,7 +34,7 @@ export const parseEscrowData = (
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
     bipsToPercentage([
       item.split_buyer,
-      item.split_buyer,
+      item.split_seller,
       item.split_marketplace,
       item.split_protocol,
     ]);
