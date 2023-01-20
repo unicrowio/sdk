@@ -8,7 +8,9 @@ import { ModalError } from "ui/internal/components/ModalError";
 import { DefaultNetwork } from "typing";
 
 export const useNetworkCheck = () => {
-  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<boolean | null>(null);
+  const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<
+    boolean | undefined
+  >(undefined);
 
   React.useEffect(() => {
     // initial check
@@ -31,7 +33,7 @@ export const useNetworkCheck = () => {
 
   const WithNetworkCheck = React.useCallback(
     (Body: JSX.Element) =>
-      isCorrectNetwork === null ? (
+      isCorrectNetwork === undefined ? (
         <></>
       ) : isCorrectNetwork ? (
         Body
