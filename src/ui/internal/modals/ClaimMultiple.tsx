@@ -15,7 +15,7 @@ import {
   formatAmountToUSD,
   getExchangeRates,
 } from "../../../helpers";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -32,8 +32,6 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
-  const { isCorrectNetwork } = useNetworkCheck();
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -81,38 +79,44 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   };
 
   const TableRow = (balance: IBalanceWithTokenUSD) => {
-    const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
-    const [tokenInfoLoading, setTokenInfoLoading] =
-      React.useState<boolean>(false);
-    const [amountInUSD, setAmountInUSD] = React.useState<string>(
+    const [rowTokenInfo, isLoadingToken] = useAsync(
+      getTokenInfo,
+      balance.token.address,
+      onModalClose,
+    );
+
+    const [exchangeValue, isLoadingExchange, error] = useAsync(
+      getExchangeRates,
+      [balance.token.symbol],
+      onModalClose,
+    );
+
+    const isLoading = isLoadingToken || isLoadingExchange;
+    const [formattedAmountInUSD, setFormattedAmountInUSD] = React.useState(
       balance.amountInUSD,
     );
 
     React.useEffect(() => {
-      if (isCorrectNetwork) {
-        setTokenInfoLoading(true);
-        getTokenInfo(balance.token.address)
-          .then(setRowTokenInfo)
-          .finally(() => {
-            setTokenInfoLoading(false);
-          });
-
-        getExchangeRates([balance.token.symbol]).then((exchangeValues) => {
-          const symbol = balance.token.symbol as string;
-          const exchangeValue = exchangeValues[symbol];
-
-          if (exchangeValue) {
-            setAmountInUSD(formatAmountToUSD(balance.amountBN, exchangeValue));
-          } else {
-            setAmountInUSD("n/a (error)");
-          }
-        });
+      if (exchangeValue) {
+        setFormattedAmountInUSD(
+          formatAmountToUSD(balance.amountBN, exchangeValue),
+        );
       }
-    }, [isCorrectNetwork]);
+    }, [exchangeValue]);
+
+    React.useEffect(() => {
+      if (error) {
+        setFormattedAmountInUSD("n/a (error)");
+      }
+    }, [error]);
+
+    React.useEffect(() => {
+      setIsLoading(isLoading);
+    }, [isLoading]);
 
     return (
       <tr key={`balance-${balance.token.address}`}>
-        {!tokenInfoLoading && rowTokenInfo ? (
+        {!isLoading && rowTokenInfo ? (
           <>
             <td>
               {balance.amountBN
@@ -122,12 +126,12 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
             </td>
             <td>
               {"$"}
-              {amountInUSD}
+              {formattedAmountInUSD}
             </td>
           </>
         ) : (
           <td>
-            {tokenInfoLoading && "Loading..."}
+            {isLoading && "Loading..."}
             {!rowTokenInfo && "Error while loading Token Info"}
           </td>
         )}

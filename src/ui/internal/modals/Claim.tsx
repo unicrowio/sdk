@@ -18,22 +18,15 @@ import {
 } from "../../../helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
+import { useAsync } from "../hooks/useAsync";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
 }
 
 export function ClaimModal(props: IClaimModalProps) {
-  const {
-    success,
-    setSuccess,
-    isLoading,
-    setIsLoading,
-    loadingMessage,
-    setLoadingMessage,
-    error,
-    onModalClose,
-  } = useModalStates({ deferredPromise: props.deferredPromise });
+  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
+    useModalStates({ deferredPromise: props.deferredPromise });
 
   const { isCorrectNetwork } = useNetworkCheck();
 
@@ -41,70 +34,62 @@ export function ClaimModal(props: IClaimModalProps) {
     {} as ModalAction,
   );
 
-  const [escrowBalance, setEscrowBalance] =
-    React.useState<IBalanceWithTokenUSD>();
+  const [escrowBalance, isLoadingBalance] = useAsync(
+    getSingleBalance,
+    Number(props.escrowId),
+    onModalClose,
+  );
 
-  const getBalance = React.useCallback(async () => {
-    if (isCorrectNetwork) {
-      try {
-        setIsLoading(true);
-        setLoadingMessage("Getting Escrow information");
+  const [exchangeValues, isLoadingExchange, error] = useAsync(
+    getExchangeRates,
+    escrowBalance.token.symbol!,
+    onModalClose,
+  );
 
-        const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
-          Number(props.escrowId),
-        );
-
-        const exchangeValues = await getExchangeRates([
-          _escrowBalance.token.symbol!,
-        ]);
-
-        const exchangeValue = exchangeValues[_escrowBalance.token.symbol!];
-
-        if (exchangeValue) {
-          _escrowBalance.amountInUSD = formatAmountToUSD(
-            _escrowBalance.amountBN,
-            exchangeValue,
-          );
-        } else {
-          _escrowBalance.amountInUSD = "n/a (error)";
-        }
-
-        setEscrowBalance(_escrowBalance);
-
-        setModalAction({
-          isForbidden: true,
-        });
-
-        if (_escrowBalance.connectedUser === "other") {
-          setModalAction({
-            isForbidden: false,
-          });
-        }
-
-        if (
-          _escrowBalance.statusEscrow.claimed ||
-          _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
-        ) {
-          setModalAction({
-            isForbidden: false,
-            reason: "You cannot claim this payment at this time",
-          });
-        }
-      } catch (error: any) {
-        toast(error, "error");
-        onModalClose();
-      } finally {
-        setLoadingMessage("");
-        setIsLoading(false);
-      }
-    }
-  }, [isCorrectNetwork, props.escrowId, onModalClose]);
+  const isLoading = isLoadingBalance || isLoadingExchange;
+  const [formattedAmountInUSD, setFormattedAmountInUSD] = React.useState("");
 
   React.useEffect(() => {
-    if (props.escrowId && !escrowBalance) {
-      getBalance();
+    if (exchangeValues) {
+      const exchangeValue = exchangeValues[escrowBalance.token.symbol!];
+
+      if (exchangeValue) {
+        setFormattedAmountInUSD(
+          formatAmountToUSD(escrowBalance.amountBN, exchangeValue),
+        );
+      }
     }
-  }, [isCorrectNetwork, props.escrowId, escrowBalance]);
+  }, [exchangeValues]);
+
+  React.useEffect(() => {
+    if (error) {
+      setFormattedAmountInUSD("n/a (error)");
+    }
+  }, [error]);
+
+  React.useEffect(() => {
+    if (escrowBalance) {
+      setModalAction({
+        isForbidden: true,
+      });
+
+      if (escrowBalance.connectedUser === "other") {
+        setModalAction({
+          isForbidden: false,
+        });
+      }
+
+      if (
+        escrowBalance.statusEscrow.claimed ||
+        escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
+      ) {
+        setModalAction({
+          isForbidden: false,
+          reason: "You cannot claim this payment at this time",
+        });
+      }
+    }
+  }, [escrowBalance]);
 
   const renderClaimableBalance = React.useCallback(() => {
     if (isCorrectNetwork) {
@@ -127,12 +112,12 @@ export function ClaimModal(props: IClaimModalProps) {
           </td>
           <td>
             {"$"}
-            {escrowBalance.amountInUSD}
+            {formattedAmountInUSD}
           </td>
         </tr>
       );
     }
-  }, [escrowBalance, isLoading, isCorrectNetwork]);
+  }, [escrowBalance, isLoading, isCorrectNetwork, formattedAmountInUSD]);
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -235,7 +220,7 @@ export function ClaimModal(props: IClaimModalProps) {
       footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
-      loadingMessage={loadingMessage}
+      loadingMessage={isLoading ? "Getting Escrow information" : ""}
     />
   );
 }

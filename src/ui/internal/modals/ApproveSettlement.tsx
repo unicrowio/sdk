@@ -3,7 +3,6 @@ import {
   ISettlementTransactionPayload,
   ISettlementApproveTransactionCallbacks,
   ISettlementApproveModalProps,
-  IGetEscrowData,
   ApproveSettlementParsedPayload,
 } from "../../../typing";
 import {
@@ -25,9 +24,9 @@ import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
-
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -49,19 +48,14 @@ const LabelFees = styled.p`
 
 export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   const { escrowData, escrowId, callbacks, deferredPromise } = props;
-  const {
-    success,
-    setSuccess,
-    isLoading,
-    setIsLoading,
-    loadingMessage,
-    setLoadingMessage,
-    onModalClose,
-  } = useModalStates({ deferredPromise });
+  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
+    useModalStates({ deferredPromise });
 
   const { isCorrectNetwork } = useNetworkCheck();
 
-  const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(escrowData);
+  const [escrow, isLoading, error] = escrowData
+    ? [escrowData, false, null]
+    : useAsync(getEscrowData, escrowId, onModalClose);
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrow?.settlement) {
@@ -137,31 +131,13 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     return escrow?.status.latestSettlementOfferBy !== escrow?.connectedUser;
   }, [escrow]);
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(escrowId)
-        .then((data: IGetEscrowData) => {
-          if (!data.settlement) {
-            throw new Error("There is no settlement to this escrow");
-          }
-          setEscrow(data);
-        })
-        .catch((e) => {
-          toast(e, "error");
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrow) {
+      if (!escrow.settlement) {
+        throw new Error("There is no settlement to this escrow");
+      }
+    }
+  }, [escrow]);
 
   const approveSettlementOfferCallbacks: ISettlementApproveTransactionCallbacks =
     {
@@ -319,7 +295,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
-      loadingMessage={loadingMessage}
+      loadingMessage={isLoading ? "Getting Escrow information" : ""}
     />
   );
 }

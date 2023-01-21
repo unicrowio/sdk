@@ -4,7 +4,6 @@ import {
   IChallengeModalProps,
   IChallengeTransactionCallbacks,
   IChallengeTransactionPayload,
-  IGetEscrowData,
 } from "../../../typing";
 import {
   Subtitle,
@@ -33,8 +32,7 @@ import styled from "styled-components";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
-
+import { useAsync } from "../hooks/useAsync";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 
 const InfoContainer = styled.div`
@@ -54,21 +52,30 @@ const InfoText = styled.p`
 `;
 
 export function ChallengeModal(props: IChallengeModalProps) {
-  const {
-    success,
-    setSuccess,
-    isLoading,
-    setIsLoading,
-    loadingMessage,
-    setLoadingMessage,
-    error,
-    onModalClose,
-  } = useModalStates({ deferredPromise: props.deferredPromise });
+  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
+    useModalStates({ deferredPromise: props.deferredPromise });
 
-  const { isCorrectNetwork } = useNetworkCheck();
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
+  const [escrowData, isLoading, error] = useAsync(
+    getEscrowData,
+    props.escrowId,
+    onModalClose,
     null,
   );
+
+  React.useEffect(() => {
+    if (escrowData) {
+      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        const who =
+          escrowData.status.latestChallengeBy === escrowData.connectedUser
+            ? "you"
+            : escrowData?.status.latestChallengeBy;
+        setPaymentStatus(`${EscrowStatus.CHALLENGED} by ${who}`);
+        return;
+      }
+
+      setPaymentStatus(escrowData.status.state);
+    }
+  }, [escrowData]);
 
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
@@ -81,40 +88,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
     countdown,
     shouldWaitOtherParty,
   } = useCountdownChallengePeriod(escrowData);
-
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(props.escrowId)
-        .then(async (data: IGetEscrowData) => {
-          setEscrowData(data);
-
-          if (data.status.state === EscrowStatus.CHALLENGED) {
-            const who =
-              data.status.latestChallengeBy === data.connectedUser
-                ? "you"
-                : data?.status.latestChallengeBy;
-            setPaymentStatus(`${EscrowStatus.CHALLENGED} by ${who}`);
-            return;
-          }
-
-          setPaymentStatus(data.status.state);
-        })
-        .catch((e) => {
-          toast(e, "error");
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
-  React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -306,7 +279,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
-      loadingMessage={loadingMessage}
+      loadingMessage={isLoading ? "Getting Escrow information" : ""}
     />
   );
 }

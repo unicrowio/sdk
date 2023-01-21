@@ -42,5 +42,5 @@ export const setupNetwork = ({
 
 setupNetwork({
   autoSwitchNetwork: false,
-  defaultNetwork: "arbitrum",
+  defaultNetwork: "development",
 });

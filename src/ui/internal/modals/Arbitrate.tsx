@@ -12,7 +12,7 @@ import { IArbitrateModalProps, IGetEscrowData } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -23,53 +23,27 @@ export const Arbitrate = ({
   deferredPromise,
   callbacks,
 }: IArbitrateModalProps) => {
-  const {
-    isLoading,
-    loadingMessage,
-    setIsLoading,
-    setSuccess,
-    error,
-    setError,
-    success,
-    onModalClose,
-    setLoadingMessage,
-  } = useModalStates({ deferredPromise });
-
-  const { isCorrectNetwork } = useNetworkCheck();
+  const { setIsLoading, setSuccess, setError, success, onModalClose } =
+    useModalStates({ deferredPromise });
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
 
-  const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
-
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      try {
-        setIsLoading(true);
-
-        setLoadingMessage("Getting Arbitration information");
-
-        const escrowData: IGetEscrowData = await getEscrowData(escrowId);
-
-        setEscrow(escrowData);
-        if (escrowData.arbitration?.arbitrated) {
-          setBuyerValue(escrowData.splitBuyer.toString());
-          setSellerValue(escrowData.splitSeller.toString());
-        }
-      } catch (error: any) {
-        console.error(error);
-        toast(error.message, "error");
-        onModalClose();
-      } finally {
-        setLoadingMessage("");
-        setIsLoading(false);
-      }
-    }
-  };
+  const [escrow, isLoading, error] = useAsync(
+    getEscrowData,
+    escrowId,
+    onModalClose,
+    null,
+  );
 
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrow) {
+      if (escrow.arbitration?.arbitrated) {
+        setBuyerValue(escrow.splitBuyer.toString());
+        setSellerValue(escrow.splitSeller.toString());
+      }
+    }
+  }, [escrow]);
 
   const confirm = (event: any) => {
     event.preventDefault();
@@ -219,7 +193,7 @@ export const Arbitrate = ({
         footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
-        loadingMessage={loadingMessage}
+        loadingMessage={isLoading ? "Getting Arbitration information" : ""}
       />
     </form>
   );

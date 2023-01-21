@@ -16,6 +16,7 @@ import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 
 /**
  * Approve the Arbitrator proposed
@@ -31,18 +32,12 @@ export const AddApproveArbitrator = ({
     loadingMessage,
     setIsLoading,
     setSuccess,
-    error,
     setError,
     success,
     onModalClose,
-    isLoading,
   } = useModalStates({ deferredPromise });
 
   const { isCorrectNetwork } = useNetworkCheck();
-
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
-    null,
-  );
 
   const [arbitrator, setArbitrator] = React.useState<string>("");
   const [arbitratorFee, setArbitratorFee] = React.useState<string>("");
@@ -53,77 +48,65 @@ export const AddApproveArbitrator = ({
 
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      try {
-        setIsLoading(true);
-
-        setLoadingMessage("Getting Arbitration information");
-        const escrow: IGetEscrowData = await getEscrowData(escrowId);
-        setEscrowData(escrow);
-
-        // Buyer or Seller should propose an arbitrator
-        if (!escrow.arbitration) {
-          setAction("new");
-          setTitle("Propose an Arbitrator");
-          setArbitrator("");
-          setArbitratorFee("");
-          return;
-        }
-
-        // Seller who proposed the arbitrator
-        if (
-          escrow.connectedUser === SELLER &&
-          escrow.arbitration.consensusSeller
-        ) {
-          setAction("view");
-          setTitle("Arbitrator Proposal");
-          setArbitrator(escrow.arbitration.arbitrator);
-          setArbitratorFee(String(escrow.arbitration.arbitratorFee));
-          return;
-        }
-
-        // Buyer who proposed the arbitrator
-        if (
-          escrow.connectedUser === BUYER &&
-          escrow.arbitration.consensusBuyer
-        ) {
-          setAction("view");
-          setTitle("Arbitrator Proposal");
-          setArbitrator(escrow.arbitration.arbitrator);
-          setArbitratorFee(String(escrow.arbitration.arbitratorFee));
-          return;
-        }
-
-        // buyer or seller should accept the arbitrator proposal
-        if (
-          escrow.arbitration.consensusBuyer &&
-          escrow.arbitration.consensusSeller
-        ) {
-          setTitle("Arbitrator Proposal");
-          setArbitrator(escrow.arbitration.arbitrator);
-          setArbitratorFee(String(escrow.arbitration.arbitratorFee));
-          setAction("edit");
-          return;
-        }
-
-        setArbitrator(escrow.arbitration.arbitrator);
-        setArbitratorFee(escrow.arbitration.arbitratorFee.toString());
-        setAction("edit");
-      } catch (error: any) {
-        console.error(error);
-        toast(error.message, "error");
-        onModalClose();
-      } finally {
-        setLoadingMessage("");
-        setIsLoading(false);
-      }
-    }
-  };
+  const [escrowData, isLoading, error] = useAsync(
+    getEscrowData,
+    escrowId,
+    onModalClose,
+    null,
+  );
 
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      // Buyer or Seller should propose an arbitrator
+      if (!escrowData.arbitration) {
+        setAction("new");
+        setTitle("Propose an Arbitrator");
+        setArbitrator("");
+        setArbitratorFee("");
+        return;
+      }
+
+      // Seller who proposed the arbitrator
+      if (
+        escrowData.connectedUser === SELLER &&
+        escrowData.arbitration.consensusSeller
+      ) {
+        setAction("view");
+        setTitle("Arbitrator Proposal");
+        setArbitrator(escrowData.arbitration.arbitrator);
+        setArbitratorFee(String(escrowData.arbitration.arbitratorFee));
+        return;
+      }
+
+      // Buyer who proposed the arbitrator
+      if (
+        escrowData.connectedUser === BUYER &&
+        escrowData.arbitration.consensusBuyer
+      ) {
+        setAction("view");
+        setTitle("Arbitrator Proposal");
+        setArbitrator(escrowData.arbitration.arbitrator);
+        setArbitratorFee(String(escrowData.arbitration.arbitratorFee));
+        return;
+      }
+
+      // buyer or seller should accept the arbitrator proposal
+      if (
+        escrowData.arbitration.consensusBuyer &&
+        escrowData.arbitration.consensusSeller
+      ) {
+        setTitle("Arbitrator Proposal");
+        setArbitrator(escrowData.arbitration.arbitrator);
+        setArbitratorFee(String(escrowData.arbitration.arbitratorFee));
+        setAction("edit");
+        return;
+      }
+
+      setArbitrator(escrowData.arbitration.arbitrator);
+      setArbitratorFee(escrowData.arbitration.arbitratorFee.toString());
+      setAction("edit");
+    }
+  }, [escrowData]);
 
   const confirm = () => {
     setIsLoading(true);
@@ -345,7 +328,7 @@ export const AddApproveArbitrator = ({
         footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
-        loadingMessage={loadingMessage}
+        loadingMessage={isLoading ? "Getting Arbitration information" : ""}
       />
     </form>
   );

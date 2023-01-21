@@ -23,27 +23,19 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
+import { useAsync } from "../hooks/useAsync";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {
     success,
     setSuccess,
-    isLoading,
     setIsLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
-  const { isCorrectNetwork } = useNetworkCheck();
-
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
-    null,
-  );
 
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
@@ -53,59 +45,47 @@ export function ReleaseModal(props: IReleaseModalProps) {
     {} as ModalAction,
   );
 
+  const [escrowData, isLoading, error] = useAsync(
+    getEscrowData,
+    props.escrowId,
+    onModalClose,
+    null,
+  );
+
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(props.escrowId)
-        .then(async (data: IGetEscrowData) => {
-          setEscrowData(data);
-
-          if (data.connectedUser !== "buyer") {
-            setModalAction({
-              isForbidden: false,
-              reason: "Only the buyer can release the payment",
-            });
-            return;
-          }
-
-          if (data.status.claimed) {
-            setModalAction({
-              isForbidden: false,
-              reason: "The payment is already claimed",
-            });
-            return;
-          }
-
-          setPaymentStatus(data.status.state);
-
-          if (data.status.state === EscrowStatus.CHALLENGED) {
-            setPaymentStatus(
-              `${EscrowStatus.CHALLENGED} by ${data.status.latestChallengeBy}`,
-            );
-          }
-
-          setModalAction({
-            isForbidden: true,
-          });
-        })
-        .catch((e) => {
-          toast(e, "error");
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      if (escrowData.connectedUser !== "buyer") {
+        setModalAction({
+          isForbidden: false,
+          reason: "Only the buyer can release the payment",
+        });
+        return;
+      }
+
+      if (escrowData.status.claimed) {
+        setModalAction({
+          isForbidden: false,
+          reason: "The payment is already claimed",
+        });
+        return;
+      }
+
+      setPaymentStatus(escrowData.status.state);
+
+      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        setPaymentStatus(
+          `${EscrowStatus.CHALLENGED} by ${escrowData.status.latestChallengeBy}`,
+        );
+      }
+
+      setModalAction({
+        isForbidden: true,
+      });
+    }
+  }, [escrowData]);
 
   const releaseCallbacks: IReleaseTransactionCallbacks = {
     connectingWallet: () => {
@@ -245,7 +225,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       footer={<ModalFooter />}
       onClose={onModalClose}
       isLoading={isLoading}
-      loadingMessage={loadingMessage}
+      loadingMessage={isLoading ? "Getting Escrow information" : ""}
     />
   );
 }

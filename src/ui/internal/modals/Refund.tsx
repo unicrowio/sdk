@@ -25,27 +25,19 @@ import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
+import { useAsync } from "../hooks/useAsync";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
     success,
     setSuccess,
-    isLoading,
     setIsLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
-  const { isCorrectNetwork } = useNetworkCheck();
-
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
-    null,
-  );
 
   const [modalAction, setModalAction] = React.useState<ModalAction>(
     {} as ModalAction,
@@ -55,59 +47,48 @@ export function RefundModal(props: IRefundModalProps) {
     string | undefined
   >();
 
+  const [escrowData, isLoading, error] = useAsync(
+    getEscrowData,
+    props.escrowId,
+    onModalClose,
+    null,
+  );
+
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(props.escrowId)
-        .then(async (data: IGetEscrowData) => {
-          setEscrowData(data);
-          if (data.connectedUser !== SELLER) {
-            setModalAction({
-              isForbidden: false,
-              reason: "Only the seller can refund the payment",
-            });
-            return;
-          }
-
-          if (data.status.claimed) {
-            setModalAction({
-              isForbidden: false,
-              reason: "The payment cannot be refunded via Unicrow anymore",
-            });
-            return;
-          }
-
-          setModalAction({
-            isForbidden: true,
-          });
-
-          if (data.status.state === EscrowStatus.CHALLENGED) {
-            setPaymentStatus(
-              `${EscrowStatus.CHALLENGED} by ${data?.status.latestChallengeBy}`,
-            );
-            return;
-          }
-
-          setPaymentStatus(data.status.state);
-        })
-        .catch((e) => {
-          toast(e, "error");
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      if (escrowData.connectedUser !== SELLER) {
+        setModalAction({
+          isForbidden: false,
+          reason: "Only the seller can refund the payment",
+        });
+        return;
+      }
+
+      if (escrowData.status.claimed) {
+        setModalAction({
+          isForbidden: false,
+          reason: "The payment cannot be refunded via Unicrow anymore",
+        });
+        return;
+      }
+
+      setModalAction({
+        isForbidden: true,
+      });
+
+      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        setPaymentStatus(
+          `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
+        );
+        return;
+      }
+
+      setPaymentStatus(escrowData.status.state);
+    }
+  }, [escrowData]);
 
   const refundCallbacks: IRefundTransactionCallbacks = {
     connectingWallet: () => {

@@ -66,19 +66,20 @@ interface IMMError {
   stack: string;
 }
 
-const _handleMataMaskError = (error: IMMError) => {
+const _handleMetaMaskError = (error: IMMError) => {
+  debugger;
   const errorMessage = METAMASK_ERRORS[error.code];
   return errorMessage || error.message || "Oops! Something went wrong.";
 };
 
 /**
- * Returns errors from the contract, MetaMask or any error that might arise.
+ * Handles all errors called from Unicrow.core, be it the contract, MetaMask or any error that might arise.
  *
- * @returns {string}
+ * @returns {string} the error message
  */
 export const errorHandler = (error: any) => {
   // generic message when no error code is found
-  let errorMessage = _handleMataMaskError(error);
+  let errorMessage = _handleMetaMaskError(error);
   const message: string | undefined =
     error.data?.message || error.error?.data?.message;
   if (message) {
