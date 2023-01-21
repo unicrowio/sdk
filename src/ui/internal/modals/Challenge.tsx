@@ -66,7 +66,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
   const { isCorrectNetwork } = useNetworkCheck();
-  const isMountedRef = React.useRef(false);
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
   );
@@ -89,9 +88,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
       setLoadingMessage("Getting Escrow information");
       getEscrowData(props.escrowId)
         .then(async (data: IGetEscrowData) => {
-          if (!isMountedRef.current) {
-            return;
-          }
           setEscrowData(data);
 
           if (data.status.state === EscrowStatus.CHALLENGED) {
@@ -118,10 +114,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   React.useEffect(() => {
     loadData();
-
-    return () => {
-      isMountedRef.current = false;
-    };
   }, [isCorrectNetwork]);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {

@@ -2,6 +2,7 @@ import React from "react";
 import {
   isCorrectNetworkConnected,
   startListeningNetwork,
+  stopListeningNetwork,
   switchNetwork,
 } from "wallet";
 import { ModalError } from "ui/internal/components/ModalError";
@@ -13,6 +14,8 @@ export const useNetworkCheck = () => {
   >(undefined);
 
   React.useEffect(() => {
+    const controller = new AbortController();
+
     // initial check
     isCorrectNetworkConnected().then((isCorrect) => {
       setIsCorrectNetwork(isCorrect);
@@ -22,6 +25,11 @@ export const useNetworkCheck = () => {
     startListeningNetwork((network) => {
       setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
     });
+
+    return () => {
+      stopListeningNetwork();
+      controller.abort();
+    };
   }, []);
 
   const onNetworkSwitch = React.useCallback(async () => {

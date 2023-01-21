@@ -125,7 +125,7 @@ export function SettlementOfferModal({
     if (!(escrow || escrowData)) {
       loadData();
     }
-  }, [escrow, escrowData]);
+  }, [escrow, escrowData, isCorrectNetwork]);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement & { name: "buyer" | "seller" }>,

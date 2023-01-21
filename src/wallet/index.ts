@@ -218,6 +218,10 @@ export const stopListening = () => {
   _onChangeWalletCallbacks = [];
 };
 
+export const stopListeningNetwork = () => {
+  _onChangeNetworkCallbacks = [];
+};
+
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
   // TODO: merge this with checkIsWalletInstalled
   const ethereum = checkIsWalletInstalled();
