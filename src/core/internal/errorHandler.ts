@@ -47,16 +47,12 @@ const ERRORS = {
   "2-007": "You are not approving this arbitrator fee",
   "2-008": "You are not approving this arbitrator address",
 };
-
 type ErrorCode = keyof typeof ERRORS;
-
 // Metamask Provider Errors
 const METAMASK_ERRORS = {
   ACTION_REJECTED: "User rejected the request",
 };
-
 type ErrorCodeMetaMask = keyof typeof METAMASK_ERRORS;
-
 interface IMMError {
   action: string;
   code: ErrorCodeMetaMask;
@@ -66,20 +62,19 @@ interface IMMError {
   stack: string;
 }
 
-const _handleMetaMaskError = (error: IMMError) => {
-  debugger;
+const _handleMataMaskError = (error: IMMError) => {
   const errorMessage = METAMASK_ERRORS[error.code];
   return errorMessage || error.message || "Oops! Something went wrong.";
 };
 
 /**
- * Handles all errors called from Unicrow.core, be it the contract, MetaMask or any error that might arise.
+ * Returns errors from the contract, MetaMask or any error that might arise.
  *
- * @returns {string} the error message
+ * @returns {string}
  */
 export const errorHandler = (error: any) => {
   // generic message when no error code is found
-  let errorMessage = _handleMetaMaskError(error);
+  let errorMessage = _handleMataMaskError(error);
   const message: string | undefined =
     error.data?.message || error.error?.data?.message;
   if (message) {
@@ -88,6 +83,5 @@ export const errorHandler = (error: any) => {
     const errorCode = message.split("revert ")[1] as ErrorCode;
     errorMessage = ERRORS[errorCode] || errorMessage;
   }
-
   return errorMessage;
 };
