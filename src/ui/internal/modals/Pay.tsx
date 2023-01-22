@@ -54,7 +54,7 @@ export function PayModal(props: IPaymentModalProps) {
   );
 
   const [tokenInfo, isLoadingToken, errorToken] = useAsync(
-    getWalletAccount,
+    getTokenInfo,
     props.paymentProps.tokenAddress,
     onModalClose,
   );

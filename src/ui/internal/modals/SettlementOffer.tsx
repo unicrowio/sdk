@@ -4,6 +4,7 @@ import {
   ISettlementOfferTransactionCallbacks,
   ISettlementOfferModalProps,
   OfferSettlementParsedPayload,
+  IGetEscrowData,
 } from "../../../typing";
 import { Button } from "../../../ui/internal/components/Button";
 import styled from "styled-components";
@@ -71,25 +72,30 @@ export function SettlementOfferModal({
     String(_splitBuyer),
   );
 
+  const getEscrowAndPossiblyRenderApproveModal = React.useCallback(
+    (escrowId) => {
+      return getEscrowData(escrowId).then((data: IGetEscrowData) => {
+        const settlementModalProps: ISettlementOfferModalProps = {
+          escrowId,
+          escrowData: data,
+          deferredPromise,
+          callbacks,
+        };
+
+        if (data.status.latestSettlementOfferBy) {
+          onModalClose();
+          renderModal(ApproveSettlementModal, settlementModalProps);
+        }
+
+        return data;
+      });
+    },
+    [deferredPromise, callbacks, onModalClose],
+  );
+
   const [escrow, isLoading, error] = escrowData
     ? [escrowData, false, null]
-    : useAsync(getEscrowData, escrowId, onModalClose);
-
-  React.useEffect(() => {
-    if (escrow) {
-      const settlementModalProps: ISettlementOfferModalProps = {
-        escrowId,
-        escrowData: escrow,
-        deferredPromise,
-        callbacks,
-      };
-
-      if (escrow.status.latestSettlementOfferBy) {
-        onModalClose();
-        renderModal(ApproveSettlementModal, settlementModalProps);
-      }
-    }
-  }, [escrow]);
+    : useAsync(getEscrowAndPossiblyRenderApproveModal, escrowId, onModalClose);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
     if (escrow?.connectedUser === BUYER) {

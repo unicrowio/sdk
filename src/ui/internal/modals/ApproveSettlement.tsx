@@ -53,7 +53,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
   const { isCorrectNetwork } = useNetworkCheck();
 
-  const [escrow, isLoading, error] = escrowData
+  const [escrow, isLoading] = escrowData
     ? [escrowData, false, null]
     : useAsync(getEscrowData, escrowId, onModalClose);
 

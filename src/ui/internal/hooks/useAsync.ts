@@ -15,5 +15,5 @@ export const useAsync = (fn, args, onModalClose?, defaultValue?) => {
     }
   }, [error]);
 
-  return [data || defaultValue, isLoading, error];
+  return [error ? null : data || defaultValue, isLoading, error];
 };

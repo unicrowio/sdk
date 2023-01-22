@@ -78,31 +78,33 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
-  const TableRow = (balance: IBalanceWithTokenUSD) => {
+  const TableRow = React.useCallback((balance: IBalanceWithTokenUSD) => {
     const [rowTokenInfo, isLoadingToken] = useAsync(
       getTokenInfo,
       balance.token.address,
       onModalClose,
+      undefined,
     );
 
-    const [exchangeValue, isLoadingExchange, error] = useAsync(
+    const [exchangeValues, , error] = useAsync(
       getExchangeRates,
       [balance.token.symbol],
       onModalClose,
     );
 
-    const isLoading = isLoadingToken || isLoadingExchange;
-    const [formattedAmountInUSD, setFormattedAmountInUSD] = React.useState(
-      balance.amountInUSD,
-    );
+    const isLoading = isLoadingToken;
+    const [formattedAmountInUSD, setFormattedAmountInUSD] =
+      React.useState("...");
 
     React.useEffect(() => {
-      if (exchangeValue) {
+      if (exchangeValues) {
+        const exchangeValue = exchangeValues[balance.token.symbol];
+
         setFormattedAmountInUSD(
           formatAmountToUSD(balance.amountBN, exchangeValue),
         );
       }
-    }, [exchangeValue]);
+    }, [exchangeValues]);
 
     React.useEffect(() => {
       if (error) {
@@ -116,7 +118,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
     return (
       <tr key={`balance-${balance.token.address}`}>
-        {!isLoading && rowTokenInfo ? (
+        {!isLoading && rowTokenInfo !== undefined ? (
           <>
             <td>
               {balance.amountBN
@@ -132,12 +134,14 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         ) : (
           <td>
             {isLoading && "Loading..."}
-            {!rowTokenInfo && "Error while loading Token Info"}
+            {!isLoading &&
+              rowTokenInfo === null &&
+              "Error while loading Token Info"}
           </td>
         )}
       </tr>
     );
-  };
+  }, []);
 
   const ModalBody = () => {
     return (
