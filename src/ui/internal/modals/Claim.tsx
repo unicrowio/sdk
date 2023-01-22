@@ -20,7 +20,6 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 
-
 export function ClaimModal(props: IClaimModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise: props.deferredPromise });
