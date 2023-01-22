@@ -20,9 +20,6 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
-  amountInUSD?: string;
-}
 
 export function ClaimModal(props: IClaimModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
@@ -36,13 +33,13 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const [escrowBalance, isLoadingBalance] = useAsync(
     getSingleBalance,
-    Number(props.escrowId),
+    props.escrowId,
     onModalClose,
   );
 
   const [exchangeValues, isLoadingExchange, error] = useAsync(
     getExchangeRates,
-    escrowBalance.token.symbol!,
+    [escrowBalance?.token.symbol!],
     onModalClose,
   );
 
@@ -79,10 +76,7 @@ export function ClaimModal(props: IClaimModalProps) {
         });
       }
 
-      if (
-        escrowBalance.statusEscrow.claimed ||
-        escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
-      ) {
+      if (escrowBalance.status !== "Ready to claim") {
         setModalAction({
           isForbidden: false,
           reason: "You cannot claim this payment at this time",

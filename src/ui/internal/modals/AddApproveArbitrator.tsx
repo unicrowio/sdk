@@ -15,8 +15,8 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useAsync } from "../hooks/useAsync";
+import { ModalAction } from "../components/Modal";
 
 /**
  * Approve the Arbitrator proposed
@@ -27,17 +27,8 @@ export const AddApproveArbitrator = ({
   deferredPromise,
   callbacks,
 }: IArbitrateModalProps) => {
-  const {
-    setLoadingMessage,
-    loadingMessage,
-    setIsLoading,
-    setSuccess,
-    setError,
-    success,
-    onModalClose,
-  } = useModalStates({ deferredPromise });
-
-  const { isCorrectNetwork } = useNetworkCheck();
+  const { setIsLoading, setSuccess, setError, success, onModalClose } =
+    useModalStates({ deferredPromise });
 
   const [arbitrator, setArbitrator] = React.useState<string>("");
   const [arbitratorFee, setArbitratorFee] = React.useState<string>("");
@@ -48,6 +39,10 @@ export const AddApproveArbitrator = ({
 
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
 
+  const [modalAction, setModalAction] = React.useState<ModalAction>(
+    {} as ModalAction,
+  );
+
   const [escrowData, isLoading, error] = useAsync(
     getEscrowData,
     escrowId,
@@ -57,6 +52,14 @@ export const AddApproveArbitrator = ({
 
   React.useEffect(() => {
     if (escrowData) {
+      if (escrowData?.status.state === "Settled") {
+        setModalAction({
+          isForbidden: true,
+          reason:
+            "The escrow has already been settled between buyer and seller.",
+        });
+      }
+
       // Buyer or Seller should propose an arbitrator
       if (!escrowData.arbitration) {
         setAction("new");
@@ -162,7 +165,7 @@ export const AddApproveArbitrator = ({
     const isBuyer = escrowData?.connectedUser === BUYER;
     const isSeller = escrowData?.connectedUser === SELLER;
 
-    if (!(escrowData && (isBuyer || isSeller))) {
+    if (modalAction.isForbidden || !(escrowData && (isBuyer || isSeller))) {
       return null;
     }
 
@@ -277,6 +280,12 @@ export const AddApproveArbitrator = ({
       escrowData?.connectedUser !== SELLER
     ) {
       return <Forbidden onClose={onModalClose} />;
+    }
+
+    if (modalAction.isForbidden) {
+      return (
+        <Forbidden description={modalAction.reason} onClose={onModalClose} />
+      );
     }
 
     return (
