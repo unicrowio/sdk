@@ -10,10 +10,10 @@ export const useAsync = (args, fn, onModalClose?, defaultValue?) => {
 
   React.useEffect(() => {
     if (error) {
-      toast(error.message, "error");
+      toast(error?.message, "error");
       onModalClose && onModalClose();
     }
   }, [error]);
 
-  return [error ? null : data || defaultValue, isLoading === undefined && false, error];
+  return [error ? null : data || defaultValue, false, error];
 };

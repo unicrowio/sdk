@@ -78,12 +78,16 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
-  const TableRow = (balance: IBalanceWithTokenUSD, onModalClose, setIsLoading) => {
+  const TableRow = (
+    balance: IBalanceWithTokenUSD,
+    onModalClose,
+    setIsLoading,
+  ) => {
     const [rowTokenInfo, isLoadingToken] = useAsync(
       balance.token.address,
       getTokenInfo,
       onModalClose,
-    )
+    );
 
     const [exchangeValues, , error] = useAsync(
       [balance.token.symbol],
@@ -201,4 +205,3 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     />
   );
 }
-

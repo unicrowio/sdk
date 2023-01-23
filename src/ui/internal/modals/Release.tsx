@@ -41,9 +41,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     string | undefined
   >();
 
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
-  );
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [escrowData, isLoading, error] = useAsync(
     props.escrowId,
@@ -137,7 +135,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (!(isLoading || modalAction.isForbidden)) {
+    if (!(isLoading || modalAction?.isForbidden)) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
@@ -193,7 +191,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (!(isLoading || modalAction.isForbidden)) {
+    if (!(isLoading || modalAction?.isForbidden)) {
       return null;
     }
 

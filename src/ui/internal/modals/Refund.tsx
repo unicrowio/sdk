@@ -39,9 +39,7 @@ export function RefundModal(props: IRefundModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
-  );
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [paymentStatus, setPaymentStatus] = React.useState<
     string | undefined
@@ -141,7 +139,7 @@ export function RefundModal(props: IRefundModalProps) {
       return null;
     }
 
-    if (!(isLoading || modalAction.isForbidden)) {
+    if (!(isLoading || modalAction?.isForbidden)) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
@@ -196,7 +194,7 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(isLoading || modalAction.isForbidden)) {
+    if (!(isLoading || modalAction?.isForbidden)) {
       return null;
     }
 

@@ -39,9 +39,7 @@ export const AddApproveArbitrator = ({
 
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
 
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
-  );
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [escrowData, isLoading, error] = useAsync(
     escrowId,
@@ -57,8 +55,7 @@ export const AddApproveArbitrator = ({
       if (escrowClosedStates.includes(escrowData?.status.state)) {
         setModalAction({
           isForbidden: true,
-          reason:
-            "The escrow has already been closed",
+          reason: "The escrow has already been closed",
         });
       }
 
@@ -167,7 +164,7 @@ export const AddApproveArbitrator = ({
     const isBuyer = escrowData?.connectedUser === BUYER;
     const isSeller = escrowData?.connectedUser === SELLER;
 
-    if (modalAction.isForbidden || !(escrowData && (isBuyer || isSeller))) {
+    if (modalAction?.isForbidden || !(escrowData && (isBuyer || isSeller))) {
       return null;
     }
 
@@ -284,7 +281,7 @@ export const AddApproveArbitrator = ({
       return <Forbidden onClose={onModalClose} />;
     }
 
-    if (modalAction.isForbidden) {
+    if (modalAction?.isForbidden) {
       return (
         <Forbidden description={modalAction.reason} onClose={onModalClose} />
       );

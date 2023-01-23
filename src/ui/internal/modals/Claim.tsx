@@ -24,9 +24,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const { isCorrectNetwork } = useNetworkCheck();
 
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
-  );
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [escrowBalance, isLoadingBalance] = useAsync(
     props.escrowId,
@@ -155,7 +153,7 @@ export function ClaimModal(props: IClaimModalProps) {
     if (!escrowBalance) {
       return null;
     }
-    if (!(isLoading || modalAction.isForbidden)) {
+    if (!(isLoading || modalAction?.isForbidden)) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
@@ -175,7 +173,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(escrowBalance && (isLoading || modalAction.isForbidden))) {
+    if (!(escrowBalance && (isLoading || modalAction?.isForbidden))) {
       return null;
     }
 
