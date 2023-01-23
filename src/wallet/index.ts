@@ -3,7 +3,7 @@ import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
 import { CHAIN_ID } from "../helpers";
-import { DefaultNetwork } from "typing";
+import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
 import { config } from "../config";
 
 let currentWallet: string | null = null;
@@ -141,7 +141,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   return name;
 };
 
-export const autoSwitchNetwork = async (callbacks?, force: boolean = false) => {
+export const autoSwitchNetwork = async (callbacks?: IGenericTransactionCallbacks, force: boolean = false) => {
   const isCorrectNetwork = await isCorrectNetworkConnected();
 
   if (!isCorrectNetwork) {
