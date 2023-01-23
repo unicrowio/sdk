@@ -45,7 +45,9 @@ export interface IPaymentProps {
   arbitratorFee?: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
-  /** ENS Addresses */
+}
+
+export interface IPaymentPropsData extends IPaymentProps {
   ensAddresses?: IEnsAddresses;
 }
 
