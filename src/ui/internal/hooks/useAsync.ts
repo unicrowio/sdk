@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { toast } from "../notification/toast";
 
-export const useAsync = (fn, args, onModalClose?, defaultValue?) => {
+export const useAsync = (args, fn, onModalClose?, defaultValue?) => {
   const { isCorrectNetwork } = useNetworkCheck();
 
   const { data, isLoading, error } = useSWR(isCorrectNetwork ? args : null, fn);
@@ -15,5 +15,5 @@ export const useAsync = (fn, args, onModalClose?, defaultValue?) => {
     }
   }, [error]);
 
-  return [error ? null : data || defaultValue, isLoading, error];
+  return [error ? null : data || defaultValue, isLoading === undefined && false, error];
 };

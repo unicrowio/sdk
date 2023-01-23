@@ -78,17 +78,16 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
-  const TableRow = React.useCallback((balance: IBalanceWithTokenUSD) => {
+  const TableRow = (balance: IBalanceWithTokenUSD, onModalClose, setIsLoading) => {
     const [rowTokenInfo, isLoadingToken] = useAsync(
-      getTokenInfo,
       balance.token.address,
+      getTokenInfo,
       onModalClose,
-      undefined,
-    );
+    )
 
     const [exchangeValues, , error] = useAsync(
-      getExchangeRates,
       [balance.token.symbol],
+      getExchangeRates,
       onModalClose,
     );
 
@@ -141,7 +140,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         )}
       </tr>
     );
-  }, []);
+  };
 
   const ModalBody = () => {
     return (
@@ -154,7 +153,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         </thead>
         <tbody>
           {props.balances.readyForClaim.map((balance: IBalanceWithTokenUSD) =>
-            TableRow(balance),
+            TableRow(balance, onModalClose, setIsLoading),
           )}
         </tbody>
       </Table>
@@ -202,3 +201,4 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     />
   );
 }
+

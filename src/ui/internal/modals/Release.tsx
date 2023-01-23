@@ -46,8 +46,8 @@ export function ReleaseModal(props: IReleaseModalProps) {
   );
 
   const [escrowData, isLoading, error] = useAsync(
-    getEscrowData,
     props.escrowId,
+    getEscrowData,
     onModalClose,
     null,
   );

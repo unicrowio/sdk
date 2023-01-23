@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  EscrowStatus,
-  IBalanceWithTokenInfo,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
@@ -31,14 +29,14 @@ export function ClaimModal(props: IClaimModalProps) {
   );
 
   const [escrowBalance, isLoadingBalance] = useAsync(
-    getSingleBalance,
     props.escrowId,
+    getSingleBalance,
     onModalClose,
   );
 
   const [exchangeValues, isLoadingExchange, error] = useAsync(
-    getExchangeRates,
     [escrowBalance?.token.symbol!],
+    getExchangeRates,
     onModalClose,
   );
 
@@ -65,19 +63,15 @@ export function ClaimModal(props: IClaimModalProps) {
 
   React.useEffect(() => {
     if (escrowBalance) {
-      setModalAction({
-        isForbidden: true,
-      });
-
       if (escrowBalance.connectedUser === "other") {
         setModalAction({
-          isForbidden: false,
+          isForbidden: true,
         });
       }
 
       if (escrowBalance.status !== "Ready to claim") {
         setModalAction({
-          isForbidden: false,
+          isForbidden: true,
           reason: "You cannot claim this payment at this time",
         });
       }

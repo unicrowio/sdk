@@ -30,18 +30,16 @@ export const Arbitrate = ({
   const [buyerValue, setBuyerValue] = React.useState<string>("");
 
   const [escrow, isLoading, error] = useAsync(
-    getEscrowData,
     escrowId,
+    getEscrowData,
     onModalClose,
     null,
   );
 
   React.useEffect(() => {
-    if (escrow) {
-      if (escrow.arbitration?.arbitrated) {
-        setBuyerValue(escrow.splitBuyer.toString());
-        setSellerValue(escrow.splitSeller.toString());
-      }
+    if (escrow.arbitration?.arbitrated) {
+      setBuyerValue(escrow.splitBuyer.toString());
+      setSellerValue(escrow.splitSeller.toString());
     }
   }, [escrow]);
 

@@ -53,9 +53,11 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
   const { isCorrectNetwork } = useNetworkCheck();
 
-  const [escrow, isLoading] = escrowData
-    ? [escrowData, false, null]
-    : useAsync(getEscrowData, escrowId, onModalClose);
+  const [escrow, isLoading] = useAsync(
+    escrowId,
+    escrowData ? null : getEscrowData,
+    onModalClose,
+  );
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrow?.settlement) {
@@ -132,10 +134,8 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrow]);
 
   React.useEffect(() => {
-    if (escrow) {
-      if (!escrow.settlement) {
-        throw new Error("There is no settlement to this escrow");
-      }
+    if (escrow && !escrow.settlement) {
+      throw new Error("There is no settlement to this escrow");
     }
   }, [escrow]);
 

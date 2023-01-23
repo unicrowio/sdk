@@ -48,8 +48,8 @@ export function RefundModal(props: IRefundModalProps) {
   >();
 
   const [escrowData, isLoading, error] = useAsync(
-    getEscrowData,
     props.escrowId,
+    getEscrowData,
     onModalClose,
     null,
   );

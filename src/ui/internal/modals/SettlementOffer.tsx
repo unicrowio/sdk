@@ -93,9 +93,11 @@ export function SettlementOfferModal({
     [deferredPromise, callbacks, onModalClose],
   );
 
-  const [escrow, isLoading, error] = escrowData
-    ? [escrowData, false, null]
-    : useAsync(getEscrowAndPossiblyRenderApproveModal, escrowId, onModalClose);
+  const [escrow, isLoading, error] = useAsync(
+    escrowId,
+    escrowData ? null : getEscrowAndPossiblyRenderApproveModal,
+    onModalClose,
+  );
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
     if (escrow?.connectedUser === BUYER) {

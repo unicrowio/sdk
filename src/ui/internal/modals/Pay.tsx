@@ -47,15 +47,15 @@ export function PayModal(props: IPaymentModalProps) {
   const [buyer, setBuyer] = React.useState<string | null>();
 
   const [walletUser, isLoadingWallet, errorWallet] = useAsync(
-    getWalletAccount,
     {},
+    getWalletAccount,
     onModalClose,
     null,
   );
 
   const [tokenInfo, isLoadingToken, errorToken] = useAsync(
-    getTokenInfo,
     props.paymentProps.tokenAddress,
+    getTokenInfo,
     onModalClose,
   );
 

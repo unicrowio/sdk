@@ -44,19 +44,21 @@ export const AddApproveArbitrator = ({
   );
 
   const [escrowData, isLoading, error] = useAsync(
-    getEscrowData,
     escrowId,
+    getEscrowData,
     onModalClose,
     null,
   );
 
   React.useEffect(() => {
     if (escrowData) {
-      if (escrowData?.status.state === "Settled") {
+      const escrowClosedStates = ["Settled", "Cancelled", "Expired"];
+
+      if (escrowClosedStates.includes(escrowData?.status.state)) {
         setModalAction({
           isForbidden: true,
           reason:
-            "The escrow has already been settled between buyer and seller.",
+            "The escrow has already been closed",
         });
       }
 

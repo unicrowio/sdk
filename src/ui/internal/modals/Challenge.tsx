@@ -56,8 +56,8 @@ export function ChallengeModal(props: IChallengeModalProps) {
     useModalStates({ deferredPromise: props.deferredPromise });
 
   const [escrowData, isLoading, error] = useAsync(
-    getEscrowData,
     props.escrowId,
+    getEscrowData,
     onModalClose,
     null,
   );
