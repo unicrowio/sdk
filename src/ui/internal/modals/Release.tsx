@@ -28,26 +28,16 @@ import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 
 export function ReleaseModal(props: IReleaseModalProps) {
-  const {
-    success,
-    setSuccess,
-    setIsLoading,
-    loadingMessage,
-    setLoadingMessage,
-    onModalClose,
-  } = useModalStates({ deferredPromise: props.deferredPromise });
+  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
+    useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [paymentStatus, setPaymentStatus] = React.useState<
-    string | undefined
-  >();
-
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
   const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [escrowData, isLoading, error] = useAsync(
     props.escrowId,
     getEscrowData,
     onModalClose,
-    null,
   );
 
   const { labelChallengePeriod, countdown } =

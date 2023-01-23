@@ -41,9 +41,7 @@ export function RefundModal(props: IRefundModalProps) {
 
   const [modalAction, setModalAction] = React.useState<ModalAction>();
 
-  const [paymentStatus, setPaymentStatus] = React.useState<
-    string | undefined
-  >();
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
 
   const [escrowData, isLoading, error] = useAsync(
     props.escrowId,
