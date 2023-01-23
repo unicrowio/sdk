@@ -45,8 +45,50 @@ export interface IPaymentProps {
   arbitratorFee?: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
+}
+
+export interface IPaymentPropsData {
+  /** Amount in token */
+  amount: string | BigNumberJs | number;
+  /** Whom is the payment for */
+  seller: string;
+  /** Initial challenge period (in seconds) */
+  challengePeriod: number;
+  /** address of the token used in the payment */
+  tokenAddress?: string;
+  /** address of a marketplace that has facilitated the payment */
+  marketplace?: string;
+  /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
+  marketplaceFee?: number;
+  /** Address of the arbitrator. null for no arbitrator */
+  arbitrator?: string | null;
+  /** Arbitrator's fee in bips. Can be 0 */
+  arbitratorFee?: number;
+  /** By how much will the challenge period get extended after a challenge (in seconds) */
+  challengePeriodExtension?: number;
   /** ENS Addresses */
   ensAddresses?: IEnsAddresses;
+}
+
+export interface IPaymentProps {
+  /** Amount in token */
+  amount: string | BigNumberJs | number;
+  /** Whom is the payment for */
+  seller: string;
+  /** Initial challenge period (in seconds) */
+  challengePeriod: number;
+  /** address of the token used in the payment */
+  tokenAddress?: string;
+  /** address of a marketplace that has facilitated the payment */
+  marketplace?: string;
+  /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
+  marketplaceFee?: number;
+  /** Address of the arbitrator. null for no arbitrator */
+  arbitrator?: string | null;
+  /** Arbitrator's fee in bips. Can be 0 */
+  arbitratorFee?: number;
+  /** By how much will the challenge period get extended after a challenge (in seconds) */
+  challengePeriodExtension?: number;
 }
 
 export interface IArbitratorData {

@@ -20,6 +20,7 @@ import {
   ISettlementOfferTransactionCallbacks,
   ISettlementOfferModalProps,
   ISettlementApproveModalProps,
+  IPaymentPropsData,
 } from "../typing";
 import ReactDOM from "react-dom";
 import React, { FunctionComponent } from "react";
@@ -118,7 +119,7 @@ export const pay = async (
   paymentProps: IPaymentProps,
   callbacks?: IPayTransactionCallbacks,
 ) => {
-  const data = paymentProps;
+  const data: IPaymentPropsData = paymentProps;
 
   try {
     const addrs = await validateParameters(data);
@@ -127,7 +128,7 @@ export const pay = async (
       paymentProps[key] = value;
     });
 
-    paymentProps.ensAddresses = addrs.ens;
+    data.ensAddresses = addrs.ens;
   } catch (error: any) {
     toast(error, "error");
     return;
@@ -136,7 +137,7 @@ export const pay = async (
   const deferredPromise = new Deferred<string>();
 
   const paymentModalProps: IPaymentModalProps = {
-    paymentProps: paymentProps,
+    paymentProps: data,
     callbacks,
     deferredPromise,
   };
