@@ -45,7 +45,6 @@ export const AddApproveArbitrator = ({
     escrowId,
     getEscrowData,
     onModalClose,
-    null,
   );
 
   React.useEffect(() => {
