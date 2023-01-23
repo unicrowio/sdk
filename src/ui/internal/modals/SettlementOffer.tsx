@@ -97,6 +97,7 @@ export function SettlementOfferModal({
     escrowId,
     escrowData ? null : getEscrowAndPossiblyRenderApproveModal,
     onModalClose,
+    escrowData,
   );
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {

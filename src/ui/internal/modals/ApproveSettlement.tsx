@@ -57,6 +57,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     escrowId,
     escrowData ? null : getEscrowData,
     onModalClose,
+    escrowData
   );
 
   const labelAmountSplit = React.useMemo(() => {
