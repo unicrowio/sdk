@@ -3,6 +3,7 @@ import Deferred from "helpers/deferred";
 import {
   IPaymentModalProps,
   IPaymentProps,
+  IPaymentPropsData,
   IPayTransactionCallbacks,
 } from "typing";
 import { toast } from "ui/internal/notification/toast";
@@ -26,7 +27,7 @@ export const pay = async (
   paymentProps: IPaymentProps,
   callbacks?: IPayTransactionCallbacks,
 ) => {
-  const data = paymentProps;
+  const data: IPaymentPropsData = paymentProps;
 
   try {
     const addrs = await validateParameters(data);
@@ -35,7 +36,7 @@ export const pay = async (
       paymentProps[key] = value;
     });
 
-    paymentProps.ensAddresses = addrs.ens;
+    data.ensAddresses = addrs.ens;
   } catch (error: any) {
     toast(error, "error");
     return;
@@ -44,7 +45,7 @@ export const pay = async (
   const deferredPromise = new Deferred<string>();
 
   const paymentModalProps: IPaymentModalProps = {
-    paymentProps: paymentProps,
+    paymentProps: data,
     callbacks,
     deferredPromise,
   };
