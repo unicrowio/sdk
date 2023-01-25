@@ -12,7 +12,6 @@ interface IEnsAddresses {
 
 /**
  * Properties of a token, incl. decimals as in its rounding precision.
- *
  */
 export interface IToken {
   /** 'DAI' | 'USDT' | 'USDC' | 'ETH' | string  */
@@ -23,8 +22,7 @@ export interface IToken {
 }
 
 /**
- * All properties needed for a payment.
- *
+ * Payment data input
  */
 export interface IPaymentProps {
   /** Amount in token */
@@ -33,15 +31,15 @@ export interface IPaymentProps {
   seller: string;
   /** Initial challenge period (in seconds) */
   challengePeriod: number;
-  /** address of the token used in the payment */
+  /** Address of the token used in the payment (skip or set to null for ETH) */
   tokenAddress?: string;
   /** address of a marketplace that has facilitated the payment */
   marketplace?: string;
-  /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
+  /** Marketplace fee in % (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee?: number;
   /** Address of the arbitrator. null for no arbitrator */
   arbitrator?: string | null;
-  /** Arbitrator's fee in bips. Can be 0 */
+  /** Arbitrator's fee in %. Can be 0 */
   arbitratorFee?: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
@@ -72,7 +70,6 @@ export type tEscrowParty = "buyer" | "seller" | null;
 
 /**
  * Full status of an escrow.
- *
  */
 export interface IEscrowStatus {
   /** The current state of an escrow (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED). */
@@ -127,37 +124,106 @@ export interface EscrowStatusView {
   paid_at: number;
 }
 
+/**
+ * Detailed information about the escrow 
+ * 
+ * @example // A returned object might look e.g. like this:
+ * {
+ *    challengePeriod: 1209600,
+ *    challengePeriodStart: "2023-01-24T11:54:33.000Z",
+ *    challengePeriodEnd: "2023-02-07T11:54:33.000Z",
+ *    status: {
+ *       state: "Paid",
+ *       latestChallengeBy: null,
+ *       latestSettlementOfferBy: null,
+ *       claimed: false
+ *    },
+ *    escrowId: 434,
+ *    amount: "2500000000",
+ *    marketplace: "0xf8C03F09b4f53FDc05b57c7846da5F428798f187",
+ *    buyer: "0x1cB9dc49C0cC09D72E8dA74a9Ea956A0b1A65ab4",
+ *    seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D",
+ *    splitMarketplace: 10,
+ *    splitBuyer: 0,
+ *    splitSeller: 100,
+ *    splitProtocol: 0.69,
+ *    consensusBuyer: 0,
+ *    consensusSeller: 1,
+ *    arbitration: {
+ *       arbitrator: "0x3C86F543e64810E1d843809B2b70a4FDcC3b9B66",
+ *       consensusSeller: true,
+ *       consensusBuyer: true,
+ *       arbitrated: false,
+ *       arbitratorFee: 0
+ *    },
+ *    settlement: null,
+ *    token: {
+ *       address: "0x7eD124F79447a1390281c88bB9bca2AC4F009BBE"
+ *    }
+ * }
+ */
 export interface IEscrowData {
+  /** Amount in token's (or ETH's) wei unit */
   amount: BigNumberJs; // ERC20 | Ether
   escrowId: number;
 
+  /** See the interface for more details */
   status: IEscrowStatus;
 
-  // Addresses
+  /** Marketplace address */
   marketplace: string | null;
+  /** Buyer (payer) address */
   buyer: string;
+  /** Seller (payee) address */
   seller: string;
+  /** Information about the payment token  */
   token: IToken;
 
+  /** How much a challenge period will extend by if challenged */
   challengePeriod: number;
+  /** Current challenge period start (either payment time or the latest challenge) */
   challengePeriodStart: Date;
+  /** Current challenge period end (when it will be possible to claim the payment) */
   challengePeriodEnd: Date;
 
-  // Split
+  /** How much (%) of the payment is meant for the buyer (default 0)  */
   splitBuyer: number;
+  /**
+   * How much (%) of the payment is meant for the seller (default 100).
+   * Buyer and seller splits are "gross", i.e. before fee deduction. 
+   * They are recalculated at the time of the claim based on fee and the latest status of the escrow
+   */
   splitSeller: number;
+  /** Protocol fee (%) */
   splitProtocol: number;
+  /** Marketplace fee (%) */
   splitMarketplace: number;
 
-  // Consensus
+  /**
+   * Indicates status of the payment from buyer's and seller's side.
+   * Negative value means that party was challenged.
+   * 
+   * Examples for various states:  <br/>
+   *  0, 1: Paid - If the payment is claimed after challenge period ends, consensus remains like this  <br/>
+   *  1, 1: Released by buyer  <br/>
+   *  1,-1: 1x Challenged by buyer - If the payment is claimed after CP ends, consensus remains like this  <br/>
+   * -1, 2: 1x Challenged by buyer and 1x by Seller  <br/>
+   *  2,-2: 2x Challenged by buyer, 1x by seller  <br/>
+   *  3, 2: Released, Refunded, or Settled. Deduct 1 from each consensus number to calculate number of challenges 
+   */
   consensusBuyer: number;
+
+  /** See consensusBuyer for details */
   consensusSeller: number;
 
+  /** When was the payment sent to the escrow */
   createdAt?: Date;
 
-  // Settlement
+  /** Address that sent the latest settlement offer (if any) */
   latestSettlementOfferAddress?: string;
+  /** What was the proposed seller's split in the latest settlement offer */
   latestSettlementOfferSeller?: number;
+  /** What was the proposed seller's split in the latest settlement offer */
   latestSettlementOfferBuyer?: number;
 
   /** ENS Addresses */
@@ -176,21 +242,19 @@ export interface GenericParsedTxPayload {
 }
 
 /**
- * The data sent by the user when he approves an arbitrator for a payment.
- *
+ * Escrow data returned after an arbitrator is approved for the escrow 
  */
 export interface ApproveArbitratorParsedPayload extends GenericParsedTxPayload {
   /** Address of the arbitrator. null for no arbitrator */
   arbitrator: string | null;
-  /** Arbitrator's fee in bips. Can be 0 */
+  /** Arbitrator's fee (%, can be 0) */
   arbitratorFee: number;
   /** Has the escrow been decided by the arbitrator, false if value === null // TODO: verify if true */
   statusArbitration: "ArbitratorApproved";
 }
 
 /**
- * The data sent by the user when he approves a payment settlement.
- *
+ * Escrow data sent after a settlement offer is approved and the payment is settled
  */
 export interface ApproveSettlementParsedPayload extends GenericParsedTxPayload {
   /* The date when payment has been settled at */
@@ -244,9 +308,10 @@ export interface ApproveSettlementParsedPayload extends GenericParsedTxPayload {
 }
 
 /**
- * The data sent by an arbitrator when he makes his arbitration proposal.
+ * Escrow data returned from the contract after an arbitration is sent
  */
 export interface ArbitrateParsedPayload extends GenericParsedTxPayload {
+  /** Date/time when the arbitration was sent and the payment was settled */
   settledAt: Date;
   /** Who sent the payment */
   buyer: string;
@@ -293,8 +358,7 @@ export interface ArbitrateParsedPayload extends GenericParsedTxPayload {
 }
 
 /**
- * The data sent either by the buyer or seller when they challenge a payment.
- *
+ * Escrow data returned after a challenge is sent
  */
 export interface ChallengeParsedPayload extends GenericParsedTxPayload {
   /* The date when payment has been challenged at */
@@ -321,14 +385,19 @@ export interface ChallengeParsedPayload extends GenericParsedTxPayload {
   consensusBuyer: number;
   /** Seller's agreement on the arbitrator */
   consensusSeller: number;
+  /** Buyer's split after the challenge (100 if the buyer challenged, 0 if the seller challenged */
   splitBuyer: number;
+  /** Seller's split after the challenge (0 if the buyer challenged, 100 if the seller challenged */
   splitSeller: number;
+  /** Marketplace fee (%) */
   splitMarketplace: number;
+  /** Protocol fee (%) */
   splitProtocol: number;
   /** Amount in token */
   amount: string;
 }
 
+/** Amounts (in ETH's or token's WEIs) sent to all the parties after the escrow was closed */
 export interface ClaimParsedPayload extends GenericParsedTxPayload {
   amountBuyer: string;
   amountSeller: string;
@@ -338,8 +407,7 @@ export interface ClaimParsedPayload extends GenericParsedTxPayload {
 }
 
 /**
- * The data sent by either the buyer or seller when he claims an escrow.
- *
+ * Amounts (in ETH's or token's WEIs) sent to all the parties after multiple escrows were closed 
  */
 export interface MultipleClaimParsedPayload extends GenericParsedTxPayload {
   /** The data for a single claim of an escrow share. (array with amountBuyer, amountSeller, amountMarketplace, amountProtocol, amountArbitrator) */
@@ -347,28 +415,28 @@ export interface MultipleClaimParsedPayload extends GenericParsedTxPayload {
 }
 
 /**
- * The data sent by either the buyer or seller when he proposes an escrow settlement.
- *
+ * Details of a settlement offer returned from the contract after the offer was sent
  */
 export interface OfferSettlementParsedPayload extends GenericParsedTxPayload {
-  /* The date when payment has been offered at */
+  /* Date/time of the offer */
   settlementOfferAt: Date;
+  /** Buyer's share in the offer */
   latestSettlementOfferBuyer: number;
+  /** Seller's share in the offer */
   latestSettlementOfferSeller: number;
-  /** address of who sent the latest settlement offer. */
+  /** Address of who sent the offer. */
   latestSettlementOfferAddress: string;
 }
 
 /**
- * The data sent by either buyer or seller when he initalizes a new payment.
- *
+ * Escrow data returned after the payment was sent and the escrow was created
  */
 export interface PayParsedPayload extends GenericParsedTxPayload {
-  /* The date when payment has been paid at */
+  /** Date/time of the payment */
   paidAt: Date;
-  /** Address of the arbitrator */
+  /** Address of the arbitrator (null if none) */
   arbitrator: string;
-  /** Arbitrator's fee in bips. Can be 0 */
+  /** Arbitrator's fee (%, can be 0) */
   arbitratorFee: number;
   /** Who sent the payment */
   buyer: string;
@@ -378,11 +446,11 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   challengePeriod: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension: number;
-  /** When does the current challenge period start (seconds in Unix epoch) */
+  /** When does the current challenge period start */
   challengePeriodStart: Date;
-  /** When does the current challenge period end (seconds in Unix epoch) */
+  /** When does the current challenge period end */
   challengePeriodEnd: Date;
-  /** address of a marketplace that has facilitated the payment */
+  /** Address of a marketplace that has facilitated the payment */
   marketplace: string;
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
@@ -394,27 +462,30 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   consensusBuyer: number;
   /** Seller's agreement on the arbitrator */
   consensusSeller: number;
+  /** Buyer's split of the escrow (0 by default) */
   splitBuyer: number;
+  /** Seller's split of the escrow (100 by default) */
   splitSeller: number;
+  /** Marketplace fee (%) */
   splitMarketplace: number;
+  /** Protocol fee (%) */
   splitProtocol: number;
   /** Amount in token */
   amount: string;
-  /** Current buyer's split based on the latest action on the escrow */
+  /** Current buyer's share (in ETH or token) based on the latest status of the escrow */
   amountBuyer: string;
-  /** Current seller's split based on the latest action on the escrow */
+  /** Current seller's share (in ETH or token) based on the latest status of the escrow */
   amountSeller: string;
-  /** Marketplace fee (bips) */
+  /** Current marketplace feee (in ETH or token) based on the latest status of the escrow */
   amountMarketplace: string;
-  /** Arbitrator fee (bips) */
+  /** Current arbitrator feee (in ETH or token) based on the latest status of the escrow */
   amountArbitrator: string;
-  /** Protocol fee (bips) */
+  /** Current protocol feee (in ETH or token) based on the latest status of the escrow */
   amountProtocol: string;
 }
 
 /**
- * The data sent by either the buyer or seller when he proposes an arbitrator for an escrow.
- *
+ * Details about arbitrator proposal 
  */
 export interface ProposalArbitratorParsedPayload
   extends GenericParsedTxPayload {
@@ -702,8 +773,51 @@ export interface IBalanceWithTokenInfo extends IBalance {
 }
 
 /**
- * Used for calculations of the user balance.
+ * The indexer returns user's contract balance in this structure
  *
+ * @example How returned values might look like for pending and claimable ETH/USDT/USDC balance
+ * {
+ *   pending: [
+ *     {
+ *        token: {
+ *           address: "0x0000000000000000000000000000000000000000",
+ *           symbol: "ETH",
+ *           decimals: 18
+ *        },
+ *        status: "Pending",
+ *        amount: "1586200000000000000",
+ *        total: "1586200000000000000",
+ *        displayableAmount: "1.5862",
+ *        amountBN: "1.5862"
+ *     }
+ *   ],
+ *   readyForClaim: [
+ *     {
+ *        token: {
+ *           address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+ *           symbol: "USDC",
+ *           decimals: 6
+ *        },
+ *        status: "Ready to claim",
+ *        amount: "1786200000",
+ *        total: "1786200000",
+ *        displayableAmount: "1786.2",
+ *        amountBN: "1786.2"
+ *     },
+ *     {
+ *        token: {
+ *           address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+ *           symbol: "USDT",
+ *           decimals: 6
+ *        },
+ *        status: "Ready to claim",
+ *        amount: "2379300000",
+ *        total: "2379300000",
+ *        displayableAmount: "2379.3",
+ *        amountBN: "2379.3"
+ *     }
+ *   ]
+ * }
  */
 export interface GetResponseUserBalance {
   /** Balance in escrows where the challenge period hasn't ended yet */
@@ -732,20 +846,152 @@ export interface IPage {
   page: number;
 }
 
+/**
+ * List of escrows returned from the indexer search function
+ * 
+ * @example // Returned object would look e.g. like this:
+ * {
+ *    totalCount: 10,
+ *    data: [
+ *       // List of IEscrowData objects
+ *    ]
+ * }
+ */
 export interface IGetPaymentListResponse {
+  /** How many records match the criteria in total */
   totalCount: number;
+  /** Subset of the escrows matching the criteria based on the defined pagination */
   data: IEscrowData[];
 }
 
+/**
+ * Returned by the SDK when connecting to the indexer. Contains functions to read escrow data from the indexer 
+ */
 export interface IndexerInstance {
+  /**
+   * Get a list of escrows based on defined parameters
+   * 
+   * @example await indexerInstance.getPaymentList({seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D"}, {limit: 20, page: 1}
+   * 
+   * // Returned object would look e.g. like this:
+   * {
+   *    totalCount: 10,
+   *    data: [
+   *       // List of IEscrowData objects
+   *    ]
+   * }
+   * 
+   * @param queryParams Search parameters
+   * @param pagination How many records should be returned from which "page" (defaults to 20, 1)
+   * @returns List of escrows
+   */
   getPaymentList: (
     queryParams: TPaymentListQueryParams,
     pagination: IPage,
   ) => Promise<IGetPaymentListResponse>;
+
+  /**
+   * Reads parameters of a single escrow payment identified by the id
+   *  
+   * @example // A returned object might look e.g. like this:
+   * {
+   *    challengePeriod: 1209600,
+   *    challengePeriodStart: "2023-01-24T11:54:33.000Z",
+   *    challengePeriodEnd: "2023-02-07T11:54:33.000Z",
+   *    status: {
+   *       state: "Paid",
+   *       latestChallengeBy: null,
+   *       latestSettlementOfferBy: null,
+   *       claimed: false
+   *    },
+   *    escrowId: 434,
+   *    amount: "2500000000",
+   *    marketplace: "0xf8C03F09b4f53FDc05b57c7846da5F428798f187",
+   *    buyer: "0x1cB9dc49C0cC09D72E8dA74a9Ea956A0b1A65ab4",
+   *    seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D",
+   *    splitMarketplace: 10,
+   *    splitBuyer: 0,
+   *    splitSeller: 100,
+   *    splitProtocol: 0.69,
+   *    consensusBuyer: 0,
+   *    consensusSeller: 1,
+   *    arbitration: {
+   *       arbitrator: "0x3C86F543e64810E1d843809B2b70a4FDcC3b9B66",
+   *       consensusSeller: true,
+   *       consensusBuyer: true,
+   *       arbitrated: false,
+   *       arbitratorFee: 0
+   *    },
+   *    settlement: null,
+   *    token: {
+   *       address: "0x7eD124F79447a1390281c88bB9bca2AC4F009BBE"
+   *    }
+   * }
+   * 
+   * @param escrowId ID of the escrow
+   * @returns Populated escrow data (incl. settlement, arbitration, status, etc. information)
+   */
   getSinglePayment: (escrowId: number) => Promise<IEscrowData | null>;
+  
+  /**
+   * Read how much balance does the provided account have in the contract
+   * 
+   * @example // A returned JSON object  might look like this:
+   * {
+   *   pending: [
+   *     {
+   *        token: {
+   *           address: "0x0000000000000000000000000000000000000000",
+   *           symbol: "ETH",
+   *           decimals: 18
+   *        },
+   *        status: "Pending",
+   *        amount: "1586200000000000000",
+   *        total: "1586200000000000000",
+   *        displayableAmount: "1.5862",
+   *        amountBN: "1.5862"
+   *     }
+   *   ],
+   *   readyForClaim: [
+   *     {
+   *        token: {
+   *           address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+   *           symbol: "USDC",
+   *           decimals: 6
+   *        },
+   *        status: "Ready to claim",
+   *        amount: "1786200000",
+   *        total: "1786200000",
+   *        displayableAmount: "1786.2",
+   *        amountBN: "1786.2"
+   *     },
+   *     {
+   *        token: {
+   *           address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+   *           symbol: "USDT",
+   *           decimals: 6
+   *        },
+   *        status: "Ready to claim",
+   *        amount: "2379300000",
+   *        total: "2379300000",
+   *        displayableAmount: "2379.3",
+   *        amountBN: "2379.3"
+   *     }
+   *   ]
+   * }
+   * @param walletUserAddress Address of an account to get balance of
+   * @returns Balance broken down by tokens and claimability
+   */  
   getUserBalance: (
     walletUserAddress: string,
   ) => Promise<GetResponseUserBalance>;
+
+  /**
+   * Get list of escrows that are available for claiming by the provided account 
+   * 
+   * @param walletUserAddress - Address of the account 
+   * @returns A list of escrow IDs
+   */
   getClaimableEscrows: (walletUserAddress: string) => Promise<string[]>;
 }
 

@@ -56,9 +56,13 @@ const mapData = (
     })
     .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
 
-/*
-  Get balance from logged user
-*/
+/**
+ * Read how much balance does the provided account have in the contract
+ * 
+ * @param client - Index client instance
+ * @param walletUserAddress Address of an account to return the balance of
+ * @returns Map of balances broken down by claimability and tokens
+ */
 export const getUserBalance = async (
   client: GraphQLClient,
   walletUserAddress: string,
