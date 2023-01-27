@@ -226,7 +226,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    connectedUser: "buyer",
  *    connectedWallet: "0xd024....5861"
  * }
- * 
+ *
  * // An escrow with 1,000 USDT, an arbitrator and marketplace with fees, which was challenged by buyer and has a settlement offer from the seller looks like this:
  * {
  *    challengePeriod: 1209600,
@@ -256,7 +256,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    consensusSeller: -1,                                // This means seller is currently challenged 1st time
  *    arbitration: {
  *       arbitrator: "0x3C86....9B66",                    // Address of the proposed or defined arbitrator
- *       consensusSeller: true,                           // Whether seller agreed (implicitly or explicitly) on the arbitrator 
+ *       consensusSeller: true,                           // Whether seller agreed (implicitly or explicitly) on the arbitrator
  *       consensusBuyer: true,                            // If both buyer and seller consensus is true, the arbitrator is set
  *       arbitrated: false,                               // The arbitrator hasn't stepped in yet
  *       arbitratorFee: 2                                 // Arbitrator's fee in %
@@ -269,7 +269,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    connectedUser: "seller",
  *    connectedWallet: "0xa9813....041d"
  * }
- * 
+ *
  * @param escrowId ID of the escrow
  * @throws Error if escrow id doesn't exist.
  * @returns All details about the escrowed payment
