@@ -58,7 +58,7 @@ const mapData = (
 
 /**
  * Read how much balance does the provided account have in the contract
- * 
+ *
  * @param client - Index client instance
  * @param walletUserAddress Address of an account to return the balance of
  * @returns Map of balances broken down by claimability and tokens
