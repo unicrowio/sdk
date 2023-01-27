@@ -8,9 +8,9 @@ import { IBalanceWithTokenInfo } from "../typing";
 import { getEscrowData } from "./getEscrowData";
 
 /**
- * Gets balance of currently logged user from an escrow.
+ * Calculates how much of the defined escrow belongs to the connected account should the escrow be claimed in its current status
  *
- * @returns The user's balance, status, token info , and other details
+ * @returns User's balance in the escrow
  */
 export const getSingleBalance = async (
   escrowId: number,

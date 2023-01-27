@@ -63,6 +63,11 @@ const registerAccountChangedListener = () => {
   }
 };
 
+/**
+ * Connects user's web3 wallet 
+ * 
+ * @returns address of the connected account 
+ */   
 export const connect = async (): Promise<string | null> => {
   if (!currentWallet) {
     registerAccountChangedListener();
@@ -85,6 +90,13 @@ export const connect = async (): Promise<string | null> => {
   return currentWallet;
 };
 
+/**
+ * Asks user's web3 wallet to switch to a selected network
+ * 
+ * @param name - Name of one of the configured networks ('arbitrum', 'development', or 'goerli' in standard SDK installation)
+ * @returns Name of the network that the wallet was switched to. Null if no wallet is installed
+ * @throws Error if the user rejected adding or switching to the network
+ */
 export const switchNetwork = async (name: DefaultNetwork) => {
   if (!checkIsWalletInstalled()) return null;
   const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
@@ -141,7 +153,17 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   return name;
 };
 
-export const autoSwitchNetwork = async (callbacks?: IGenericTransactionCallbacks, force: boolean = false) => {
+/**
+ * If non-default network is connected and if auto-switch is configured globally or requested by "force" parameter, 
+ * switch wallet to the default network
+ * 
+ * @param force - True to force switching to the default network
+ * @throws Unsupported network error if the user is on incorrect network, and neither global settings nor the parameter requires the switch
+ */
+export const autoSwitchNetwork = async (
+  callbacks?: IGenericTransactionCallbacks,
+  force: boolean = false,
+) => {
   const isCorrectNetwork = await isCorrectNetworkConnected();
 
   if (!isCorrectNetwork) {
@@ -154,6 +176,11 @@ export const autoSwitchNetwork = async (callbacks?: IGenericTransactionCallbacks
   }
 };
 
+/**
+ * Get parameters of the network that the wallet is connected to
+ * 
+ * @returns Network parameters
+ */
 export const getNetwork = async (): Promise<ethers.providers.Network> => {
   const provider = await getWeb3Provider();
 
@@ -176,15 +203,30 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
   return network;
 };
 
+/**
+ * Get list of networks supported by the configuration
+ * 
+ * @returns List and parameters of all configured networks 
+ */
 export const getSupportedNetworks: () => {
   [name: string]: UnicrowNetwork;
 } = () => networks;
 
+/**
+ * Checks, based on chainId comparison, if the wallet is connected to the default network
+ * 
+ * @returns true/false if the wallet is connected to the default network
+ */
 export const isCorrectNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork();
   return network.chainId === globalThis.defaultNetwork.chainId;
 };
 
+/**
+ * Checks, based on chainId comparison, if the wallet is connected to one of the networks supported by the configuration
+ * 
+ * @returns true/false
+ */
 export const isSupportedNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork();
   const currentNetwork = Object.values(networks).filter(
@@ -194,6 +236,11 @@ export const isSupportedNetworkConnected = async (): Promise<boolean> => {
   return currentNetwork.length > 0;
 };
 
+/**
+ * Start listening to change in wallet connection and run the callback function if the account changes
+ * 
+ * @param onChangeWalletCallback Function to be called if the user changes a connected account
+ */
 export const startListening = (
   onChangeWalletCallback: (walletAddress: string | null) => void,
 ) => {
@@ -203,6 +250,11 @@ export const startListening = (
   registerAccountChangedListener();
 };
 
+/**
+ * Listen to whether the wallet switches to another network and run the provided callback if yes
+ * 
+ * @param onChangeNetworkCallback Function to be called when the wallet switches to another network
+ */
 export const startListeningNetwork = (
   onChangeNetworkCallback: (networkId: number) => void,
 ) => {
@@ -210,14 +262,25 @@ export const startListeningNetwork = (
   registerChainChangedListener();
 };
 
+/**
+ * Check if the app is listening to account or network change
+ * 
+ * @returns true if at least one of the listeners is active
+ */
 export const isListening = (): boolean => {
   return _onChangeWalletCallbacks.length > 0;
 };
 
+/**
+ * Stop listening to wallet account changes
+ */
 export const stopListening = () => {
   _onChangeWalletCallbacks = [];
 };
 
+/**
+ * Stop listening to network switch 
+ */
 export const stopListeningNetwork = () => {
   _onChangeNetworkCallbacks = [];
 };
@@ -234,6 +297,12 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
     : null;
 };
 
+/**
+ * Check if a web3 wallet is installed
+ * 
+ * @returns installed web3 provider or null if none
+ * @throws If this is not run in a browser
+ */
 export const checkIsWalletInstalled = () => {
   if (typeof window === "undefined") {
     throw new Error("Should run through Browser");
@@ -251,6 +320,10 @@ export const checkIsWalletInstalled = () => {
   return ethereum;
 };
 
+/**
+ * Returns connected wallet account (Attempts to connect to the wallet if not connected)
+ * @returns Account address
+ */
 export const getWalletAccount = async () => {
   await connect();
   return currentWallet;
