@@ -6,12 +6,10 @@ import { errorHandler } from "./internal/errorHandler";
 import { parseClaim } from "./internal/parsers/eventClaim";
 
 /**
- * Claims a single payment from the escrow. To save everyone's gas costs, it claims balances and fees
- * of all parties that are eligible for a share from the escrow.
+ * Claims a share from the escrow. To save everyone's gas costs, it claims balances and fees
+ * for all parties that are eligible for it.
  *
- * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ClaimParsedPayload>}
+ * @returns Claimed amounts (in token's or ETH's WEI) per party)
  */
 export const claim = async (
   escrowId: number,

@@ -13,9 +13,10 @@ import { parseOfferSettlement } from "./internal/parsers/eventOfferSettlement";
  * Sends an offer to settle the payment arbitrarily between the buyer and the seller. The other party must confirm
  * the settlement in order for it to be executed.
  *
- * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<OfferSettlementParsedPayload>}
+ * @param escrowId - Id of the escrow
+ * @param splitBuyer - Split offered to the buyer (%)
+ * @param splitSeller - Split offered to the seller (%)
+ * @returns The percentages of the payment split between the buyer and seller, by who it was offered and when
  */
 export const offerSettlement = async (
   escrowId: number,

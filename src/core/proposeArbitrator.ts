@@ -13,9 +13,11 @@ import { parseProposalArbitrator } from "./internal/parsers/eventProposalArbitra
  * One of the parties (buyer or seller) can call this to propose an arbitrator
  * for an escrow that has no arbitrator defined.
  *
- * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ProposalArbitratorParsedPayload>}
+ * @param escrowId - Id of an escrow for which the arbitrator is being proposed
+ * @param arbitrator - Arbitrator's address
+ * @param arbitratorFee - Arbitrator's fee in % (can be 0)
+ * @param callbacks - Pass code to any of these to be executed when the respective step takes place in the wallet
+ * @returns Info about the proposed arbitrator, his fee and who proposed it
  */
 export const proposeArbitrator = async (
   escrowId: number,
