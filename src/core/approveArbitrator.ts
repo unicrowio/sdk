@@ -11,12 +11,13 @@ import { percentageToBips } from "../helpers";
 import { parseApproveArbitrator } from "./internal/parsers/eventApproveArbitrator";
 
 /**
- * Approves an arbitrator proposed by another party (i.e. by seller if buyer proposed, by buyer if seller proposed).
- * To ensure the user approves an arbitrator they wanted, it requires the same parameters as proposal
+ * Approves an arbitrator proposed by the other party (i.e. by seller if buyer proposed, by buyer if seller proposed).
+ * To ensure both agree to the same arbitrator and arbitrator fee, these parameters are included in the proposal.
  *
- * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ApproveArbitratorParsedPayload>}
+ * @param escrowId - ID of the escrow
+ * @param arbitrator - Arbitrator address
+ * @param arbitratorFee - Arbitrator fee in %
+ * @returns Info about the approved arbitration
  */
 export const approveArbitrator = async (
   escrowId: number,

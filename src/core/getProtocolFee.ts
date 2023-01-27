@@ -4,10 +4,10 @@ import { bipsToPercentage } from "../helpers";
 import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
 /**
- * Retrieves information about the fee of Crow and returns its percentage.
- * If you need to use as BIPS, multiply by 100.
+ * Retrieves information about the protocol fee and returns its percentage.
+ * If you need to have it in bips, multiply by 100.
  *
- * @returns {number}
+ * @returns The protocol fee in percentage
  */
 export const getProtocolFee = async () => {
   const smartContract = Unicrow__factory.connect(
