@@ -16,6 +16,7 @@ import {
   getExchangeRates,
 } from "../../../helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { BigCheckIcon } from "../assets/BigCheckIcon";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -135,8 +136,24 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     );
   };
 
-  const ModalBody = () => {
+  const ClaimSuccessful = () => {
+    const wrapperStyles = {
+      margin: "0 auto",
+      textAlign: "center",
+      fontWeight: 500,
+    };
     return (
+      <div style={wrapperStyles}>
+        <BigCheckIcon />
+        <p>All balances claimed!</p>
+      </div>
+    );
+  };
+
+  const ModalBody = () => {
+    return success ? (
+      <ClaimSuccessful />
+    ) : (
       <Table>
         <thead>
           <tr>
