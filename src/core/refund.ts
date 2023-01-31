@@ -8,8 +8,9 @@ import { errorHandler } from "./internal/errorHandler";
  * Refunds 100% of the buyer payment (all fees are waived), returns transactions' hash.
  * Can only be called by the seller.
  *
+ * @param escrowId - ID of the escrow to refund
  * @throws Error if account is not connected or if called in an invalid state (e.g. already claimed / not called by seller)
- * @returns {Promise<string>}
+ * @returns transaction hash
  */
 export const refund = async (
   escrowId: number,
