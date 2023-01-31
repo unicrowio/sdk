@@ -8,9 +8,13 @@ import { renderModal } from "ui/internal/config/render";
 import { ClaimMultipleModal } from "ui/internal/modals";
 
 /**
- * Renders a modal to claim a given amount to different wallets (?) from the payment. //TODO clarify
+ * Displays a modal that summarizes user's balance in all the provided escrows. The balances have to
+ * be provided as a separate parameter. Indexer provides an easy way to get inputs for this function
  *
- * @returns {Promise<string>}
+ * @param escrowIds - List of escrow IDs to be claimed. You can get this from indexer's getClaimableEscrows() function
+ * @param balances - Balance broken down by token. You can get this from indexer's getUserBalance() function
+ * @param callbacks - Code to execute at various stages of the claim transaction. Confirmed provides information about withdrawn balances (in tokens)
+ * @returns Claim Transaction hash
  */
 export const claimMultiple = async (
   escrowIds: number[],

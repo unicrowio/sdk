@@ -7,9 +7,10 @@ import { renderModal } from "ui/internal/config/render";
 import { Arbitrate } from "ui/internal/modals";
 
 /**
- * Renders a modal to propose an arbitration (only visible for arbitrator as agreed by both escrow parties).
+ * Previously defined/agreed on arbitrator uses this to arbitrate the payment
  *
- * @returns {Promise<string>}
+ * @param escrowId - ID of the escrow to arbitrate
+ * @param callbacks - Broadcasted and confirmed callbacks provide to the front-end information about what the arbitrator has submitted and how has the contract processed it
  */
 export const arbitrate = async (
   escrowId: number,
