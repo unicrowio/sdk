@@ -9,6 +9,7 @@ import { parseClaim } from "./internal/parsers/eventClaim";
  * Claims a share from the escrow. To save everyone's gas costs, it claims balances and fees
  * for all parties that are eligible for it.
  *
+ * @param escrowId - ID of the escrow to claim
  * @returns Claimed amounts (in token's or ETH's WEI) per party)
  */
 export const claim = async (

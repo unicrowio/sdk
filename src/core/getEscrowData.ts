@@ -270,7 +270,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    connectedWallet: "0xa9813....041d"
  * }
  *
- * @param escrowId ID of the escrow
+ * @param escrowId - ID of the escrow
  * @throws Error if escrow id doesn't exist.
  * @returns All details about the escrowed payment
  */
