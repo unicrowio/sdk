@@ -7,9 +7,7 @@ import { renderModal } from "ui/internal/config/render";
 import { ApproveSettlementModal } from "ui/internal/modals";
 
 /**
- * Renders a modal to approve a settlement proposal (either by buyer or seller).
- *
- * @returns {Promise<string>}
+ * @deprecated redundant function, will be removed (use settlementOffer() instead)
  */
 export const approveSettlement = async (
   escrowId: number,
