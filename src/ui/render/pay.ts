@@ -123,8 +123,7 @@ export const pay = async (
   const data: IPaymentPropsData = paymentProps;
 
   try {
-    const userWallet = await getWalletAccount();
-    const addrs = await validateParameters({...data, buyer: userWallet});
+    const addrs = await validateParameters({ ...data });
 
     Object.entries(addrs.common).forEach(([key, value]) => {
       paymentProps[key] = value;

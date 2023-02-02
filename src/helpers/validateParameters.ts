@@ -1,5 +1,5 @@
 import { getWalletAccount } from "wallet";
-import { IPaymentProps, IValidateProps } from "../typing";
+import { IPaymentProps } from "../typing";
 import { ETH_ADDRESS } from "./constants";
 import {
   validateAddress,
@@ -14,7 +14,7 @@ export interface AddressesToCheck {
   tokenAddress?: string;
 }
 
-export const validateParameters = async (data: IValidateProps) => {
+export const validateParameters = async (data: IPaymentProps) => {
   const {
     seller,
     arbitrator,
@@ -38,7 +38,6 @@ export const validateParameters = async (data: IValidateProps) => {
   } catch (e: any) {
     throw new Error(e.message);
   }
-
 
   const walletUser = await getWalletAccount();
 

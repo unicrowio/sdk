@@ -45,10 +45,6 @@ export interface IPaymentProps {
   challengePeriodExtension?: number;
 }
 
-export interface IValidateProps extends IPaymentProps {
-  buyer: string
-}
-
 export interface IPaymentPropsData extends IPaymentProps {
   ensAddresses?: IEnsAddresses;
 }
