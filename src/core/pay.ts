@@ -168,6 +168,10 @@ export const pay = async (
 
   const walletUser = await getWalletAccount();
 
+  if(walletUser.toLowerCase() === seller.toLowerCase()) {
+    throw new Error("Buyer cannot be the same as the seller");
+  }
+
   const UNICROW_ADDRESS = getContractAddress("unicrow");
 
   let bigNumberAmount: BigNumberish;
