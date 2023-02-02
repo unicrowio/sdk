@@ -26,6 +26,7 @@ import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {
@@ -38,7 +39,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
@@ -239,13 +240,15 @@ export function ReleaseModal(props: IReleaseModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={"Release Payment"}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={"Release Payment"}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

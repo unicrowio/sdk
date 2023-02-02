@@ -18,6 +18,7 @@ import {
 } from "../../../helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -34,7 +35,7 @@ export function ClaimModal(props: IClaimModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [modalAction, setModalAction] = React.useState<ModalAction>(
@@ -229,13 +230,15 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   return (
-    <ScopedModal
-      title="Claim Payment"
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title="Claim Payment"
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

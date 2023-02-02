@@ -28,6 +28,7 @@ import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -40,7 +41,7 @@ export function RefundModal(props: IRefundModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
@@ -245,13 +246,15 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={"Refund Payment"}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={"Refund Payment"}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

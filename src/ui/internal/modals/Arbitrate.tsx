@@ -13,6 +13,7 @@ import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -34,7 +35,7 @@ export const Arbitrate = ({
     onModalClose,
     setLoadingMessage,
   } = useModalStates({ deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
@@ -212,7 +213,7 @@ export const Arbitrate = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={confirm}>
+    <form ref={closeHandlerRef} autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
         body={<ModalBody />}

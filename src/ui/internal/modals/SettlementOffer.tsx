@@ -20,6 +20,7 @@ import { Forbidden } from "../components/Forbidden";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -63,7 +64,7 @@ export function SettlementOfferModal({
     setError,
     onModalClose,
   } = useModalStates({ deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const _splitBuyer = escrowData?.settlement?.latestSettlementOfferBuyer || "";
@@ -339,7 +340,7 @@ export function SettlementOfferModal({
   };
 
   return (
-    <form autoComplete="off" onSubmit={onSubmitNewOffer}>
+    <form ref={closeHandlerRef} autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={"Settlement Offer"}
         body={<ModalBody />}
