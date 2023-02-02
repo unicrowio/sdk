@@ -59,12 +59,11 @@ export function PayModal(props: IPaymentModalProps) {
 
       getWalletAccount().then((account) => {
         setWalletUser(account);
-        
+
         if (props.paymentProps.seller.toLowerCase() === account.toLowerCase()) {
           onModalClose();
           toast("Buyer cannot be the same as the seller", "error");
         }
-
       });
       getTokenInfo(props.paymentProps.tokenAddress)
         .then(setTokenInfo)

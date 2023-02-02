@@ -1,4 +1,3 @@
-import { Console } from "console";
 import { IPaymentProps } from "../typing";
 import { ETH_ADDRESS } from "./constants";
 import {
