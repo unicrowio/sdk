@@ -1,22 +1,17 @@
+import type * as CSS from "csstype";
 import React from "react";
+import { claimMultiple } from "../../../core";
 import {
   IBalanceWithTokenInfo,
   IClaimMultipleModalProps,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
-  IToken,
 } from "../../../typing";
-import { Button, Table, ScopedModal, TokenSymbol } from "../components";
+import { BigCheckIcon } from "../assets/BigCheckIcon";
+import { Button, ScopedModal, Table } from "../components";
+import { TableRow } from "../components/TableRow";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
-import { claimMultiple, getTokenInfo } from "../../../core";
-import {
-  displayDecimals,
-  formatAmountToUSD,
-  getExchangeRates,
-} from "../../../helpers";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
-import { BigCheckIcon } from "../assets/BigCheckIcon";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -33,8 +28,6 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
-  const { isCorrectNetwork } = useNetworkCheck();
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -69,75 +62,19 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
       toast("Claimed", "success");
 
-      setSuccess(payload.transactionHash);
       setIsLoading(false);
+      setSuccess(payload);
     },
   };
 
   const onHandleMultipleClaim = () => {
     claimMultiple(props.escrowIds, claimCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
     });
   };
 
-  const TableRow = (balance: IBalanceWithTokenUSD) => {
-    const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
-    const [tokenInfoLoading, setTokenInfoLoading] =
-      React.useState<boolean>(false);
-    const [amountInUSD, setAmountInUSD] = React.useState<string>(
-      balance.amountInUSD,
-    );
-
-    React.useEffect(() => {
-      if (isCorrectNetwork) {
-        setTokenInfoLoading(true);
-        getTokenInfo(balance.token.address)
-          .then(setRowTokenInfo)
-          .finally(() => {
-            setTokenInfoLoading(false);
-          });
-
-        getExchangeRates([balance.token.symbol]).then((exchangeValues) => {
-          const symbol = balance.token.symbol as string;
-          const exchangeValue = exchangeValues[symbol];
-
-          if (exchangeValue) {
-            setAmountInUSD(formatAmountToUSD(balance.amountBN, exchangeValue));
-          } else {
-            setAmountInUSD("n/a (error)");
-          }
-        });
-      }
-    }, [isCorrectNetwork]);
-
-    return (
-      <tr key={`balance-${balance.token.address}`}>
-        {!tokenInfoLoading && rowTokenInfo ? (
-          <>
-            <td>
-              {balance.amountBN
-                .toNumber()
-                .toFixed(displayDecimals(balance.token.symbol!))}{" "}
-              <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
-            </td>
-            <td>
-              {"$"}
-              {amountInUSD}
-            </td>
-          </>
-        ) : (
-          <td>
-            {tokenInfoLoading && "Loading..."}
-            {!rowTokenInfo && "Error while loading Token Info"}
-          </td>
-        )}
-      </tr>
-    );
-  };
-
   const ClaimSuccessful = () => {
-    const wrapperStyles = {
+    const wrapperStyles: CSS.Properties = {
       margin: "0 auto",
       textAlign: "center",
       fontWeight: 500,
