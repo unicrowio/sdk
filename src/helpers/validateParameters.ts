@@ -39,12 +39,6 @@ export const validateParameters = async (data: IPaymentProps) => {
     throw new Error(e.message);
   }
 
-  console.log({ addrs });
-
-  // if(addrs.common.buyer.toLowerCase() === addrs.common.seller.toLowerCase()) {
-  //   throw new Error("Buyer cannot be the same as the seller");
-  // }
-
   if (amount <= 0) {
     throw new Error("Invalid amount");
   }

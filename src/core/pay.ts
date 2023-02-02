@@ -168,7 +168,7 @@ export const pay = async (
 
   const walletUser = await getWalletAccount();
 
-  if(walletUser.toLowerCase() === seller.toLowerCase()) {
+  if (walletUser.toLowerCase() === seller.toLowerCase()) {
     throw new Error("Buyer cannot be the same as the seller");
   }
 
