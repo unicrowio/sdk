@@ -3,6 +3,8 @@ import { BigNumber as BigNumberJs } from "bignumber.js";
 BigNumberJs.config({ EXPONENTIAL_AT: 19 });
 
 const calculate = (amount: BigNumberJs, tokenPrecision: number) => {
+
+  console.log("amount", amount.toString())
   const BASE = new BigNumberJs(10);
   return amount.dividedBy(BASE.pow(tokenPrecision));
 };
