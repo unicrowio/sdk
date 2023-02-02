@@ -306,7 +306,7 @@ export const AddApproveArbitrator = ({
           name="arbitrator"
           id="arbitrator"
           label="Address"
-          onChange={(event) => setArbitrator(event.target.value)}
+          onChange={(event) => setArbitrator(event.target.value.trim())}
           value={arbitrator}
         />
         <InputText
