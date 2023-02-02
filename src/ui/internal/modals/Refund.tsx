@@ -144,7 +144,7 @@ export function RefundModal(props: IRefundModalProps) {
       toast("Refunded", "success");
       setPaymentStatus(EscrowStatus.REFUNDED);
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };

@@ -150,7 +150,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       toast("Challenged", "success");
 
       setPaymentStatus(`${EscrowStatus.CHALLENGED} by you`);
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };

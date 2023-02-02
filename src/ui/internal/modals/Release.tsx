@@ -141,7 +141,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
       toast("Released", "success");
       setPaymentStatus(EscrowStatus.RELEASED);
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
