@@ -220,6 +220,7 @@ export const pay = async (
     challengePeriodExtension: paymentProps.challengePeriodExtension,
     tokenAddress,
     amount,
+    buyer: walletUser
   });
 
   const _arbitrator = addrs.common.arbitrator || ADDRESS_ZERO;
