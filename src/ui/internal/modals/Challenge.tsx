@@ -34,7 +34,7 @@ import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
-
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 
 const InfoContainer = styled.div`
@@ -64,7 +64,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
     null,
@@ -300,13 +300,15 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={"Challenge"}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={"Challenge"}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

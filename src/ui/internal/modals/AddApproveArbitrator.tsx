@@ -16,6 +16,7 @@ import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 /**
  * Approve the Arbitrator proposed
@@ -37,7 +38,7 @@ export const AddApproveArbitrator = ({
     onModalClose,
     isLoading,
   } = useModalStates({ deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
@@ -338,7 +339,7 @@ export const AddApproveArbitrator = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={handleSubmit}>
+    <form ref={closeHandlerRef} autoComplete="off" onSubmit={handleSubmit}>
       <ScopedModal
         title={title}
         body={<ModalBody />}

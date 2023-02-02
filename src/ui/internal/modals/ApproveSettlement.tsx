@@ -25,7 +25,7 @@ import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
-
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
@@ -58,7 +58,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(escrowData);
@@ -313,13 +313,15 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [displayActionButtons, isLoading, escrow]);
 
   return (
-    <ScopedModal
-      title={title}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={title}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

@@ -12,6 +12,7 @@ import { Button, ScopedModal, Table } from "../components";
 import { TableRow } from "../components/TableRow";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -28,7 +29,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
       setIsLoading(true);
@@ -134,17 +135,19 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={
-        props.balances.readyForClaim.length > 1
-          ? "Claim Balances"
-          : "Claim Payment"
-      }
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={
+          props.balances.readyForClaim.length > 1
+            ? "Claim Balances"
+            : "Claim Payment"
+        }
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

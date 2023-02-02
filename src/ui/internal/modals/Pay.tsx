@@ -29,6 +29,7 @@ import { toast } from "../notification/toast";
 import { getWalletAccount } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -43,7 +44,7 @@ export function PayModal(props: IPaymentModalProps) {
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
   const { isCorrectNetwork } = useNetworkCheck();
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
@@ -231,13 +232,15 @@ export function PayModal(props: IPaymentModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={modalTitle}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={modalTitle}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }
