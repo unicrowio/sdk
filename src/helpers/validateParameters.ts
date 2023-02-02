@@ -24,7 +24,7 @@ export const validateParameters = async (data: IValidateProps) => {
     arbitratorFee,
     marketplaceFee,
     tokenAddress = ETH_ADDRESS,
-    buyer
+    buyer,
   } = data;
 
   const addrs: AddressToReturn = await validateEns({
