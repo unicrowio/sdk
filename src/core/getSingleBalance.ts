@@ -10,7 +10,7 @@ import { getEscrowData } from "./getEscrowData";
 /**
  * Calculates how much of the defined escrow belongs to the connected account should the escrow be claimed in its current status
  *
- * @param escrowId - ID of the escrow 
+ * @param escrowId - ID of the escrow
  * @returns User's balance in the escrow
  */
 export const getSingleBalance = async (
