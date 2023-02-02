@@ -63,7 +63,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
       toast("Claimed", "success");
 
       setIsLoading(false);
-      setSuccess(payload[0].transactionHash);
+      setSuccess(payload);
     },
   };
 
