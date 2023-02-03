@@ -3,63 +3,33 @@ import {
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
+  IBalanceWithTokenInfo,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
-import { Button, Table, ScopedModal, TokenSymbol } from "../components";
+import { Button, Table, ScopedModal } from "../components";
 import { toast } from "../notification/toast";
 import { Forbidden } from "../components/Forbidden";
 import { getSingleBalance, claim } from "../../../core";
-import {
-  displayDecimals,
-  formatAmountToUSD,
-  getExchangeRates,
-} from "../../../helpers";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
+import { TableRow } from "../components/TableRow";
+
+interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+  amountInUSD?: string;
+}
 
 export function ClaimModal(props: IClaimModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
 
-  const { isCorrectNetwork } = useNetworkCheck();
-
   const [modalAction, setModalAction] = React.useState<ModalAction>();
-
-  const [escrowBalance, isLoadingBalance] = useAsync(
+  const [escrowBalance, isLoading, error] = useAsync(
     props.escrowId,
     getSingleBalance,
     onModalClose,
   );
-
-  const [exchangeValues, isLoadingExchange, error] = useAsync(
-    [escrowBalance?.token.symbol!],
-    getExchangeRates,
-    onModalClose,
-  );
-
-  const isLoading = isLoadingBalance || isLoadingExchange;
-  const [formattedAmountInUSD, setFormattedAmountInUSD] = React.useState("");
-
-  React.useEffect(() => {
-    if (exchangeValues) {
-      const exchangeValue = exchangeValues[escrowBalance.token.symbol!];
-
-      if (exchangeValue) {
-        setFormattedAmountInUSD(
-          formatAmountToUSD(escrowBalance.amountBN, exchangeValue),
-        );
-      }
-    }
-  }, [exchangeValues]);
-
-  React.useEffect(() => {
-    if (error) {
-      setFormattedAmountInUSD("n/a (error)");
-    }
-  }, [error]);
 
   React.useEffect(() => {
     if (escrowBalance) {
@@ -77,34 +47,6 @@ export function ClaimModal(props: IClaimModalProps) {
       }
     }
   }, [escrowBalance]);
-
-  const renderClaimableBalance = React.useCallback(() => {
-    if (isCorrectNetwork) {
-      if (isLoading || !escrowBalance) {
-        return (
-          <tr>
-            <td>Loading...</td>
-          </tr>
-        );
-      }
-
-      const amount = Number(escrowBalance.displayableAmount);
-      const decimals = displayDecimals(escrowBalance.token.symbol!);
-      const symbol = escrowBalance.token.symbol || "ERR";
-
-      return (
-        <tr>
-          <td>
-            {amount.toFixed(decimals)} <TokenSymbol>{symbol}</TokenSymbol>
-          </td>
-          <td>
-            {"$"}
-            {formattedAmountInUSD}
-          </td>
-        </tr>
-      );
-    }
-  }, [escrowBalance, isLoading, isCorrectNetwork, formattedAmountInUSD]);
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -155,12 +97,12 @@ export function ClaimModal(props: IClaimModalProps) {
     if (!escrowBalance) {
       return null;
     }
-    if (!(isLoading || modalAction?.isForbidden)) {
+
+    if (modalAction?.isForbidden) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
     }
-
     return (
       <Table>
         <thead>
@@ -169,13 +111,17 @@ export function ClaimModal(props: IClaimModalProps) {
             <th>USD Value</th>
           </tr>
         </thead>
-        <tbody>{renderClaimableBalance()}</tbody>
+        <tbody>
+          {[escrowBalance].map((balance: IBalanceWithTokenUSD) =>
+            TableRow(balance, onModalClose, setIsLoading),
+          )}
+        </tbody>
       </Table>
     );
   };
 
   const ModalFooter = () => {
-    if (!(escrowBalance && (isLoading || modalAction?.isForbidden))) {
+    if (!escrowBalance || modalAction?.isForbidden) {
       return null;
     }
 

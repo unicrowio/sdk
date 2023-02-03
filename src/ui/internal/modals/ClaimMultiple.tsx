@@ -76,6 +76,10 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
+  React.useEffect(() => {
+    setIsLoading(true);
+  }, []);
+
   const ClaimSuccessful = () => {
     const wrapperStyles: CSS.Properties = {
       margin: "0 auto",

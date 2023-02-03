@@ -1,14 +1,13 @@
 import React from "react";
-
 import { getTokenInfo } from "../../../core";
 import {
   displayDecimals,
   formatAmountToUSD,
   getExchangeRates,
 } from "../../../helpers";
-import { IBalanceWithTokenInfo, IToken } from "../../../typing";
+import { IBalanceWithTokenInfo } from "../../../typing";
 import { TokenSymbol } from "../components";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -19,56 +18,49 @@ export const TableRow = (
   onModalClose,
   setIsLoading,
 ) => {
-  const [rowTokenInfo, setRowTokenInfo] = React.useState<IToken>();
-  const [tokenInfoLoading, setTokenInfoLoading] =
-    React.useState<boolean>(false);
-  const [amountInUSD, setAmountInUSD] = React.useState<string>(
-    balance.amountInUSD,
+  const [formattedAmountInUSD, setFormattedAmountInUSD] = React.useState("");
+  const [exchangeValues, , errorExchange] = useAsync(
+    [balance?.token?.symbol],
+    getExchangeRates,
+    onModalClose,
   );
-  const { isCorrectNetwork } = useNetworkCheck();
+  React.useEffect(() => {
+    if (exchangeValues) {
+      const exchangeValue = exchangeValues[balance.token.symbol];
+      setIsLoading(false);
+
+      if (exchangeValue) {
+        setFormattedAmountInUSD(
+          formatAmountToUSD(balance.amountBN, exchangeValue),
+        );
+      }
+    }
+  }, [exchangeValues]);
 
   React.useEffect(() => {
-    if (isCorrectNetwork) {
-      setTokenInfoLoading(true);
-      getTokenInfo(balance.token.address)
-        .then(setRowTokenInfo)
-        .finally(() => {
-          setTokenInfoLoading(false);
-        });
-
-      getExchangeRates([balance.token.symbol]).then((exchangeValues) => {
-        const symbol = balance.token.symbol as string;
-        const exchangeValue = exchangeValues[symbol];
-
-        if (exchangeValue) {
-          setAmountInUSD(formatAmountToUSD(balance.amountBN, exchangeValue));
-        } else {
-          setAmountInUSD("n/a (error)");
-        }
-      });
+    if (errorExchange) {
+      setIsLoading(false);
+      setFormattedAmountInUSD("n/a (error)");
     }
-  }, [isCorrectNetwork]);
+  }, [errorExchange]);
 
-  return (
+  return !balance ? (
+    <tr></tr>
+  ) : (
     <tr key={`balance-${balance.token.address}`}>
-      {!tokenInfoLoading && rowTokenInfo ? (
+      {balance.token.symbol && (
         <>
           <td>
             {balance.amountBN
               .toNumber()
-              .toFixed(displayDecimals(balance.token.symbol!))}{" "}
-            <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
+              .toFixed(displayDecimals(balance.token.symbol))}{" "}
+            <TokenSymbol>{balance.token.symbol}</TokenSymbol>
           </td>
           <td>
             {"$"}
-            {amountInUSD}
+            {formattedAmountInUSD}
           </td>
         </>
-      ) : (
-        <td>
-          {tokenInfoLoading && "Loading..."}
-          {!rowTokenInfo && "Error while loading Token Info"}
-        </td>
       )}
     </tr>
   );
