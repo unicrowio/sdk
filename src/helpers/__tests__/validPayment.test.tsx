@@ -1,8 +1,9 @@
-import { IPaymentProps } from "../../typing";
+import { IValidateProps } from "../../typing";
 import { validateParameters } from "../validateParameters";
 
-const params: IPaymentProps = {
+const params: IValidateProps = {
   seller: "0x7bD733DBc10A1cD04e1e51cC89450941c928ee62",
+  buyer: "0x484Ee4Eb8CB165F4FBFd897f84283142C8f1fD3a",
   arbitrator: "0x7bD733DBc10A1cD04e1e51cC89450941c928ee62",
   marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928ee62",
   amount: 1,

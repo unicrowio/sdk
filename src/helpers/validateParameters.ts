@@ -1,4 +1,4 @@
-import { IPaymentProps } from "../typing";
+import { IValidateProps } from "../typing";
 import { ETH_ADDRESS } from "./constants";
 import {
   validateAddress,
@@ -13,7 +13,7 @@ export interface AddressesToCheck {
   tokenAddress?: string;
 }
 
-export const validateParameters = async (data: IPaymentProps) => {
+export const validateParameters = async (data: IValidateProps) => {
   const {
     seller,
     arbitrator,
@@ -24,6 +24,7 @@ export const validateParameters = async (data: IPaymentProps) => {
     arbitratorFee,
     marketplaceFee,
     tokenAddress = ETH_ADDRESS,
+    buyer,
   } = data;
 
   const addrs: AddressToReturn = await validateEns({
@@ -36,6 +37,10 @@ export const validateParameters = async (data: IPaymentProps) => {
     validateAddress({ ...addrs.common, tokenAddress });
   } catch (e: any) {
     throw new Error(e.message);
+  }
+
+  if (buyer.toLowerCase() === seller.toLowerCase()) {
+    throw new Error("Buyer cannot be the same as the seller");
   }
 
   if (amount <= 0) {
