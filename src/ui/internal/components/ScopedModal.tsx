@@ -2,7 +2,6 @@ import React, { ReactNode } from "react";
 import {
   Modal,
   ModalBody,
-  ModalEmptyBody,
   ModalFooter,
   ModalHeader,
   ModalHeaderClose,

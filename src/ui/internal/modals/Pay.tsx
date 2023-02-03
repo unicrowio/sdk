@@ -5,7 +5,6 @@ import {
   IPaymentModalProps,
   IPayTransactionCallbacks,
   IPayTransactionPayload,
-  IToken,
 } from "../../../typing";
 import { pay } from "../../../core/pay";
 import {

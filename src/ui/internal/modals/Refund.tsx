@@ -1,6 +1,5 @@
 import {
   EscrowStatus,
-  IGetEscrowData,
   IRefundModalProps,
   IRefundTransactionCallbacks,
   IRefundTransactionPayload,
@@ -59,7 +58,6 @@ export function RefundModal(props: IRefundModalProps) {
         isForbidden: true,
         reason: "Only the seller can refund the payment",
       });
-      return;
     }
 
     if (escrowData?.status.claimed) {
@@ -67,14 +65,12 @@ export function RefundModal(props: IRefundModalProps) {
         isForbidden: true,
         reason: "The payment cannot be refunded via Unicrow anymore",
       });
-      return;
     }
 
     if (escrowData?.status.state === EscrowStatus.CHALLENGED) {
       setPaymentStatus(
         `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
       );
-      return;
     }
 
     setPaymentStatus(escrowData?.status.state);
@@ -214,6 +210,7 @@ export function RefundModal(props: IRefundModalProps) {
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </div>
   );

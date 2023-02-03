@@ -191,6 +191,7 @@ export const Arbitrate = ({
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={isLoading ? "Getting Arbitration information" : ""}
+        modalAction={modalAction}
       />
     </form>
   );

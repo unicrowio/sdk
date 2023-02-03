@@ -329,6 +329,7 @@ export function SettlementOfferModal({
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        modalAction={modalAction}
       />
     </form>
   );

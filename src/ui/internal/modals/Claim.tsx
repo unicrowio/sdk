@@ -147,6 +147,7 @@ export function ClaimModal(props: IClaimModalProps) {
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        modalAction={modalAction}
       />
     </div>
   );

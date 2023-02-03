@@ -1,6 +1,5 @@
 import {
   EscrowStatus,
-  IGetEscrowData,
   IReleasedTransactionPayload,
   IReleaseModalProps,
   IReleaseTransactionCallbacks,
@@ -48,18 +47,16 @@ export function ReleaseModal(props: IReleaseModalProps) {
     if (escrowData) {
       if (escrowData.connectedUser !== "buyer") {
         setModalAction({
-          isForbidden: false,
+          isForbidden: true,
           reason: "Only the buyer can release the payment",
         });
-        return;
       }
 
       if (escrowData.status.claimed) {
         setModalAction({
-          isForbidden: false,
+          isForbidden: true,
           reason: "The payment is already claimed",
         });
-        return;
       }
 
       setPaymentStatus(escrowData.status.state);
@@ -69,10 +66,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
           `${EscrowStatus.CHALLENGED} by ${escrowData.status.latestChallengeBy}`,
         );
       }
-
-      setModalAction({
-        isForbidden: true,
-      });
     }
   }, [escrowData]);
 

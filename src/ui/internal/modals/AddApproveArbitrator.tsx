@@ -322,8 +322,8 @@ export const AddApproveArbitrator = ({
         footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
-        modalAction={modalAction}
         loadingMessage={isLoading ? "Getting Arbitration information" : ""}
+        modalAction={modalAction}
       />
     </form>
   );
