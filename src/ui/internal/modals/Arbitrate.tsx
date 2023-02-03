@@ -35,11 +35,10 @@ export const Arbitrate = ({
     escrowId,
     getEscrowData,
     onModalClose,
-    null,
   );
 
   React.useEffect(() => {
-    if (escrow.arbitration?.arbitrated) {
+    if (escrow?.arbitration?.arbitrated) {
       setBuyerValue(escrow.splitBuyer.toString());
       setSellerValue(escrow.splitSeller.toString());
     }
