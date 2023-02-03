@@ -43,6 +43,8 @@ export const Arbitrate = ({
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
 
+  const [focus, setFocus] = React.useState<"seller" | "buyer">("seller");
+
   const loadData = async () => {
     if (isCorrectNetwork) {
       try {
@@ -104,9 +106,11 @@ export const Arbitrate = ({
     if (event.target.name === "seller") {
       setSellerValue(event.target.value);
       setBuyerValue(String(100 - Number(event.target.value)));
+      setFocus("seller")
     } else {
       setSellerValue(String(100 - Number(event.target.value)));
       setBuyerValue(event.target.value);
+      setFocus("buyer")
     }
   };
 
@@ -125,6 +129,7 @@ export const Arbitrate = ({
     return (
       <Stack>
         <InputText
+          autoFocus={focus === "seller"}
           required
           disabled={!!success || escrow.arbitration?.arbitrated}
           name="seller"
@@ -150,6 +155,7 @@ export const Arbitrate = ({
           }}
         />
         <InputText
+          autoFocus={focus === "buyer"}
           required
           disabled={!!success || escrow.arbitration?.arbitrated}
           name="buyer"
@@ -216,8 +222,8 @@ export const Arbitrate = ({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
-        body={<ModalBody />}
-        footer={<ModalFooter />}
+        body={ModalBody()}
+        footer={ModalFooter()}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}
