@@ -21,6 +21,7 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
+import { ModalAction } from "../components/Modal";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -62,7 +63,7 @@ export function SettlementOfferModal({
     onModalClose,
   } = useModalStates({ deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
-
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const _splitBuyer = escrowData?.settlement?.latestSettlementOfferBuyer || "";
   const _splitSeller =
     escrowData?.settlement?.latestSettlementOfferSeller || "";
@@ -101,6 +102,21 @@ export function SettlementOfferModal({
     onModalClose,
     escrowData,
   );
+
+  React.useEffect(() => {
+    if (![BUYER, SELLER].includes(escrow?.connectedUser)) {
+      setModalAction({
+        isForbidden: true,
+      });
+    }
+
+    if (escrow?.status.claimed) {
+      setModalAction({
+        isForbidden: true,
+        reason: "The payment is already claimed",
+      });
+    }
+  }, [escrow]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
     if (escrow?.connectedUser === BUYER) {
@@ -221,25 +237,14 @@ export function SettlementOfferModal({
   };
 
   const ModalBody = () => {
-    if (
-      !isLoading &&
-      escrow &&
-      ![BUYER, SELLER].includes(escrow?.connectedUser)
-    ) {
-      return <Forbidden onClose={onModalClose} />;
-    }
-
-    if (escrow?.status.claimed) {
-      return (
-        <Forbidden
-          onClose={onModalClose}
-          description="The payment is already claimed"
-        />
-      );
-    }
-
     if (!escrow) {
       return null;
+    }
+
+    if (modalAction?.isForbidden) {
+      return (
+        <Forbidden description={modalAction?.reason} onClose={onModalClose} />
+      );
     }
 
     return (
@@ -311,7 +316,7 @@ export function SettlementOfferModal({
   };
 
   const ModalFooter = () => {
-    if (!escrow || escrow.status.claimed) {
+    if (!escrow || modalAction?.isForbidden) {
       return null;
     }
     return (
