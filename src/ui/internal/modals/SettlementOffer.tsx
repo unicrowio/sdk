@@ -133,8 +133,6 @@ export function SettlementOfferModal({
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement & { name: "buyer" | "seller" }>,
   ) => {
-    event.stopPropagation();
-
     if (event.target.name === "seller") {
       setSellerValue(event.target.value);
       setBuyerValue(String(100 - Number(event.target.value)));
