@@ -77,7 +77,7 @@ export function SettlementOfferModal({
   const [buyerValue, setBuyerValue] = React.useState<string>(
     String(_splitBuyer),
   );
-  
+
   const [focus, setFocus] = React.useState<"buyer" | "seller">("buyer");
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>();
@@ -356,6 +356,6 @@ export function SettlementOfferModal({
         isLoading={isLoading}
         loadingMessage={loadingMessage}
       />
-     </form>
+    </form>
   );
 }

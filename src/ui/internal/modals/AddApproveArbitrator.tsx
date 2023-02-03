@@ -54,7 +54,9 @@ export const AddApproveArbitrator = ({
 
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
 
-  const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">("arbitrator");
+  const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">(
+    "arbitrator",
+  );
 
   const loadData = async () => {
     if (isCorrectNetwork) {
@@ -302,28 +304,28 @@ export const AddApproveArbitrator = ({
     return (
       <Stack>
         <InputText
-          autoFocus={focus === 'arbitrator'}
+          autoFocus={focus === "arbitrator"}
           required
           disabled={action === "view" || action === "edit" || !!success}
           name="arbitrator"
           id="arbitrator"
           label="Address"
           onChange={(event) => {
-            setArbitrator(event.target.value.trim())
-            setFocus('arbitrator')
+            setArbitrator(event.target.value.trim());
+            setFocus("arbitrator");
           }}
           value={arbitrator}
         />
         <InputText
-          autoFocus={focus === 'arbitratorFee'}
+          autoFocus={focus === "arbitratorFee"}
           disabled={action === "view" || action === "edit" || !!success}
           required
           name="arbitratorFee"
           id="arbitratorFee"
           label="Fee"
           onChange={(event) => {
-            setArbitratorFee(event.target.value)
-            setFocus('arbitratorFee')
+            setArbitratorFee(event.target.value);
+            setFocus("arbitratorFee");
           }}
           value={arbitratorFee}
           min="0"
