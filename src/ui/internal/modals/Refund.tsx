@@ -55,36 +55,30 @@ export function RefundModal(props: IRefundModalProps) {
     useCountdownChallengePeriod(escrowData);
 
   React.useEffect(() => {
-    if (escrowData) {
-      if (escrowData.connectedUser !== SELLER) {
-        setModalAction({
-          isForbidden: false,
-          reason: "Only the seller can refund the payment",
-        });
-        return;
-      }
-
-      if (escrowData.status.claimed) {
-        setModalAction({
-          isForbidden: false,
-          reason: "The payment cannot be refunded via Unicrow anymore",
-        });
-        return;
-      }
-
+    if (escrowData?.connectedUser !== SELLER) {
       setModalAction({
         isForbidden: true,
+        reason: "Only the seller can refund the payment",
       });
-
-      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
-        setPaymentStatus(
-          `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
-        );
-        return;
-      }
-
-      setPaymentStatus(escrowData.status.state);
+      return;
     }
+
+    if (escrowData?.status.claimed) {
+      setModalAction({
+        isForbidden: true,
+        reason: "The payment cannot be refunded via Unicrow anymore",
+      });
+      return;
+    }
+
+    if (escrowData?.status.state === EscrowStatus.CHALLENGED) {
+      setPaymentStatus(
+        `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
+      );
+      return;
+    }
+
+    setPaymentStatus(escrowData?.status.state);
   }, [escrowData]);
 
   const refundCallbacks: IRefundTransactionCallbacks = {
@@ -138,7 +132,7 @@ export function RefundModal(props: IRefundModalProps) {
       return null;
     }
 
-    if (!(isLoading || modalAction?.isForbidden)) {
+    if (modalAction?.isForbidden) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
@@ -193,11 +187,7 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(isLoading || modalAction?.isForbidden)) {
-      return null;
-    }
-
-    if (!escrowData) {
+    if (!escrowData || modalAction?.isForbidden) {
       return null;
     }
 

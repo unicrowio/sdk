@@ -26,8 +26,8 @@ import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { MARKER } from "../../../config/marker";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useAsync } from "../hooks/useAsync";
+import { ModalAction } from "../components/Modal";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -52,12 +52,10 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
-
-  const { isCorrectNetwork } = useNetworkCheck();
-
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const [escrow, isLoading] = useAsync(
     escrowId,
-    escrowData ? null : getEscrowData,
+    escrowData ? null : getEscrowData, // this only runs if escrowData is null
     onModalClose,
     escrowData,
   );
@@ -98,7 +96,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrow]);
 
   const title = React.useMemo(() => {
-    if (escrow?.settlement && escrow.connectedUser) {
+    if (escrow?.settlement && escrow?.connectedUser) {
       if (
         escrow.connectedUser === BUYER &&
         escrow.status.latestSettlementOfferBy === BUYER
@@ -122,7 +120,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       }
     }
     return "Approve Settlement";
-  }, [escrow, isCorrectNetwork]);
+  }, [escrow]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
     if (escrow?.connectedUser === BUYER) {
@@ -137,8 +135,15 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrow]);
 
   React.useEffect(() => {
-    if (escrow && !escrow.settlement) {
-      throw new Error("There is no settlement to this escrow");
+    if (![BUYER, SELLER].includes(escrow?.connectedUser)) {
+      setModalAction({
+        isForbidden: true,
+      });
+    } else {
+      if (!escrow?.settlement) {
+        toast("There is no settlement to this escrow", "error");
+        throw new Error("There is no settlement to this escrow");
+      }
     }
   }, [escrow]);
 
@@ -186,7 +191,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       return null;
     }
 
-    if (!(isLoading || [BUYER, SELLER].includes(escrow.connectedUser))) {
+    if (modalAction?.isForbidden) {
       return <Forbidden onClose={onModalClose} />;
     }
 
@@ -250,7 +255,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   };
 
   const ModalFooter = React.useCallback(() => {
-    if (!escrow) {
+    if (!escrow || modalAction?.isForbidden) {
       return null;
     }
 

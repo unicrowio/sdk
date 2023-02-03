@@ -127,7 +127,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (!(isLoading || modalAction?.isForbidden)) {
+    if (modalAction?.isForbidden) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
@@ -179,11 +179,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!escrowData) {
-      return null;
-    }
-
-    if (!(isLoading || modalAction?.isForbidden)) {
+    if (!escrowData || modalAction?.isForbidden) {
       return null;
     }
 

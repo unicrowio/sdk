@@ -32,19 +32,17 @@ export function ClaimModal(props: IClaimModalProps) {
   );
 
   React.useEffect(() => {
-    if (escrowBalance) {
-      if (escrowBalance.connectedUser === "other") {
-        setModalAction({
-          isForbidden: true,
-        });
-      }
+    if (escrowBalance?.connectedUser === "other") {
+      setModalAction({
+        isForbidden: true,
+      });
+    }
 
-      if (escrowBalance.status !== "Ready to claim") {
-        setModalAction({
-          isForbidden: true,
-          reason: "You cannot claim this payment at this time",
-        });
-      }
+    if (escrowBalance?.status !== "Ready to claim") {
+      setModalAction({
+        isForbidden: true,
+        reason: "You cannot claim this payment at this time",
+      });
     }
   }, [escrowBalance]);
 

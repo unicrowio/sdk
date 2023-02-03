@@ -41,7 +41,7 @@ const ButtonContainer = styled.div`
 export const Forbidden = ({
   onClose,
   title = "Action Forbidden",
-  description = " You are neither buyer nor seller in this payment",
+  description = "You are neither buyer nor seller in this payment",
 }: IForbiddenProps) => {
   return (
     <Container>

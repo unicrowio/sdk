@@ -44,7 +44,7 @@ export const Arbitrate = ({
       setSellerValue(escrow.splitSeller.toString());
     }
 
-    if (escrow.connectedUser !== "arbitrator") {
+    if (escrow?.connectedUser !== "arbitrator") {
       setModalAction({
         isForbidden: true,
         reason: "Only the arbitrator defined in the escrow can arbitrate it",
