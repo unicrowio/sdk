@@ -14,6 +14,7 @@ import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalAction } from "../components/Modal";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -30,7 +31,7 @@ export const Arbitrate = ({
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
-
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const [escrow, isLoading, error] = useAsync(
     escrowId,
     getEscrowData,
@@ -41,6 +42,13 @@ export const Arbitrate = ({
     if (escrow?.arbitration?.arbitrated) {
       setBuyerValue(escrow.splitBuyer.toString());
       setSellerValue(escrow.splitSeller.toString());
+    }
+
+    if (escrow.connectedUser !== "arbitrator") {
+      setModalAction({
+        isForbidden: true,
+        reason: "Only the arbitrator defined in the escrow can arbitrate it",
+      });
     }
   }, [escrow]);
 
@@ -85,12 +93,9 @@ export const Arbitrate = ({
   const ModalBody = () => {
     if (!escrow) return null;
 
-    if (escrow.connectedUser !== "arbitrator") {
+    if (modalAction?.isForbidden) {
       return (
-        <Forbidden
-          onClose={onModalClose}
-          description="Only the arbitrator defined in the escrow can arbitrate it"
-        />
+        <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
     }
 
@@ -151,7 +156,7 @@ export const Arbitrate = ({
   };
 
   const ModalFooter = () => {
-    if (!escrow?.arbitration) {
+    if (!escrow?.arbitration || modalAction?.isForbidden) {
       return null;
     }
 
