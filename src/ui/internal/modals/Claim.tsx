@@ -8,7 +8,6 @@ import {
 import { useModalStates } from "../hooks/useModalStates";
 import { Button, Table, ScopedModal } from "../components";
 import { toast } from "../notification/toast";
-import { Forbidden } from "../components/Forbidden";
 import { getSingleBalance, claim } from "../../../core";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
@@ -96,11 +95,6 @@ export function ClaimModal(props: IClaimModalProps) {
       return null;
     }
 
-    if (modalAction?.isForbidden) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
-    }
     return (
       <Table>
         <thead>
@@ -119,7 +113,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!escrowBalance || modalAction?.isForbidden) {
+    if (!escrowBalance) {
       return null;
     }
 

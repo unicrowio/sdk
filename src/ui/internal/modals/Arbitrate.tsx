@@ -11,7 +11,6 @@ import { toast } from "../notification/toast";
 import { IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
-import { Forbidden } from "../components/Forbidden";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { ModalAction } from "../components/Modal";
@@ -93,12 +92,6 @@ export const Arbitrate = ({
   const ModalBody = () => {
     if (!escrow) return null;
 
-    if (modalAction?.isForbidden) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
-    }
-
     return (
       <Stack>
         <InputText
@@ -156,7 +149,7 @@ export const Arbitrate = ({
   };
 
   const ModalFooter = () => {
-    if (!escrow?.arbitration || modalAction?.isForbidden) {
+    if (!escrow?.arbitration) {
       return null;
     }
 

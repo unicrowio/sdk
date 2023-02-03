@@ -23,7 +23,6 @@ import {
 import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
-import { Forbidden } from "../components/Forbidden";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { MARKER } from "../../../config/marker";
 import { useAsync } from "../hooks/useAsync";
@@ -191,10 +190,6 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       return null;
     }
 
-    if (modalAction?.isForbidden) {
-      return <Forbidden onClose={onModalClose} />;
-    }
-
     return (
       <>
         <Amount
@@ -255,7 +250,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   };
 
   const ModalFooter = React.useCallback(() => {
-    if (!escrow || modalAction?.isForbidden) {
+    if (!escrow) {
       return null;
     }
 
@@ -305,6 +300,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        modalAction={modalAction}
       />
     </div>
   );

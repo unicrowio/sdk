@@ -14,7 +14,6 @@ import { useModalStates } from "../hooks/useModalStates";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
-import { Forbidden } from "../components/Forbidden";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
@@ -52,6 +51,12 @@ export const AddApproveArbitrator = ({
   React.useEffect(() => {
     if (escrowData) {
       const escrowClosedStates = ["Settled", "Cancelled", "Expired"];
+
+      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      }
 
       if (escrowClosedStates.includes(escrowData?.status.state)) {
         setModalAction({
@@ -161,14 +166,51 @@ export const AddApproveArbitrator = ({
     }
   };
 
+  const ModalBody = () => {
+    if (!escrowData) return null;
+
+    return (
+      <Stack>
+        <InputText
+          autoFocus
+          required
+          disabled={action === "view" || action === "edit" || !!success}
+          name="arbitrator"
+          id="arbitrator"
+          label="Address"
+          onChange={(event) => setArbitrator(event.target.value)}
+          value={arbitrator}
+        />
+        <InputText
+          disabled={action === "view" || action === "edit" || !!success}
+          required
+          name="arbitratorFee"
+          id="arbitratorFee"
+          label="Fee"
+          onChange={(event) => setArbitratorFee(event.target.value)}
+          value={arbitratorFee}
+          min="0"
+          max="100"
+          type="number"
+          adornmentStart={{
+            content: <AdornmentContent>%</AdornmentContent>,
+          }}
+          adornmentEnd={{
+            content: escrowData.arbitration && (
+              <FormattedPercentageAmountAdornment
+                amount={escrowData?.amount}
+                tokenInfo={escrowData?.token}
+                percentage={arbitratorFee}
+              />
+            ),
+            options: { hideBorder: true },
+          }}
+        />
+      </Stack>
+    );
+  };
+
   const ModalFooter = () => {
-    const isBuyer = escrowData?.connectedUser === BUYER;
-    const isSeller = escrowData?.connectedUser === SELLER;
-
-    if (modalAction?.isForbidden || !(escrowData && (isBuyer || isSeller))) {
-      return null;
-    }
-
     if (action === "view" || action === "added") {
       return (
         <Button
@@ -272,63 +314,6 @@ export const AddApproveArbitrator = ({
     return null;
   };
 
-  const ModalBody = () => {
-    if (!escrowData) return null;
-
-    if (
-      escrowData?.connectedUser !== BUYER &&
-      escrowData?.connectedUser !== SELLER
-    ) {
-      return <Forbidden onClose={onModalClose} />;
-    }
-
-    if (modalAction?.isForbidden) {
-      return (
-        <Forbidden description={modalAction.reason} onClose={onModalClose} />
-      );
-    }
-
-    return (
-      <Stack>
-        <InputText
-          autoFocus
-          required
-          disabled={action === "view" || action === "edit" || !!success}
-          name="arbitrator"
-          id="arbitrator"
-          label="Address"
-          onChange={(event) => setArbitrator(event.target.value)}
-          value={arbitrator}
-        />
-        <InputText
-          disabled={action === "view" || action === "edit" || !!success}
-          required
-          name="arbitratorFee"
-          id="arbitratorFee"
-          label="Fee"
-          onChange={(event) => setArbitratorFee(event.target.value)}
-          value={arbitratorFee}
-          min="0"
-          max="100"
-          type="number"
-          adornmentStart={{
-            content: <AdornmentContent>%</AdornmentContent>,
-          }}
-          adornmentEnd={{
-            content: escrowData.arbitration && (
-              <FormattedPercentageAmountAdornment
-                amount={escrowData?.amount}
-                tokenInfo={escrowData?.token}
-                percentage={arbitratorFee}
-              />
-            ),
-            options: { hideBorder: true },
-          }}
-        />
-      </Stack>
-    );
-  };
-
   return (
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={handleSubmit}>
       <ScopedModal
@@ -337,6 +322,7 @@ export const AddApproveArbitrator = ({
         footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoading}
+        modalAction={modalAction}
         loadingMessage={isLoading ? "Getting Arbitration information" : ""}
       />
     </form>

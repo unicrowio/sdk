@@ -21,7 +21,6 @@ import {
 } from "../../../helpers";
 import { toast } from "../notification/toast";
 import { refund, getEscrowData } from "../../../core";
-import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
@@ -132,12 +131,6 @@ export function RefundModal(props: IRefundModalProps) {
       return null;
     }
 
-    if (modalAction?.isForbidden) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
-    }
-
     const isExpired = escrowData.challengePeriodEnd.getTime() <= Date.now();
     return (
       <>
@@ -187,7 +180,7 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!escrowData || modalAction?.isForbidden) {
+    if (!escrowData) {
       return null;
     }
 

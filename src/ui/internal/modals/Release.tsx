@@ -20,7 +20,6 @@ import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { release } from "../../../core/release";
 import { getEscrowData } from "../../../core/getEscrowData";
-import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
@@ -127,12 +126,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (modalAction?.isForbidden) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
-    }
-
     return (
       <>
         <Amount
@@ -179,7 +172,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!escrowData || modalAction?.isForbidden) {
+    if (!escrowData) {
       return null;
     }
 
@@ -213,6 +206,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        modalAction={modalAction}
       />
     </div>
   );

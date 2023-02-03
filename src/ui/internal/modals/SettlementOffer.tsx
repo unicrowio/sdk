@@ -16,7 +16,6 @@ import { renderModal } from "../config/render";
 import { ApproveSettlementModal } from "./ApproveSettlement";
 import { InputText, ScopedModal, Stack } from "../components";
 import { AdornmentContent } from "../components/InputText";
-import { Forbidden } from "../components/Forbidden";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
@@ -241,12 +240,6 @@ export function SettlementOfferModal({
       return null;
     }
 
-    if (modalAction?.isForbidden) {
-      return (
-        <Forbidden description={modalAction?.reason} onClose={onModalClose} />
-      );
-    }
-
     return (
       <Stack>
         <InputText
@@ -316,9 +309,10 @@ export function SettlementOfferModal({
   };
 
   const ModalFooter = () => {
-    if (!escrow || modalAction?.isForbidden) {
+    if (!escrow) {
       return null;
     }
+
     return (
       <ContainerModalFooter>
         <ContainerButtons>{renderButtons()}</ContainerButtons>

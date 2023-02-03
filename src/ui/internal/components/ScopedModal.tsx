@@ -13,6 +13,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { checkIsWalletInstalled } from "../../../wallet";
 import { ModalError } from "./ModalError";
 import { metamaskUrl } from "../../../helpers/constants";
+import { Forbidden } from "./Forbidden";
 
 interface ScopedModalProps {
   title: string;
@@ -21,6 +22,7 @@ interface ScopedModalProps {
   isLoading: boolean;
   loadingMessage: string;
   onClose?: () => any;
+  modalAction?: any;
 }
 
 export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
@@ -28,11 +30,15 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
 ): JSX.Element => {
   const { WithNetworkCheck } = useNetworkCheck();
   const metamaskInstalled = checkIsWalletInstalled() !== null;
+  const { isForbidden = false, reason } = props.modalAction || {};
+  console.log("pwe", "modalAction", { isForbidden, reason });
 
   const BodyWithFooter = React.useCallback(
     () =>
       WithNetworkCheck(
-        props.body ? (
+        isForbidden ? (
+          <Forbidden description={reason} onClose={props.onClose} />
+        ) : (
           <ModalBody>
             <>
               {props.body}
@@ -41,8 +47,6 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
               </ModalFooter>
             </>
           </ModalBody>
-        ) : (
-          <ModalEmptyBody />
         ),
       ),
     [props.body, props.footer, WithNetworkCheck],
