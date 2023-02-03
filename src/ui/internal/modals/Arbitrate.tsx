@@ -106,11 +106,11 @@ export const Arbitrate = ({
     if (event.target.name === "seller") {
       setSellerValue(event.target.value);
       setBuyerValue(String(100 - Number(event.target.value)));
-      setFocus("seller")
+      setFocus("seller");
     } else {
       setSellerValue(String(100 - Number(event.target.value)));
       setBuyerValue(event.target.value);
-      setFocus("buyer")
+      setFocus("buyer");
     }
   };
 
