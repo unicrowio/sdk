@@ -54,6 +54,10 @@ export const AddApproveArbitrator = ({
 
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
 
+  const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">(
+    "arbitrator",
+  );
+
   const loadData = async () => {
     if (isCorrectNetwork) {
       try {
@@ -300,22 +304,29 @@ export const AddApproveArbitrator = ({
     return (
       <Stack>
         <InputText
-          autoFocus
+          autoFocus={focus === "arbitrator"}
           required
           disabled={action === "view" || action === "edit" || !!success}
           name="arbitrator"
           id="arbitrator"
           label="Address"
-          onChange={(event) => setArbitrator(event.target.value.trim())}
+          onChange={(event) => {
+            setArbitrator(event.target.value.trim());
+            setFocus("arbitrator");
+          }}
           value={arbitrator}
         />
         <InputText
+          autoFocus={focus === "arbitratorFee"}
           disabled={action === "view" || action === "edit" || !!success}
           required
           name="arbitratorFee"
           id="arbitratorFee"
           label="Fee"
-          onChange={(event) => setArbitratorFee(event.target.value)}
+          onChange={(event) => {
+            setArbitratorFee(event.target.value);
+            setFocus("arbitratorFee");
+          }}
           value={arbitratorFee}
           min="0"
           max="100"
@@ -342,8 +353,8 @@ export const AddApproveArbitrator = ({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={handleSubmit}>
       <ScopedModal
         title={title}
-        body={<ModalBody />}
-        footer={<ModalFooter />}
+        body={ModalBody()}
+        footer={ModalFooter()}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}

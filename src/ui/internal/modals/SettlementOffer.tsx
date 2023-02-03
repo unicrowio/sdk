@@ -78,6 +78,8 @@ export function SettlementOfferModal({
     String(_splitBuyer),
   );
 
+  const [focus, setFocus] = React.useState<"buyer" | "seller">("buyer");
+
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>();
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
@@ -138,6 +140,8 @@ export function SettlementOfferModal({
       setSellerValue(String(100 - Number(event.target.value)));
       setBuyerValue(event.target.value);
     }
+
+    setFocus(event.target.name);
   };
 
   const settlementCallbacks: ISettlementOfferTransactionCallbacks = {
@@ -263,7 +267,7 @@ export function SettlementOfferModal({
     return (
       <Stack>
         <InputText
-          autoFocus
+          autoFocus={focus === "buyer"}
           required
           disabled={!!success}
           name="buyer"
@@ -292,6 +296,7 @@ export function SettlementOfferModal({
         />
 
         <InputText
+          autoFocus={focus === "seller"}
           required
           disabled={!!success}
           name="seller"
@@ -343,8 +348,8 @@ export function SettlementOfferModal({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={"Settlement Offer"}
-        body={<ModalBody />}
-        footer={<ModalFooter />}
+        body={ModalBody()}
+        footer={ModalFooter()}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}
