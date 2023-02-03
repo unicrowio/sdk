@@ -110,7 +110,7 @@ export function PayModal(props: IPaymentModalProps) {
       setBuyer(payload.buyer);
       setPaymentStatus(EscrowStatus.PAID);
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
 
       setIsLoading(false);
     },

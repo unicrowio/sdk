@@ -183,7 +183,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
         toast("Accepted", "success");
 
-        setSuccess(payload.transactionHash);
+        setSuccess(payload);
         setIsLoading(false);
       },
     };

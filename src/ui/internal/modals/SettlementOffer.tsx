@@ -159,7 +159,7 @@ export function SettlementOfferModal({
 
       toast("Offer sent with success", "success");
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };

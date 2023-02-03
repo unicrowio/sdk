@@ -168,7 +168,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
       toast("Claimed", "success");
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
