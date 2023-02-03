@@ -10,12 +10,10 @@ import { errorHandler } from "./internal/errorHandler";
 import { parseChallenge } from "./internal/parsers/eventChallenge";
 
 /**
- * Performs a challenge and returns its data.
+ * Sends a challenge and returns the escrow data.
  *
- * @async
- * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ChallengeParsedPayload>}
+ * @param escrowId - Escrow ID
+ * @returns Escrow data after the challenge
  */
 export const challenge = async (
   escrowId: number,

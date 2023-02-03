@@ -6,16 +6,16 @@ import { errorHandler } from "./internal/errorHandler";
 
 /**
  * Refunds 100% of the buyer payment (all fees are waived), returns transactions' hash.
+ * Can only be called by the seller.
  *
- * @privateRemarks Can only be called by the seller.
- * @throws Error
- * If account is not connected (=no provider given) or if called in invalid state (e.g. already claimed / not called by seller)
- * @returns {Promise<string>}
+ * @param escrowId - ID of the escrow to refund
+ * @throws Error if account is not connected or if called in an invalid state (e.g. already claimed / not called by seller)
+ * @returns transaction hash
  */
 export const refund = async (
   escrowId: number,
   callbacks?: IRefundTransactionCallbacks,
-) => {
+): Promise<string> => {
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
   const provider = await getWeb3Provider();
 

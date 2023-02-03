@@ -9,12 +9,13 @@ import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
 import { parseArbitrate } from "./internal/parsers/eventArbitrate";
 
 /**
- * Performs and arbitration and returns its data.
+ * Previously defined/agreed on arbitrator uses this to arbitrate the payment
  *
- * @async
- * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ArbitrateParsedPayload>}
+ * @param escrowId - ID of the escrow to arbitrate
+ * @param splitBuyer - What share of the escrow should go to the buyer (0 for release, 100 for refund)
+ * @param splitSeller - What share of the escrow should go to the seller (buyer + seller must equal 100)
+ *
+ * @returns Info about the arbitration
  */
 export const arbitrate = async (
   escrowId: number,

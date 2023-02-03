@@ -16,9 +16,9 @@ const fetchTokenInfo = async (tokenAddress: string) => {
 /**
  * Gets info of an ERC20 token based on its address.
  *
- * @throws Error
- * If token info doesn't exist on this address or the token address couldn't be parsed.
- * @returns {Promise<IToken>}
+ * @param tokenAddress Address of the token on Arbitrum One blockchain
+ * @throws Error if token info doesn't exist on this address or the token address couldn't be parsed.
+ * @returns Token address, symbol, and no. of its decimals
  */
 export const getTokenInfo = async (
   tokenAddress = ETH_ADDRESS,

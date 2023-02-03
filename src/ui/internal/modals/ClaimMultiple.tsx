@@ -1,21 +1,18 @@
+import type * as CSS from "csstype";
 import React from "react";
 import {
   IBalanceWithTokenInfo,
   IClaimMultipleModalProps,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
-  IToken,
 } from "../../../typing";
-import { Button, Table, ScopedModal, TokenSymbol } from "../components";
+import { BigCheckIcon } from "../assets/BigCheckIcon";
+import { Button, ScopedModal, Table } from "../components";
+import { TableRow } from "../components/TableRow";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
-import { claimMultiple, getTokenInfo } from "../../../core";
-import {
-  displayDecimals,
-  formatAmountToUSD,
-  getExchangeRates,
-} from "../../../helpers";
-import { useAsync } from "../hooks/useAsync";
+import { claimMultiple } from "../../../core";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -32,6 +29,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -66,7 +64,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
       toast("Claimed", "success");
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
@@ -78,76 +76,24 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
-  const TableRow = (
-    balance: IBalanceWithTokenUSD,
-    onModalClose,
-    setIsLoading,
-  ) => {
-    const [rowTokenInfo, isLoadingToken] = useAsync(
-      balance.token.address,
-      getTokenInfo,
-      onModalClose,
-    );
-
-    const [exchangeValues, , error] = useAsync(
-      [balance.token.symbol],
-      getExchangeRates,
-      onModalClose,
-    );
-
-    const isLoading = isLoadingToken;
-    const [formattedAmountInUSD, setFormattedAmountInUSD] =
-      React.useState("...");
-
-    React.useEffect(() => {
-      if (exchangeValues) {
-        const exchangeValue = exchangeValues[balance.token.symbol];
-
-        setFormattedAmountInUSD(
-          formatAmountToUSD(balance.amountBN, exchangeValue),
-        );
-      }
-    }, [exchangeValues]);
-
-    React.useEffect(() => {
-      if (error) {
-        setFormattedAmountInUSD("n/a (error)");
-      }
-    }, [error]);
-
-    React.useEffect(() => {
-      setIsLoading(isLoading);
-    }, [isLoading]);
-
+  const ClaimSuccessful = () => {
+    const wrapperStyles: CSS.Properties = {
+      margin: "0 auto",
+      textAlign: "center",
+      fontWeight: 500,
+    };
     return (
-      <tr key={`balance-${balance.token.address}`}>
-        {!isLoading && rowTokenInfo !== undefined ? (
-          <>
-            <td>
-              {balance.amountBN
-                .toNumber()
-                .toFixed(displayDecimals(balance.token.symbol!))}{" "}
-              <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
-            </td>
-            <td>
-              {"$"}
-              {formattedAmountInUSD}
-            </td>
-          </>
-        ) : (
-          <td>
-            {isLoading && "Loading..."}
-            {!isLoading &&
-              rowTokenInfo === null &&
-              "Error while loading Token Info"}
-          </td>
-        )}
-      </tr>
+      <div style={wrapperStyles}>
+        <BigCheckIcon />
+        <p>All balances claimed!</p>
+      </div>
     );
   };
 
   const ModalBody = () => {
-    return (
+    return success ? (
+      <ClaimSuccessful />
+    ) : (
       <Table>
         <thead>
           <tr>
@@ -191,17 +137,19 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={
-        props.balances.readyForClaim.length > 1
-          ? "Claim Balances"
-          : "Claim Payment"
-      }
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={
+          props.balances.readyForClaim.length > 1
+            ? "Claim Balances"
+            : "Claim Payment"
+        }
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

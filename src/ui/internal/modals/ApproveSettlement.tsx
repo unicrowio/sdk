@@ -24,6 +24,7 @@ import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useAsync } from "../hooks/useAsync";
@@ -50,6 +51,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   const { escrowData, escrowId, callbacks, deferredPromise } = props;
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const { isCorrectNetwork } = useNetworkCheck();
 
@@ -57,7 +59,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     escrowId,
     escrowData ? null : getEscrowData,
     onModalClose,
-    escrowData
+    escrowData,
   );
 
   const labelAmountSplit = React.useMemo(() => {
@@ -290,13 +292,15 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [displayActionButtons, isLoading, escrow]);
 
   return (
-    <ScopedModal
-      title={title}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={isLoading ? "Getting Escrow information" : ""}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={title}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+      />
+    </div>
   );
 }

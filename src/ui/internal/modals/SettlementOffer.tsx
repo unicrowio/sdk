@@ -19,6 +19,7 @@ import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 
 const ContainerButtons = styled.div`
@@ -60,6 +61,7 @@ export function SettlementOfferModal({
     setError,
     onModalClose,
   } = useModalStates({ deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const _splitBuyer = escrowData?.settlement?.latestSettlementOfferBuyer || "";
   const _splitSeller =
@@ -320,7 +322,7 @@ export function SettlementOfferModal({
   };
 
   return (
-    <form autoComplete="off" onSubmit={onSubmitNewOffer}>
+    <form ref={closeHandlerRef} autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={"Settlement Offer"}
         body={<ModalBody />}

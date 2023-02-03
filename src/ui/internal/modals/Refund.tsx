@@ -28,6 +28,7 @@ import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -38,7 +39,7 @@ export function RefundModal(props: IRefundModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
@@ -222,13 +223,15 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={"Refund Payment"}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={"Refund Payment"}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={loadingMessage}
+      />
+    </div>
   );
 }

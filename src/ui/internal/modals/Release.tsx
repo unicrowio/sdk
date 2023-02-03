@@ -26,10 +26,12 @@ import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise: props.deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
   const [modalAction, setModalAction] = React.useState<ModalAction>();
@@ -207,13 +209,15 @@ export function ReleaseModal(props: IReleaseModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={"Release Payment"}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={isLoading ? "Getting Escrow information" : ""}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={"Release Payment"}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+      />
+    </div>
   );
 }

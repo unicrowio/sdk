@@ -9,12 +9,15 @@ import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
 import { parseApproveSettlement } from "./internal/parsers/eventApproveSettlement";
 
 /**
- * Sends an offer to settle the payment between the buyer and the seller.
+ * Approves an offer to settle the payment between the buyer and the seller.
+ * To check that the user is really approving the right offer (i.e. to prevent on-chain front-running),
+ *   the same offer parameters must be provided.
  *
-
-     * @throws Error
- * If account is not connected (=no provider given) or if sth. else went wrong.
- * @returns {Promise<ApproveSettlementParsedPayload>}
+ * @param escrowId - ID of the escrow
+ * @param splitBuyer - Share (%) of the escrow offered to the buyer
+ * @param splitSeller - Share (%) of the escrow offered to the seller (buyer+seller must equal 100)
+ *
+ * @returns Info about the approved offer
  */
 export const approveSettlement = async (
   escrowId: number,

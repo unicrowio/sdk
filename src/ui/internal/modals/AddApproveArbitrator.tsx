@@ -9,7 +9,7 @@ import { approveArbitrator } from "../../../core/approveArbitrator";
 import { proposeArbitrator } from "../../../core/proposeArbitrator";
 import { toast } from "../notification/toast";
 import { FormattedPercentageAmountAdornment } from "../../../ui/internal/components/FormattedPercentageAmountAdornment";
-import { IArbitrateModalProps, IGetEscrowData } from "../../../typing";
+import { IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
@@ -17,6 +17,7 @@ import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 /**
  * Approve the Arbitrator proposed
@@ -29,6 +30,7 @@ export const AddApproveArbitrator = ({
 }: IArbitrateModalProps) => {
   const { setIsLoading, setSuccess, setError, success, onModalClose } =
     useModalStates({ deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [arbitrator, setArbitrator] = React.useState<string>("");
   const [arbitratorFee, setArbitratorFee] = React.useState<string>("");
@@ -328,7 +330,7 @@ export const AddApproveArbitrator = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={handleSubmit}>
+    <form ref={closeHandlerRef} autoComplete="off" onSubmit={handleSubmit}>
       <ScopedModal
         title={title}
         body={<ModalBody />}

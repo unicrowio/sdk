@@ -8,11 +8,12 @@ import {
 } from "../../../ui/internal/components";
 import { arbitrate, getEscrowData } from "../../../core";
 import { toast } from "../notification/toast";
-import { IArbitrateModalProps, IGetEscrowData } from "../../../typing";
+import { IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { useAsync } from "../hooks/useAsync";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -25,6 +26,7 @@ export const Arbitrate = ({
 }: IArbitrateModalProps) => {
   const { setIsLoading, setSuccess, setError, success, onModalClose } =
     useModalStates({ deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
@@ -184,7 +186,7 @@ export const Arbitrate = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={confirm}>
+    <form ref={closeHandlerRef} autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
         body={<ModalBody />}

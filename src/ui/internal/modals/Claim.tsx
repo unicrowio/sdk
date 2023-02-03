@@ -16,11 +16,13 @@ import {
 } from "../../../helpers";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 
 export function ClaimModal(props: IClaimModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise: props.deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const { isCorrectNetwork } = useNetworkCheck();
 
@@ -199,13 +201,15 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   return (
-    <ScopedModal
-      title="Claim Payment"
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={isLoading ? "Getting Escrow information" : ""}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title="Claim Payment"
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+      />
+    </div>
   );
 }

@@ -32,6 +32,7 @@ import styled from "styled-components";
 import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 
@@ -54,6 +55,7 @@ const InfoText = styled.p`
 export function ChallengeModal(props: IChallengeModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
     useModalStates({ deferredPromise: props.deferredPromise });
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [escrowData, isLoading, error] = useAsync(
     props.escrowId,
@@ -271,13 +273,15 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   return (
-    <ScopedModal
-      title={"Challenge"}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={isLoading ? "Getting Escrow information" : ""}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={"Challenge"}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoading}
+        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+      />
+    </div>
   );
 }
