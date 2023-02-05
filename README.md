@@ -1,123 +1,103 @@
-<h1 align="center">
-   <a href="#"> Unicrow SDK </a>
-</h1>
+# Unicrow SDK
 
-<h3 align="center">
-   This SDK makes integration of the UE seamless for e-commerce developers
-</h3>
+Unicrow Software Development Kit provides a convenient way of integrating the protocol’s smart contracts.
 
-<h4 align="center">
-	 Status: NPM Private
-</h4>
+To get a quick hands-on experience with using the SDK, check out our [SDK Tutorial](https://github.com/unicrowio/sdk-tutorial).
 
-<p align="center">
- <a href="#about">About</a> •
- <a href="#features">Features</a> •
- <a href="#how-it-works">How it works</a> •
- <a href="#tech-stack">Tech Stack</a> •
- <a href="#user-content-license">License</a>
+The SDK is organized in modules as follows:
 
-</p>
+- UI - functions integrating Unicrow contracts via modals that give users overview of the selected escrow payment, provide UI elements for the actions they can take, and give them updates on the status of the actions. Use these to save time on developing your own front-end.
+- Core - functions that interact with the contracts directly and provide updates to the front-end via callbacks. Use these if you want to embed the contract interaction into your system, or to read data from the contract.
+- Wallet - web3 wallet integration functions. The SDK takes care of the wallet integration automatically wherever necessary, so these are optional to use.
+- Indexer - functions to read escrow information from the indexer. While it is possible to read data for a single escrow from the contract directly via core functions, using the indexer is necessary to search or list multiple escrows or to read user’s overall balance in the contract in case the app doesn’t keep records in other ways.
 
-## About
+**Note: In order to continuously and quickly improve SDK’s developer experience, we might introduce small breaking changes in the first couple of months after the launch.**
 
-🪙 Universal Escrow allows any buyer to pay for any goods or services to any seller while using a trustless, autonomous escrow service to secure the trade. The service runs in a open, permissionless, and unstoppable smart contract.
+**We promise to avoid such situations as much as possible, but if it'll happen, the changes will be announced in the [#breaking-changes](https://discord.gg/6vnHwuKmwS) Discord channel, and explained along with the version number in the function comments. To get notified about such changes, we recommend to enable the channel's notifications.**
 
-** This SDK makes integration of the UE seamless for e-commerce developers. **
+## Getting Started
 
----
+### Install
 
-## How to install
-
-```
+```bash
 yarn install @unicrowio/sdk
 ```
 
 or
 
-```
+```bash
 npm install @unicrowio/sdk
 ```
 
+### Import
 
-> ps. Once we are currently in private npm and this SDK depends of the "@unicrowio/ethers-types" private lib. Then, we need do this adtional steps:
+```js
+import unicrowSdk from "@unicrowio/sdk";
+```
 
-1. Create [Access Token](https://www.npmjs.com/settings/unicrowio/packages)
-2. Run in the terminal: `npm config set '//registry.npmjs.org/:_authToken' "YOUR_ACCESS_TOKEN"` 
-3. Take a look at the version of the "@unicrowio/sdk" on package.json.
+### Pay
 
+```js
+await result = unicrowSdk.ui.pay({
+  amount: <amount_in_ETH_or_token>,    // use whole units, not weis
+  seller: “<address_or_ens>”,          // whom is the payment for*
+  challengePeriod: <seconds>,          // how long can the buyer challenge*
+  challengePeriodExtension: <seconds>, // by how much the challenge period will be extended after a challenge
+  tokenAddress: “<address>”,           // address of the payment token (null for ETH)
+  marketplace: “<address_or_ens>”,     // a marketplace that processes the payment
+  marketplaceFee: “<%>”,               // a fee that the marketplace charges
+  arbitrator: “<address_or_ens>”,      // a 3rd party arbitrator
+  arbitratorFee: “<%>”,                // a fee that the arbitrator charges
+})                                     // * - required parameters
 
----
+const escrowId = result.escrowId
+```
 
-## Features
+### Get escrow data
 
-- [x] Pay:
+```js
+await escrowData = unicrowSdk.core.getEscrowData(escrowId)
+```
 
-  - [x] Direct
-  - [x] Request Payment
+### Release by the buyer
 
-- [x] Release
+```js
+unicrowSdk.ui.release(escrowId)
+```
 
-  - [x] ...
+### Claim by the seller (after the challenge period ended)
 
-- [x] Challenge
+```js
+unicrowSdk.ui.claim(escrowId)
+```
 
-  - [x] ...
+### Change network
 
-- [x] Balance
+The SDK is by default configured to interact with the Arbitrum One network and asks the user to switch to it automatically when any contract-interacting functions are called. We currently support also Ethereum Goerli* and Unicrow’s private RPC. The automated switch can also be turned off (in such a case, an error is thrown).
 
-  - [x] ...
+\*We chose to deploy on Ethereum Goerli instead of Arbitrum Goerli because of larger support for "stablecoins", DEXes, etc.
 
-- [x] Claim
-  - [x] ...
+```js
+unicrowSdk.config({
+  defaultNetwork: “<arbitrum|goerli|development>”,
+  autoSwitchNetwork: <true|false> // optional, defaults to true
+})
+```
 
----
+For more examples, check out the [SDK Tutorial](https://github.com/unicrowio/sdk-tutorial).
 
-## How it works
-
-This project is divided into two parts:
-
-1. With UI (components)
-2. Functions Interfaces (core)
+## SDK Developers
 
 ### Pre-requisites
 
-Before you begin, you will need to have the following tools installed on your machine:
-[Git] (https://git-scm.com), [Node.js] (https://nodejs.org/en/).
-In addition, it is good to have an editor to work with the code like [VSCode] (https://code.visualstudio.com/)
+Before you begin, you will need to have the following tools installed on your machine: [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/).
 
-#### Run
+### Build
 
-1. `yarn install` to install dependencies
-2. `yarn dev` to start a server with hot reload
-3. `yarn test` to run the tests
-4. `yarn build` to generate new bundle
-5. Assure that `yarn link` was ran in the crow-sdk project
-6. `yarn link @unicrowio/sdk` to add your local crow-sdk project as dependency on node_modules folder
-
-7. Thats all
-
-In order to use this project as dependency without having to publish it all the time, on can run `yarn link` to expose this project as globally installed module an then, on the application that will be using this module as dependency, `yarn link sdk`. It will add this very module to the node_modules through symbolic links. After this setup, all changes in this project will be reflected in every module that has it linked.
-
----
-
-## Tech Stack
-
-The following tools were used in the construction of the project:
-
-#### **Website** ([React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/))
-
-- **[tsup 🚀](https://tsup.egoist.sh/)**
-
-> See the file [package.json](https://github.com/popstand/crow-sdk/blob/develop/package.json)
-
----
-
-## License
-
-<!-- This project is under the license [ISC](./LICENSE). -->
-
-Made with love by Popstand - Dev Team 👋🏽 [Get in Touch!](https://popstand.com)
-
----
-# sdk
+- Clone from https://github.com/unicrowio/sdk
+- cd to the project directory
+- `yarn install` to install dependencies
+- `yarn dev` to start a server with hot reload
+- `yarn test` to run the tests
+- `yarn build` to generate new bundle
+- `yarn link @unicrowio/sdk` to add your local crow-sdk project as dependency on node_modules folder
