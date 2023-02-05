@@ -20,7 +20,7 @@ The SDK is organized in modules as follows:
 ### Install
 
 ```bash
-yarn install @unicrowio/sdk
+yarn add @unicrowio/sdk
 ```
 
 or
