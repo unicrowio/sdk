@@ -53,13 +53,6 @@ export interface IPaymentPropsData extends IPaymentProps {
   ensAddresses?: IEnsAddresses;
 }
 
-export interface IArbitratorData {
-  address: string;
-  fee: number;
-  splitBuyer: number;
-  splitSeller: number;
-}
-
 export enum EscrowStatus {
   UNPAID = "Unpaid",
   PAID = "Paid",
@@ -758,13 +751,6 @@ export interface ISettlementOfferTransactionCallbacks
   confirmed?: (data: OfferSettlementParsedPayload) => void;
 }
 
-/**
- *
- */
-export interface IAddArbitratorTransactionPayload {
-  transactionHash: string;
-}
-
 export interface IChallengeTransactionPayload {
   transactionHash: string;
 }
@@ -912,11 +898,6 @@ export interface IBalance {
 
   /** Whether the balance is still waiting for the challenge period to end, or is ready to claim */
   status: "Pending" | "Ready to claim";
-}
-
-export interface IBalanceResponse {
-  pending: IBalance[];
-  readyForClaim: IBalance[];
 }
 
 /**
@@ -1168,14 +1149,6 @@ export interface IndexerInstance {
    * @returns A list of escrow IDs
    */
   getClaimableEscrows: (walletUserAddress: string) => Promise<string[]>;
-}
-
-export interface IArbitratorContractData {
-  arbitrated: boolean;
-  consensusBuyer: boolean;
-  consensusSeller: boolean;
-  arbitrator: string;
-  arbitratorFee: string;
 }
 
 /**
