@@ -17,6 +17,8 @@ The SDK is organized in modules as follows:
 
 ## Getting Started
 
+To get a quick hands-on experience with using the SDK, check out our [SDK Tutorial](https://github.com/unicrowio/sdk-tutorial). Otherwise you can follow the steps and see some basic functions below.
+
 ### Install
 
 ```bash
