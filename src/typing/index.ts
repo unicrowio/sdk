@@ -79,48 +79,6 @@ export interface IEscrowStatus {
   latestSettlementOfferBy: tEscrowParty;
 }
 
-export interface EscrowStatusView {
-  amount: BigNumberJs; // ERC20 | Ether
-  escrow_id: number;
-  status: keyof typeof EscrowStatus;
-
-  // Addresses
-  marketplace: string | null;
-  buyer: string;
-  seller: string;
-  currency: string;
-
-  challenge_period: number;
-  challenge_period_start: number;
-  challenge_period_end: number;
-
-  // Split
-  split_seller: number;
-  split_buyer: number;
-  split_protocol: number;
-  split_marketplace: number;
-
-  // Consensus
-  consensus_seller: number;
-  consensus_buyer: number;
-
-  claimed: boolean;
-
-  // Arbitration
-  arbitrator?: string;
-  arbitrator_fee?: number;
-  arbitrated: boolean;
-  arbitrator_proposer?: string;
-  status_arbitration?: string;
-
-  // Settlement
-  latest_settlement_offer_address?: string;
-  latest_settlement_offer_seller?: number;
-  latest_settlement_offer_buyer?: number;
-
-  paid_at: number;
-}
-
 /**
  * Detailed information about the escrow
  *
@@ -903,7 +861,7 @@ export interface IBalance {
 /**
  * More detailed information about user's balance in an escrow
  */
-export interface IBalanceWithTokenInfo extends IBalance {
+export interface IBalanceDetailed extends IBalance {
   /** Amount converted to human readable form */
   displayableAmount: string | BigNumberJs;
 
@@ -970,9 +928,9 @@ export interface IBalanceWithTokenInfo extends IBalance {
  */
 export interface GetResponseUserBalance {
   /** Balance in escrows where the challenge period hasn't ended yet */
-  pending: IBalanceWithTokenInfo[];
+  pending: IBalanceDetailed[];
   /** Balance that can be claimed from the contract */
-  readyForClaim: IBalanceWithTokenInfo[];
+  readyForClaim: IBalanceDetailed[];
 }
 
 export interface IClaimMultipleModalProps {

@@ -6,11 +6,11 @@ import {
   formatAmountToUSD,
   getExchangeRates,
 } from "../../../helpers";
-import { IBalanceWithTokenInfo, IToken } from "../../../typing";
+import { IBalanceDetailed, IToken } from "../../../typing";
 import { TokenSymbol } from "../components";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 

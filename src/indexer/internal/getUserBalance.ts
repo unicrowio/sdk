@@ -6,15 +6,11 @@ import {
 } from "../../helpers";
 import { GraphQLClient } from "graphql-request";
 import { getTokenInfo } from "../../core";
-import {
-  EscrowStatusView,
-  GetResponseUserBalance,
-  IToken,
-  IBalance,
-} from "../../typing";
+import { GetResponseUserBalance, IToken, IBalance } from "../../typing";
 import { buildBalanceQuery } from "./queryBalance";
 import BigNumber from "bignumber.js";
 import { parseEscrowData } from "./parseEscrowData";
+import { EscrowStatusView } from "indexer/internal/types";
 
 const fetchTokenInfo = async (balances: IBalance[]) => {
   const tokens: IToken[] = [];

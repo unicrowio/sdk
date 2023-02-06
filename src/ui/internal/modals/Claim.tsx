@@ -1,7 +1,7 @@
 import React from "react";
 import {
   EscrowStatus,
-  IBalanceWithTokenInfo,
+  IBalanceDetailed,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
@@ -20,7 +20,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
