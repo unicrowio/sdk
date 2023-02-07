@@ -22,7 +22,7 @@ import {
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import {
   getWeb3Provider,
-  getWalletAccount,
+  getCurrentAddress,
   autoSwitchNetwork,
 } from "../wallet";
 
@@ -38,7 +38,7 @@ const getConnectedUser = async ({
   arbitrator,
   marketplace,
 }: IGetConnectedUser) => {
-  const connectedWallet = await getWalletAccount();
+  const connectedWallet = await getCurrentAddress();
   let connectedUser: tConnectedUser | undefined;
   if (isSameAddress(connectedWallet, buyer)) {
     connectedUser = "buyer";

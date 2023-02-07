@@ -26,7 +26,7 @@ import {
 } from "../../../helpers";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
-import { getWalletAccount } from "../../../wallet";
+import { getCurrentAddress } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
@@ -58,7 +58,7 @@ export function PayModal(props: IPaymentModalProps) {
     if (isCorrectNetwork) {
       setIsLoading(true);
 
-      getWalletAccount().then((account) => {
+      getCurrentAddress().then((account) => {
         setWalletUser(account);
       });
       getTokenInfo(props.paymentProps.tokenAddress)

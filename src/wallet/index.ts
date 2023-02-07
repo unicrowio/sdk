@@ -6,27 +6,27 @@ import { CHAIN_ID } from "../helpers";
 import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
 import { config } from "../config";
 
-let currentWallet: string | null = null;
+let currentAddress: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
 let chainChangedListener: EventEmitter | null = null;
 let _onChangeNetworkCallbacks: Array<(networkId: number) => void> = [];
 let _onChangeWalletCallbacks: Array<(currentWallet: string) => void> = [];
 
 const handleAccountsChanged = (accounts: string[]) => {
-  if (currentWallet === accounts[0]) {
+  if (currentAddress === accounts[0]) {
     return;
   }
 
   if (accounts.length === 0) {
     // MetaMask is locked or the user has not connected any accounts
-    currentWallet = null;
+    currentAddress = null;
   } else {
-    currentWallet = accounts[0];
+    currentAddress = accounts[0];
   }
 
   _onChangeWalletCallbacks.length > 0 &&
     _onChangeWalletCallbacks.forEach(
-      (callback: (currentWallet: string) => void) => callback(currentWallet),
+      (callback: (currentAddress: string) => void) => callback(currentAddress),
     );
 };
 
@@ -65,9 +65,8 @@ const registerAccountChangedListener = () => {
  * @returns address of the connected account
  */
 export const connect = async (): Promise<string | null> => {
-  if (isWeb3WalletInstalled() && !currentWallet) {
+  if (isWeb3WalletInstalled() && !currentAddress) {
     registerAccountChangedListener();
-    console.log('pwe', 'connect')
 
     const _accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -76,14 +75,14 @@ export const connect = async (): Promise<string | null> => {
     handleAccountsChanged(_accounts);
 
     if (_accounts && _accounts.length > 0) {
-      currentWallet = _accounts[0];
+      currentAddress = _accounts[0];
       return _accounts[0];
     }
   } else {
     return null;
   }
 
-  return currentWallet;
+  return currentAddress;
 };
 
 /**
@@ -180,8 +179,6 @@ export const autoSwitchNetwork = async (
 export const getNetwork = async (): Promise<ethers.providers.Network> => {
   const provider = await getWeb3Provider();
 
-  console.log('pwe', 'provider', provider)
-
   let network = {
     chainId: 0,
     name: "unknown",
@@ -196,7 +193,6 @@ export const getNetwork = async (): Promise<ethers.providers.Network> => {
         name: "development",
       };
     }
-    console.log('pwe', 'network', network)
   }
 
   return network;
@@ -287,7 +283,6 @@ export const stopListeningNetwork = () => {
 };
 
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
-  console.log('pwe', 'getWeb3Provider', isWeb3WalletInstalled())
   return isWeb3WalletInstalled()
     ? new ethers.providers.Web3Provider(
         window?.ethereum as unknown as ExternalProvider,
@@ -307,7 +302,6 @@ export const isWeb3WalletInstalled = () => {
     throw new Error("Should run through Browser");
   }
 
-  console.log('pwe', 'checkIsWalletInstalled', window?.ethereum?.isMetaMask || false)
   return window?.ethereum?.isMetaMask || false;
 };
 
@@ -315,7 +309,7 @@ export const isWeb3WalletInstalled = () => {
  * Returns connected wallet account (Attempts to connect to the wallet if not connected)
  * @returns Account address
  */
-export const getWalletAccount = async () => {
+export const getCurrentAddress = async () => {
   await connect();
-  return currentWallet;
+  return currentAddress;
 };

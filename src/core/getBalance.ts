@@ -1,7 +1,7 @@
 import { ERC20__factory } from "@unicrowio/ethers-types";
 import {
   getWeb3Provider,
-  getWalletAccount,
+  getCurrentAddress,
   autoSwitchNetwork,
 } from "../wallet";
 import { ETH_ADDRESS } from "../helpers";
@@ -16,7 +16,7 @@ import { BigNumber } from "ethers";
  */
 export const getBalance = async (tokenAddress: string): Promise<BigNumber> => {
   const provider = await getWeb3Provider();
-  const currentAccount = await getWalletAccount();
+  const currentAccount = await getCurrentAddress();
 
   if (!(provider && currentAccount)) {
     throw new Error("Error on Get Balance, Account Not connected");
