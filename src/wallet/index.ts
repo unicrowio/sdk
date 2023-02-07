@@ -69,11 +69,12 @@ const registerAccountChangedListener = () => {
  * @returns address of the connected account
  */
 export const connect = async (): Promise<string | null> => {
+  const ethereum = checkIsWalletInstalled();
+  if (!ethereum) throw Error("No wallet installed");
+
   if (!currentWallet) {
     registerAccountChangedListener();
 
-    const ethereum = checkIsWalletInstalled();
-    if (!ethereum) return null;
     const _accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -95,10 +96,10 @@ export const connect = async (): Promise<string | null> => {
  *
  * @param name - Name of one of the configured networks ('arbitrum', 'development', or 'goerli' in standard SDK installation)
  * @returns Name of the network that the wallet was switched to. Null if no wallet is installed
- * @throws Error if the user rejected adding or switching to the network
+ * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
 export const switchNetwork = async (name: DefaultNetwork) => {
-  if (!checkIsWalletInstalled()) return null;
+  if (!checkIsWalletInstalled()) throw Error("No wallet installed");
   const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
     networks[name];
 
