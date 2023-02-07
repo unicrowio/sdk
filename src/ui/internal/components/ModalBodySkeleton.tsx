@@ -15,6 +15,10 @@ const SkeletonWrapper = styled.div`
   .subtitle {
     margin-top: -40px;
   }
+
+  .buttons {
+    margin-bottom: -40px;
+  }
 `;
 
 export const ModalBodySkeleton = () => {
@@ -25,7 +29,7 @@ export const ModalBodySkeleton = () => {
       <Skeleton width="100%" height={24} />
       <Skeleton width="100%" height={24} />
       <Skeleton width="100%" height={24} />
-      <Skeleton width="100%" height={24} />
+      <Skeleton width="100%" className="buttons" height={80} />
     </SkeletonWrapper>
   );
 };
