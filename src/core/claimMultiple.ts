@@ -35,7 +35,7 @@ export const claimMultiple = async (
 
   await autoSwitchNetwork(callbacks);
 
-  const walletAddress = await getWalletAccount();
+  const walletAddress = await provider.getSigner().getAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = UnicrowClaim__factory.connect(
