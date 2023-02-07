@@ -40,10 +40,8 @@ const handleChainChanged = (networkId: string) => {
 };
 
 const registerChainChangedListener = () => {
-  const ethereum = checkIsWalletInstalled();
-
-  if (ethereum && !chainChangedListener) {
-    chainChangedListener = ethereum!.on("chainChanged", (networkId) => {
+  if (!chainChangedListener) {
+    chainChangedListener = window.ethereum.on("chainChanged", (networkId) => {
       console.info("chainChanged", networkId);
       handleChainChanged(networkId);
     });
@@ -51,10 +49,8 @@ const registerChainChangedListener = () => {
 };
 
 const registerAccountChangedListener = () => {
-  const ethereum = checkIsWalletInstalled();
-
-  if (ethereum && !accountChangedListener) {
-    accountChangedListener = ethereum!.on(
+  if (!accountChangedListener) {
+    accountChangedListener = window.ethereum.on(
       "accountsChanged",
       (accounts: any) => {
         handleAccountsChanged(accounts);
@@ -69,12 +65,11 @@ const registerAccountChangedListener = () => {
  * @returns address of the connected account
  */
 export const connect = async (): Promise<string | null> => {
-  if (!currentWallet) {
+  if (isWeb3WalletInstalled() && !currentWallet) {
     registerAccountChangedListener();
+    console.log('pwe', 'connect')
 
-    const ethereum = checkIsWalletInstalled();
-    if (!ethereum) return null;
-    const _accounts = await ethereum.request({
+    const _accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
 
@@ -84,6 +79,7 @@ export const connect = async (): Promise<string | null> => {
       currentWallet = _accounts[0];
       return _accounts[0];
     }
+  } else {
     return null;
   }
 
@@ -98,7 +94,7 @@ export const connect = async (): Promise<string | null> => {
  * @throws Error if the user rejected adding or switching to the network
  */
 export const switchNetwork = async (name: DefaultNetwork) => {
-  if (!checkIsWalletInstalled()) return null;
+  if (!isWeb3WalletInstalled()) return null;
   const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
     networks[name];
 
@@ -184,20 +180,23 @@ export const autoSwitchNetwork = async (
 export const getNetwork = async (): Promise<ethers.providers.Network> => {
   const provider = await getWeb3Provider();
 
-  if (provider === null) {
-    return {
-      chainId: 0,
-      name: "unknown",
-    };
-  }
+  console.log('pwe', 'provider', provider)
 
-  let network = await provider.getNetwork();
+  let network = {
+    chainId: 0,
+    name: "unknown",
+  };
 
-  if (network.chainId === CHAIN_ID.development) {
-    network = {
-      ...network,
-      name: "development",
-    };
+  if (provider !== null) {
+    network = await provider.getNetwork();
+
+    if (network.chainId === CHAIN_ID.development) {
+      network = {
+        ...network,
+        name: "development",
+      };
+    }
+    console.log('pwe', 'network', network)
   }
 
   return network;
@@ -244,10 +243,10 @@ export const isSupportedNetworkConnected = async (): Promise<boolean> => {
 export const startListening = (
   onChangeWalletCallback: (walletAddress: string | null) => void,
 ) => {
-  checkIsWalletInstalled();
-  _onChangeWalletCallbacks.push(onChangeWalletCallback);
-
-  registerAccountChangedListener();
+  if (isWeb3WalletInstalled()) {
+    _onChangeWalletCallbacks.push(onChangeWalletCallback);
+    registerAccountChangedListener();
+  }
 };
 
 /**
@@ -258,8 +257,10 @@ export const startListening = (
 export const startListeningNetwork = (
   onChangeNetworkCallback: (networkId: number) => void,
 ) => {
-  _onChangeNetworkCallbacks.push(onChangeNetworkCallback);
-  registerChainChangedListener();
+  if (isWeb3WalletInstalled()) {
+    _onChangeNetworkCallbacks.push(onChangeNetworkCallback);
+    registerChainChangedListener();
+  }
 };
 
 /**
@@ -286,12 +287,10 @@ export const stopListeningNetwork = () => {
 };
 
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
-  // TODO: merge this with checkIsWalletInstalled
-  const ethereum = checkIsWalletInstalled();
-
-  return ethereum
+  console.log('pwe', 'getWeb3Provider', isWeb3WalletInstalled())
+  return isWeb3WalletInstalled()
     ? new ethers.providers.Web3Provider(
-        ethereum as unknown as ExternalProvider,
+        window?.ethereum as unknown as ExternalProvider,
         "any",
       )
     : null;
@@ -300,24 +299,16 @@ export const getWeb3Provider = async (): Promise<Web3Provider> => {
 /**
  * Check if a web3 wallet is installed
  *
- * @returns installed web3 provider or null if none
+ * @returns boolean
  * @throws If this is not run in a browser
  */
-export const checkIsWalletInstalled = () => {
+export const isWeb3WalletInstalled = () => {
   if (typeof window === "undefined") {
     throw new Error("Should run through Browser");
   }
-  // Have to check the ethereum binding on the window object to see if it's installed
-  const { ethereum } = window;
 
-  try {
-    // is there a more agnostic way to check? I know otherwallets use isMetaMask too, but perhaps there are better flags
-    const check = ethereum.isMetaMask;
-  } catch (e) {
-    return null;
-  }
-
-  return ethereum;
+  console.log('pwe', 'checkIsWalletInstalled', window?.ethereum?.isMetaMask || false)
+  return window?.ethereum?.isMetaMask || false;
 };
 
 /**

@@ -123,7 +123,9 @@ export const pay = async (
   const data: IPaymentPropsData = paymentProps;
 
   try {
-    const walletUser = await getWalletAccount();
+     // || '' => hack to not throw in validateParameters, so that we can show "No wallet installed" within the modal
+    const walletUser = await getWalletAccount() || '';
+
     const addrs = await validateParameters({ ...data, buyer: walletUser });
 
     Object.entries(addrs.common).forEach(([key, value]) => {

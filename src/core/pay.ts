@@ -156,7 +156,8 @@ export const pay = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks && callbacks.connected && callbacks.connected();
+  const walletAddress = await provider.getSigner().getAddress();
+  callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const providerSigner = provider.getSigner();
 
@@ -240,6 +241,7 @@ export const pay = async (
 
     const isETH = tokenAddress === ETH_ADDRESS;
     // { value: bigNumberAmount } should be passed only in case of Ethers
+    console.log('pwe', 'smartContract', smartContract)
     if (isETH) {
       payTx = await smartContract.pay(
         payInput,
