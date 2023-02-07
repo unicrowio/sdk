@@ -9,6 +9,8 @@ import {
 import { IBalanceWithTokenInfo, IToken } from "../../../typing";
 import { TokenSymbol } from "../components";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import Skeleton from "@material-ui/lab/Skeleton";
+import styled from "styled-components";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -56,16 +58,21 @@ export const TableRow = (balance: IBalanceWithTokenUSD) => {
             <TokenSymbol>{rowTokenInfo.symbol}</TokenSymbol>
           </td>
           <td>
-            {"$"}
-            {amountInUSD}
+            <ExchangeCell>
+              {"$"}
+              {amountInUSD ? amountInUSD : <Skeleton width={80} height={30} />}
+            </ExchangeCell>
           </td>
         </>
       ) : (
-        <td>
-          {tokenInfoLoading && "Loading..."}
-          {!rowTokenInfo && "Error while loading Token Info"}
-        </td>
+        <td>{!rowTokenInfo && "Error while loading Token Info"}</td>
       )}
     </tr>
   );
 };
+
+const ExchangeCell = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: right;
+`;
