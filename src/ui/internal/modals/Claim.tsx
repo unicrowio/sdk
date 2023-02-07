@@ -19,6 +19,7 @@ import {
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
   amountInUSD?: string;
@@ -182,7 +183,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const ModalBody = () => {
     if (!escrowBalance) {
-      return null;
+      return <ModalBodySkeleton />;
     }
     if (!(isLoading || modalAction.isForbidden)) {
       return (

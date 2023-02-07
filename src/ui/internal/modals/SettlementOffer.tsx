@@ -21,6 +21,7 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -261,7 +262,7 @@ export function SettlementOfferModal({
     }
 
     if (!escrow) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     return (

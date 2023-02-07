@@ -17,6 +17,7 @@ import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 /**
  * Approve the Arbitrator proposed
@@ -292,7 +293,9 @@ export const AddApproveArbitrator = ({
   };
 
   const ModalBody = () => {
-    if (!escrowData) return null;
+    if (!escrowData) {
+      return <ModalBodySkeleton />;
+    }
 
     if (
       escrowData?.connectedUser !== BUYER &&

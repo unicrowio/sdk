@@ -14,6 +14,7 @@ import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -111,7 +112,9 @@ export const Arbitrate = ({
   };
 
   const ModalBody = () => {
-    if (!escrow) return null;
+    if (!escrow) {
+      return <ModalBodySkeleton />;
+    }
 
     if (escrow.connectedUser !== "arbitrator") {
       return (
