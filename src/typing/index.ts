@@ -590,7 +590,7 @@ export interface IGenericTransactionCallbacks {
   connectingWallet?: (payload?: any) => void;
 
   /** When the wallet is successfully connected */
-  connected?: (payload?: any) => void;
+  connected?: (address: string) => void;
 
   /** If the user is not connected to the default network and is being asked to switch by the global configuration */
   switchingNetwork?: (payload?: any) => void;

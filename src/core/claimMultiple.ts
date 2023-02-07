@@ -4,7 +4,11 @@ import {
   MultipleClaimParsedPayload,
   IClaimTransactionCallbacks,
 } from "../typing";
-import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
+import {
+  getWeb3Provider,
+  autoSwitchNetwork,
+  getWalletAccount,
+} from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
 import { parseMultipleClaim } from "./internal/parsers/eventClaimMultiple";
 
@@ -31,7 +35,8 @@ export const claimMultiple = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks && callbacks.connected && callbacks.connected();
+  const walletAddress = await getWalletAccount();
+  callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = UnicrowClaim__factory.connect(
     getContractAddress("claim"),

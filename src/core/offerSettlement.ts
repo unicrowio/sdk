@@ -6,7 +6,11 @@ import {
   OfferSettlementParsedPayload,
 } from "../typing";
 import { errorHandler } from "./internal/errorHandler";
-import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
+import {
+  autoSwitchNetwork,
+  getWalletAccount,
+  getWeb3Provider,
+} from "../wallet";
 import { parseOfferSettlement } from "./internal/parsers/eventOfferSettlement";
 
 /**
@@ -33,6 +37,9 @@ export const offerSettlement = async (
     }
 
     await autoSwitchNetwork(callbacks);
+
+    const walletAddress = await getWalletAccount();
+    callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
     const crowDisputeContract = UnicrowDispute__factory.connect(
       getContractAddress("dispute"),

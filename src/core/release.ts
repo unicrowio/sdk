@@ -1,7 +1,11 @@
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from "../typing";
-import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
+import {
+  autoSwitchNetwork,
+  getWalletAccount,
+  getWeb3Provider,
+} from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
 import { parseRelease } from "./internal/parsers/eventRelease";
 
@@ -25,7 +29,8 @@ export const release = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks && callbacks.connected && callbacks.connected();
+  const walletAddress = await getWalletAccount();
+  callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const Unicrow = Unicrow__factory.connect(
     getContractAddress("unicrow"),
