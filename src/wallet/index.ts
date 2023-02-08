@@ -285,7 +285,7 @@ export const stopListeningNetwork = () => {
 export const getWeb3Provider = async (): Promise<Web3Provider> => {
   return isWeb3WalletInstalled()
     ? new ethers.providers.Web3Provider(
-        window?.ethereum as unknown as ExternalProvider,
+        window.ethereum as unknown as ExternalProvider,
         "any",
       )
     : null;
