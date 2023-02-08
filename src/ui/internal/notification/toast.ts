@@ -19,9 +19,10 @@ const styles = jss.createStyleSheet(
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      width: "400px",
+      width: "100%",
+      maxWidth: "500px",
       minWidth: "250px",
-      marginLeft: "-220px",
+      transform: "translate(-50%, 0)",
       padding: "16px",
       position: "fixed",
       zIndex: 9999999999,
@@ -62,7 +63,7 @@ const colorBg = {
 export function toast(
   message: any,
   type: "info" | "error" | "success" | "warning" = "error",
-  duration = 5000,
+  duration = 50000,
 ) {
   const normalized = message?.message || message;
   const stringified =
