@@ -203,8 +203,6 @@ export const pay = async (
     providerSigner,
   );
 
-  callbacks && callbacks.broadcasting && callbacks.broadcasting();
-
   // solidity doesn't work with decimal points
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
@@ -236,6 +234,8 @@ export const pay = async (
   };
 
   try {
+    callbacks && callbacks.broadcasting && callbacks.broadcasting();
+
     let payTx: any;
 
     const isETH = tokenAddress === ETH_ADDRESS;
