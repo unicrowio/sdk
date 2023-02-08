@@ -116,8 +116,7 @@ export const AddApproveArbitrator = ({
         setArbitratorFee(escrow.arbitration.arbitratorFee.toString());
         setAction("edit");
       } catch (error: any) {
-        console.error(error);
-        toast(error.message, "error");
+        toast(error, "error");
         onModalClose();
       } finally {
         setLoadingMessage("");
@@ -141,10 +140,9 @@ export const AddApproveArbitrator = ({
         setAction("added");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast(e, "error");
       })
       .finally(() => {
         setIsLoading(false);
@@ -161,10 +159,9 @@ export const AddApproveArbitrator = ({
         setAction("view");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast(e, "error");
       })
       .finally(() => {
         setIsLoading(false);
