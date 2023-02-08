@@ -63,7 +63,7 @@ const colorBg = {
 export function toast(
   message: any,
   type: "info" | "error" | "success" | "warning" = "error",
-  duration = 50000,
+  duration = 5000,
 ) {
   const normalized = message?.message || message;
   const stringified =
