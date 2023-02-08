@@ -60,7 +60,7 @@ export const TableRow = (balance: IBalanceWithTokenUSD) => {
           <td>
             <ExchangeCell>
               {"$"}
-              {amountInUSD ? amountInUSD : <Skeleton width={80} height={30} />}
+              {amountInUSD ? amountInUSD : <Skeleton width={80} height={25} />}
             </ExchangeCell>
           </td>
         </>
