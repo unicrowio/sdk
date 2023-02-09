@@ -36,6 +36,7 @@ import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePerio
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -164,7 +165,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER

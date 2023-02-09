@@ -28,6 +28,7 @@ import { Forbidden } from "../components/Forbidden";
 
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -202,7 +203,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
   const ModalBody = React.useCallback(() => {
     if (!escrow) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     if (!(isLoading || [BUYER, SELLER].includes(escrow.connectedUser))) {

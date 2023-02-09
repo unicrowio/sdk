@@ -130,9 +130,9 @@ export function PayModal(props: IPaymentModalProps) {
           amount={formatAmount(
             props.paymentProps.amount,
             tokenInfo?.decimals || 18,
-            tokenInfo?.symbol || "ERR",
+            tokenInfo?.symbol || "",
           )}
-          tokenSymbol={tokenInfo?.symbol ? tokenInfo.symbol : "ERR"}
+          tokenSymbol={tokenInfo?.symbol}
           status={paymentStatus}
         />
         <Subtitle>Payment Summary</Subtitle>

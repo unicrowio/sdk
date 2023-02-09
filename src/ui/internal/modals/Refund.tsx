@@ -29,6 +29,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -158,7 +159,7 @@ export function RefundModal(props: IRefundModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     if (!(isLoading || modalAction.isForbidden)) {

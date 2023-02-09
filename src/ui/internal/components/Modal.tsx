@@ -63,11 +63,6 @@ export const ModalBody = styled.div`
   min-height: 100px;
 `;
 
-export const ModalEmptyBody = styled(ModalBody)`
-  flex: 1;
-  min-height: 360px;
-`;
-
 export const ModalFooter = styled.footer`
   display: flex;
   align-items: center;
