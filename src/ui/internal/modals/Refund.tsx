@@ -198,7 +198,11 @@ export function RefundModal(props: IRefundModalProps) {
           />
 
           {!isExpired && (
-            <DataDisplayer label={labelChallengePeriod} value={countdown} />
+            <DataDisplayer
+              label={labelChallengePeriod}
+              value={countdown}
+              marker={MARKER.challengePeriod}
+            />
           )}
           <DataDisplayer
             hide={!escrowData?.marketplace}
