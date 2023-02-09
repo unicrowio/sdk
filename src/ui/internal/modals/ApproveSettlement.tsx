@@ -58,9 +58,6 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     escrowData,
   );
 
-  console.log('pwe', 'escrowData', escrowData)
-  console.log('pwe', 'escrowId', escrowId)
-  console.log('pwe', 'escrow', escrow)
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrow?.settlement) {
