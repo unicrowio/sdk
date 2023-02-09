@@ -36,6 +36,7 @@ import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePerio
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -124,11 +125,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -164,7 +165,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
@@ -199,7 +200,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
             copy={escrowData.buyer}
             marker={MARKER.buyer}
           />
-          <DataDisplayer label={labelChallengePeriod} value={countdown} />
+          <DataDisplayer
+            label={labelChallengePeriod}
+            value={countdown}
+            marker={MARKER.challengePeriod}
+          />
           <DataDisplayer
             label="Challenge Period Extension"
             value={displayChallengePeriod(escrowData.challengePeriod)}

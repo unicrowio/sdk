@@ -50,7 +50,7 @@ export const useCountdownChallengePeriod = (
 
   const setup = (date: Date, periodStarted = true) => {
     setLabelChallengePeriod("Challenge Period");
-    setButtonLabel("Challenge period hasn't periodStarted");
+    setButtonLabel("Challenge period hasn't started");
     setDisableButton(true);
     const timer = count(date, periodStarted);
     return timer;

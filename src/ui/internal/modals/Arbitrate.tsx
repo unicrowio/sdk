@@ -14,6 +14,7 @@ import { AdornmentContent } from "../components/InputText";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -40,8 +41,16 @@ export const Arbitrate = ({
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
-
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
+  const [focus, setFocus] = React.useState<"seller" | "buyer">("seller");
+
+  const arbitrateCallbacks = {
+    ...callbacks,
+    connected: (address: string) => {
+      setLoadingMessage("Connected");
+      callbacks && callbacks.connected && callbacks.connected(address);
+    },
+  };
 
   const loadData = async () => {
     if (isCorrectNetwork) {
@@ -58,8 +67,7 @@ export const Arbitrate = ({
           setSellerValue(escrowData.splitSeller.toString());
         }
       } catch (error: any) {
-        console.error(error);
-        toast(error.message, "error");
+        toast(error, "error");
         onModalClose();
       } finally {
         setLoadingMessage("");
@@ -82,7 +90,7 @@ export const Arbitrate = ({
       escrow.escrowId,
       Number(buyerValue),
       Number(sellerValue),
-      callbacks,
+      arbitrateCallbacks,
     )
       .then(() => {
         setSuccess("Arbitration Successful");
@@ -90,10 +98,9 @@ export const Arbitrate = ({
         toast("Arbitration Successful", "success");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast(e, "error");
       })
       .finally(() => {
         setIsLoading(false);
@@ -104,14 +111,18 @@ export const Arbitrate = ({
     if (event.target.name === "seller") {
       setSellerValue(event.target.value);
       setBuyerValue(String(100 - Number(event.target.value)));
+      setFocus("seller");
     } else {
       setSellerValue(String(100 - Number(event.target.value)));
       setBuyerValue(event.target.value);
+      setFocus("buyer");
     }
   };
 
   const ModalBody = () => {
-    if (!escrow) return null;
+    if (!escrow) {
+      return <ModalBodySkeleton />;
+    }
 
     if (escrow.connectedUser !== "arbitrator") {
       return (
@@ -125,6 +136,7 @@ export const Arbitrate = ({
     return (
       <Stack>
         <InputText
+          autoFocus={focus === "seller"}
           required
           disabled={!!success || escrow.arbitration?.arbitrated}
           name="seller"
@@ -150,6 +162,7 @@ export const Arbitrate = ({
           }}
         />
         <InputText
+          autoFocus={focus === "buyer"}
           required
           disabled={!!success || escrow.arbitration?.arbitrated}
           name="buyer"
@@ -216,8 +229,8 @@ export const Arbitrate = ({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
-        body={<ModalBody />}
-        footer={<ModalFooter />}
+        body={ModalBody()}
+        footer={ModalFooter()}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={loadingMessage}

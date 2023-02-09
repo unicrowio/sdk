@@ -21,6 +21,7 @@ import { getEscrowData } from "../../../core/getEscrowData";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -150,6 +151,10 @@ export function SettlementOfferModal({
       setLoadingMessage("Connecting");
       callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
     },
+    connected: (address: string) => {
+      setLoadingMessage("Connected");
+      callbacks && callbacks.connected && callbacks.connected(address);
+    },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
       callbacks && callbacks.broadcasting && callbacks.broadcasting();
@@ -261,7 +266,7 @@ export function SettlementOfferModal({
     }
 
     if (!escrow) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     return (
