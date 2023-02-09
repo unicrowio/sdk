@@ -2,7 +2,7 @@ import type * as CSS from "csstype";
 import React from "react";
 import { claimMultiple } from "../../../core";
 import {
-  IBalanceWithTokenInfo,
+  IBalanceDetailed,
   IClaimMultipleModalProps,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
@@ -14,7 +14,7 @@ import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
