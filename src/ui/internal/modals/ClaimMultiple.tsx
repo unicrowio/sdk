@@ -108,8 +108,6 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     );
   };
 
-  console.log("pwe", "props.balances", props.balances);
-
   const ModalFooter = () => {
     let buttonChildren;
     let buttonOnClick;
