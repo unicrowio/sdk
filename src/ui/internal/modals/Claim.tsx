@@ -1,7 +1,7 @@
 import React from "react";
 import {
   EscrowStatus,
-  IBalanceWithTokenInfo,
+  IBalanceDetailed,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
@@ -20,7 +20,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
@@ -143,11 +143,11 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

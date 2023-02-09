@@ -25,7 +25,7 @@ import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 import { Forbidden } from "../components/Forbidden";
-import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
@@ -34,9 +34,7 @@ const ContainerButtons = styled.div`
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  gap: 10px;
-  margin-top: -28px;
+  gap: 16px;
 `;
 const LabelFees = styled.p`
   font-family: 'Work Sans';
@@ -58,7 +56,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
+
   const { isCorrectNetwork } = useNetworkCheck();
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(escrowData);
@@ -183,7 +181,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
         toast("Accepted", "success");
 
-        setSuccess(payload);
+        setSuccess(payload.transactionHash);
         setIsLoading(false);
       },
     };
@@ -313,15 +311,13 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [displayActionButtons, isLoading, escrow]);
 
   return (
-    <div ref={closeHandlerRef}>
-      <ScopedModal
-        title={title}
-        body={<ModalBody />}
-        footer={<ModalFooter />}
-        onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={loadingMessage}
-      />
-    </div>
+    <ScopedModal
+      title={title}
+      body={<ModalBody />}
+      footer={<ModalFooter />}
+      onClose={onModalClose}
+      isLoading={isLoading}
+      loadingMessage={loadingMessage}
+    />
   );
 }

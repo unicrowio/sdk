@@ -40,10 +40,16 @@ export const Arbitrate = ({
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
-
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
-
   const [focus, setFocus] = React.useState<"seller" | "buyer">("seller");
+
+  const arbitrateCallbacks = {
+    ...callbacks,
+    connected: (address: string) => {
+      setLoadingMessage("Connected");
+      callbacks && callbacks.connected && callbacks.connected(address);
+    },
+  };
 
   const loadData = async () => {
     if (isCorrectNetwork) {
@@ -60,8 +66,7 @@ export const Arbitrate = ({
           setSellerValue(escrowData.splitSeller.toString());
         }
       } catch (error: any) {
-        console.error(error);
-        toast(error.message, "error");
+        toast(error, "error");
         onModalClose();
       } finally {
         setLoadingMessage("");
@@ -84,7 +89,7 @@ export const Arbitrate = ({
       escrow.escrowId,
       Number(buyerValue),
       Number(sellerValue),
-      callbacks,
+      arbitrateCallbacks,
     )
       .then(() => {
         setSuccess("Arbitration Successful");
@@ -92,10 +97,9 @@ export const Arbitrate = ({
         toast("Arbitration Successful", "success");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast(e, "error");
       })
       .finally(() => {
         setIsLoading(false);
