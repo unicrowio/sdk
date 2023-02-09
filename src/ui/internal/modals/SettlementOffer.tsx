@@ -166,7 +166,7 @@ export function SettlementOfferModal({
     confirmed: (payload: OfferSettlementParsedPayload) => {
       callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
-      toast.success("Offer sent with success");
+      toast.success("Offer sent successfully");
       setSuccess(payload);
       setIsLoading(false);
     },
