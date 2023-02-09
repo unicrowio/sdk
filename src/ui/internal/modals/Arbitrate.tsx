@@ -43,6 +43,14 @@ export const Arbitrate = ({
 
   const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
 
+  const arbitrateCallbacks = {
+    ...callbacks,
+    connected: (address: string) => {
+      setLoadingMessage("Connected");
+      callbacks && callbacks.connected && callbacks.connected(address);
+    },
+  };
+
   const loadData = async () => {
     if (isCorrectNetwork) {
       try {
@@ -81,7 +89,7 @@ export const Arbitrate = ({
       escrow.escrowId,
       Number(buyerValue),
       Number(sellerValue),
-      callbacks,
+      arbitrateCallbacks,
     )
       .then(() => {
         setSuccess("Arbitration Successful");
