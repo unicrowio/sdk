@@ -190,16 +190,13 @@ export function ChallengeModal(props: IChallengeModalProps) {
         <ContainerDataDisplayer>
           <DataDisplayer
             label="Seller"
-            value={addressWithYou(
-              escrowData.seller,
-              escrowData.connectedWallet,
-            )}
+            value={addressWithYou(escrowData.seller, escrowData.walletAddress)}
             copy={escrowData.seller}
             marker={MARKER.seller}
           />
           <DataDisplayer
             label="Buyer"
-            value={addressWithYou(escrowData.buyer, escrowData.connectedWallet)}
+            value={addressWithYou(escrowData.buyer, escrowData.walletAddress)}
             copy={escrowData.buyer}
             marker={MARKER.buyer}
           />

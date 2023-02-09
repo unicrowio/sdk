@@ -9,7 +9,7 @@ import {
 import { toast } from "ui/internal/notification/toast";
 import { renderModal } from "ui/internal/config/render";
 import { PayModal } from "ui/internal/modals";
-import { getWalletAccount } from "wallet";
+import { getCurrentWalletAddress } from "wallet";
 
 /**
  * Opens a payment modal, which summarizes the escrow parameters for the user (buyer) and displays a button to Pay.
@@ -123,8 +123,10 @@ export const pay = async (
   const data: IPaymentPropsData = paymentProps;
 
   try {
-    const walletUser = await getWalletAccount();
-    const addrs = await validateParameters({ ...data, buyer: walletUser });
+    // || '' => hack to not throw in validateParameters, so that we can show "No wallet installed" within the modal
+    const walletAddress = (await getCurrentWalletAddress()) || "";
+
+    const addrs = await validateParameters({ ...data, buyer: walletAddress });
 
     Object.entries(addrs.common).forEach(([key, value]) => {
       paymentProps[key] = value;

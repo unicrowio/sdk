@@ -30,7 +30,7 @@ const consensusArbitration = (status, proposer, seller) => {
  */
 export const parseEscrowData = (
   item: EscrowStatusView,
-): Omit<IGetEscrowData, "connectedUser" | "connectedWallet"> => {
+): Omit<IGetEscrowData, "connectedUser" | "walletAddress"> => {
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
     bipsToPercentage([
       item.split_buyer,

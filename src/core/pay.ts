@@ -19,7 +19,7 @@ import { errorHandler } from "./internal/errorHandler";
 
 import {
   getWeb3Provider,
-  getWalletAccount,
+  getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet/index";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
@@ -156,7 +156,7 @@ export const pay = async (
 
   await autoSwitchNetwork(callbacks);
 
-  const walletAddress = await provider.getSigner().getAddress();
+  const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const providerSigner = provider.getSigner();
@@ -183,7 +183,7 @@ export const pay = async (
     checkBalance(balance, bigNumberAmount);
 
     const alreadyAllowedAmount = await token.allowance(
-      walletAddress!,
+      walletAddress,
       UNICROW_ADDRESS,
     );
 
@@ -260,7 +260,7 @@ export const pay = async (
       callbacks.broadcasted &&
       callbacks.broadcasted({
         transactionHash: payTx.hash,
-        buyer: walletAddress!,
+        buyer: walletAddress,
       });
 
     const receiptTx = await payTx.wait();

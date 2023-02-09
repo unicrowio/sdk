@@ -7,7 +7,7 @@ import {
 import {
   getWeb3Provider,
   autoSwitchNetwork,
-  getWalletAccount,
+  getCurrentWalletAddress,
 } from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
 import { parseMultipleClaim } from "./internal/parsers/eventClaimMultiple";
@@ -35,7 +35,7 @@ export const claimMultiple = async (
 
   await autoSwitchNetwork(callbacks);
 
-  const walletAddress = await provider.getSigner().getAddress();
+  const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = UnicrowClaim__factory.connect(

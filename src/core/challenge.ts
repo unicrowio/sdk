@@ -2,7 +2,7 @@ import { UnicrowDispute__factory } from "@unicrowio/ethers-types";
 
 import {
   autoSwitchNetwork,
-  getWalletAccount,
+  getCurrentWalletAddress,
   getWeb3Provider,
 } from "../wallet";
 import { getContractAddress } from "../config";
@@ -33,7 +33,7 @@ export const challenge = async (
   await autoSwitchNetwork(callbacks);
 
   try {
-    const walletAddress = await provider.getSigner().getAddress();
+    const walletAddress = await getCurrentWalletAddress();
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
     const smartContract = UnicrowDispute__factory.connect(
       getContractAddress("dispute"),
