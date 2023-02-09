@@ -156,7 +156,7 @@ export const pay = async (
 
   await autoSwitchNetwork(callbacks);
 
-  const walletAddress = await provider.getSigner().getAddress();
+  const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const providerSigner = provider.getSigner();
@@ -166,8 +166,6 @@ export const pay = async (
   if (!tokenInfo) {
     throw new Error("Could not get token info");
   }
-
-  const walletUser = await getCurrentWalletAddress();
 
   const UNICROW_ADDRESS = getContractAddress("unicrow");
 
@@ -185,7 +183,7 @@ export const pay = async (
     checkBalance(balance, bigNumberAmount);
 
     const alreadyAllowedAmount = await token.allowance(
-      walletUser!,
+      walletAddress,
       UNICROW_ADDRESS,
     );
 
@@ -221,7 +219,7 @@ export const pay = async (
     challengePeriodExtension: paymentProps.challengePeriodExtension,
     tokenAddress,
     amount,
-    buyer: walletUser,
+    buyer: walletAddress,
   });
 
   const _arbitrator = addrs.common.arbitrator || ADDRESS_ZERO;
@@ -262,7 +260,7 @@ export const pay = async (
       callbacks.broadcasted &&
       callbacks.broadcasted({
         transactionHash: payTx.hash,
-        buyer: walletUser!,
+        buyer: walletAddress,
       });
 
     const receiptTx = await payTx.wait();
