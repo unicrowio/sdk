@@ -112,7 +112,7 @@ export function SettlementOfferModal({
           setEscrow(data);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -166,8 +166,7 @@ export function SettlementOfferModal({
     confirmed: (payload: OfferSettlementParsedPayload) => {
       callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
-      toast("Offer sent with success", "success");
-
+      toast.success("Offer sent with success");
       setSuccess(payload);
       setIsLoading(false);
     },
@@ -194,7 +193,7 @@ export function SettlementOfferModal({
           renderModal(ApproveSettlementModal, settlementModalProps);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
         })
         .finally(() => {
           setIsLoading(false);

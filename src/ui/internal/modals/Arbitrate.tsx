@@ -67,7 +67,7 @@ export const Arbitrate = ({
           setSellerValue(escrowData.splitSeller.toString());
         }
       } catch (error: any) {
-        toast(error, "error");
+        toast.error(error);
         onModalClose();
       } finally {
         setLoadingMessage("");
@@ -95,12 +95,12 @@ export const Arbitrate = ({
       .then(() => {
         setSuccess("Arbitration Successful");
         setError(null);
-        toast("Arbitration Successful", "success");
+        toast.success("Arbitration Successful");
       })
       .catch((e) => {
         setSuccess(null);
         setError(e.message);
-        toast(e, "error");
+        toast.error(e);
       })
       .finally(() => {
         setIsLoading(false);

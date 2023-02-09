@@ -60,36 +60,50 @@ const colorBg = {
   warning: "#000000",
 };
 
-export function toast(
-  message: any,
-  type: "info" | "error" | "success" | "warning" = "error",
-  duration = 5000,
-) {
+const prettifyMessage = (message) => {
+  if (!message) return;
+
   const normalized = message?.message || message;
-  const stringified =
+  const prettified =
     typeof normalized === "object"
       ? JSON.stringify(normalized)
       : normalized.toString();
-  const trimmed = `${stringified}`.substring(0, 80).trim();
 
-  const toast = tag("div");
-  const span = `<span style="margin-left: 8px">${trimmed}</span>`;
+  return `${prettified}`.substring(0, 80).trim();
+};
+
+const t = (
+  message: any,
+  type: "info" | "error" | "success" | "warning" = "error",
+  duration = 5000,
+) => {
+  const toastContainer = tag("div");
+  const span = `<span style="margin-left: 8px">${prettifyMessage(
+    message,
+  )}</span>`;
 
   if (message?.message) {
     console.error(message);
   }
 
-  toast.classList.add(styles.classes.toastContainer);
+  toastContainer.classList.add(styles.classes.toastContainer);
   styles.attach();
   styles.update({
     background: colorBg[type],
     color: colorText[type],
   });
 
-  toast.innerHTML = `${svgs[type]}${span}`;
+  toastContainer.innerHTML = `${svgs[type]}${span}`;
 
-  document.body.append(toast);
+  document.body.append(toastContainer);
   setTimeout(() => {
-    document.body.removeChild(toast);
+    document.body.removeChild(toastContainer);
   }, duration);
-}
+};
+
+export const toast = {
+  success: (args) => t(args, "success"),
+  info: (args) => t(args, "info"),
+  error: (args) => t(args, "error"),
+  warning: (args) => t(args, "warning"),
+};

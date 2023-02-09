@@ -97,7 +97,7 @@ export function RefundModal(props: IRefundModalProps) {
           setPaymentStatus(data.status.state);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -142,7 +142,7 @@ export function RefundModal(props: IRefundModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Refunded", "success");
+      toast.success("Refunded");
       setPaymentStatus(EscrowStatus.REFUNDED);
 
       setSuccess(payload);
@@ -153,7 +153,7 @@ export function RefundModal(props: IRefundModalProps) {
   const onRefund = () => {
     refund(props.escrowId, refundCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 

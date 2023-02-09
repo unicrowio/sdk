@@ -103,7 +103,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
           setPaymentStatus(data.status.state);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -148,7 +148,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Challenged", "success");
+      toast.success("Challenged");
 
       setPaymentStatus(`${EscrowStatus.CHALLENGED} by you`);
       setSuccess(payload);
@@ -159,7 +159,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
   const onChallenge = () => {
     challenge(props.escrowId, challengeCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 

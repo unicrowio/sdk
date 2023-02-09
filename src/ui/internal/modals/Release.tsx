@@ -95,7 +95,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
           });
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -140,7 +140,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Released", "success");
+      toast.success("Released");
       setPaymentStatus(EscrowStatus.RELEASED);
       setSuccess(payload);
       setIsLoading(false);
@@ -150,7 +150,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
   const onRelease = () => {
     release(props.escrowId, releaseCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 

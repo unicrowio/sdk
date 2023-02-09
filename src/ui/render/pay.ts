@@ -132,7 +132,7 @@ export const pay = async (
 
     data.ensAddresses = addrs.ens;
   } catch (error: any) {
-    toast(error, "error");
+    toast.error(error);
     return;
   }
 

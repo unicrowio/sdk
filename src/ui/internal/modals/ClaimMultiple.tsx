@@ -61,7 +61,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Claimed", "success");
+      toast.success("Claimed");
 
       setIsLoading(false);
       setSuccess(payload);

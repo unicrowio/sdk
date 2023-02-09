@@ -148,7 +148,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
           setEscrow(data);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -180,7 +180,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       confirmed: (payload: ApproveSettlementParsedPayload) => {
         callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
-        toast("Accepted", "success");
+        toast.success("Accepted");
 
         setSuccess(payload.transactionHash);
         setIsLoading(false);
@@ -196,7 +196,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         approveSettlementOfferCallbacks,
       ).catch((e) => {
         setIsLoading(false);
-        toast(e, "error");
+        toast.error(e);
       });
     }
   }, [escrowId, escrow]);
