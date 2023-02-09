@@ -6,10 +6,9 @@ const Tooltip = styled.div`
   position: relative;
   display: inline-block;
   z-index: 1;
-  /* border-bottom: 1px dotted black; */
-  /* width: 100%; */
+  
   svg {
-    font-size: 10px;
+    font-size: 14px;
     margin-top: -6px;
   }
 
@@ -34,17 +33,16 @@ const Tooltip = styled.div`
     margin-bottom: 5px;
   }
 
-  /*
     span::after {
     content: '';
     position: absolute;
     top: 100%;
-    left: 50%;
+    left: 50px;
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
     border-color: black transparent transparent transparent;
-  } */
+  }
 
   :hover span {
     visibility: visible;

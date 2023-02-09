@@ -119,11 +119,11 @@ export function RefundModal(props: IRefundModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -199,7 +199,11 @@ export function RefundModal(props: IRefundModalProps) {
           />
 
           {!isExpired && (
-            <DataDisplayer label={labelChallengePeriod} value={countdown} />
+            <DataDisplayer
+              label={labelChallengePeriod}
+              value={countdown}
+              marker={MARKER.challengePeriod}
+            />
           )}
           <DataDisplayer
             hide={!escrowData?.marketplace}

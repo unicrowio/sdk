@@ -22,4 +22,4 @@ export const displayableAmountBN = (
 };
 
 export const displayDecimals = (tokenSymbol: string) =>
-  STABLE_COINS.includes(tokenSymbol.toUpperCase()) ? 2 : 4;
+  !tokenSymbol ? 2 : STABLE_COINS.includes(tokenSymbol.toUpperCase()) ? 2 : 4;

@@ -6,7 +6,11 @@ import {
   IArbitrationTransactionCallbacks,
 } from "../typing";
 import { errorHandler } from "./internal/errorHandler";
-import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
+import {
+  getWeb3Provider,
+  autoSwitchNetwork,
+  getWalletAccount,
+} from "../wallet";
 import { percentageToBips } from "../helpers";
 import { parseApproveArbitrator } from "./internal/parsers/eventApproveArbitrator";
 
@@ -34,6 +38,9 @@ export const approveArbitrator = async (
     }
 
     await autoSwitchNetwork(callbacks);
+
+    const walletAddress = await provider.getSigner().getAddress();
+    callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
       getContractAddress("arbitrator"),

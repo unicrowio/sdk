@@ -1,7 +1,7 @@
 import React from "react";
 import {
   EscrowStatus,
-  IBalanceWithTokenInfo,
+  IBalanceDetailed,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
@@ -20,8 +20,9 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
+import Skeleton from "@material-ui/lab/Skeleton";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
@@ -113,19 +114,24 @@ export function ClaimModal(props: IClaimModalProps) {
       if (isLoading || !escrowBalance) {
         return (
           <tr>
-            <td>Loading...</td>
+            <Skeleton width="100%" height={25} />
           </tr>
         );
       }
 
       const amount = Number(escrowBalance.displayableAmount);
       const decimals = displayDecimals(escrowBalance.token.symbol!);
-      const symbol = escrowBalance.token.symbol || "ERR";
+      const symbol = escrowBalance?.token?.symbol;
 
       return (
         <tr>
           <td>
-            {amount.toFixed(decimals)} <TokenSymbol>{symbol}</TokenSymbol>
+            {amount.toFixed(decimals)}{" "}
+            {symbol ? (
+              <TokenSymbol>{symbol}</TokenSymbol>
+            ) : (
+              <Skeleton width={32} height={25} />
+            )}
           </td>
           <td>
             {"$"}
@@ -144,11 +150,11 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");

@@ -6,13 +6,13 @@ import {
   formatAmountToUSD,
   getExchangeRates,
 } from "../../../helpers";
-import { IBalanceWithTokenInfo, IToken } from "../../../typing";
+import { IBalanceDetailed, IToken } from "../../../typing";
 import { TokenSymbol } from "../components";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import Skeleton from "@material-ui/lab/Skeleton";
 import styled from "styled-components";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
@@ -60,7 +60,7 @@ export const TableRow = (balance: IBalanceWithTokenUSD) => {
           <td>
             <ExchangeCell>
               {"$"}
-              {amountInUSD ? amountInUSD : <Skeleton width={80} height={30} />}
+              {amountInUSD ? amountInUSD : <Skeleton width={80} height={25} />}
             </ExchangeCell>
           </td>
         </>

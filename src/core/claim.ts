@@ -1,7 +1,11 @@
 import { getContractAddress } from "../config";
 import { UnicrowClaim__factory } from "@unicrowio/ethers-types";
 import { IClaimTransactionCallbacks, ClaimParsedPayload } from "../typing";
-import { getWeb3Provider, autoSwitchNetwork } from "../wallet";
+import {
+  getWeb3Provider,
+  autoSwitchNetwork,
+  getWalletAccount,
+} from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
 import { parseClaim } from "./internal/parsers/eventClaim";
 
@@ -25,7 +29,8 @@ export const claim = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks && callbacks.connected && callbacks.connected();
+  const walletAddress = await provider.getSigner().getAddress();
+  callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = UnicrowClaim__factory.connect(
     getContractAddress("claim"),
