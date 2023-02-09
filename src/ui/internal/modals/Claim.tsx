@@ -13,8 +13,6 @@ import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 import { TableRow } from "../components/TableRow";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
-import Skeleton from "@material-ui/lab/Skeleton";
 
 interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
@@ -94,7 +92,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const ModalBody = () => {
     if (!escrowBalance) {
-      return <ModalBodySkeleton />;
+      return null;
     }
 
     return (

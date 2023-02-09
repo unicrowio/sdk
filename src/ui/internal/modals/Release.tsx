@@ -25,7 +25,6 @@ import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePerio
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
@@ -117,7 +116,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return <ModalBodySkeleton />;
+      return null;
     }
 
     return (

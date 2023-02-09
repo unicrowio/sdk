@@ -35,7 +35,6 @@ import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 import { ModalAction } from "../components/Modal";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -144,7 +143,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return <ModalBodySkeleton />;
+      return null;
     }
 
     return (

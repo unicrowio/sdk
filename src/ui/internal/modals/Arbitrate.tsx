@@ -14,7 +14,6 @@ import { AdornmentContent } from "../components/InputText";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { ModalAction } from "../components/Modal";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -109,7 +108,7 @@ export const Arbitrate = ({
 
   const ModalBody = () => {
     if (!escrow) {
-      return <ModalBodySkeleton />;
+      return null;
     }
 
     return (

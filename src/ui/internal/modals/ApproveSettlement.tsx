@@ -27,7 +27,6 @@ import { SettlementOfferModal } from "./SettlementOffer";
 import { MARKER } from "../../../config/marker";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;

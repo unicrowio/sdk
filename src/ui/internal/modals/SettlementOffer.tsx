@@ -21,7 +21,6 @@ import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -245,7 +244,7 @@ export function SettlementOfferModal({
 
   const ModalBody = () => {
     if (!escrow) {
-      return <ModalBodySkeleton />;
+      return null;
     }
 
     return (

@@ -27,7 +27,6 @@ import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChall
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -125,7 +124,7 @@ export function RefundModal(props: IRefundModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return <ModalBodySkeleton />;
+      return null;
     }
 
     const isExpired = escrowData.challengePeriodEnd.getTime() <= Date.now();
