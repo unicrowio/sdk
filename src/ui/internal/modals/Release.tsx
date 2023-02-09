@@ -180,16 +180,13 @@ export function ReleaseModal(props: IReleaseModalProps) {
           <DataDisplayer
             copy={escrowData.seller}
             label="Seller"
-            value={addressWithYou(
-              escrowData.seller,
-              escrowData.connectedWallet,
-            )}
+            value={addressWithYou(escrowData.seller, escrowData.walletAddress)}
             marker={MARKER.seller}
           />
           <DataDisplayer
             copy={escrowData.buyer}
             label="Buyer"
-            value={addressWithYou(escrowData.buyer, escrowData.connectedWallet)}
+            value={addressWithYou(escrowData.buyer, escrowData.walletAddress)}
             marker={MARKER.buyer}
           />
 

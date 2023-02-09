@@ -18,7 +18,7 @@ export const getSingleBalance = async (
 ): Promise<IBalanceWithTokenInfo> => {
   const escrowData = await getEscrowData(escrowId);
 
-  const amount = getSplitFromLoggedUser(escrowData, escrowData.connectedWallet);
+  const amount = getSplitFromLoggedUser(escrowData, escrowData.walletAddress);
 
   const amountBN = new BigNumber(amount);
 
@@ -33,7 +33,7 @@ export const getSingleBalance = async (
     amountBN: displayableAmountBN(amountBN, escrowData.token.decimals),
     displayableAmount: displayableAmount(amountBN, escrowData.token.decimals),
     connectedUser: escrowData.connectedUser,
-    connectedWallet: escrowData.connectedWallet,
+    walletAddress: escrowData.walletAddress,
     statusEscrow: escrowData.status,
   };
 

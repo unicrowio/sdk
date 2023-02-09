@@ -933,7 +933,7 @@ export interface IBalanceWithTokenInfo extends IBalance {
   connectedUser: tConnectedUser;
 
   /** Address of the connected user */
-  connectedWallet: string;
+  walletAddress: string;
 
   /** Indicates status of the payment (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED) */
   statusEscrow: IEscrowStatus;
@@ -1236,7 +1236,7 @@ export interface IGetEscrowData extends Omit<IEscrowData, "tokenAddress"> {
   connectedUser?: tConnectedUser;
 
   /** Address of the connected user */
-  connectedWallet?: string;
+  walletAddress?: string;
 }
 
 export interface ISettlementOfferModalProps {

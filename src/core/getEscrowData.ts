@@ -22,7 +22,7 @@ import {
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import {
   getWeb3Provider,
-  getCurrentAddress,
+  getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet";
 
@@ -38,21 +38,21 @@ const getConnectedUser = async ({
   arbitrator,
   marketplace,
 }: IGetConnectedUser) => {
-  const connectedWallet = await getCurrentAddress();
+  const walletAddress = await getCurrentWalletAddress();
   let connectedUser: tConnectedUser | undefined;
-  if (isSameAddress(connectedWallet, buyer)) {
+  if (isSameAddress(walletAddress, buyer)) {
     connectedUser = "buyer";
-  } else if (isSameAddress(connectedWallet, seller)) {
+  } else if (isSameAddress(walletAddress, seller)) {
     connectedUser = "seller";
-  } else if (!!arbitrator && isSameAddress(connectedWallet, arbitrator)) {
+  } else if (!!arbitrator && isSameAddress(walletAddress, arbitrator)) {
     connectedUser = "arbitrator";
-  } else if (isSameAddress(connectedWallet, marketplace)) {
+  } else if (isSameAddress(walletAddress, marketplace)) {
     connectedUser = "marketplace";
   } else {
     connectedUser = "other";
   }
 
-  return { connectedUser, connectedWallet };
+  return { connectedUser, walletAddress };
 };
 
 const parseArbitration = (data): IArbitratorInfo | null => {
@@ -224,7 +224,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    arbitration: null,
  *    settlement: null,
  *    connectedUser: "buyer",
- *    connectedWallet: "0xd024....5861"
+ *    walletAddress: "0xd024....5861"
  * }
  *
  * // An escrow with 1,000 USDT, an arbitrator and marketplace with fees, which was challenged by buyer and has a settlement offer from the seller looks like this:
@@ -267,7 +267,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *       latestSettlementOfferSeller: 80                  // Seller asked to receive 80% (minus fees)
  *    },
  *    connectedUser: "seller",
- *    connectedWallet: "0xa9813....041d"
+ *    walletAddress: "0xa9813....041d"
  * }
  *
  * @param escrowId - ID of the escrow
@@ -305,7 +305,7 @@ export const getEscrowData = async (
 
   const marketplace = nullOrValue(escrow.marketplace);
 
-  const { connectedUser, connectedWallet } = await getConnectedUser({
+  const { connectedUser, walletAddress } = await getConnectedUser({
     buyer: nullOrValue(escrow.buyer),
     seller: escrow.seller,
     arbitrator: arbitration?.arbitrator,
@@ -321,7 +321,7 @@ export const getEscrowData = async (
     arbitration,
     settlement,
     connectedUser,
-    connectedWallet,
+    walletAddress,
     marketplace,
   };
 };

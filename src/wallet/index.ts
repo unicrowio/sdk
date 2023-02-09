@@ -6,27 +6,27 @@ import { CHAIN_ID } from "../helpers";
 import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
 import { config } from "../config";
 
-let currentAddress: string | null = null;
+let walletAddress: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
 let chainChangedListener: EventEmitter | null = null;
 let _onChangeNetworkCallbacks: Array<(networkId: number) => void> = [];
-let _onChangeWalletCallbacks: Array<(currentWallet: string) => void> = [];
+let _onChangeWalletCallbacks: Array<(walletAddress: string) => void> = [];
 
 const handleAccountsChanged = (accounts: string[]) => {
-  if (currentAddress === accounts[0]) {
+  if (walletAddress === accounts[0]) {
     return;
   }
 
   if (accounts.length === 0) {
     // MetaMask is locked or the user has not connected any accounts
-    currentAddress = null;
+    walletAddress = null;
   } else {
-    currentAddress = accounts[0];
+    walletAddress = accounts[0];
   }
 
   _onChangeWalletCallbacks.length > 0 &&
     _onChangeWalletCallbacks.forEach(
-      (callback: (currentAddress: string) => void) => callback(currentAddress),
+      (callback: (walletAddress: string) => void) => callback(walletAddress),
     );
 };
 
@@ -65,7 +65,7 @@ const registerAccountChangedListener = () => {
  * @returns address of the connected account
  */
 export const connect = async (): Promise<string | null> => {
-  if (isWeb3WalletInstalled() && !currentAddress) {
+  if (isWeb3WalletInstalled() && !walletAddress) {
     registerAccountChangedListener();
 
     const _accounts = await window.ethereum.request({
@@ -75,14 +75,14 @@ export const connect = async (): Promise<string | null> => {
     handleAccountsChanged(_accounts);
 
     if (_accounts && _accounts.length > 0) {
-      currentAddress = _accounts[0];
+      walletAddress = _accounts[0];
       return _accounts[0];
     }
   } else {
     return null;
   }
 
-  return currentAddress;
+  return walletAddress;
 };
 
 /**
@@ -302,14 +302,14 @@ export const isWeb3WalletInstalled = () => {
     throw new Error("Should run through Browser");
   }
 
-  return window?.ethereum?.isMetaMask || false;
+  return !!window?.ethereum?.isMetaMask;
 };
 
 /**
  * Returns connected wallet account (Attempts to connect to the wallet if not connected)
  * @returns Account address
  */
-export const getCurrentAddress = async () => {
+export const getCurrentWalletAddress = async () => {
   await connect();
-  return currentAddress;
+  return walletAddress;
 };

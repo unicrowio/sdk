@@ -23,10 +23,10 @@ export const reduceAddress = (address: string, ensAddress?: string) => {
 
 export const addressWithYou = (
   address: string,
-  currentUserAddress: string,
+  walletAddress: string,
   nonEnsAddress?: string,
 ) => {
-  return isSameAddress(address, currentUserAddress)
+  return isSameAddress(address, walletAddress)
     ? `You (${reduceAddress(address, nonEnsAddress)})`
     : reduceAddress(address, nonEnsAddress);
 };

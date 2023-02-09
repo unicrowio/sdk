@@ -19,7 +19,7 @@ import { errorHandler } from "./internal/errorHandler";
 
 import {
   getWeb3Provider,
-  getCurrentAddress,
+  getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet/index";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
@@ -167,7 +167,7 @@ export const pay = async (
     throw new Error("Could not get token info");
   }
 
-  const walletUser = await getCurrentAddress();
+  const walletUser = await getCurrentWalletAddress();
 
   const UNICROW_ADDRESS = getContractAddress("unicrow");
 
