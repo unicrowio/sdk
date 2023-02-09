@@ -2,7 +2,6 @@ import React, { ReactNode } from "react";
 import {
   Modal,
   ModalBody,
-  ModalEmptyBody,
   ModalFooter,
   ModalHeader,
   ModalHeaderClose,
@@ -10,9 +9,10 @@ import {
 } from "../../../ui/internal/components/Modal";
 import { CloseIcon } from "../assets/CloseIcon";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
-import { checkIsWalletInstalled } from "../../../wallet";
+import { isWeb3WalletInstalled } from "../../../wallet";
 import { ModalError } from "./ModalError";
 import { metamaskUrl } from "../../../helpers/constants";
+import { ModalBodySkeleton } from "./ModalBodySkeleton";
 
 interface ScopedModalProps {
   title: string;
@@ -27,7 +27,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,
 ): JSX.Element => {
   const { WithNetworkCheck } = useNetworkCheck();
-  const metamaskInstalled = checkIsWalletInstalled() !== null;
+  const metamaskInstalled = isWeb3WalletInstalled();
 
   const BodyWithFooter = React.useCallback(
     () =>
@@ -42,7 +42,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
             </>
           </ModalBody>
         ) : (
-          <ModalEmptyBody />
+          <ModalBodySkeleton />
         ),
       ),
     [props.body, props.footer, WithNetworkCheck],

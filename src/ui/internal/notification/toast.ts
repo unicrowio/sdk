@@ -19,9 +19,10 @@ const styles = jss.createStyleSheet(
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      width: "400px",
+      width: "100%",
+      maxWidth: "500px",
       minWidth: "250px",
-      marginLeft: "-220px",
+      transform: "translate(-50%, 0)",
       padding: "16px",
       position: "fixed",
       zIndex: 9999999999,
@@ -59,25 +60,50 @@ const colorBg = {
   warning: "#000000",
 };
 
-export function toast(
-  message: string,
+const prettifyMessage = (message) => {
+  if (!message) return;
+
+  const normalized = message?.message || message;
+  const prettified =
+    typeof normalized === "object"
+      ? JSON.stringify(normalized)
+      : normalized.toString();
+
+  return `${prettified}`.substring(0, 80).trim();
+};
+
+const t = (
+  message: any,
   type: "info" | "error" | "success" | "warning" = "error",
   duration = 5000,
-) {
-  const toast = tag("div");
-  const span = `<span style="margin-left: 8px">${message}</span>`;
+) => {
+  const toastContainer = tag("div");
+  const span = `<span style="margin-left: 8px">${prettifyMessage(
+    message,
+  )}</span>`;
 
-  toast.classList.add(styles.classes.toastContainer);
+  if (message?.message) {
+    console.error(message);
+  }
+
+  toastContainer.classList.add(styles.classes.toastContainer);
   styles.attach();
   styles.update({
     background: colorBg[type],
     color: colorText[type],
   });
 
-  toast.innerHTML = `${svgs[type]}${span}`;
+  toastContainer.innerHTML = `${svgs[type]}${span}`;
 
-  document.body.append(toast);
+  document.body.append(toastContainer);
   setTimeout(() => {
-    document.body.removeChild(toast);
+    document.body.removeChild(toastContainer);
   }, duration);
-}
+};
+
+export const toast = {
+  success: (args) => t(args, "success"),
+  info: (args) => t(args, "info"),
+  error: (args) => t(args, "error"),
+  warning: (args) => t(args, "warning"),
+};

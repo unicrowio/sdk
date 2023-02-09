@@ -17,6 +17,7 @@ import { BUYER, SELLER } from "../../../helpers";
 import { Forbidden } from "../components/Forbidden";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 /**
  * Approve the Arbitrator proposed
@@ -116,8 +117,7 @@ export const AddApproveArbitrator = ({
         setArbitratorFee(escrow.arbitration.arbitratorFee.toString());
         setAction("edit");
       } catch (error: any) {
-        console.error(error);
-        toast(error.message, "error");
+        toast.error(error);
         onModalClose();
       } finally {
         setLoadingMessage("");
@@ -130,21 +130,33 @@ export const AddApproveArbitrator = ({
     loadData();
   }, [isCorrectNetwork]);
 
+  const approveCallbacks = {
+    ...callbacks,
+    connected: (address: string) => {
+      setLoadingMessage("Connected");
+      callbacks.connected && callbacks.connected(address);
+    },
+  };
+
   const confirm = () => {
     setIsLoading(true);
-    proposeArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
+    proposeArbitrator(
+      escrowId,
+      arbitrator,
+      Number(arbitratorFee),
+      approveCallbacks,
+    )
       .then(() => {
         setError(null);
         setSuccess("Arbitrator Proposal Sent");
-        toast("Arbitrator Proposal Sent", "success");
+        toast.success("Arbitrator Proposal Sent");
 
         setAction("added");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast.error(e);
       })
       .finally(() => {
         setIsLoading(false);
@@ -153,18 +165,22 @@ export const AddApproveArbitrator = ({
 
   const accept = () => {
     setIsLoading(true);
-    approveArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
+    approveArbitrator(
+      escrowId,
+      arbitrator,
+      Number(arbitratorFee),
+      approveCallbacks,
+    )
       .then(() => {
         setSuccess("Arbitrator Approved");
-        toast("Arbitrator Approved", "success");
+        toast.success("Arbitrator Approved");
         setError(null);
         setAction("view");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast.error(e);
       })
       .finally(() => {
         setIsLoading(false);
@@ -292,7 +308,9 @@ export const AddApproveArbitrator = ({
   };
 
   const ModalBody = () => {
-    if (!escrowData) return null;
+    if (!escrowData) {
+      return <ModalBodySkeleton />;
+    }
 
     if (
       escrowData?.connectedUser !== BUYER &&

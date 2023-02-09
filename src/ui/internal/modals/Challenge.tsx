@@ -36,6 +36,7 @@ import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePerio
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -102,7 +103,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
           setPaymentStatus(data.status.state);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -124,11 +125,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -147,7 +148,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Challenged", "success");
+      toast.success("Challenged");
 
       setPaymentStatus(`${EscrowStatus.CHALLENGED} by you`);
       setSuccess(payload);
@@ -158,13 +159,13 @@ export function ChallengeModal(props: IChallengeModalProps) {
   const onChallenge = () => {
     challenge(props.escrowId, challengeCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
@@ -189,20 +190,21 @@ export function ChallengeModal(props: IChallengeModalProps) {
         <ContainerDataDisplayer>
           <DataDisplayer
             label="Seller"
-            value={addressWithYou(
-              escrowData.seller,
-              escrowData.connectedWallet,
-            )}
+            value={addressWithYou(escrowData.seller, escrowData.walletAddress)}
             copy={escrowData.seller}
             marker={MARKER.seller}
           />
           <DataDisplayer
             label="Buyer"
-            value={addressWithYou(escrowData.buyer, escrowData.connectedWallet)}
+            value={addressWithYou(escrowData.buyer, escrowData.walletAddress)}
             copy={escrowData.buyer}
             marker={MARKER.buyer}
           />
-          <DataDisplayer label={labelChallengePeriod} value={countdown} />
+          <DataDisplayer
+            label={labelChallengePeriod}
+            value={countdown}
+            marker={MARKER.challengePeriod}
+          />
           <DataDisplayer
             label="Challenge Period Extension"
             value={displayChallengePeriod(escrowData.challengePeriod)}

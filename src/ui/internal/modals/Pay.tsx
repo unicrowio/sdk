@@ -26,7 +26,7 @@ import {
 } from "../../../helpers";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
-import { getWalletAccount } from "../../../wallet";
+import { getCurrentWalletAddress } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
@@ -58,7 +58,7 @@ export function PayModal(props: IPaymentModalProps) {
     if (isCorrectNetwork) {
       setIsLoading(true);
 
-      getWalletAccount().then((account) => {
+      getCurrentWalletAddress().then((account) => {
         setWalletUser(account);
       });
       getTokenInfo(props.paymentProps.tokenAddress)
@@ -81,11 +81,11 @@ export function PayModal(props: IPaymentModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -104,7 +104,7 @@ export function PayModal(props: IPaymentModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Payment Sent", "success");
+      toast.success("Payment Sent");
       setModalTitle("Payment Sent");
 
       setBuyer(payload.buyer);
@@ -119,7 +119,7 @@ export function PayModal(props: IPaymentModalProps) {
   const onPayClick = () => {
     pay(props.paymentProps, payCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
@@ -130,9 +130,9 @@ export function PayModal(props: IPaymentModalProps) {
           amount={formatAmount(
             props.paymentProps.amount,
             tokenInfo?.decimals || 18,
-            tokenInfo?.symbol || "ERR",
+            tokenInfo?.symbol || "",
           )}
-          tokenSymbol={tokenInfo?.symbol ? tokenInfo.symbol : "ERR"}
+          tokenSymbol={tokenInfo?.symbol}
           status={paymentStatus}
         />
         <Subtitle>Payment Summary</Subtitle>

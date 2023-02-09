@@ -4,7 +4,7 @@ import {
   displayableAmountBN,
 } from "../helpers";
 import BigNumber from "bignumber.js";
-import { IBalanceWithTokenInfo } from "../typing";
+import { IBalanceDetailed } from "../typing";
 import { getEscrowData } from "./getEscrowData";
 
 /**
@@ -15,14 +15,14 @@ import { getEscrowData } from "./getEscrowData";
  */
 export const getSingleBalance = async (
   escrowId: number,
-): Promise<IBalanceWithTokenInfo> => {
+): Promise<IBalanceDetailed> => {
   const escrowData = await getEscrowData(escrowId);
 
-  const amount = getSplitFromLoggedUser(escrowData, escrowData.connectedWallet);
+  const amount = getSplitFromLoggedUser(escrowData, escrowData.walletAddress);
 
   const amountBN = new BigNumber(amount);
 
-  const balance: IBalanceWithTokenInfo = {
+  const balance: IBalanceDetailed = {
     token: {
       address: escrowData.token.address,
       symbol: escrowData.token.symbol,
@@ -33,7 +33,7 @@ export const getSingleBalance = async (
     amountBN: displayableAmountBN(amountBN, escrowData.token.decimals),
     displayableAmount: displayableAmount(amountBN, escrowData.token.decimals),
     connectedUser: escrowData.connectedUser,
-    connectedWallet: escrowData.connectedWallet,
+    walletAddress: escrowData.walletAddress,
     statusEscrow: escrowData.status,
   };
 

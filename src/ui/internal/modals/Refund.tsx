@@ -29,6 +29,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -96,7 +97,7 @@ export function RefundModal(props: IRefundModalProps) {
           setPaymentStatus(data.status.state);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -118,11 +119,11 @@ export function RefundModal(props: IRefundModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -141,7 +142,7 @@ export function RefundModal(props: IRefundModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Refunded", "success");
+      toast.success("Refunded");
       setPaymentStatus(EscrowStatus.REFUNDED);
 
       setSuccess(payload);
@@ -152,13 +153,13 @@ export function RefundModal(props: IRefundModalProps) {
   const onRefund = () => {
     refund(props.escrowId, refundCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     if (!(isLoading || modalAction.isForbidden)) {
@@ -184,21 +185,22 @@ export function RefundModal(props: IRefundModalProps) {
           <DataDisplayer
             copy={escrowData.seller}
             label="Seller"
-            value={addressWithYou(
-              escrowData.seller,
-              escrowData.connectedWallet,
-            )}
+            value={addressWithYou(escrowData.seller, escrowData.walletAddress)}
             marker={MARKER.seller}
           />
           <DataDisplayer
             copy={escrowData.buyer}
             label="Buyer"
-            value={addressWithYou(escrowData.buyer, escrowData.connectedWallet)}
+            value={addressWithYou(escrowData.buyer, escrowData.walletAddress)}
             marker={MARKER.buyer}
           />
 
           {!isExpired && (
-            <DataDisplayer label={labelChallengePeriod} value={countdown} />
+            <DataDisplayer
+              label={labelChallengePeriod}
+              value={countdown}
+              marker={MARKER.challengePeriod}
+            />
           )}
           <DataDisplayer
             hide={!escrowData?.marketplace}

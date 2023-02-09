@@ -27,6 +27,7 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {
@@ -94,7 +95,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
           });
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
           onModalClose();
         })
         .finally(() => {
@@ -116,11 +117,11 @@ export function ReleaseModal(props: IReleaseModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -139,7 +140,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Released", "success");
+      toast.success("Released");
       setPaymentStatus(EscrowStatus.RELEASED);
       setSuccess(payload);
       setIsLoading(false);
@@ -149,13 +150,13 @@ export function ReleaseModal(props: IReleaseModalProps) {
   const onRelease = () => {
     release(props.escrowId, releaseCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     if (!(isLoading || modalAction.isForbidden)) {
@@ -180,16 +181,13 @@ export function ReleaseModal(props: IReleaseModalProps) {
           <DataDisplayer
             copy={escrowData.seller}
             label="Seller"
-            value={addressWithYou(
-              escrowData.seller,
-              escrowData.connectedWallet,
-            )}
+            value={addressWithYou(escrowData.seller, escrowData.walletAddress)}
             marker={MARKER.seller}
           />
           <DataDisplayer
             copy={escrowData.buyer}
             label="Buyer"
-            value={addressWithYou(escrowData.buyer, escrowData.connectedWallet)}
+            value={addressWithYou(escrowData.buyer, escrowData.walletAddress)}
             marker={MARKER.buyer}
           />
 

@@ -10,7 +10,7 @@ export const useModalCloseHandler = (onModalClose) => {
       event.keyCode === KEYCODE_ESC ||
       event.which === KEYCODE_ESC ||
       event.charCode === KEYCODE_ESC ||
-      event.key == "Escape";
+      event.key === "Escape";
 
     // since our modals are wrapped in a div or form element and positioned fixed,
     // this is the easiest way to check if the click was outside the modal
