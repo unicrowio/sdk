@@ -35,7 +35,7 @@ const ContainerButtons = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  gap: 10px;
+  gap: 16px;
   margin-top: -28px;
 `;
 const LabelFees = styled.p`
