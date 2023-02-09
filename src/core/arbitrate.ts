@@ -7,7 +7,7 @@ import {
 import { errorHandler } from "./internal/errorHandler";
 import {
   autoSwitchNetwork,
-  getWalletAccount,
+  getCurrentWalletAddress,
   getWeb3Provider,
 } from "../wallet";
 import { parseArbitrate } from "./internal/parsers/eventArbitrate";
@@ -37,7 +37,7 @@ export const arbitrate = async (
 
     await autoSwitchNetwork(callbacks);
 
-    const walletAddress = await provider.getSigner().getAddress();
+    const walletAddress = await getCurrentWalletAddress();
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(

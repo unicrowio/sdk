@@ -3,7 +3,7 @@ import { getContractAddress } from "../config";
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from "../typing";
 import {
   autoSwitchNetwork,
-  getWalletAccount,
+  getCurrentWalletAddress,
   getWeb3Provider,
 } from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
@@ -29,7 +29,7 @@ export const release = async (
 
   await autoSwitchNetwork(callbacks);
 
-  const walletAddress = await provider.getSigner().getAddress();
+  const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const Unicrow = Unicrow__factory.connect(
