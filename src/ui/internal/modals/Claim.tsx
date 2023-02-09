@@ -3,7 +3,7 @@ import {
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
-  IBalanceWithTokenInfo,
+  IBalanceDetailed,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { Button, Table, ScopedModal } from "../components";
@@ -13,8 +13,10 @@ import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 import { TableRow } from "../components/TableRow";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
+import Skeleton from "@material-ui/lab/Skeleton";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
@@ -53,11 +55,11 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -78,7 +80,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
       toast("Claimed", "success");
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
@@ -92,7 +94,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
   const ModalBody = () => {
     if (!escrowBalance) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     return (

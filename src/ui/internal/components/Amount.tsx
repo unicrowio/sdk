@@ -2,6 +2,7 @@ import { formatAmount } from "../../../helpers/formatAmount";
 import React from "react";
 import styled from "styled-components";
 import { Chip } from "../../../ui/internal/components/Chip";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const Style = styled.div`
   display: flex;
@@ -9,6 +10,9 @@ const Style = styled.div`
   align-items: center;
 
   div {
+    display: flex;
+    align-items: center;
+
     strong {
       font-family: 'Bai Jamjuree';
       font-style: normal;
@@ -38,16 +42,29 @@ export interface IAmountProps {
   precision?: number;
 }
 
-export const Amount = (props: IAmountProps) => {
+export const Amount = ({
+  amount,
+  precision,
+  tokenSymbol,
+  status,
+}: IAmountProps) => {
   return (
     <Style>
       <div>
         <strong>
-          {formatAmount(props.amount, props.precision || 18, props.tokenSymbol)}
+          {formatAmount(amount, precision || 18, tokenSymbol || "")}
         </strong>
-        <span>{props.tokenSymbol}</span>
+        {tokenSymbol ? (
+          <span>{tokenSymbol}</span>
+        ) : (
+          <Skeleton
+            style={{ display: "inline-block" }} // needed to not wrap the skeleton to a new line
+            width={85}
+            height={55}
+          />
+        )}
       </div>
-      {props.status && <Chip>{props.status}</Chip>}
+      {status && <Chip>{status}</Chip>}
     </Style>
   );
 };

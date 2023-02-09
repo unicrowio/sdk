@@ -1,7 +1,11 @@
 import { getContractAddress } from "../config";
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { IRefundTransactionCallbacks } from "../typing";
-import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
+import {
+  autoSwitchNetwork,
+  getWalletAccount,
+  getWeb3Provider,
+} from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
 
 /**
@@ -25,7 +29,8 @@ export const refund = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks && callbacks.connected && callbacks.connected();
+  const walletAddress = await provider.getSigner().getAddress();
+  callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = Unicrow__factory.connect(
     getContractAddress("unicrow"),

@@ -71,11 +71,11 @@ export function PayModal(props: IPaymentModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -100,7 +100,7 @@ export function PayModal(props: IPaymentModalProps) {
       setBuyer(payload.buyer);
       setPaymentStatus(EscrowStatus.PAID);
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
 
       setIsLoading(false);
     },
@@ -120,9 +120,9 @@ export function PayModal(props: IPaymentModalProps) {
           amount={formatAmount(
             props.paymentProps.amount,
             tokenInfo?.decimals || 18,
-            tokenInfo?.symbol || "ERR",
+            tokenInfo?.symbol || "",
           )}
-          tokenSymbol={tokenInfo?.symbol ? tokenInfo.symbol : "ERR"}
+          tokenSymbol={tokenInfo?.symbol}
           status={paymentStatus}
         />
         <Subtitle>Payment Summary</Subtitle>

@@ -23,19 +23,18 @@ import {
 import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
-import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+
 import { MARKER } from "../../../config/marker";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  gap: 10px;
-  margin-top: -28px;
+  gap: 16px;
 `;
 const LabelFees = styled.p`
   font-family: 'Work Sans';

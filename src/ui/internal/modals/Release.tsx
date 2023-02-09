@@ -25,6 +25,7 @@ import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePerio
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
@@ -77,11 +78,11 @@ export function ReleaseModal(props: IReleaseModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -102,7 +103,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
       toast("Released", "success");
       setPaymentStatus(EscrowStatus.RELEASED);
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
@@ -116,7 +117,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     return (

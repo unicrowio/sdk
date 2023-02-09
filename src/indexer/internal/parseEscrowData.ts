@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import {
-  EscrowStatusView,
   IGetEscrowData,
   IToken,
   ISettlement,
@@ -8,6 +7,7 @@ import {
 } from "../../typing";
 import { nullOrValue, toDate, bipsToPercentage } from "../../helpers";
 import { calculateStatus } from "../../core/calculateStatus";
+import { EscrowStatusView } from "indexer/internal/types";
 
 const consensusArbitration = (status, proposer, seller) => {
   if (!status) {

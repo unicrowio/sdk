@@ -13,6 +13,7 @@ import { checkIsWalletInstalled } from "../../../wallet";
 import { ModalError } from "./ModalError";
 import { metamaskUrl } from "../../../helpers/constants";
 import { Forbidden } from "./Forbidden";
+import { ModalBodySkeleton } from "./ModalBodySkeleton";
 
 interface ScopedModalProps {
   title: string;
@@ -40,7 +41,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
         ) : (
           <ModalBody>
             <>
-              {props.body}
+              {props.body ? props.body : <ModalBodySkeleton />}
               <ModalFooter>
                 <>{props.footer}</>
               </ModalFooter>

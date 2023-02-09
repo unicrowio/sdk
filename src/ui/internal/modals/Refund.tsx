@@ -27,6 +27,7 @@ import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChall
 import { ModalAction } from "../components/Modal";
 import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -84,11 +85,11 @@ export function RefundModal(props: IRefundModalProps) {
         props.callbacks.connectingWallet &&
         props.callbacks.connectingWallet();
     },
-    connected: () => {
+    connected: (address: string) => {
       setLoadingMessage("Connected");
       props.callbacks &&
         props.callbacks.connected &&
-        props.callbacks.connected();
+        props.callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -110,7 +111,7 @@ export function RefundModal(props: IRefundModalProps) {
       toast("Refunded", "success");
       setPaymentStatus(EscrowStatus.REFUNDED);
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
@@ -124,7 +125,7 @@ export function RefundModal(props: IRefundModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     const isExpired = escrowData.challengePeriodEnd.getTime() <= Date.now();
@@ -158,7 +159,11 @@ export function RefundModal(props: IRefundModalProps) {
           />
 
           {!isExpired && (
-            <DataDisplayer label={labelChallengePeriod} value={countdown} />
+            <DataDisplayer
+              label={labelChallengePeriod}
+              value={countdown}
+              marker={MARKER.challengePeriod}
+            />
           )}
           <DataDisplayer
             hide={!escrowData?.marketplace}

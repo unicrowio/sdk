@@ -45,15 +45,12 @@ export interface IPaymentProps {
   challengePeriodExtension?: number;
 }
 
-export interface IPaymentPropsData extends IPaymentProps {
-  ensAddresses?: IEnsAddresses;
+export interface IValidateProps extends IPaymentProps {
+  buyer: string;
 }
 
-export interface IArbitratorData {
-  address: string;
-  fee: number;
-  splitBuyer: number;
-  splitSeller: number;
+export interface IPaymentPropsData extends IPaymentProps {
+  ensAddresses?: IEnsAddresses;
 }
 
 export enum EscrowStatus {
@@ -80,48 +77,6 @@ export interface IEscrowStatus {
   latestChallengeBy: tEscrowParty;
   /** Who sent the latest settlement offer ('buyer', 'seller', or null if there's been no offer) */
   latestSettlementOfferBy: tEscrowParty;
-}
-
-export interface EscrowStatusView {
-  amount: BigNumberJs; // ERC20 | Ether
-  escrow_id: number;
-  status: keyof typeof EscrowStatus;
-
-  // Addresses
-  marketplace: string | null;
-  buyer: string;
-  seller: string;
-  currency: string;
-
-  challenge_period: number;
-  challenge_period_start: number;
-  challenge_period_end: number;
-
-  // Split
-  split_seller: number;
-  split_buyer: number;
-  split_protocol: number;
-  split_marketplace: number;
-
-  // Consensus
-  consensus_seller: number;
-  consensus_buyer: number;
-
-  claimed: boolean;
-
-  // Arbitration
-  arbitrator?: string;
-  arbitrator_fee?: number;
-  arbitrated: boolean;
-  arbitrator_proposer?: string;
-  status_arbitration?: string;
-
-  // Settlement
-  latest_settlement_offer_address?: string;
-  latest_settlement_offer_seller?: number;
-  latest_settlement_offer_buyer?: number;
-
-  paid_at: number;
 }
 
 /**
@@ -586,7 +541,7 @@ export interface IGenericTransactionCallbacks {
   connectingWallet?: (payload?: any) => void;
 
   /** When the wallet is successfully connected */
-  connected?: (payload?: any) => void;
+  connected?: (address: string) => void;
 
   /** If the user is not connected to the default network and is being asked to switch by the global configuration */
   switchingNetwork?: (payload?: any) => void;
@@ -754,13 +709,6 @@ export interface ISettlementOfferTransactionCallbacks
   confirmed?: (data: OfferSettlementParsedPayload) => void;
 }
 
-/**
- *
- */
-export interface IAddArbitratorTransactionPayload {
-  transactionHash: string;
-}
-
 export interface IChallengeTransactionPayload {
   transactionHash: string;
 }
@@ -910,15 +858,10 @@ export interface IBalance {
   status: "Pending" | "Ready to claim";
 }
 
-export interface IBalanceResponse {
-  pending: IBalance[];
-  readyForClaim: IBalance[];
-}
-
 /**
  * More detailed information about user's balance in an escrow
  */
-export interface IBalanceWithTokenInfo extends IBalance {
+export interface IBalanceDetailed extends IBalance {
   /** Amount converted to human readable form */
   displayableAmount: string | BigNumberJs;
 
@@ -985,9 +928,9 @@ export interface IBalanceWithTokenInfo extends IBalance {
  */
 export interface GetResponseUserBalance {
   /** Balance in escrows where the challenge period hasn't ended yet */
-  pending: IBalanceWithTokenInfo[];
+  pending: IBalanceDetailed[];
   /** Balance that can be claimed from the contract */
-  readyForClaim: IBalanceWithTokenInfo[];
+  readyForClaim: IBalanceDetailed[];
 }
 
 export interface IClaimMultipleModalProps {
@@ -1164,14 +1107,6 @@ export interface IndexerInstance {
    * @returns A list of escrow IDs
    */
   getClaimableEscrows: (walletUserAddress: string) => Promise<string[]>;
-}
-
-export interface IArbitratorContractData {
-  arbitrated: boolean;
-  consensusBuyer: boolean;
-  consensusSeller: boolean;
-  arbitrator: string;
-  arbitratorFee: string;
 }
 
 /**

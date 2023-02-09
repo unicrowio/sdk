@@ -1,15 +1,16 @@
 import React from "react";
-import { getTokenInfo } from "../../../core";
 import {
   displayDecimals,
   formatAmountToUSD,
   getExchangeRates,
 } from "../../../helpers";
-import { IBalanceWithTokenInfo } from "../../../typing";
+import { IBalanceDetailed } from "../../../typing";
 import { TokenSymbol } from "../components";
 import { useAsync } from "../hooks/useAsync";
+import Skeleton from "@material-ui/lab/Skeleton";
+import styled from "styled-components";
 
-interface IBalanceWithTokenUSD extends IBalanceWithTokenInfo {
+interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
@@ -18,7 +19,8 @@ export const TableRow = (
   onModalClose,
   setIsLoading,
 ) => {
-  const [formattedAmountInUSD, setFormattedAmountInUSD] = React.useState("");
+  const [formattedAmountInUSD, setFormattedAmountInUSD] =
+    React.useState<string>();
   const [exchangeValues, , errorExchange] = useAsync(
     [balance?.token?.symbol],
     getExchangeRates,
@@ -56,12 +58,22 @@ export const TableRow = (
               .toFixed(displayDecimals(balance.token.symbol))}{" "}
             <TokenSymbol>{balance.token.symbol}</TokenSymbol>
           </td>
-          <td>
+          <ExchangeCell>
             {"$"}
-            {formattedAmountInUSD}
-          </td>
+            {formattedAmountInUSD ? (
+              formattedAmountInUSD
+            ) : (
+              <Skeleton width={80} height={25} />
+            )}
+          </ExchangeCell>
         </>
       )}
     </tr>
   );
 };
+
+const ExchangeCell = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: right;
+`;

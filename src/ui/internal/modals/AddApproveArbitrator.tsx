@@ -122,15 +122,14 @@ export const AddApproveArbitrator = ({
       .then(() => {
         setError(null);
         setSuccess("Arbitrator Proposal Sent");
-        toast("Arbitrator Proposal Sent", "success");
-
+        toast.success("Arbitrator Proposal Sent");
         setAction("added");
       })
       .catch((e) => {
         console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast.error(e);
       })
       .finally(() => {
         setIsLoading(false);
@@ -142,15 +141,14 @@ export const AddApproveArbitrator = ({
     approveArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
       .then(() => {
         setSuccess("Arbitrator Approved");
-        toast("Arbitrator Approved", "success");
+        toast.success("Arbitrator Approved");
         setError(null);
         setAction("view");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
-        toast(e.message, "error");
+        toast.error(e);
       })
       .finally(() => {
         setIsLoading(false);

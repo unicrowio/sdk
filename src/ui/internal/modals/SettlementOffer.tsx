@@ -21,6 +21,7 @@ import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
+import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -73,6 +74,8 @@ export function SettlementOfferModal({
   const [buyerValue, setBuyerValue] = React.useState<string>(
     String(_splitBuyer),
   );
+
+  const [focus, setFocus] = React.useState<"buyer" | "seller">("buyer");
 
   const getEscrowAndPossiblyRenderApproveModal = React.useCallback(
     (escrowId) => {
@@ -135,6 +138,8 @@ export function SettlementOfferModal({
       setSellerValue(String(100 - Number(event.target.value)));
       setBuyerValue(event.target.value);
     }
+
+    setFocus(event.target.name);
   };
 
   const settlementCallbacks: ISettlementOfferTransactionCallbacks = {
@@ -142,6 +147,10 @@ export function SettlementOfferModal({
       setIsLoading(true);
       setLoadingMessage("Connecting");
       callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
+    },
+    connected: (address: string) => {
+      setLoadingMessage("Connected");
+      callbacks && callbacks.connected && callbacks.connected(address);
     },
     broadcasting: () => {
       setLoadingMessage("Waiting for approval");
@@ -156,7 +165,7 @@ export function SettlementOfferModal({
 
       toast("Offer sent with success", "success");
 
-      setSuccess(payload.transactionHash);
+      setSuccess(payload);
       setIsLoading(false);
     },
   };
@@ -237,13 +246,13 @@ export function SettlementOfferModal({
 
   const ModalBody = () => {
     if (!escrow) {
-      return null;
+      return <ModalBodySkeleton />;
     }
 
     return (
       <Stack>
         <InputText
-          autoFocus
+          autoFocus={focus === "buyer"}
           required
           disabled={!!success}
           name="buyer"
@@ -272,6 +281,7 @@ export function SettlementOfferModal({
         />
 
         <InputText
+          autoFocus={focus === "seller"}
           required
           disabled={!!success}
           name="seller"
@@ -324,8 +334,8 @@ export function SettlementOfferModal({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={"Settlement Offer"}
-        body={<ModalBody />}
-        footer={<ModalFooter />}
+        body={ModalBody()}
+        footer={ModalFooter()}
         onClose={onModalClose}
         isLoading={isLoading}
         loadingMessage={isLoading ? "Getting Escrow information" : ""}

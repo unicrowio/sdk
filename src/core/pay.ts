@@ -156,7 +156,8 @@ export const pay = async (
 
   await autoSwitchNetwork(callbacks);
 
-  callbacks && callbacks.connected && callbacks.connected();
+  const walletAddress = await provider.getSigner().getAddress();
+  callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const providerSigner = provider.getSigner();
 
@@ -165,8 +166,6 @@ export const pay = async (
   if (!tokenInfo) {
     throw new Error("Could not get token info");
   }
-
-  const walletUser = await getWalletAccount();
 
   const UNICROW_ADDRESS = getContractAddress("unicrow");
 
@@ -184,7 +183,7 @@ export const pay = async (
     checkBalance(balance, bigNumberAmount);
 
     const alreadyAllowedAmount = await token.allowance(
-      walletUser!,
+      walletAddress!,
       UNICROW_ADDRESS,
     );
 
@@ -203,8 +202,6 @@ export const pay = async (
     providerSigner,
   );
 
-  callbacks && callbacks.broadcasting && callbacks.broadcasting();
-
   // solidity doesn't work with decimal points
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
@@ -220,6 +217,7 @@ export const pay = async (
     challengePeriodExtension: paymentProps.challengePeriodExtension,
     tokenAddress,
     amount,
+    buyer: walletAddress,
   });
 
   const _arbitrator = addrs.common.arbitrator || ADDRESS_ZERO;
@@ -235,6 +233,8 @@ export const pay = async (
   };
 
   try {
+    callbacks && callbacks.broadcasting && callbacks.broadcasting();
+
     let payTx: any;
 
     const isETH = tokenAddress === ETH_ADDRESS;
@@ -260,7 +260,7 @@ export const pay = async (
       callbacks.broadcasted &&
       callbacks.broadcasted({
         transactionHash: payTx.hash,
-        buyer: walletUser!,
+        buyer: walletAddress!,
       });
 
     const receiptTx = await payTx.wait();
