@@ -31,12 +31,6 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   const { WithNetworkCheck } = useNetworkCheck();
   const metamaskInstalled = isWeb3WalletInstalled();
   const { isForbidden = false, reason } = props.modalAction || {};
-  console.log(
-    "pwe",
-    "isForbidden && metamaskInstalled",
-    isForbidden,
-    metamaskInstalled,
-  );
 
   const BodyWithFooter = React.useCallback(
     () =>
