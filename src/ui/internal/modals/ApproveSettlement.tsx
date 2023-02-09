@@ -58,7 +58,6 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     escrowData,
   );
 
-
   const labelAmountSplit = React.useMemo(() => {
     if (escrow?.settlement) {
       const _splitBuyer = escrow.settlement.latestSettlementOfferBuyer / 100;

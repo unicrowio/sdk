@@ -38,6 +38,7 @@ export const Table = styled.table`
         font-style: normal;
         font-weight: 600;
         font-size: 16px;
+        line-height: 22%;
         color: #252e47;
         text-align: left;
         padding-bottom: 1.2rem;

@@ -58,21 +58,23 @@ export const TableRow = (
               .toFixed(displayDecimals(balance.token.symbol))}{" "}
             <TokenSymbol>{balance.token.symbol}</TokenSymbol>
           </td>
-          <ExchangeCell>
-            {"$"}
-            {formattedAmountInUSD ? (
-              formattedAmountInUSD
-            ) : (
-              <Skeleton width={80} height={25} />
-            )}
-          </ExchangeCell>
+          <td>
+            <ExchangeCell>
+              {"$"}
+              {formattedAmountInUSD ? (
+                formattedAmountInUSD
+              ) : (
+                <Skeleton width={80} height={25} />
+              )}
+            </ExchangeCell>
+          </td>
         </>
       )}
     </tr>
   );
 };
 
-const ExchangeCell = styled.td`
+const ExchangeCell = styled.span`
   display: flex;
   align-items: center;
   justify-content: right;
