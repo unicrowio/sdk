@@ -202,7 +202,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
             copy={escrowData.buyer}
             marker={MARKER.buyer}
           />
-          <DataDisplayer label={labelChallengePeriod} value={countdown} />
+          <DataDisplayer
+            label={labelChallengePeriod}
+            value={countdown}
+            marker={MARKER.challengePeriod}
+          />
           <DataDisplayer
             label="Challenge Period Extension"
             value={displayChallengePeriod(escrowData.challengePeriod)}
