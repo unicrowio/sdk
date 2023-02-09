@@ -65,11 +65,10 @@ const registerAccountChangedListener = () => {
  * @returns address of the connected account
  */
 export const connect = async (): Promise<string | null> => {
-
   if (isWeb3WalletInstalled() && !walletAddress) {
     registerAccountChangedListener();
 
-    const _accounts = await window.ethereum.request(
+    const _accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
 
