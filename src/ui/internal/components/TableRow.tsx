@@ -64,7 +64,10 @@ export const TableRow = (
               {formattedAmountInUSD ? (
                 formattedAmountInUSD
               ) : (
-                <Skeleton width={80} height={25} />
+                <>
+                  {" "}
+                  <Skeleton width={80} height={25} />
+                </>
               )}
             </ExchangeCell>
           </td>
