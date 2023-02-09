@@ -34,9 +34,7 @@ const ContainerButtons = styled.div`
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  gap: 10px;
-  margin-top: -28px;
+  gap: 16px;
 `;
 const LabelFees = styled.p`
   font-family: 'Work Sans';
