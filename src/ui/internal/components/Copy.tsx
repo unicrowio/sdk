@@ -14,7 +14,7 @@ export const CopyToClipboard = ({ content, copy }: CopyToClipboardProps) => {
       className="span-clipboard"
       onClick={async () => {
         copyToClipboard(copy).then(() => {
-          toast("Copied to the clipboard", "success");
+          toast.success("Copied to the clipboard");
         });
       }}
       data-clipboard-text={copy}

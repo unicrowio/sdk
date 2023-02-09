@@ -104,7 +104,7 @@ export function PayModal(props: IPaymentModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Payment Sent", "success");
+      toast.success("Payment Sent");
       setModalTitle("Payment Sent");
 
       setBuyer(payload.buyer);
@@ -119,7 +119,7 @@ export function PayModal(props: IPaymentModalProps) {
   const onPayClick = () => {
     pay(props.paymentProps, payCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
