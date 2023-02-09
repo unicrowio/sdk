@@ -3,7 +3,7 @@ import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { IRefundTransactionCallbacks } from "../typing";
 import {
   autoSwitchNetwork,
-  getWalletAccount,
+  getCurrentWalletAddress,
   getWeb3Provider,
 } from "../wallet";
 import { errorHandler } from "./internal/errorHandler";
@@ -29,7 +29,7 @@ export const refund = async (
 
   await autoSwitchNetwork(callbacks);
 
-  const walletAddress = await provider.getSigner().getAddress();
+  const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = Unicrow__factory.connect(

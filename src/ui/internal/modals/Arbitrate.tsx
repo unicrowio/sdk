@@ -25,8 +25,14 @@ export const Arbitrate = ({
   deferredPromise,
   callbacks,
 }: IArbitrateModalProps) => {
-  const { setIsLoading, setSuccess, setError, success, onModalClose } =
-    useModalStates({ deferredPromise });
+  const {
+    setIsLoading,
+    setLoadingMessage,
+    setSuccess,
+    setError,
+    success,
+    onModalClose,
+  } = useModalStates({ deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [sellerValue, setSellerValue] = React.useState<string>("");
@@ -77,12 +83,12 @@ export const Arbitrate = ({
       .then(() => {
         setSuccess("Arbitration Successful");
         setError(null);
-        toast("Arbitration Successful", "success");
+        toast.success("Arbitration Successful");
       })
       .catch((e) => {
         setSuccess(null);
         setError(e.message);
-        toast(e, "error");
+        toast.error(e);
       })
       .finally(() => {
         setIsLoading(false);

@@ -78,7 +78,7 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Claimed", "success");
+      toast.success("Claimed");
 
       setSuccess(payload);
       setIsLoading(false);
@@ -88,7 +88,7 @@ export function ClaimModal(props: IClaimModalProps) {
   const onClaim = () => {
     claim(Number(props.escrowId), claimCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 

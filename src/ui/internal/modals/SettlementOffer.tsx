@@ -163,8 +163,7 @@ export function SettlementOfferModal({
     confirmed: (payload: OfferSettlementParsedPayload) => {
       callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
-      toast("Offer sent with success", "success");
-
+      toast.success("Offer sent successfully");
       setSuccess(payload);
       setIsLoading(false);
     },
@@ -191,7 +190,7 @@ export function SettlementOfferModal({
           renderModal(ApproveSettlementModal, settlementModalProps);
         })
         .catch((e) => {
-          toast(e, "error");
+          toast.error(e);
         })
         .finally(() => {
           setIsLoading(false);

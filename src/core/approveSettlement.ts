@@ -8,7 +8,7 @@ import { errorHandler } from "./internal/errorHandler";
 import {
   getWeb3Provider,
   autoSwitchNetwork,
-  getWalletAccount,
+  getCurrentWalletAddress,
 } from "../wallet";
 import { parseApproveSettlement } from "./internal/parsers/eventApproveSettlement";
 
@@ -39,7 +39,7 @@ export const approveSettlement = async (
 
     await autoSwitchNetwork(callbacks);
 
-    const walletAddress = await provider.getSigner().getAddress();
+    const walletAddress = await getCurrentWalletAddress();
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
     const CrowDisputeContract = UnicrowDispute__factory.connect(

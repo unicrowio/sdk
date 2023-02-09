@@ -139,7 +139,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       });
     } else {
       if (!escrow?.settlement) {
-        toast("There is no settlement to this escrow", "error");
+        toast.error("There is no settlement to this escrow");
         throw new Error("There is no settlement to this escrow");
       }
     }
@@ -163,7 +163,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       confirmed: (payload: ApproveSettlementParsedPayload) => {
         callbacks && callbacks.confirmed && callbacks.confirmed(payload);
 
-        toast("Accepted", "success");
+        toast.success("Accepted");
 
         setSuccess(payload.transactionHash);
         setIsLoading(false);
@@ -179,7 +179,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         approveSettlementOfferCallbacks,
       ).catch((e) => {
         setIsLoading(false);
-        toast(e, "error");
+        toast.error(e);
       });
     }
   }, [escrowId, escrow]);

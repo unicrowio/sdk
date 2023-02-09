@@ -108,7 +108,7 @@ export function RefundModal(props: IRefundModalProps) {
         props.callbacks.confirmed &&
         props.callbacks.confirmed(payload);
 
-      toast("Refunded", "success");
+      toast.success("Refunded");
       setPaymentStatus(EscrowStatus.REFUNDED);
 
       setSuccess(payload);
@@ -119,7 +119,7 @@ export function RefundModal(props: IRefundModalProps) {
   const onRefund = () => {
     refund(props.escrowId, refundCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
@@ -145,16 +145,13 @@ export function RefundModal(props: IRefundModalProps) {
           <DataDisplayer
             copy={escrowData.seller}
             label="Seller"
-            value={addressWithYou(
-              escrowData.seller,
-              escrowData.connectedWallet,
-            )}
+            value={addressWithYou(escrowData.seller, escrowData.walletAddress)}
             marker={MARKER.seller}
           />
           <DataDisplayer
             copy={escrowData.buyer}
             label="Buyer"
-            value={addressWithYou(escrowData.buyer, escrowData.connectedWallet)}
+            value={addressWithYou(escrowData.buyer, escrowData.walletAddress)}
             marker={MARKER.buyer}
           />
 

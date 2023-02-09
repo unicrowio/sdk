@@ -123,6 +123,7 @@ export const AddApproveArbitrator = ({
         setError(null);
         setSuccess("Arbitrator Proposal Sent");
         toast.success("Arbitrator Proposal Sent");
+
         setAction("added");
       })
       .catch((e) => {
