@@ -105,17 +105,19 @@ export function SettlementOfferModal({
   );
 
   React.useEffect(() => {
-    if (![BUYER, SELLER].includes(escrow?.connectedUser)) {
-      setModalAction({
-        isForbidden: true,
-      });
-    }
+    if (escrow) {
+      if (![BUYER, SELLER].includes(escrow.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      }
 
-    if (escrow?.status.claimed) {
-      setModalAction({
-        isForbidden: true,
-        reason: "The payment is already claimed",
-      });
+      if (escrow.status.claimed) {
+        setModalAction({
+          isForbidden: true,
+          reason: "The payment is already claimed",
+        });
+      }
     }
   }, [escrow]);
 

@@ -50,6 +50,7 @@ const InfoText = styled.p`
   line-height: 22px;
   text-align: center;
   color: #322ca2;
+  margin: 0;
 `;
 
 export function ChallengeModal(props: IChallengeModalProps) {

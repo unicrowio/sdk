@@ -27,6 +27,7 @@ import { SettlementOfferModal } from "./SettlementOffer";
 import { MARKER } from "../../../config/marker";
 import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -56,6 +57,10 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     onModalClose,
     escrowData,
   );
+
+  console.log('pwe', 'escrowData', escrowData)
+  console.log('pwe', 'escrowId', escrowId)
+  console.log('pwe', 'escrow', escrow)
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrow?.settlement) {
@@ -132,14 +137,16 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrow]);
 
   React.useEffect(() => {
-    if (![BUYER, SELLER].includes(escrow?.connectedUser)) {
-      setModalAction({
-        isForbidden: true,
-      });
-    } else {
-      if (!escrow?.settlement) {
-        toast.error("There is no settlement to this escrow");
-        throw new Error("There is no settlement to this escrow");
+    if (escrow) {
+      if (![BUYER, SELLER].includes(escrow?.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      } else {
+        if (!escrow?.settlement) {
+          toast.error("There is no settlement to this escrow");
+          throw new Error("There is no settlement to this escrow");
+        }
       }
     }
   }, [escrow]);

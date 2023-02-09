@@ -72,7 +72,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   const onHandleMultipleClaim = () => {
     claimMultiple(props.escrowIds, claimCallbacks).catch((e) => {
       setIsLoading(false);
-      toast(e, "error");
+      toast.error(e);
     });
   };
 
@@ -113,8 +113,6 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
       </Table>
     );
   };
-
-  console.log("pwe", "props.balances", props.balances);
 
   const ModalFooter = () => {
     let buttonChildren;

@@ -49,7 +49,7 @@ export function PayModal(props: IPaymentModalProps) {
 
   const [walletUser, isLoadingWallet, errorWallet] = useAsync(
     {},
-    getWalletAccount,
+    getCurrentWalletAddress,
     onModalClose,
     null,
   );

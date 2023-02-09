@@ -72,7 +72,7 @@ export const TableRow = (
   );
 };
 
-const ExchangeCell = styled.span`
+const ExchangeCell = styled.td`
   display: flex;
   align-items: center;
   justify-content: right;

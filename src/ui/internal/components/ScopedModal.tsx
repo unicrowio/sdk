@@ -31,24 +31,47 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   const { WithNetworkCheck } = useNetworkCheck();
   const metamaskInstalled = isWeb3WalletInstalled();
   const { isForbidden = false, reason } = props.modalAction || {};
+  console.log(
+    "pwe",
+    "isForbidden && metamaskInstalled",
+    isForbidden,
+    metamaskInstalled,
+  );
 
   const BodyWithFooter = React.useCallback(
     () =>
       WithNetworkCheck(
-        isForbidden ? (
-          <Forbidden description={reason} onClose={props.onClose} />
-        ) : (
-          <ModalBody>
-            <>
-              {props.body ? props.body : <ModalBodySkeleton />}
-              <ModalFooter>
-                <>{props.footer}</>
-              </ModalFooter>
-            </>
-          </ModalBody>
-        ),
+        <>
+          {isForbidden && (
+            <Forbidden description={reason} onClose={props.onClose} />
+          )}
+          {!metamaskInstalled && (
+            <ModalError
+              onClick={() => window.open(metamaskUrl)}
+              type="noMetaMask"
+            />
+          )}
+
+          {!isForbidden && metamaskInstalled && (
+            <ModalBody>
+              <>
+                {props.body ? props.body : <ModalBodySkeleton />}
+                <ModalFooter>
+                  <>{props.footer}</>
+                </ModalFooter>
+              </>
+            </ModalBody>
+          )}
+        </>,
       ),
-    [props.body, props.footer, WithNetworkCheck],
+    [
+      props.body,
+      props.footer,
+      WithNetworkCheck,
+      metamaskInstalled,
+      isForbidden,
+      reason,
+    ],
   );
 
   return (
@@ -59,15 +82,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
           <CloseIcon />
         </ModalHeaderClose>
       </ModalHeader>
-
-      {metamaskInstalled ? (
-        <BodyWithFooter />
-      ) : (
-        <ModalError
-          onClick={() => window.open(metamaskUrl)}
-          type="noMetaMask"
-        />
-      )}
+      <BodyWithFooter />
     </Modal>
   );
 };

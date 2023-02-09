@@ -9,7 +9,7 @@ import { approveArbitrator } from "../../../core/approveArbitrator";
 import { proposeArbitrator } from "../../../core/proposeArbitrator";
 import { toast } from "../notification/toast";
 import { FormattedPercentageAmountAdornment } from "../../../ui/internal/components/FormattedPercentageAmountAdornment";
-import { IArbitrateModalProps } from "../../../typing";
+import { EscrowStatus, IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
@@ -50,7 +50,12 @@ export const AddApproveArbitrator = ({
 
   React.useEffect(() => {
     if (escrowData) {
-      const escrowClosedStates = ["Settled", "Cancelled", "Expired"];
+      const escrowClosedStates = [
+        EscrowStatus.SETTLED,
+        EscrowStatus.PERIOD_EXPIRED,
+        EscrowStatus.RELEASED,
+        EscrowStatus.REFUNDED,
+      ];
 
       if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
         setModalAction({

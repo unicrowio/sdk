@@ -54,16 +54,18 @@ export const Arbitrate = ({
   };
 
   React.useEffect(() => {
-    if (escrow?.arbitration?.arbitrated) {
-      setBuyerValue(escrow.splitBuyer.toString());
-      setSellerValue(escrow.splitSeller.toString());
-    }
+    if (escrow) {
+      if (escrow.arbitration?.arbitrated) {
+        setBuyerValue(escrow.splitBuyer.toString());
+        setSellerValue(escrow.splitSeller.toString());
+      }
 
-    if (escrow?.connectedUser !== "arbitrator") {
-      setModalAction({
-        isForbidden: true,
-        reason: "Only the arbitrator defined in the escrow can arbitrate it",
-      });
+      if (escrow.connectedUser !== "arbitrator") {
+        setModalAction({
+          isForbidden: true,
+          reason: "Only the arbitrator defined in the escrow can arbitrate it",
+        });
+      }
     }
   }, [escrow]);
 

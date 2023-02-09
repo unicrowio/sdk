@@ -53,27 +53,29 @@ export function RefundModal(props: IRefundModalProps) {
     useCountdownChallengePeriod(escrowData);
 
   React.useEffect(() => {
-    if (escrowData?.connectedUser !== SELLER) {
-      setModalAction({
-        isForbidden: true,
-        reason: "Only the seller can refund the payment",
-      });
-    }
+    if (escrowData) {
+      if (escrowData.connectedUser !== SELLER) {
+        setModalAction({
+          isForbidden: true,
+          reason: "Only the seller can refund the payment",
+        });
+      }
 
-    if (escrowData?.status.claimed) {
-      setModalAction({
-        isForbidden: true,
-        reason: "The payment cannot be refunded via Unicrow anymore",
-      });
-    }
+      if (escrowData.status.claimed) {
+        setModalAction({
+          isForbidden: true,
+          reason: "The payment cannot be refunded via Unicrow anymore",
+        });
+      }
 
-    if (escrowData?.status.state === EscrowStatus.CHALLENGED) {
-      setPaymentStatus(
-        `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
-      );
-    }
+      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        setPaymentStatus(
+          `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
+        );
+      }
 
-    setPaymentStatus(escrowData?.status.state);
+      setPaymentStatus(escrowData.status.state);
+    }
   }, [escrowData]);
 
   const refundCallbacks: IRefundTransactionCallbacks = {
