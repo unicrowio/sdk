@@ -146,7 +146,7 @@ export const Modal = ({
               <div>
                 <Loading />
                 <ModalLoadingMessage>
-                  {loadingMessage}
+                  {loadingMessage ? loadingMessage : "Loading"}
                   <span>{dots}</span>
                 </ModalLoadingMessage>
               </div>
