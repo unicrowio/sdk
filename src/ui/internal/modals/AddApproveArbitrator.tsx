@@ -27,8 +27,15 @@ export const AddApproveArbitrator = ({
   deferredPromise,
   callbacks,
 }: IArbitrateModalProps) => {
-  const { setIsLoading, setSuccess, setError, success, onModalClose } =
-    useModalStates({ deferredPromise });
+  const {
+    isLoading,
+    loadingMessage,
+    setIsLoading,
+    setSuccess,
+    setError,
+    success,
+    onModalClose,
+  } = useModalStates({ deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [arbitrator, setArbitrator] = React.useState<string>("");
@@ -39,14 +46,19 @@ export const AddApproveArbitrator = ({
   >("initial");
 
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
+  const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">(
+    "arbitrator",
+  );
 
   const [modalAction, setModalAction] = React.useState<ModalAction>();
 
-  const [escrowData, isLoading, error] = useAsync(
+  const [escrowData, isLoadingEscrow, error] = useAsync(
     escrowId,
     getEscrowData,
     onModalClose,
   );
+
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
     if (escrowData) {
@@ -132,7 +144,6 @@ export const AddApproveArbitrator = ({
         setAction("added");
       })
       .catch((e) => {
-        console.error(e);
         setSuccess(null);
         setError(e.message);
         toast.error(e);
@@ -176,22 +187,29 @@ export const AddApproveArbitrator = ({
     return (
       <Stack>
         <InputText
-          autoFocus
+          autoFocus={focus === "arbitrator"}
           required
           disabled={action === "view" || action === "edit" || !!success}
           name="arbitrator"
           id="arbitrator"
           label="Address"
-          onChange={(event) => setArbitrator(event.target.value)}
+          onChange={(event) => {
+            setArbitrator(event.target.value.trim());
+            setFocus("arbitrator");
+          }}
           value={arbitrator}
         />
         <InputText
+          autoFocus={focus === "arbitratorFee"}
           disabled={action === "view" || action === "edit" || !!success}
           required
           name="arbitratorFee"
           id="arbitratorFee"
           label="Fee"
-          onChange={(event) => setArbitratorFee(event.target.value)}
+          onChange={(event) => {
+            setArbitratorFee(event.target.value);
+            setFocus("arbitratorFee");
+          }}
           value={arbitratorFee}
           min="0"
           max="100"
@@ -218,7 +236,7 @@ export const AddApproveArbitrator = ({
     if (action === "view" || action === "added") {
       return (
         <Button
-          disabled={isLoading}
+          disabled={isLoadingAnything}
           fullWidth
           variant="tertiary"
           onClick={onModalClose}
@@ -232,7 +250,7 @@ export const AddApproveArbitrator = ({
       return (
         <Stack direction="row" style={{ width: "100%" }}>
           <Button
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             variant="secondary"
             type="button"
@@ -246,7 +264,7 @@ export const AddApproveArbitrator = ({
           </Button>
 
           <Button
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             variant="primary"
             type="submit"
@@ -261,7 +279,7 @@ export const AddApproveArbitrator = ({
       return (
         <Stack direction="row" style={{ width: "100%" }}>
           <Button
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             variant="tertiary"
             type="button"
@@ -279,7 +297,7 @@ export const AddApproveArbitrator = ({
           </Button>
 
           <Button
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             variant="primary"
             type="submit"
@@ -294,7 +312,7 @@ export const AddApproveArbitrator = ({
       return (
         <Stack direction="row" style={{ width: "100%" }}>
           <Button
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             variant="tertiary"
             type="button"
@@ -304,7 +322,7 @@ export const AddApproveArbitrator = ({
           </Button>
 
           <Button
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             variant="primary"
             type="submit"
@@ -325,8 +343,8 @@ export const AddApproveArbitrator = ({
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={isLoading ? "Getting Arbitration information" : ""}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
         modalAction={modalAction}
       />
     </form>

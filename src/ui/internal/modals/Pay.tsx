@@ -35,6 +35,7 @@ export function PayModal(props: IPaymentModalProps) {
     success,
     setSuccess,
     setIsLoading,
+    isLoading,
     loadingMessage,
     setLoadingMessage,
     onModalClose,
@@ -60,7 +61,7 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   );
 
-  const isLoading = isLoadingToken || isLoadingWallet;
+  const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
   const error = errorWallet || errorToken;
 
   const payCallbacks: IPayTransactionCallbacks = {
@@ -87,7 +88,7 @@ export function PayModal(props: IPaymentModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IPayTransactionPayload) => {
       props.callbacks &&
@@ -107,6 +108,7 @@ export function PayModal(props: IPaymentModalProps) {
   };
 
   const onPayClick = () => {
+    setIsLoading(true);
     pay(props.paymentProps, payCallbacks).catch((e) => {
       setIsLoading(false);
       toast.error(e);
@@ -215,7 +217,7 @@ export function PayModal(props: IPaymentModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -228,7 +230,7 @@ export function PayModal(props: IPaymentModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
       />
     </div>

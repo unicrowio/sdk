@@ -69,7 +69,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   );
 
   return (
-    <Modal isLoading={props.isLoading} loadingMessage={props.loadingMessage}>
+    <Modal isLoading={!!props?.isLoading} loadingMessage={props.loadingMessage}>
       <ModalHeader>
         <ModalHeaderTitle>{props.title}</ModalHeaderTitle>
         <ModalHeaderClose onClick={props.onClose}>

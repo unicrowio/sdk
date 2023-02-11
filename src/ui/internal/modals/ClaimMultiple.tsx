@@ -6,17 +6,12 @@ import {
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
 } from "../../../typing";
-import { BigCheckIcon } from "../assets/BigCheckIcon";
 import { Button, ScopedModal, Table } from "../components";
-import { TableRow } from "../components/TableRow";
+import { BalancesTable } from "../components/BalancesTable";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { claimMultiple } from "../../../core";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-
-interface IBalanceWithTokenUSD extends IBalanceDetailed {
-  amountInUSD?: string;
-}
 
 export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   const {
@@ -55,7 +50,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IClaimTransactionPayload) => {
       props.callbacks &&
@@ -76,41 +71,20 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     });
   };
 
-  React.useEffect(() => {
-    setIsLoading(true);
-  }, []);
-
-  const ClaimSuccessful = () => {
-    const wrapperStyles: CSS.Properties = {
-      margin: "0 auto",
-      textAlign: "center",
-      fontWeight: 500,
-    };
-    return (
-      <div style={wrapperStyles}>
-        <BigCheckIcon />
-        <p>All balances claimed!</p>
-      </div>
-    );
-  };
+  const claimableAmount = props.balances.readyForClaim.length;
 
   const ModalBody = () => {
-    return success ? (
-      <ClaimSuccessful />
-    ) : (
-      <Table>
-        <thead>
-          <tr>
-            <th>Currency</th>
-            <th>USD Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.balances.readyForClaim.map((balance: IBalanceWithTokenUSD) =>
-            TableRow(balance, onModalClose, setIsLoading),
-          )}
-        </tbody>
-      </Table>
+    if (isLoading) {
+      return null;
+    }
+
+    return (
+      <BalancesTable
+        balances={props.balances.readyForClaim}
+        onModalClose={onModalClose}
+        setIsLoading={setIsLoading}
+        success={success}
+      />
     );
   };
 
@@ -118,10 +92,10 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     let buttonChildren;
     let buttonOnClick;
 
-    if (!(error || success)) {
+    if (!(error || success) && claimableAmount > 0) {
       buttonChildren = "Confirm";
       buttonOnClick = onHandleMultipleClaim;
-    } else if (success) {
+    } else if (success || claimableAmount === 0) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
     } else {
@@ -130,11 +104,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     }
 
     return (
-      <Button
-        fullWidth
-        disabled={isLoading || props.balances.readyForClaim.length === 0}
-        onClick={buttonOnClick}
-      >
+      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -143,11 +113,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   return (
     <div ref={closeHandlerRef}>
       <ScopedModal
-        title={
-          props.balances.readyForClaim.length > 1
-            ? "Claim Balances"
-            : "Claim Payment"
-        }
+        title={claimableAmount > 1 ? "Claim Balances" : "Claim Payment"}
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}

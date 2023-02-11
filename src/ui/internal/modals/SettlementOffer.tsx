@@ -56,7 +56,9 @@ export function SettlementOfferModal({
   const {
     success,
     setSuccess,
+    isLoading,
     setIsLoading,
+    loadingMessage,
     setLoadingMessage,
     setError,
     onModalClose,
@@ -97,12 +99,14 @@ export function SettlementOfferModal({
     [deferredPromise, callbacks, onModalClose],
   );
 
-  const [escrow, isLoading, error] = useAsync(
+  const [escrow, isLoadingEscrow, error] = useAsync(
     escrowId,
     escrowData ? null : getEscrowAndPossiblyRenderApproveModal,
     onModalClose,
     escrowData,
   );
+
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
     if (escrow) {
@@ -159,7 +163,7 @@ export function SettlementOfferModal({
     },
     broadcasted: (payload: ISettlementTransactionPayload) => {
       callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: OfferSettlementParsedPayload) => {
       callbacks && callbacks.confirmed && callbacks.confirmed(payload);
@@ -237,7 +241,12 @@ export function SettlementOfferModal({
         <Button fullWidth type="button" variant="tertiary" onClick={onCancel}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" disabled={isLoading} fullWidth>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={isLoadingAnything}
+          fullWidth
+        >
           Submit
         </Button>
       </>
@@ -337,8 +346,8 @@ export function SettlementOfferModal({
         body={ModalBody()}
         footer={ModalFooter()}
         onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
         modalAction={modalAction}
       />
     </form>

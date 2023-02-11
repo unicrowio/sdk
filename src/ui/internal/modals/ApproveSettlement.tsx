@@ -47,16 +47,25 @@ const LabelFees = styled.p`
 
 export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   const { escrowData, escrowId, callbacks, deferredPromise } = props;
-  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
-    useModalStates({ deferredPromise });
+  const {
+    success,
+    setSuccess,
+    isLoading,
+    setIsLoading,
+    loadingMessage,
+    setLoadingMessage,
+    onModalClose,
+  } = useModalStates({ deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalAction, setModalAction] = React.useState<ModalAction>();
-  const [escrow, isLoading] = useAsync(
+  const [escrow, isLoadingEscrow] = useAsync(
     escrowId,
     escrowData ? null : getEscrowData, // this only runs if escrowData is null
     onModalClose,
     escrowData,
   );
+
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrow?.settlement) {
@@ -160,7 +169,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       },
       broadcasted: (payload: ISettlementTransactionPayload) => {
         callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
-        setLoadingMessage("Waiting confirmation");
+        setLoadingMessage("Waiting for confirmation");
       },
       confirmed: (payload: ApproveSettlementParsedPayload) => {
         callbacks && callbacks.confirmed && callbacks.confirmed(payload);
@@ -272,7 +281,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
           </Button>
           <Button
             variant="primary"
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             onClick={onAcceptClick}
           >
@@ -290,7 +299,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         </Button>
       </ContainerButtons>
     );
-  }, [displayActionButtons, isLoading, escrow]);
+  }, [displayActionButtons, isLoadingAnything, escrow]);
 
   return (
     <div ref={closeHandlerRef}>
@@ -299,8 +308,8 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
         modalAction={modalAction}
       />
     </div>

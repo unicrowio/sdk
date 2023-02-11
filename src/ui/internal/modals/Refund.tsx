@@ -33,6 +33,7 @@ export function RefundModal(props: IRefundModalProps) {
     success,
     setSuccess,
     setIsLoading,
+    isLoading,
     loadingMessage,
     setLoadingMessage,
     onModalClose,
@@ -42,12 +43,14 @@ export function RefundModal(props: IRefundModalProps) {
 
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
 
-  const [escrowData, isLoading, error] = useAsync(
+  const [escrowData, isLoadingEsrow, error] = useAsync(
     props.escrowId,
     getEscrowData,
     onModalClose,
     null,
   );
+
+  const isLoadingAnything = isLoadingEsrow || isLoading;
 
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
@@ -102,7 +105,7 @@ export function RefundModal(props: IRefundModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IRefundTransactionPayload) => {
       props.callbacks &&
@@ -198,7 +201,7 @@ export function RefundModal(props: IRefundModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -211,7 +214,7 @@ export function RefundModal(props: IRefundModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
         modalAction={modalAction}
       />

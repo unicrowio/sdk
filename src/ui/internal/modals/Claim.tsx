@@ -12,23 +12,28 @@ import { getSingleBalance, claim } from "../../../core";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useAsync } from "../hooks/useAsync";
-import { TableRow } from "../components/TableRow";
-
-interface IBalanceWithTokenUSD extends IBalanceDetailed {
-  amountInUSD?: string;
-}
+import { BalancesTable } from "../components/BalancesTable";
 
 export function ClaimModal(props: IClaimModalProps) {
-  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
-    useModalStates({ deferredPromise: props.deferredPromise });
+  const {
+    success,
+    setSuccess,
+    isLoading,
+    setIsLoading,
+    loadingMessage,
+    setLoadingMessage,
+    onModalClose,
+  } = useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [modalAction, setModalAction] = React.useState<ModalAction>();
-  const [escrowBalance, isLoading, error] = useAsync(
+  const [escrowBalance, isLoadingBalance, error] = useAsync(
     props.escrowId,
     getSingleBalance,
     onModalClose,
   );
+
+  const isLoadingAnything = isLoadingBalance || isLoading;
 
   React.useEffect(() => {
     if (escrowBalance) {
@@ -71,7 +76,7 @@ export function ClaimModal(props: IClaimModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IClaimTransactionPayload) => {
       props.callbacks &&
@@ -93,24 +98,17 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalBody = () => {
-    if (!escrowBalance) {
+    if (isLoadingBalance) {
       return null;
     }
 
     return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Currency</th>
-            <th>USD Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[escrowBalance].map((balance: IBalanceWithTokenUSD) =>
-            TableRow(balance, onModalClose, setIsLoading),
-          )}
-        </tbody>
-      </Table>
+      <BalancesTable
+        balances={[escrowBalance]}
+        onModalClose={onModalClose}
+        setIsLoading={setIsLoading}
+        success={success}
+      />
     );
   };
 
@@ -134,7 +132,7 @@ export function ClaimModal(props: IClaimModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -147,8 +145,8 @@ export function ClaimModal(props: IClaimModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
         modalAction={modalAction}
       />
     </div>

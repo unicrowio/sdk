@@ -25,7 +25,9 @@ export const Arbitrate = ({
   callbacks,
 }: IArbitrateModalProps) => {
   const {
+    isLoading,
     setIsLoading,
+    loadingMessage,
     setLoadingMessage,
     setSuccess,
     setError,
@@ -39,11 +41,13 @@ export const Arbitrate = ({
   const [focus, setFocus] = React.useState<"seller" | "buyer">("seller");
 
   const [modalAction, setModalAction] = React.useState<ModalAction>();
-  const [escrow, isLoading, error] = useAsync(
+  const [escrow, isLoadingEscrow, error] = useAsync(
     escrowId,
     getEscrowData,
     onModalClose,
   );
+
+  const isLoadingAnything = isLoading || isLoadingEscrow;
 
   const arbitrateCallbacks = {
     ...callbacks,
@@ -182,7 +186,7 @@ export const Arbitrate = ({
     ) {
       return (
         <Button
-          disabled={isLoading}
+          disabled={isLoadingAnything}
           fullWidth
           variant="tertiary"
           onClick={onModalClose}
@@ -196,7 +200,12 @@ export const Arbitrate = ({
       !escrow.arbitration.arbitrated
     ) {
       return (
-        <Button disabled={isLoading} fullWidth variant="primary" type="submit">
+        <Button
+          disabled={isLoadingAnything}
+          fullWidth
+          variant="primary"
+          type="submit"
+        >
           {error ? "Retry" : "Confirm"}
         </Button>
       );
@@ -212,8 +221,8 @@ export const Arbitrate = ({
         body={ModalBody()}
         footer={ModalFooter()}
         onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={isLoading ? "Getting Arbitration information" : ""}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
         modalAction={modalAction}
       />
     </form>

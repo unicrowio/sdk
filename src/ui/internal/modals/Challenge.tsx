@@ -54,16 +54,25 @@ const InfoText = styled.p`
 `;
 
 export function ChallengeModal(props: IChallengeModalProps) {
-  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
-    useModalStates({ deferredPromise: props.deferredPromise });
+  const {
+    success,
+    setSuccess,
+    isLoading,
+    setIsLoading,
+    loadingMessage,
+    setLoadingMessage,
+    onModalClose,
+  } = useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalAction, setModalAction] = React.useState<ModalAction>();
-  const [escrowData, isLoading, error] = useAsync(
+  const [escrowData, isLoadingEscrow, error] = useAsync(
     props.escrowId,
     getEscrowData,
     onModalClose,
     null,
   );
+
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
     if (escrowData) {
@@ -120,7 +129,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IChallengeTransactionPayload) => {
       props.callbacks &&
@@ -252,7 +261,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
         {!shouldWaitOtherParty && (
           <Button
             fullWidth
-            disabled={isLoading || disableButton}
+            disabled={isLoadingAnything || disableButton}
             onClick={buttonOnClick}
           >
             {buttonChildren}
@@ -280,8 +289,8 @@ export function ChallengeModal(props: IChallengeModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
-        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
       />
     </div>
   );

@@ -27,18 +27,26 @@ import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function ReleaseModal(props: IReleaseModalProps) {
-  const { success, setSuccess, setIsLoading, setLoadingMessage, onModalClose } =
-    useModalStates({ deferredPromise: props.deferredPromise });
+  const {
+    success,
+    setSuccess,
+    isLoading,
+    setIsLoading,
+    setLoadingMessage,
+    onModalClose,
+  } = useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
 
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
   const [modalAction, setModalAction] = React.useState<ModalAction>();
 
-  const [escrowData, isLoading, error] = useAsync(
+  const [escrowData, isLoadingEscrow, error] = useAsync(
     props.escrowId,
     getEscrowData,
     onModalClose,
   );
+
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
@@ -93,7 +101,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IReleasedTransactionPayload) => {
       props.callbacks &&
@@ -181,7 +189,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -194,7 +202,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={isLoading ? "Getting Escrow information" : ""}
         modalAction={modalAction}
       />

@@ -74,7 +74,7 @@ export const ModalFooter = styled.footer`
 export const ModalLoading = styled.div`
   position: fixed;
   z-index: 99999999;
-  top: -12px;
+  top: -22px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -119,22 +119,16 @@ export interface ModalAction {
   reason?: string;
 }
 
-export const Modal = ({
-  isLoading = false,
-  loadingMessage = "",
-  children,
-}: TModalProps) => {
+export const Modal = ({ isLoading, loadingMessage, children }: TModalProps) => {
   const [dots, setDots] = React.useState("...");
 
-  const updateDots = () => {
+  useInterval(() => {
     if (dots === "...") {
       setDots("");
     } else {
       setDots(dots + ".");
     }
-  };
-
-  useInterval(updateDots, 500);
+  }, 500);
 
   return (
     <ModalWrapper>
