@@ -18,7 +18,7 @@ export const useCountdownChallengePeriod = (
   const [disableButton, setDisableButton] = React.useState(false);
   const [labelChallengePeriod, setLabelChallengePeriod] =
     React.useState("Challenge Period");
-  const [countdown, setCountdown] = React.useState("...");
+  const countdown = React.useRef("...");
 
   const [shouldWaitOtherParty, setShouldWaitOtherParty] = React.useState(false);
 
@@ -26,12 +26,12 @@ export const useCountdownChallengePeriod = (
     const _countdown = countdownChallengePeriod(date);
 
     if (_countdown === "-") {
-      setCountdown("expired");
+      countdown.current = "expired";
     } else {
       if (periodStarted) {
-        setCountdown(_countdown);
+        countdown.current = _countdown;
       } else {
-        setCountdown(`Starts in ${_countdown.replace(" remaining", "")}`);
+        countdown.current = `Starts in ${_countdown.replace(" remaining", "")}`;
       }
     }
   };
@@ -60,7 +60,7 @@ export const useCountdownChallengePeriod = (
     setLabelChallengePeriod("Challenge Period");
     setButtonLabel("Challenge period expired");
     setDisableButton(true);
-    setCountdown("expired");
+    countdown.current = "expired";
   };
 
   const init = () => {
@@ -146,7 +146,7 @@ export const useCountdownChallengePeriod = (
     buttonLabel,
     disableButton,
     labelChallengePeriod,
-    countdown,
+    countdown: countdown.current,
     shouldWaitOtherParty,
   };
 };

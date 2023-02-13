@@ -41,15 +41,15 @@ export const AnimatedLogo = styled.div`
     &[class*="long-path"] {
       animation: dash-long 2s linear infinite;
       stroke: #252e47;
-      stroke-dasharray: 159;
-      stroke-dashoffset: 159;
+      stroke-dasharray: 160;
+      stroke-dashoffset: 160;
     }
 
     &[class*="short-path"] {
       animation: dash-short 2s linear infinite;
       stroke: #322ca2;
-      stroke-dasharray: 124;
-      stroke-dashoffset: 124;
+      stroke-dasharray: 125;
+      stroke-dashoffset: 125;
     }
 
     &[class*="shortest-path"] {
@@ -62,7 +62,7 @@ export const AnimatedLogo = styled.div`
 
   @keyframes dash-long {
     0% {
-      stroke-dashoffset: 159;
+      stroke-dashoffset: 160;
       stroke: #252e47;
       fill: transparent;
     }
@@ -85,7 +85,7 @@ export const AnimatedLogo = styled.div`
 
   @keyframes dash-short {
     0% {
-      stroke-dashoffset: 124;
+      stroke-dashoffset: 125;
       stroke: #322ca2;
       fill: transparent;
     }

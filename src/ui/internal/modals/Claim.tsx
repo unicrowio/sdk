@@ -6,7 +6,7 @@ import {
   IBalanceDetailed,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
-import { Button, Table, ScopedModal } from "../components";
+import { Button, ScopedModal } from "../components";
 import { toast } from "../notification/toast";
 import { getSingleBalance, claim } from "../../../core";
 import { ModalAction } from "../components/Modal";

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactElement, ReactNode } from "react";
 import {
   Modal,
   ModalBody,
@@ -32,6 +32,13 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   const metamaskInstalled = isWeb3WalletInstalled();
   const { isForbidden = false, reason } = props.modalAction || {};
 
+  const bodyContent = React.Children.toArray(props.body)[0] as any;
+  const [bodyIsEmpty, setBodyIsEmpty] = React.useState(true);
+
+  React.useEffect(() => {
+    setBodyIsEmpty([null, false].includes(bodyContent.type()));
+  }, [bodyContent]);
+
   const BodyWithFooter = React.useCallback(
     () =>
       WithNetworkCheck(
@@ -45,15 +52,17 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
               type="noMetaMask"
             />
           )}
-
           {!isForbidden && metamaskInstalled && (
             <ModalBody>
-              <>
-                {props.body ? props.body : <ModalBodySkeleton />}
-                <ModalFooter>
-                  <>{props.footer}</>
-                </ModalFooter>
-              </>
+              {bodyIsEmpty && <ModalBodySkeleton />}
+              {!bodyIsEmpty && (
+                <>
+                  {props.body}
+                  <ModalFooter>
+                    <>{props.footer}</>
+                  </ModalFooter>
+                </>
+              )}
             </ModalBody>
           )}
         </>,
