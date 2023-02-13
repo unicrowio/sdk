@@ -105,7 +105,7 @@ export function SettlementOfferModal({
           };
 
           if (data.status.latestSettlementOfferBy) {
-            onModalClose();
+            onModalClose("change");
             renderModal(ApproveSettlementModal, settlementModalProps);
           }
 
@@ -213,7 +213,7 @@ export function SettlementOfferModal({
 
       renderModal(ApproveSettlementModal, settlementModalProps);
     } else {
-      onModalClose();
+      onModalClose("change");
     }
   };
 
