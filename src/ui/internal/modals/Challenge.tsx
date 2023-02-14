@@ -98,11 +98,13 @@ export function ChallengeModal(props: IChallengeModalProps) {
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
 
   const {
-    buttonLabel,
-    disableButton,
     labelChallengePeriod,
     countdown,
-    shouldWaitOtherParty,
+    challengedBy,
+    updateChallenge,
+    startChallenge,
+    startExpired,
+    canChallenge,
   } = useCountdownChallengePeriod(escrowData);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
@@ -130,6 +132,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting for confirmation");
+      updateChallenge(escrowData);
     },
     confirmed: (payload: IChallengeTransactionPayload) => {
       props.callbacks &&
@@ -137,6 +140,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Challenged");
+      startChallenge();
 
       setPaymentStatus(`${EscrowStatus.CHALLENGED} by you`);
       setSuccess(payload);
@@ -218,6 +222,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
   const ModalFooter = () => {
     const isSeller = escrowData?.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData?.connectedUser === BUYER; // SIGNED AS BUYER
+    const isWaitsForChallenge = challengedBy !== escrowData?.connectedUser;
 
     if (!(escrowData && (isBuyer || isSeller))) {
       return null;
@@ -239,46 +244,42 @@ export function ChallengeModal(props: IChallengeModalProps) {
       );
     }
 
+    if (isWaitsForChallenge && !startExpired) {
+      return (
+        <Button fullWidth disabled variant="primary">
+          <>
+            <SpinnerIcon />
+            Challenge period hasn't started yet
+          </>
+        </Button>
+      );
+    }
+
     let buttonChildren;
     let buttonOnClick;
 
     if (!escrowData) {
-      buttonChildren = buttonLabel;
+      buttonChildren = "";
       buttonOnClick = () => "";
-    } else if (!(error || success)) {
-      buttonChildren = buttonLabel;
+    } else if (canChallenge) {
+      buttonChildren = "Confirm Challenge";
       buttonOnClick = onChallenge;
-    } else if (success) {
+    } else if (!canChallenge) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
-    } else {
+    } else if (error) {
       buttonChildren = "Retry";
       buttonOnClick = onChallenge;
     }
 
     return (
-      <>
-        {!shouldWaitOtherParty && (
-          <Button
-            fullWidth
-            disabled={isLoadingAnything || disableButton}
-            onClick={buttonOnClick}
-          >
-            {buttonChildren}
-          </Button>
-        )}
-
-        {shouldWaitOtherParty && countdown !== "expired" && (
-          <>
-            <Button fullWidth disabled variant="primary">
-              <>
-                <SpinnerIcon />
-                Challenge period hasn't started yet
-              </>
-            </Button>
-          </>
-        )}
-      </>
+      <Button
+        fullWidth
+        disabled={isLoadingAnything || false} // disableButton
+        onClick={buttonOnClick}
+      >
+        {buttonChildren}
+      </Button>
     );
   };
 
