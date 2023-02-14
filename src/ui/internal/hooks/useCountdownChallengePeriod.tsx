@@ -57,7 +57,7 @@ export const useCountdownChallengePeriod = (escrowData) => {
         prefix = "Expires in";
       } else {
         date = challengedByYou ? end : start;
-        prefix = challengedByYou ? "Expires in" : "Begins in";
+        prefix = challengedByYou ? "Expires in" : "Starts in";
       }
       const _countdown = getCountdown(date, prefix);
 
@@ -103,7 +103,7 @@ export const useCountdownChallengePeriod = (escrowData) => {
       return;
     }
 
-    if (startExpired && countdown?.current === "Begins in -") {
+    if (startExpired && countdown?.current === "Starts in -") {
       setCanChallenge(true);
       startCountdown();
       return;
