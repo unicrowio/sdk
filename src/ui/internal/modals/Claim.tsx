@@ -85,8 +85,8 @@ export function ClaimModal(props: IClaimModalProps) {
         }
 
         if (
-          _escrowBalance.statusEscrow.claimed ||
-          _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
+          _escrowBalance.status.claimed ||
+          _escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED
         ) {
           setModalAction({
             isForbidden: false,
@@ -114,7 +114,9 @@ export function ClaimModal(props: IClaimModalProps) {
       if (isLoading || !escrowBalance) {
         return (
           <tr>
-            <Skeleton width="100%" height={25} />
+            <td>
+              <Skeleton width="100%" height={25} />
+            </td>
           </tr>
         );
       }
