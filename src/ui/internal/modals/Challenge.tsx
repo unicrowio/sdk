@@ -92,12 +92,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   React.useEffect(() => {
     if (escrowData) {
-      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
-        setModalAction({
-          isForbidden: true,
-        });
-      }
-
       if (escrowData.status.state === EscrowStatus.CHALLENGED) {
         const who =
           escrowData.status.latestChallengeBy === escrowData.connectedUser
@@ -237,7 +231,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
       return null;
     }
 
-    if (modalAction?.isForbidden) {
+    if (modalAction?.isForbidden || (!isSeller && !isBuyer)) {
       return <Forbidden onClose={onModalClose} />;
     }
 
