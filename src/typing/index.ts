@@ -884,9 +884,6 @@ export interface IBalanceDetailed extends IBalance {
 
   /** Address of the connected user */
   walletAddress: string;
-
-  /** Indicates status of the payment (claimed, latestChallengeBy, latestSettlementBy and its escrow state like 'Paid' | 'Unpaid' etc.) */
-  status: IEscrowStatus;
 }
 
 /**
