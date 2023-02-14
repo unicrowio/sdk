@@ -338,7 +338,11 @@ export function SettlementOfferModal({
   };
 
   const ModalFooter = () => {
-    if (!escrow || escrow.status.claimed) {
+    if (
+      !escrow ||
+      escrow.status.claimed ||
+      ![BUYER, SELLER].includes(escrow.connectedUser)
+    ) {
       return null;
     }
     return (
