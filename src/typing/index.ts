@@ -855,7 +855,7 @@ export interface IBalance {
   token?: IToken;
 
   /** Whether the balance is still waiting for the challenge period to end, or is ready to claim */
-  status: "Pending" | "Ready to claim";
+  status: IEscrowStatus;
 }
 
 /**
@@ -873,9 +873,6 @@ export interface IBalanceDetailed extends IBalance {
 
   /** Address of the connected user */
   walletAddress: string;
-
-  /** Indicates status of the payment (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED) */
-  statusEscrow: IEscrowStatus;
 }
 
 /**

@@ -88,7 +88,7 @@ export function SettlementOfferModal({
           callbacks,
         };
 
-        if (data.status.latestSettlementOfferBy) {
+        if (data && data.status.latestSettlementOfferBy) {
           onModalClose();
           renderModal(ApproveSettlementModal, settlementModalProps);
         }
@@ -123,6 +123,7 @@ export function SettlementOfferModal({
         });
       }
     }
+    return () => setModalAction(undefined);
   }, [escrow]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
@@ -205,7 +206,7 @@ export function SettlementOfferModal({
   );
 
   const onCancel = () => {
-    if (escrowData) {
+    if (escrow) {
       const settlementModalProps: ISettlementOfferModalProps = {
         escrowId,
         escrowData: escrow,
@@ -343,8 +344,8 @@ export function SettlementOfferModal({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={onSubmitNewOffer}>
       <ScopedModal
         title={"Settlement Offer"}
-        body={ModalBody()}
-        footer={ModalFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}

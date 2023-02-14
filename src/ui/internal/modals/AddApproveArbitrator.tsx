@@ -56,6 +56,8 @@ export const AddApproveArbitrator = ({
     escrowId,
     getEscrowData,
     onModalClose,
+    null,
+    true,
   );
 
   const isLoadingAnything = isLoadingEscrow || isLoading;
@@ -220,8 +222,8 @@ export const AddApproveArbitrator = ({
           adornmentEnd={{
             content: escrowData.arbitration && (
               <FormattedPercentageAmountAdornment
-                amount={escrowData?.amount}
-                tokenInfo={escrowData?.token}
+                amount={escrowData.amount}
+                tokenInfo={escrowData.token}
                 percentage={arbitratorFee}
               />
             ),

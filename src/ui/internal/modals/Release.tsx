@@ -174,13 +174,15 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
+    const cantReleaseAnymore =
+      escrowData.status.state === EscrowStatus.PERIOD_EXPIRED;
     let buttonChildren;
     let buttonOnClick;
 
-    if (!(error || success)) {
+    if (!(error || success) && !cantReleaseAnymore) {
       buttonChildren = "Confirm Release";
       buttonOnClick = onRelease;
-    } else if (success) {
+    } else if (success || cantReleaseAnymore) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
     } else {
