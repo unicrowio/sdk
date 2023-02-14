@@ -11,7 +11,7 @@ export const countdownChallengePeriod = (end: Date) => {
   const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
   if (days >= 1 && hours === 0) {
-    return "1d remaining";
+    return `${days}d remaining`;
   }
 
   if (days >= 1 && hours >= 1) {
@@ -26,12 +26,16 @@ export const countdownChallengePeriod = (end: Date) => {
     return `${hours}h ${minutes}m remaining`;
   }
 
-  if (minutes >= 1) {
+  if (minutes >= 2) {
     return `${minutes}m remaining`;
   }
 
+  if (minutes === 1) {
+    return `more than a minute remaining`;
+  }
+
   if (seconds >= 1) {
-    return "Less than a minute remaining";
+    return `${seconds}sec remaining`;
   }
 
   return "-";

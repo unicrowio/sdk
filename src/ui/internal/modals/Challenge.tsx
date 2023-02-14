@@ -37,6 +37,8 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
+import { useAsync } from "../hooks/useAsync";
+import { ModalAction } from "../components/Modal";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -56,18 +58,19 @@ const InfoText = styled.p`
 
 export function ChallengeModal(props: IChallengeModalProps) {
   const {
-    success,
     setSuccess,
     isLoading,
     setIsLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const { isCorrectNetwork } = useNetworkCheck();
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const [escrowData, isLoadingEscrow, error] = useAsync(
+    props.escrowId,
+    getEscrowData,
+    onModalClose,
     null,
   );
 
@@ -75,47 +78,38 @@ export function ChallengeModal(props: IChallengeModalProps) {
     string | undefined
   >();
 
+  const isLoadingAnything = isLoadingEscrow || isLoading;
+
   const {
-    buttonLabel,
-    disableButton,
     labelChallengePeriod,
     countdown,
-    shouldWaitOtherParty,
+    challengedBy,
+    updateChallenge,
+    startChallenge,
+    startExpired,
+    canChallenge,
   } = useCountdownChallengePeriod(escrowData);
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(props.escrowId)
-        .then(async (data: IGetEscrowData) => {
-          setEscrowData(data);
-
-          if (data.status.state === EscrowStatus.CHALLENGED) {
-            const who =
-              data.status.latestChallengeBy === data.connectedUser
-                ? "you"
-                : data?.status.latestChallengeBy;
-            setPaymentStatus(`${EscrowStatus.CHALLENGED} by ${who}`);
-            return;
-          }
-
-          setPaymentStatus(data.status.state);
-        })
-        .catch((e) => {
-          toast.error(e);
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      }
+
+      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        const who =
+          escrowData.status.latestChallengeBy === escrowData.connectedUser
+            ? "you"
+            : escrowData?.status.latestChallengeBy;
+        setPaymentStatus(`${EscrowStatus.CHALLENGED} by ${who}`);
+        return;
+      }
+
+      setPaymentStatus(escrowData.status.state);
+    }
+  }, [escrowData]);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -237,9 +231,14 @@ export function ChallengeModal(props: IChallengeModalProps) {
   const ModalFooter = () => {
     const isSeller = escrowData?.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData?.connectedUser === BUYER; // SIGNED AS BUYER
+    const isWaitsForChallenge = challengedBy !== escrowData?.connectedUser;
 
     if (!(escrowData && (isBuyer || isSeller))) {
       return null;
+    }
+
+    if (modalAction?.isForbidden) {
+      return <Forbidden onClose={onModalClose} />;
     }
 
     if (
@@ -258,46 +257,38 @@ export function ChallengeModal(props: IChallengeModalProps) {
       );
     }
 
+    if (isWaitsForChallenge && !startExpired) {
+      return (
+        <Button fullWidth disabled variant="primary">
+          <>
+            <SpinnerIcon />
+            Challenge period hasn't started yet
+          </>
+        </Button>
+      );
+    }
+
     let buttonChildren;
     let buttonOnClick;
 
     if (!escrowData) {
-      buttonChildren = buttonLabel;
+      buttonChildren = "";
       buttonOnClick = () => "";
-    } else if (!(error || success)) {
-      buttonChildren = buttonLabel;
+    } else if (canChallenge) {
+      buttonChildren = "Confirm Challenge";
       buttonOnClick = onChallenge;
-    } else if (success) {
+    } else if (!canChallenge) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
-    } else {
+    } else if (error) {
       buttonChildren = "Retry";
       buttonOnClick = onChallenge;
     }
 
     return (
-      <>
-        {!shouldWaitOtherParty && (
-          <Button
-            fullWidth
-            disabled={isLoading || disableButton}
-            onClick={buttonOnClick}
-          >
-            {buttonChildren}
-          </Button>
-        )}
-
-        {shouldWaitOtherParty && countdown !== "expired" && (
-          <>
-            <Button fullWidth disabled variant="primary">
-              <>
-                <SpinnerIcon />
-                Challenge period hasn't started yet
-              </>
-            </Button>
-          </>
-        )}
-      </>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
+        {buttonChildren}
+      </Button>
     );
   };
 
