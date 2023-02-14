@@ -98,7 +98,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalBody = () => {
-    if (isLoadingBalance) {
+    if (isLoadingBalance || !escrowBalance) {
       return null;
     }
 

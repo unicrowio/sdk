@@ -118,9 +118,7 @@ const TableRow = (
     }
   }, [errorExchange]);
 
-  return !balance ? (
-    <tr></tr>
-  ) : (
+  return (
     <tr key={`balance-${balance.token.address}`}>
       {balance.token.symbol && (
         <>
