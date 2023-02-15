@@ -126,7 +126,7 @@ export const Modal = ({ isLoading, loadingMessage, children }: TModalProps) => {
     if (dots === "...") {
       setDots("");
     } else {
-      setDots(dots + ".");
+      setDots(`${dots}.`);
     }
   }, 500);
 

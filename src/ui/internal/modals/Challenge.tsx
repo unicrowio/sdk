@@ -282,12 +282,12 @@ export function ChallengeModal(props: IChallengeModalProps) {
     <div ref={closeHandlerRef}>
       <ScopedModal
         title={"Challenge"}
-        modalAction={modalAction}
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </div>
   );

@@ -32,6 +32,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     setSuccess,
     isLoading,
     setIsLoading,
+    loadingMessage,
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
@@ -177,7 +178,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     let buttonChildren;
     let buttonOnClick;
 
-    if (!(error || success) && !cantReleaseAnymore) {
+    if (!(error || success || cantReleaseAnymore)) {
       buttonChildren = "Confirm Release";
       buttonOnClick = onRelease;
     } else if (success || cantReleaseAnymore) {
@@ -203,7 +204,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
         footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
-        loadingMessage={isLoading ? "Getting Escrow information" : ""}
+        loadingMessage={loadingMessage}
         modalAction={modalAction}
       />
     </div>
