@@ -13,19 +13,19 @@ const formatDate = (diff: IDiff): string => {
   let formattedString = "-";
 
   if (days > 0) {
-    formattedString = `${days} ${days === 1 ? "day" : "days"} ${
-      hours > 0 ? hours : ""
-    } ${hours > 0 ? (hours === 1 ? "hour" : "hours") : ""}`;
+    formattedString = `${days}d ${hours > 0 ? hours : ""}${
+      hours > 0 ? "h" : ""
+    }`;
   } else if (hours > 0) {
-    formattedString = `${hours} ${hours === 1 ? "hour" : "hours"} ${
-      minutes > 0 ? minutes : ""
-    } ${minutes > 0 ? (minutes === 1 ? "minute" : "minutes") : ""}`;
+    formattedString = `${hours}h ${minutes > 0 ? minutes : ""}${
+      minutes > 0 ? "min" : ""
+    }`;
   } else if (minutes > 0) {
-    formattedString = `${minutes} ${minutes === 1 ? "minute" : "minutes"} ${
-      seconds > 0 ? seconds : ""
-    } ${seconds > 0 ? (seconds === 1 ? "second" : "seconds") : ""}`;
+    formattedString = `${minutes}min ${seconds > 0 ? seconds : ""}${
+      seconds > 0 ? "sec" : ""
+    }`;
   } else if (seconds > 0) {
-    formattedString = `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
+    formattedString = `${seconds}sec`;
   }
 
   return formattedString;
