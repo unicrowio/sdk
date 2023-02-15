@@ -76,8 +76,8 @@ export const AddApproveArbitrator = ({
           isForbidden: true,
           reason: "The escrow has already been closed",
         });
-      } 
-      
+      }
+
       // Buyer or Seller should propose an arbitrator
       if (!escrowData.arbitration) {
         setAction("new");
