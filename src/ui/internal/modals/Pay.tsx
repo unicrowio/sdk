@@ -41,13 +41,6 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const [modalTitle, setModalTitle] = React.useState("Payment");
-  const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
-    EscrowStatus.UNPAID,
-  );
-  const [buyer, setBuyer] = React.useState<string | null>();
-
   const [walletUser, isLoadingWallet, errorWallet] = useAsync(
     {},
     getCurrentWalletAddress,
@@ -61,6 +54,12 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [modalTitle, setModalTitle] = React.useState("Payment");
+  const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
+    EscrowStatus.UNPAID,
+  );
+  const [buyer, setBuyer] = React.useState<string | null>();
   const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
   const error = errorWallet || errorToken;
 
@@ -108,7 +107,6 @@ export function PayModal(props: IPaymentModalProps) {
   };
 
   const onPayClick = () => {
-    setIsLoading(true);
     pay(props.paymentProps, payCallbacks).catch((e) => {
       setIsLoading(false);
       toast.error(e);

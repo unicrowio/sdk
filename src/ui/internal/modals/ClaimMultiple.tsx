@@ -24,6 +24,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
+
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const amountClaimable = props.balances?.readyForClaim?.length;
 

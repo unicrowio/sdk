@@ -49,7 +49,7 @@ const ContainerModalFooter = styled.div`
 
 export function SettlementOfferModal({
   escrowId,
-  escrowData,
+  escrowData: propsData,
   deferredPromise,
   callbacks,
 }: ISettlementOfferModalProps) {
@@ -63,24 +63,10 @@ export function SettlementOfferModal({
     setError,
     onModalClose,
   } = useModalStates({ deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
-  const _splitBuyer = escrowData?.settlement?.latestSettlementOfferBuyer || "";
-  const _splitSeller =
-    escrowData?.settlement?.latestSettlementOfferSeller || "";
-
-  const [sellerValue, setSellerValue] = React.useState<string>(
-    String(_splitSeller),
-  );
-  const [buyerValue, setBuyerValue] = React.useState<string>(
-    String(_splitBuyer),
-  );
-
-  const [focus, setFocus] = React.useState<"buyer" | "seller">("buyer");
 
   const getEscrowAndPossiblyRenderApproveModal = React.useCallback(
-    (escrowId) => {
-      return getEscrowData(escrowId).then((data: IGetEscrowData) => {
+    (escrowId) =>
+      getEscrowData(escrowId).then((data: IGetEscrowData) => {
         const settlementModalProps: ISettlementOfferModalProps = {
           escrowId,
           escrowData: data,
@@ -94,29 +80,39 @@ export function SettlementOfferModal({
         }
 
         return data;
-      });
-    },
+      }),
     [deferredPromise, callbacks, onModalClose],
   );
 
-  const [escrow, isLoadingEscrow, error] = useAsync(
+  const [escrowData, isLoadingEscrow, error] = useAsync(
     escrowId,
-    escrowData ? null : getEscrowAndPossiblyRenderApproveModal,
+    propsData ? null : getEscrowAndPossiblyRenderApproveModal,
     onModalClose,
-    escrowData,
+    propsData,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const _splitBuyer = propsData?.settlement?.latestSettlementOfferBuyer || "";
+  const _splitSeller = propsData?.settlement?.latestSettlementOfferSeller || "";
+  const [sellerValue, setSellerValue] = React.useState<string>(
+    String(_splitSeller),
+  );
+  const [buyerValue, setBuyerValue] = React.useState<string>(
+    String(_splitBuyer),
+  );
+  const [focus, setFocus] = React.useState<"buyer" | "seller">("buyer");
   const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
-    if (escrow) {
-      if (![BUYER, SELLER].includes(escrow.connectedUser)) {
+    if (escrowData) {
+      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
         setModalAction({
           isForbidden: true,
         });
       }
 
-      if (escrow.status.claimed) {
+      if (escrowData.status.claimed) {
         setModalAction({
           isForbidden: true,
           reason: "The payment is already claimed",
@@ -124,15 +120,15 @@ export function SettlementOfferModal({
       }
     }
     return () => setModalAction(undefined);
-  }, [escrow]);
+  }, [escrowData]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
-    if (escrow?.connectedUser === BUYER) {
+    if (escrowData?.connectedUser === BUYER) {
       return ["You should get back", "Seller should receive"];
     }
 
     return ["Buyer should get back", "You should receive"];
-  }, [escrow]);
+  }, [escrowData]);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement & { name: "buyer" | "seller" }>,
@@ -206,10 +202,10 @@ export function SettlementOfferModal({
   );
 
   const onCancel = () => {
-    if (escrow) {
+    if (escrowData) {
       const settlementModalProps: ISettlementOfferModalProps = {
         escrowId,
-        escrowData: escrow,
+        escrowData,
         deferredPromise,
         callbacks,
       };
@@ -231,7 +227,7 @@ export function SettlementOfferModal({
 
     if (success) {
       return (
-        <Button fullWidth variant="primary" onClick={onModalClose}>
+        <Button fullWidth variant="primary" onClick={() => onModalClose()}>
           Close
         </Button>
       );
@@ -255,7 +251,7 @@ export function SettlementOfferModal({
   };
 
   const ModalBody = () => {
-    if (!escrow) {
+    if (!escrowData) {
       return null;
     }
 
@@ -279,10 +275,10 @@ export function SettlementOfferModal({
             content: <AdornmentContent>%</AdornmentContent>,
           }}
           adornmentEnd={{
-            content: escrow && (
+            content: escrowData && (
               <FormattedPercentageAmountAdornment
-                amount={escrow.amount}
-                tokenInfo={escrow.token}
+                amount={escrowData.amount}
+                tokenInfo={escrowData.token}
                 percentage={buyerValue}
               />
             ),
@@ -308,10 +304,10 @@ export function SettlementOfferModal({
             content: <AdornmentContent>%</AdornmentContent>,
           }}
           adornmentEnd={{
-            content: escrow && (
+            content: escrowData && (
               <FormattedPercentageAmountAdornment
-                amount={escrow.amount}
-                tokenInfo={escrow.token}
+                amount={escrowData.amount}
+                tokenInfo={escrowData.token}
                 percentage={sellerValue}
               />
             ),
@@ -319,7 +315,7 @@ export function SettlementOfferModal({
           }}
         />
 
-        {!isLoading && escrow && escrow.connectedUser === SELLER && (
+        {!isLoading && escrowData && escrowData.connectedUser === SELLER && (
           <LabelFees>
             Fees will be reduced proportionally to your share
           </LabelFees>
@@ -329,7 +325,7 @@ export function SettlementOfferModal({
   };
 
   const ModalFooter = () => {
-    if (!escrow) {
+    if (!escrowData) {
       return null;
     }
 

@@ -36,21 +36,6 @@ export const AddApproveArbitrator = ({
     success,
     onModalClose,
   } = useModalStates({ deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-
-  const [arbitrator, setArbitrator] = React.useState<string>("");
-  const [arbitratorFee, setArbitratorFee] = React.useState<string>("");
-
-  const [action, setAction] = React.useState<
-    "initial" | "new" | "edit" | "view" | "added" | "editing"
-  >("initial");
-
-  const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
-  const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">(
-    "arbitrator",
-  );
-
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [escrowData, isLoadingEscrow, error] = useAsync(
     escrowId,
@@ -60,6 +45,17 @@ export const AddApproveArbitrator = ({
     true,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [arbitrator, setArbitrator] = React.useState<string>("");
+  const [arbitratorFee, setArbitratorFee] = React.useState<string>("");
+  const [action, setAction] = React.useState<
+    "initial" | "new" | "edit" | "view" | "added" | "editing"
+  >("initial");
+  const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
+  const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">(
+    "arbitrator",
+  );
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
@@ -241,7 +237,7 @@ export const AddApproveArbitrator = ({
           disabled={isLoadingAnything}
           fullWidth
           variant="tertiary"
-          onClick={onModalClose}
+          onClick={() => onModalClose()}
         >
           Close
         </Button>
@@ -318,7 +314,7 @@ export const AddApproveArbitrator = ({
             fullWidth
             variant="tertiary"
             type="button"
-            onClick={onModalClose}
+            onClick={() => onModalClose()}
           >
             Cancel
           </Button>

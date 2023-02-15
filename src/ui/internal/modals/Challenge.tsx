@@ -62,8 +62,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
+
   const [escrowData, isLoadingEscrow, error] = useAsync(
     props.escrowId,
     getEscrowData,
@@ -71,6 +70,9 @@ export function ChallengeModal(props: IChallengeModalProps) {
     null,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
@@ -94,8 +96,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
     }
   }, [escrowData]);
 
-  const [paymentStatus, setPaymentStatus] = React.useState<string>();
-
   const {
     labelChallengePeriod,
     countdown,
@@ -105,16 +105,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
     startExpired,
     canChallenge,
   } = useCountdownChallengePeriod(escrowData);
-
-  console.log("pwe", {
-    labelChallengePeriod,
-    countdown,
-    challengedBy,
-    updateChallenge,
-    startChallenge,
-    startExpired,
-    canChallenge,
-  });
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -229,7 +219,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   const ModalFooter = () => {
-    console.log("pwe", "challengedBy", challengedBy);
     const isSeller = escrowData?.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData?.connectedUser === BUYER; // SIGNED AS BUYER
     const isWaitsForChallenge = challengedBy !== escrowData?.connectedUser;

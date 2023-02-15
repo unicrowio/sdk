@@ -38,10 +38,6 @@ export function RefundModal(props: IRefundModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
-
-  const [paymentStatus, setPaymentStatus] = React.useState<string>();
 
   const [escrowData, isLoadingEsrow, error] = useAsync(
     props.escrowId,
@@ -50,8 +46,10 @@ export function RefundModal(props: IRefundModalProps) {
     null,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
   const isLoadingAnything = isLoadingEsrow || isLoading;
-
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 

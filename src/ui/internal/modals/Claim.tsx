@@ -25,9 +25,7 @@ export function ClaimModal(props: IClaimModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const [isLoadingTable, setLoadingTable] = React.useState(false);
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
+
   const [escrowBalance, isLoadingBalance, error] = useAsync(
     props.escrowId,
     getSingleBalance,
@@ -36,9 +34,10 @@ export function ClaimModal(props: IClaimModalProps) {
     true,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [isLoadingTable, setLoadingTable] = React.useState(false);
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const isLoadingAnything = isLoadingBalance || isLoadingTable || isLoading;
-  console.log("pwe", "isLoadingAnything", isLoadingAnything);
-  console.log("pwe", "escrowBalance", escrowBalance);
 
   React.useEffect(() => {
     setIsLoading(true);

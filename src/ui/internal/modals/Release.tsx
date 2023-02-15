@@ -35,10 +35,6 @@ export function ReleaseModal(props: IReleaseModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-
-  const [paymentStatus, setPaymentStatus] = React.useState<string>();
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
 
   const [escrowData, isLoadingEscrow, error] = useAsync(
     props.escrowId,
@@ -46,8 +42,10 @@ export function ReleaseModal(props: IReleaseModalProps) {
     onModalClose,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const isLoadingAnything = isLoadingEscrow || isLoading;
-
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
