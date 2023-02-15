@@ -50,17 +50,13 @@ export function ClaimModal(props: IClaimModalProps) {
         setModalAction({
           isForbidden: true,
         });
-      }
-
-      if (escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
+      } else if (escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
         setModalAction({
           isForbidden: true,
           reason:
             "The escrow has been challenged and its period has not expired yet",
         });
-      }
-
-      if (escrowBalance.status.claimed) {
+      } else if (escrowBalance.status.claimed) {
         setModalAction({
           isForbidden: true,
           reason: "This escrow has already been claimed",

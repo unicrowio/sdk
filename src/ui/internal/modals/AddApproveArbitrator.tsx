@@ -71,15 +71,13 @@ export const AddApproveArbitrator = ({
         setModalAction({
           isForbidden: true,
         });
-      }
-
-      if (escrowClosedStates.includes(escrowData?.status.state)) {
+      } else if (escrowClosedStates.includes(escrowData?.status.state)) {
         setModalAction({
           isForbidden: true,
           reason: "The escrow has already been closed",
         });
-      }
-
+      } 
+      
       // Buyer or Seller should propose an arbitrator
       if (!escrowData.arbitration) {
         setAction("new");

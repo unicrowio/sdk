@@ -5,6 +5,7 @@ import {
   ISettlementOfferModalProps,
   OfferSettlementParsedPayload,
   IGetEscrowData,
+  EscrowStatus,
 } from "../../../typing";
 import { Button } from "../../../ui/internal/components/Button";
 import styled from "styled-components";
@@ -110,16 +111,18 @@ export function SettlementOfferModal({
         setModalAction({
           isForbidden: true,
         });
-      }
-
-      if (escrowData.status.claimed) {
+      } else if (escrowData.status.state === EscrowStatus.SETTLED) {
+        setModalAction({
+          isForbidden: true,
+          reason: "The payment already gets settled via arbitrator",
+        });
+      } else if (escrowData.status.claimed) {
         setModalAction({
           isForbidden: true,
           reason: "The payment is already claimed",
         });
       }
     }
-    return () => setModalAction(undefined);
   }, [escrowData]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {

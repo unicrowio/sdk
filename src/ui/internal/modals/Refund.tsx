@@ -60,16 +60,12 @@ export function RefundModal(props: IRefundModalProps) {
           isForbidden: true,
           reason: "Only the seller can refund the payment",
         });
-      }
-
-      if (escrowData.status.claimed) {
+      } else if (escrowData.status.claimed) {
         setModalAction({
           isForbidden: true,
           reason: "The payment cannot be refunded via Unicrow anymore",
         });
-      }
-
-      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+      } else if (escrowData.status.state === EscrowStatus.CHALLENGED) {
         setPaymentStatus(
           `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
         );

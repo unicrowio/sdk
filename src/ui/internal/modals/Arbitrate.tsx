@@ -175,7 +175,7 @@ export const Arbitrate = ({
   };
 
   const ModalFooter = () => {
-    if (!escrowData?.arbitration) {
+    if (!escrowData || !escrowData?.arbitration) {
       return null;
     }
 
@@ -218,8 +218,8 @@ export const Arbitrate = ({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
-        body={ModalBody()}
-        footer={ModalFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}

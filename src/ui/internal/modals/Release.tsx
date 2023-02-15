@@ -57,9 +57,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
           isForbidden: true,
           reason: "Only the buyer can release the payment",
         });
-      }
-
-      if (escrowData.status.claimed) {
+      } if (escrowData.status.claimed) {
         setModalAction({
           isForbidden: true,
           reason: "The payment is already claimed",
