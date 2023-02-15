@@ -109,6 +109,9 @@ const TableRow = (
         );
       }
     }
+    return () => {
+      setFormattedAmountInUSD('');
+    }
   }, [exchangeValues]);
 
   React.useEffect(() => {
