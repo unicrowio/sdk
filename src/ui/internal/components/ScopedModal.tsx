@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import {
   Modal,
   ModalBody,
@@ -14,6 +14,7 @@ import { ModalError } from "./ModalError";
 import { metamaskUrl } from "../../../helpers/constants";
 import { Forbidden } from "./Forbidden";
 import { ModalBodySkeleton } from "./ModalBodySkeleton";
+import { stopAsync } from "../hooks/useAsync";
 
 interface ScopedModalProps {
   title: string;
@@ -31,13 +32,18 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   const { WithNetworkCheck } = useNetworkCheck();
   const metamaskInstalled = isWeb3WalletInstalled();
   const { isForbidden = false, reason } = props.modalAction || {};
-
-  const bodyContent = React.Children.toArray(props.body)[0] as any;
   const [bodyIsEmpty, setBodyIsEmpty] = React.useState(true);
 
   React.useEffect(() => {
-    setBodyIsEmpty([null, false].includes(bodyContent.type()));
-  }, [bodyContent]);
+    return () => stopAsync();
+  }, []);
+
+  React.useEffect(() => {
+    // fancy way of checking whether a component is empty / returning null
+    const bodyContent = React.Children.toArray(props.body)[0] as any;
+
+    setBodyIsEmpty([null, false, undefined].includes(bodyContent?.type()));
+  }, [props?.body]);
 
   const BodyWithFooter = React.useCallback(
     () =>

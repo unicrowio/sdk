@@ -55,7 +55,6 @@ const InfoText = styled.p`
 
 export function ChallengeModal(props: IChallengeModalProps) {
   const {
-    success,
     setSuccess,
     isLoading,
     setIsLoading,
@@ -106,6 +105,16 @@ export function ChallengeModal(props: IChallengeModalProps) {
     startExpired,
     canChallenge,
   } = useCountdownChallengePeriod(escrowData);
+
+  console.log("pwe", {
+    labelChallengePeriod,
+    countdown,
+    challengedBy,
+    updateChallenge,
+    startChallenge,
+    startExpired,
+    canChallenge,
+  });
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -220,6 +229,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
   };
 
   const ModalFooter = () => {
+    console.log("pwe", "challengedBy", challengedBy);
     const isSeller = escrowData?.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData?.connectedUser === BUYER; // SIGNED AS BUYER
     const isWaitsForChallenge = challengedBy !== escrowData?.connectedUser;
@@ -273,11 +283,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     }
 
     return (
-      <Button
-        fullWidth
-        disabled={isLoadingAnything || false} // disableButton
-        onClick={buttonOnClick}
-      >
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -287,6 +293,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     <div ref={closeHandlerRef}>
       <ScopedModal
         title={"Challenge"}
+        modalAction={modalAction}
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}

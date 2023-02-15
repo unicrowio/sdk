@@ -18,22 +18,17 @@ interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
 }
 
-const noBalancesCellStyle: CSS.Properties = {
-  textAlign: "center",
-  padding: "40px 0 20px 0",
-};
-
 const wrapperStyles: CSS.Properties = {
   margin: "0 auto",
   textAlign: "center",
   fontWeight: 500,
 };
 
-const ClaimSuccessful = () => {
+const ClaimSuccessful = (amount) => {
   return (
     <div style={wrapperStyles}>
       <BigCheckIcon />
-      <p>All balances claimed!</p>
+      <p>{amount === 1 ? "Payment" : "All balances"} claimed!</p>
     </div>
   );
 };
@@ -46,7 +41,7 @@ export const BalancesTable = ({
 }) => {
   return (
     <>
-      {success && <ClaimSuccessful />}
+      {success && <ClaimSuccessful amount={balances.length} />}
       {!success && (
         <Table>
           <thead>
@@ -56,16 +51,8 @@ export const BalancesTable = ({
             </tr>
           </thead>
           <tbody>
-            {balances.length > 0 ? (
-              balances.map((balance: IBalanceWithTokenUSD) =>
-                TableRow(balance, onModalClose, setIsLoading),
-              )
-            ) : (
-              <tr>
-                <td style={noBalancesCellStyle} colSpan={2}>
-                  All balances claimed!
-                </td>
-              </tr>
+            {balances.map((balance: IBalanceWithTokenUSD) =>
+              TableRow(balance, onModalClose, setIsLoading),
             )}
           </tbody>
         </Table>

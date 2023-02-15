@@ -12,7 +12,7 @@ import { toast } from "../notification/toast";
 import { getSingleBalance, claim } from "../../../core";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { useAsync } from "../hooks/useAsync";
+import { stopAsync, useAsync } from "../hooks/useAsync";
 import { BalancesTable } from "../components/BalancesTable";
 
 export function ClaimModal(props: IClaimModalProps) {
@@ -26,18 +26,27 @@ export function ClaimModal(props: IClaimModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
-
+  const [isLoadingTable, setLoadingTable] = React.useState(false);
   const [modalAction, setModalAction] = React.useState<ModalAction>();
   const [escrowBalance, isLoadingBalance, error] = useAsync(
     props.escrowId,
     getSingleBalance,
     onModalClose,
+    null,
+    true,
   );
 
-  const isLoadingAnything = isLoadingBalance || isLoading;
+  const isLoadingAnything = isLoadingBalance || isLoadingTable || isLoading;
+  console.log("pwe", "isLoadingAnything", isLoadingAnything);
+  console.log("pwe", "escrowBalance", escrowBalance);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+  }, []);
 
   React.useEffect(() => {
     if (escrowBalance) {
+      setIsLoading(false);
       if (escrowBalance.connectedUser === "other") {
         setModalAction({
           isForbidden: true,
@@ -93,6 +102,7 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Claimed");
+      stopAsync();
 
       setSuccess(payload);
       setIsLoading(false);
@@ -107,7 +117,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalBody = () => {
-    if (isLoadingBalance || !escrowBalance) {
+    if (!escrowBalance) {
       return null;
     }
 
@@ -115,7 +125,7 @@ export function ClaimModal(props: IClaimModalProps) {
       <BalancesTable
         balances={[escrowBalance]}
         onModalClose={onModalClose}
-        setIsLoading={setIsLoading}
+        setIsLoading={setLoadingTable}
         success={success}
       />
     );

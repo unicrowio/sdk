@@ -1,4 +1,3 @@
-import type * as CSS from "csstype";
 import React from "react";
 import {
   IBalanceDetailed,
@@ -12,6 +11,7 @@ import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { claimMultiple } from "../../../core";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { stopAsync } from "../hooks/useAsync";
 
 export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   const {
@@ -25,6 +25,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
   const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const amountClaimable = props.balances?.readyForClaim?.length;
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -58,6 +59,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Claimed");
+      stopAsync();
 
       setSuccess(payload);
       setIsLoading(false);
@@ -65,16 +67,16 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   };
 
   const onHandleMultipleClaim = () => {
+    setIsLoading(true);
+
     claimMultiple(props.escrowIds, claimCallbacks).catch((e) => {
       setIsLoading(false);
       toast.error(e);
     });
   };
 
-  const claimableAmount = props.balances.readyForClaim.length;
-
   const ModalBody = () => {
-    if (isLoading) {
+    if (!props.balances?.readyForClaim) {
       return null;
     }
 
@@ -82,7 +84,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
       <BalancesTable
         balances={props.balances.readyForClaim}
         onModalClose={onModalClose}
-        setIsLoading={setIsLoading}
+        setIsLoading={() => {}}
         success={success}
       />
     );
@@ -92,10 +94,10 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     let buttonChildren;
     let buttonOnClick;
 
-    if (!(error || success) && claimableAmount > 0) {
+    if (!(error || success) && amountClaimable > 0) {
       buttonChildren = "Confirm";
       buttonOnClick = onHandleMultipleClaim;
-    } else if (success || claimableAmount === 0) {
+    } else if (success || amountClaimable === 0) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
     } else {
@@ -113,7 +115,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   return (
     <div ref={closeHandlerRef}>
       <ScopedModal
-        title={claimableAmount > 1 ? "Claim Balances" : "Claim Payment"}
+        title={amountClaimable > 1 ? "Claim Balances" : "Claim Payment"}
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}

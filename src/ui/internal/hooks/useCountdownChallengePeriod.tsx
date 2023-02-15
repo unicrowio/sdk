@@ -26,7 +26,7 @@ export const useCountdownChallengePeriod = (escrowData) => {
   const countdown = React.useRef<any>("...");
   const [canChallenge, setCanChallenge] = React.useState<boolean>(false);
 
-  const startExpired = hasExpired(challenge.current?.start);
+  const startExpired = hasExpired(challenge.current?.start) || false;
   const endExpired = hasExpired(challenge.current?.end);
 
   const updateChallenge = (newData) => {
@@ -44,6 +44,9 @@ export const useCountdownChallengePeriod = (escrowData) => {
   };
 
   const startCountdown = () => {
+    console.log("pwe", "challenge.current", challenge?.current);
+
+    if (!challenge.current) return;
     timer.current && resetCountdown();
     timer.current = setInterval(() => {
       let prefix;
@@ -82,6 +85,7 @@ export const useCountdownChallengePeriod = (escrowData) => {
   };
 
   React.useEffect(() => {
+    console.log("pwe", "escrowData", escrowData);
     if (escrowData) {
       const newData = JSON.stringify(escrowData);
       const oldData = JSON.stringify(data?.current);
@@ -111,14 +115,13 @@ export const useCountdownChallengePeriod = (escrowData) => {
 
     if (!timer.current || countdown?.current === "...") {
       startCountdown();
-      return;
     }
   }, [timer?.current, countdown.current, endExpired, startExpired]);
 
   return {
     labelChallengePeriod: "Challenge Period",
     countdown: countdown.current,
-    challengedBy: challenge.current?.challengedBy,
+    challengedBy: challenge.current?.challengedBy || "buyer",
     startChallenge,
     updateChallenge,
     canChallenge,

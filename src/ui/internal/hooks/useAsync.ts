@@ -1,5 +1,5 @@
 import React from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { toast } from "../notification/toast";
 
@@ -26,4 +26,8 @@ export const useAsync = (
   }, [error]);
 
   return [error ? null : data || defaultValue, isLoading, error];
+};
+
+export const stopAsync = () => {
+  mutate(() => true, undefined, { revalidate: false });
 };
