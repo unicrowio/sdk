@@ -246,7 +246,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   }, [escrow, labelSeller, labelBuyer, labelAmountSplit]);
 
   const openNegotiateModal = async () => {
-    onModalClose();
+    onModalClose("change");
 
     if (escrow) {
       const settlementModalProps: ISettlementApproveModalProps = {
@@ -267,7 +267,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     if (success || escrow.status.claimed) {
       return (
         <ContainerButtons>
-          <Button fullWidth variant="primary" onClick={onModalClose}>
+          <Button fullWidth variant="primary" onClick={() => onModalClose()}>
             Close
           </Button>
         </ContainerButtons>

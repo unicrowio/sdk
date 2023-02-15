@@ -89,8 +89,8 @@ export const connect = async (): Promise<string | null> => {
  * Asks user's web3 wallet to switch to a selected network
  *
  * @param name - Name of one of the configured networks ('arbitrum', 'development', or 'goerli' in standard SDK installation)
- * @returns Name of the network that the wallet was switched to. Null if no wallet is installed
- * @throws Error if the user rejected adding or switching to the network
+ * @returns Name of the network that the wallet was switched to.
+ * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
 export const switchNetwork = async (name: DefaultNetwork) => {
   if (!isWeb3WalletInstalled()) return null;

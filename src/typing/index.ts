@@ -66,10 +66,19 @@ export enum EscrowStatus {
 export type tEscrowParty = "buyer" | "seller" | null;
 
 /**
- * Full status of an escrow.
+ * Full status of a payment
+ *
+ * @example // A returned object might look e.g. like this:
+ * {
+ *    state: "Paid",
+ *    latestChallengeBy: null,
+ *    latestSettlementOfferBy: null,
+ *    claimed: false
+ * },
+ *
  */
 export interface IEscrowStatus {
-  /** The current state of an escrow (PAID | UNPAID | RELEASED | PERIOD_EXPIRED | REFUNDED | CHALLENGED | SETTLED). */
+  /** The current state of an escrow ('Paid' | 'Unpaid' | 'Released' | 'Period Expired' | 'Refunded' | 'Challenged' | 'Settled'). */
   state: EscrowStatus;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
@@ -80,7 +89,7 @@ export interface IEscrowStatus {
 }
 
 /**
- * Detailed information about the escrow
+ * Full information about the escrow
  *
  * @example // A returned object might look e.g. like this:
  * {
@@ -121,9 +130,11 @@ export interface IEscrowStatus {
 export interface IEscrowData {
   /** Amount in token's (or ETH's) wei unit */
   amount: BigNumberJs; // ERC20 | Ether
+
+  /** ID of the escrow that the transaction created or acted upon */
   escrowId: number;
 
-  /** See the interface for more details */
+  /** Indicates status of the payment (claimed, latestChallengeBy, latestSettlementBy and its escrow state like 'Paid' | 'Unpaid' etc.) */
   status: IEscrowStatus;
 
   /** Marketplace address */
@@ -562,7 +573,7 @@ export interface IGenericTransactionCallbacks {
 export interface IPayTransactionPayload {
   transactionHash: string;
 
-  /** Name of the event ("Pay") */
+  /** Name of the event ('Pay') */
   name?: string;
 
   /** Number of the block in which the payment transaction was minted */
@@ -854,7 +865,7 @@ export interface IBalance {
   /** Information about the token */
   token?: IToken;
 
-  /** Whether the balance is still waiting for the challenge period to end, or is ready to claim */
+  /** Indicates status of the payment (claimed, latestChallengeBy, latestSettlementBy and its escrow state like 'Paid' | 'Unpaid' etc.) */
   status: IEscrowStatus;
 }
 
@@ -888,7 +899,12 @@ export interface IBalanceDetailed extends IBalance {
  *           symbol: "ETH",
  *           decimals: 18
  *        },
- *        status: "Pending",
+ *        status: {
+ *           state: "Paid",
+ *           latestChallengeBy: null,
+ *           latestSettlementOfferBy: null,
+ *           claimed: false
+ *        },
  *        amount: "1586200000000000000",
  *        total: "1586200000000000000",
  *        displayableAmount: "1.5862",
@@ -902,7 +918,12 @@ export interface IBalanceDetailed extends IBalance {
  *           symbol: "USDC",
  *           decimals: 6
  *        },
- *        status: "Ready to claim",
+ *        status: {
+ *           state: "Period Expired",
+ *           latestChallengeBy: null,
+ *           latestSettlementOfferBy: null,
+ *           claimed: false
+ *        },
  *        amount: "1786200000",
  *        total: "1786200000",
  *        displayableAmount: "1786.2",
@@ -914,7 +935,12 @@ export interface IBalanceDetailed extends IBalance {
  *           symbol: "USDT",
  *           decimals: 6
  *        },
- *        status: "Ready to claim",
+ *        status: {
+ *           state: "Period Expired",
+ *           latestChallengeBy: null,
+ *           latestSettlementOfferBy: null,
+ *           claimed: false
+ *        },
  *        amount: "2379300000",
  *        total: "2379300000",
  *        displayableAmount: "2379.3",
@@ -1010,7 +1036,7 @@ export interface IndexerInstance {
    *    challengePeriodStart: "2023-01-24T11:54:33.000Z",
    *    challengePeriodEnd: "2023-02-07T11:54:33.000Z",
    *    status: {
-   *       state: "Paid",
+   *       state: "Period Expired",
    *       latestChallengeBy: null,
    *       latestSettlementOfferBy: null,
    *       claimed: false
@@ -1056,7 +1082,12 @@ export interface IndexerInstance {
    *           symbol: "ETH",
    *           decimals: 18
    *        },
-   *        status: "Pending",
+   *        status: {
+   *           state: "Period Expired",
+   *           latestChallengeBy: null,
+   *           latestSettlementOfferBy: null,
+   *           claimed: false
+   *        },
    *        amount: "1586200000000000000",
    *        total: "1586200000000000000",
    *        displayableAmount: "1.5862",
@@ -1070,7 +1101,12 @@ export interface IndexerInstance {
    *           symbol: "USDC",
    *           decimals: 6
    *        },
-   *        status: "Ready to claim",
+   *        status: {
+   *           state: "Period Expired",
+   *           latestChallengeBy: null,
+   *           latestSettlementOfferBy: null,
+   *           claimed: false
+   *        },
    *        amount: "1786200000",
    *        total: "1786200000",
    *        displayableAmount: "1786.2",
@@ -1082,7 +1118,12 @@ export interface IndexerInstance {
    *           symbol: "USDT",
    *           decimals: 6
    *        },
-   *        status: "Ready to claim",
+   *        status: {
+   *           state: "Period Expired",
+   *           latestChallengeBy: null,
+   *           latestSettlementOfferBy: null,
+   *           claimed: false
+   *        },
    *        amount: "2379300000",
    *        total: "2379300000",
    *        displayableAmount: "2379.3",
@@ -1168,6 +1209,7 @@ export interface IGetEscrowData extends Omit<IEscrowData, "tokenAddress"> {
 }
 
 export interface ISettlementOfferModalProps {
+  /** ID of the escrow that the transaction created or acted upon */
   escrowId: number;
   escrowData?: IGetEscrowData;
   deferredPromise: Deferred<any>;
@@ -1175,12 +1217,14 @@ export interface ISettlementOfferModalProps {
 }
 
 export interface ISettlementApproveModalProps {
+  /** ID of the escrow that the transaction created or acted upon */
   escrowId: number;
   escrowData?: IGetEscrowData;
   deferredPromise: Deferred<any>;
   callbacks?: ISettlementApproveTransactionCallbacks;
 }
 export interface IArbitrateModalProps {
+  /** ID of the escrow that the transaction created or acted upon */
   escrowId: number;
   deferredPromise: Deferred<any>;
   callbacks?: IArbitrationTransactionCallbacks;

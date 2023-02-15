@@ -11,7 +11,7 @@ export interface TUseModalStates {
   setError: Dispatch<any>;
   success: string | null;
   setSuccess: Dispatch<any>;
-  onModalClose: VoidFunction;
+  onModalClose: (reason?: "close" | "change") => void;
 }
 
 export const useModalStates = ({
@@ -25,12 +25,16 @@ export const useModalStates = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const onModalClose = () => {
+  const onModalClose = (reason: "close" | "change" = "close") => {
     if (!(error || success)) {
       const noActionCloseError = {
-        message: "User closed modal without taking any actions",
+        message:
+          reason === "change"
+            ? ""
+            : "User closed modal without taking any actions",
       };
-      deferredPromise.reject(noActionCloseError);
+
+      deferredPromise.resolve(noActionCloseError.message);
     } else if (!success) {
       deferredPromise.reject(error);
     } else {
