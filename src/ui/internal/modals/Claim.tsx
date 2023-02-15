@@ -4,6 +4,7 @@ import {
   IClaimTransactionPayload,
   IClaimModalProps,
   IBalanceDetailed,
+  EscrowStatus,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { Button, ScopedModal } from "../components";
@@ -43,10 +44,18 @@ export function ClaimModal(props: IClaimModalProps) {
         });
       }
 
-      if (escrowBalance.status !== "Ready to claim") {
+      if (escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
         setModalAction({
           isForbidden: true,
-          reason: "You cannot claim this payment at this time",
+          reason:
+            "The escrow has been challenged and its period has not expired yet",
+        });
+      }
+
+      if (escrowBalance.status.claimed) {
+        setModalAction({
+          isForbidden: true,
+          reason: "This escrow has already been claimed",
         });
       }
     }
