@@ -1,152 +1,127 @@
-import { BUYER, SELLER, countdownChallengePeriod } from "../../../helpers";
-import React, { useEffect } from "react";
-import { IGetEscrowData } from "typing";
+import { countdownChallengePeriod } from "helpers/countdownChallengePeriod";
+import React from "react";
 
-interface CountdownChallengePeriodProps {
-  buttonLabel: string;
-  disableButton: boolean;
-  labelChallengePeriod: string;
-  countdown: string;
-  shouldWaitOtherParty: boolean;
-}
+const hasExpired = (period: Date) => period && Date.now() > period.getTime();
+const getCountdown = (date, prefix) =>
+  prefix + " " + countdownChallengePeriod(date).replace(" remaining", "");
 
-export const useCountdownChallengePeriod = (
-  escrow: IGetEscrowData | null,
-): CountdownChallengePeriodProps => {
-  const [buttonLabel, setButtonLabel] =
-    React.useState<string>("Confirm Challenge");
-  const [disableButton, setDisableButton] = React.useState(false);
-  const [labelChallengePeriod, setLabelChallengePeriod] =
-    React.useState("Challenge Period");
-  const [countdown, setCountdown] = React.useState("...");
+const getChallengedBy = (data) => {
+  return data.status.latestChallengeBy === null
+    ? "buyer"
+    : data.status.latestChallengeBy;
+};
 
-  const [shouldWaitOtherParty, setShouldWaitOtherParty] = React.useState(false);
+const extractChallengeData = (data) => ({
+  start: data.challengePeriodStart,
+  end: data.challengePeriodEnd,
+  connectedUser: data.connectedUser,
+  neverChallenged: data.status.latestChallengeBy === null,
+  challengedBy: getChallengedBy(data),
+});
 
-  const setupCountdown = (date: Date, periodStarted = true) => {
-    const _countdown = countdownChallengePeriod(date);
+export const useCountdownChallengePeriod = (escrowData) => {
+  const data = React.useRef<any>(escrowData);
+  const challenge = React.useRef<any>(null);
+  const timer = React.useRef<NodeJS.Timer>();
+  const countdown = React.useRef<any>("...");
+  const [canChallenge, setCanChallenge] = React.useState<boolean>(false);
 
-    if (_countdown === "-") {
-      setCountdown("expired");
-    } else {
-      if (periodStarted) {
-        setCountdown(_countdown);
-      } else {
-        setCountdown(`Starts in ${_countdown.replace(" remaining", "")}`);
-      }
-    }
-  };
+  const startExpired = hasExpired(challenge.current?.start);
+  const endExpired = hasExpired(challenge.current?.end);
 
-  const isExpired = (period: Date) => {
-    return countdownChallengePeriod(period) === "-";
-  };
-
-  const count = (period: Date, periodStarted: boolean) => {
-    const timer = setInterval(() => {
-      setupCountdown(period, periodStarted);
-    }, 1000);
-
-    return timer;
-  };
-
-  const setup = (date: Date, periodStarted = true) => {
-    setLabelChallengePeriod("Challenge Period");
-    setButtonLabel("Challenge period hasn't started");
-    setDisableButton(true);
-    const timer = count(date, periodStarted);
-    return timer;
-  };
-
-  const reset = () => {
-    setLabelChallengePeriod("Challenge Period");
-    setButtonLabel("Challenge period expired");
-    setDisableButton(true);
-    setCountdown("expired");
-  };
-
-  const init = () => {
-    setLabelChallengePeriod("Current Challenge Period");
-    setButtonLabel("Confirm Challenge");
-    setDisableButton(false);
-    setShouldWaitOtherParty(false);
-  };
-
-  useEffect(() => {
-    if (!escrow) return;
-
-    if (isExpired(escrow.challengePeriodEnd)) {
-      reset();
-      return;
-    }
-
-    let timer: NodeJS.Timer;
-
-    const isSellerConnected = escrow.connectedUser === SELLER;
-    const isBuyerConnected = escrow.connectedUser === BUYER;
-
-    if (!(isSellerConnected || isBuyerConnected)) return;
-
-    if (
-      (isSellerConnected && !escrow.status.latestChallengeBy) ||
-      (isBuyerConnected && !escrow.status.latestChallengeBy)
-    ) {
-      timer = setup(escrow.challengePeriodEnd, true);
-
-      if (isBuyerConnected) {
-        init();
-      } else if (isSellerConnected) {
-        setShouldWaitOtherParty(true);
-      }
-      return;
-    }
-
-    if (
-      (isSellerConnected && escrow.status.latestChallengeBy === SELLER) ||
-      (isBuyerConnected && escrow.status.latestChallengeBy === BUYER)
-    ) {
-      if (!isExpired(escrow.challengePeriodStart)) {
-        if (Date.now() > escrow.challengePeriodStart.getTime()) {
-          timer = count(escrow.challengePeriodEnd, true);
-          setShouldWaitOtherParty(true);
-        } else {
-          timer = count(escrow.challengePeriodStart, false);
-          setShouldWaitOtherParty(true);
-        }
-      } else {
-        timer = count(escrow.challengePeriodEnd, true);
-        setShouldWaitOtherParty(true);
-      }
-      return;
-    }
-
-    if (
-      (isSellerConnected && escrow.status.latestChallengeBy === BUYER) ||
-      (isBuyerConnected && escrow.status.latestChallengeBy === SELLER)
-    ) {
-      if (!isExpired(escrow.challengePeriodStart)) {
-        if (Date.now() > escrow.challengePeriodStart.getTime()) {
-          timer = count(escrow.challengePeriodEnd, true);
-          setShouldWaitOtherParty(false);
-        } else {
-          timer = count(escrow.challengePeriodStart, false);
-          setShouldWaitOtherParty(true);
-        }
-      } else {
-        timer = count(escrow.challengePeriodEnd, true);
-        setShouldWaitOtherParty(false);
-      }
-      return;
-    }
-
-    return () => {
-      clearInterval(timer);
+  const updateChallenge = (newData) => {
+    data.current = newData;
+    challenge.current = {
+      ...challenge.current,
+      ...extractChallengeData(newData),
     };
-  }, [escrow, countdown]);
+    resetCountdown();
+  };
+
+  const startChallenge = () => {
+    setCanChallenge(false);
+    startCountdown();
+  };
+
+  const startCountdown = () => {
+    timer.current && resetCountdown();
+    timer.current = setInterval(() => {
+      const { end, start, challengedBy, neverChallenged, connectedUser } =
+        challenge.current;
+      const challengedByYou = challengedBy === connectedUser;
+      let prefix;
+      let date;
+
+      if (startExpired || neverChallenged) {
+        date = end;
+        prefix = "Ends in";
+      } else {
+        date = challengedByYou ? end : start;
+        prefix = challengedByYou ? "Ends in" : "Starts in";
+      }
+      const _countdown = getCountdown(date, prefix);
+
+      setCountdown(_countdown);
+    }, 1000);
+  };
+
+  const setCountdown = (newValue) => {
+    countdown.current = newValue;
+  };
+
+  const resetCountdown = () => {
+    setCountdown("...");
+    clearInterval(timer.current);
+    timer.current = null;
+  };
+
+  const stopCountdown = () => {
+    setCountdown("expired");
+    setCanChallenge(false);
+    clearInterval(timer.current);
+  };
+
+  React.useEffect(() => {
+    if (escrowData) {
+      const newData = JSON.stringify(escrowData);
+      const oldData = JSON.stringify(data?.current);
+
+      if (newData !== oldData) {
+        updateChallenge(escrowData);
+        setCanChallenge(
+          challenge.current?.neverChallenged ||
+            challenge.current?.challengedBy !==
+              challenge.current?.connectedUser,
+        );
+      }
+    }
+  }, [escrowData, data?.current, challenge.current]);
+
+  React.useEffect(() => {
+    if (endExpired) {
+      stopCountdown();
+      return;
+    }
+
+    if (startExpired && countdown?.current === "Starts in -") {
+      setCanChallenge(true);
+      startCountdown();
+      return;
+    }
+
+    if (!timer.current || countdown?.current === "...") {
+      startCountdown();
+      return;
+    }
+  }, [timer?.current, countdown.current, endExpired, startExpired]);
 
   return {
-    buttonLabel,
-    disableButton,
-    labelChallengePeriod,
-    countdown,
-    shouldWaitOtherParty,
+    labelChallengePeriod: "Challenge Period",
+    countdown: countdown.current,
+    challengedBy: challenge.current?.challengedBy,
+    startChallenge,
+    updateChallenge,
+    canChallenge,
+    startExpired,
   };
 };
