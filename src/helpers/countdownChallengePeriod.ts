@@ -23,15 +23,11 @@ export const countdownChallengePeriod = (end: Date) => {
   }
 
   if (hours >= 1 && minutes >= 1) {
-    return `${hours}h ${minutes}m remaining`;
+    return `${hours}h ${minutes}min remaining`;
   }
 
-  if (minutes >= 2) {
-    return `${minutes}m remaining`;
-  }
-
-  if (minutes === 1) {
-    return `more than a minute remaining`;
+  if (minutes >= 1) {
+    return `${minutes}min ${seconds}sec remaining`;
   }
 
   if (seconds >= 1) {
