@@ -28,13 +28,12 @@ export const getSingleBalance = async (
       symbol: escrowData.token.symbol,
       decimals: escrowData.token.decimals,
     },
-    status: "Ready to claim",
+    status: escrowData.status,
     amount: amountBN.toString(),
     amountBN: displayableAmountBN(amountBN, escrowData.token.decimals),
     displayableAmount: displayableAmount(amountBN, escrowData.token.decimals),
     connectedUser: escrowData.connectedUser,
     walletAddress: escrowData.walletAddress,
-    statusEscrow: escrowData.status,
   };
 
   return balance;

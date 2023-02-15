@@ -74,23 +74,24 @@ export function ClaimModal(props: IClaimModalProps) {
 
         setEscrowBalance(_escrowBalance);
 
-        setModalAction({
-          isForbidden: true,
-        });
-
         if (_escrowBalance.connectedUser === "other") {
           setModalAction({
-            isForbidden: false,
+            isForbidden: true,
           });
         }
 
-        if (
-          _escrowBalance.statusEscrow.claimed ||
-          _escrowBalance.statusEscrow.state !== EscrowStatus.PERIOD_EXPIRED
-        ) {
+        if (_escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
           setModalAction({
-            isForbidden: false,
-            reason: "You cannot claim this payment at this time",
+            isForbidden: true,
+            reason:
+              "The escrow has been challenged and its period has not expired yet",
+          });
+        }
+
+        if (_escrowBalance.status.claimed) {
+          setModalAction({
+            isForbidden: true,
+            reason: "This escrow has already been claimed",
           });
         }
       } catch (error: any) {
@@ -114,7 +115,9 @@ export function ClaimModal(props: IClaimModalProps) {
       if (isLoading || !escrowBalance) {
         return (
           <tr>
-            <Skeleton width="100%" height={25} />
+            <td>
+              <Skeleton width="100%" height={25} />
+            </td>
           </tr>
         );
       }
@@ -191,7 +194,7 @@ export function ClaimModal(props: IClaimModalProps) {
     if (!escrowBalance) {
       return <ModalBodySkeleton />;
     }
-    if (!(isLoading || modalAction.isForbidden)) {
+    if (!(isLoading || !modalAction.isForbidden)) {
       return (
         <Forbidden onClose={onModalClose} description={modalAction.reason} />
       );
@@ -211,7 +214,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(escrowBalance && (isLoading || modalAction.isForbidden))) {
+    if (!(escrowBalance && (isLoading || !modalAction.isForbidden))) {
       return null;
     }
 
