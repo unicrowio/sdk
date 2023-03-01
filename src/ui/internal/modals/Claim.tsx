@@ -31,7 +31,6 @@ export function ClaimModal(props: IClaimModalProps) {
     getSingleBalance,
     onModalClose,
     null,
-    true,
   );
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
@@ -40,12 +39,7 @@ export function ClaimModal(props: IClaimModalProps) {
   const isLoadingAnything = isLoadingBalance || isLoadingTable || isLoading;
 
   React.useEffect(() => {
-    setIsLoading(true);
-  }, []);
-
-  React.useEffect(() => {
-    if (escrowBalance) {
-      setIsLoading(false);
+    if (escrowBalance && !success) {
       if (escrowBalance.connectedUser === "other") {
         setModalAction({
           isForbidden: true,
@@ -63,7 +57,7 @@ export function ClaimModal(props: IClaimModalProps) {
         });
       }
     }
-  }, [escrowBalance]);
+  }, [escrowBalance, success]);
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -90,6 +84,7 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
       setLoadingMessage("Waiting for confirmation");
+      stopAsync();
     },
     confirmed: (payload: IClaimTransactionPayload) => {
       props.callbacks &&
@@ -97,8 +92,6 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Claimed");
-      stopAsync();
-
       setSuccess(payload);
       setIsLoading(false);
     },
@@ -112,7 +105,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalBody = () => {
-    if (!escrowBalance) {
+    if (!escrowBalance && !success) {
       return null;
     }
 
@@ -127,7 +120,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!escrowBalance) {
+    if (!escrowBalance && !success) {
       return null;
     }
 
