@@ -1,15 +1,21 @@
 import React from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { toast } from "../notification/toast";
 
-export const useAsync = (args, fn, onModalClose?, defaultValue?) => {
+export const useAsync = (
+  args,
+  fn,
+  onModalClose?,
+  defaultValue?,
+  noRefresh?,
+) => {
   const { isCorrectNetwork } = useNetworkCheck();
 
   const { data, isLoading, error } = useSWR(
     isCorrectNetwork ? args : null,
     fn,
-    { refreshInterval: 1000 },
+    noRefresh ? {} : { refreshInterval: 1000 },
   );
 
   React.useEffect(() => {
@@ -20,4 +26,8 @@ export const useAsync = (args, fn, onModalClose?, defaultValue?) => {
   }, [error]);
 
   return [error ? null : data || defaultValue, isLoading, error];
+};
+
+export const stopAsync = () => {
+  mutate(() => true, undefined, { revalidate: false });
 };

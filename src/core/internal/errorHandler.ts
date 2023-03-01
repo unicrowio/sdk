@@ -47,16 +47,12 @@ const ERRORS = {
   "2-007": "You are not approving this arbitrator fee",
   "2-008": "You are not approving this arbitrator address",
 };
-
 type ErrorCode = keyof typeof ERRORS;
-
 // Metamask Provider Errors
 const METAMASK_ERRORS = {
   ACTION_REJECTED: "User rejected the request",
 };
-
 type ErrorCodeMetaMask = keyof typeof METAMASK_ERRORS;
-
 interface IMMError {
   action: string;
   code: ErrorCodeMetaMask;
@@ -87,6 +83,5 @@ export const errorHandler = (error: any) => {
     const errorCode = message.split("revert ")[1] as ErrorCode;
     errorMessage = ERRORS[errorCode] || errorMessage;
   }
-
   return errorMessage;
 };

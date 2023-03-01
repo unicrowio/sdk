@@ -5,7 +5,6 @@ import {
   IPaymentModalProps,
   IPayTransactionCallbacks,
   IPayTransactionPayload,
-  IToken,
 } from "../../../typing";
 import { pay } from "../../../core/pay";
 import {
@@ -28,50 +27,41 @@ import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
 import { getCurrentWalletAddress } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
     success,
     setSuccess,
-    isLoading,
     setIsLoading,
+    isLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const { isCorrectNetwork } = useNetworkCheck();
+  const [walletUser, isLoadingWallet, errorWallet] = useAsync(
+    {},
+    getCurrentWalletAddress,
+    onModalClose,
+    null,
+  );
+
+  const [tokenInfo, isLoadingToken, errorToken] = useAsync(
+    props.paymentProps.tokenAddress,
+    getTokenInfo,
+    onModalClose,
+  );
+
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
   );
-  const [tokenInfo, setTokenInfo] = React.useState<IToken>();
   const [buyer, setBuyer] = React.useState<string | null>();
-
-  const [walletUser, setWalletUser] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-
-      getCurrentWalletAddress().then((account) => {
-        setWalletUser(account);
-      });
-      getTokenInfo(props.paymentProps.tokenAddress)
-        .then(setTokenInfo)
-        .catch(() => {
-          onModalClose();
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setLoadingMessage("");
-        });
-    }
-  }, [isCorrectNetwork]);
+  const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
+  const error = errorWallet || errorToken;
 
   const payCallbacks: IPayTransactionCallbacks = {
     connectingWallet: () => {
@@ -97,7 +87,7 @@ export function PayModal(props: IPaymentModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IPayTransactionPayload) => {
       props.callbacks &&
@@ -225,7 +215,7 @@ export function PayModal(props: IPaymentModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -238,7 +228,7 @@ export function PayModal(props: IPaymentModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
       />
     </div>

@@ -3,7 +3,6 @@ import {
   ISettlementTransactionPayload,
   ISettlementApproveTransactionCallbacks,
   ISettlementApproveModalProps,
-  IGetEscrowData,
   ApproveSettlementParsedPayload,
 } from "../../../typing";
 import {
@@ -24,11 +23,11 @@ import {
 import { renderModal } from "../config/render";
 import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
-import { Forbidden } from "../components/Forbidden";
 
 import { MARKER } from "../../../config/marker";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
+import { useAsync } from "../hooks/useAsync";
+import { ModalAction } from "../components/Modal";
+import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -47,7 +46,7 @@ const LabelFees = styled.p`
 `;
 
 export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
-  const { escrowData, escrowId, callbacks, deferredPromise } = props;
+  const { escrowData: propsData, escrowId, callbacks, deferredPromise } = props;
   const {
     success,
     setSuccess,
@@ -58,109 +57,109 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise });
 
-  const { isCorrectNetwork } = useNetworkCheck();
+  const [escrowData, isLoadingEscrow] = useAsync(
+    escrowId,
+    propsData ? null : getEscrowData, // this only runs if propsData is null
+    onModalClose,
+    propsData,
+  );
 
-  const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(escrowData);
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   const labelAmountSplit = React.useMemo(() => {
-    if (escrow?.settlement) {
-      const _splitBuyer = escrow.settlement.latestSettlementOfferBuyer / 100;
-      const _splitSeller = escrow.settlement.latestSettlementOfferSeller / 100;
+    if (escrowData?.settlement) {
+      const _splitBuyer =
+        escrowData.settlement.latestSettlementOfferBuyer / 100;
+      const _splitSeller =
+        escrowData.settlement.latestSettlementOfferSeller / 100;
 
-      const _amountBuyer = escrow.amount.times(_splitBuyer);
-      const _amountSeller = escrow.amount.times(_splitSeller);
+      const _amountBuyer = escrowData.amount.times(_splitBuyer);
+      const _amountSeller = escrowData.amount.times(_splitSeller);
 
       const _amountBuyerDisplayable = displayableAmount(
         _amountBuyer,
-        escrow.token.decimals,
+        escrowData.token.decimals,
       );
 
       const _sellerBuyerDisplayable = displayableAmount(
         _amountSeller,
-        escrow.token.decimals,
+        escrowData.token.decimals,
       );
 
       return {
         buyer: {
           amount: _amountBuyerDisplayable,
-          symbol: escrow.token.symbol,
-          percentage: escrow.settlement.latestSettlementOfferBuyer,
+          symbol: escrowData.token.symbol,
+          percentage: escrowData.settlement.latestSettlementOfferBuyer,
         },
 
         seller: {
           amount: _sellerBuyerDisplayable,
-          symbol: escrow.token.symbol,
-          percentage: escrow.settlement.latestSettlementOfferSeller,
+          symbol: escrowData.token.symbol,
+          percentage: escrowData.settlement.latestSettlementOfferSeller,
         },
       };
     }
     return null;
-  }, [escrow]);
+  }, [escrowData]);
 
   const title = React.useMemo(() => {
-    if (escrow?.settlement && escrow.connectedUser) {
+    if (escrowData?.settlement && escrowData?.connectedUser) {
       if (
-        escrow.connectedUser === BUYER &&
-        escrow.status.latestSettlementOfferBy === BUYER
+        escrowData.connectedUser === BUYER &&
+        escrowData.status.latestSettlementOfferBy === BUYER
       ) {
         return "Settlement Offered by You";
       } else if (
-        escrow.connectedUser === SELLER &&
-        escrow.status.latestSettlementOfferBy === SELLER
+        escrowData.connectedUser === SELLER &&
+        escrowData.status.latestSettlementOfferBy === SELLER
       ) {
         return "Settlement Offered by You";
       } else if (
-        escrow.connectedUser === BUYER &&
-        escrow.status.latestSettlementOfferBy !== BUYER
+        escrowData.connectedUser === BUYER &&
+        escrowData.status.latestSettlementOfferBy !== BUYER
       ) {
         return "Settlement Offered by Seller";
       } else if (
-        escrow.connectedUser === SELLER &&
-        escrow.status.latestSettlementOfferBy !== SELLER
+        escrowData.connectedUser === SELLER &&
+        escrowData.status.latestSettlementOfferBy !== SELLER
       ) {
         return "Settlement Offered by Buyer";
       }
     }
     return "Approve Settlement";
-  }, [escrow, isCorrectNetwork]);
+  }, [escrowData]);
 
   const [labelBuyer, labelSeller] = React.useMemo(() => {
-    if (escrow?.connectedUser === BUYER) {
+    if (escrowData?.connectedUser === BUYER) {
       return ["You will get back", "Seller will receive"];
     }
 
     return ["Buyer will get back", "You will receive"];
-  }, [escrow]);
+  }, [escrowData]);
 
-  const displayActionButtons = React.useMemo(() => {
-    return escrow?.status.latestSettlementOfferBy !== escrow?.connectedUser;
-  }, [escrow]);
-
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(escrowId)
-        .then((data: IGetEscrowData) => {
-          if (!data.settlement) {
-            throw new Error("There is no settlement to this escrow");
-          }
-          setEscrow(data);
-        })
-        .catch((e) => {
-          toast.error(e);
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
+  const displayActionButtons = React.useMemo(
+    () =>
+      escrowData?.status.latestSettlementOfferBy !== escrowData?.connectedUser,
+    [escrowData],
+  );
 
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      } else {
+        if (!escrowData.settlement) {
+          toast.error("There is no settlement to this escrow");
+          throw new Error("There is no settlement to this escrow");
+        }
+      }
+    }
+  }, [escrowData]);
 
   const approveSettlementOfferCallbacks: ISettlementApproveTransactionCallbacks =
     {
@@ -175,7 +174,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       },
       broadcasted: (payload: ISettlementTransactionPayload) => {
         callbacks && callbacks.broadcasted && callbacks.broadcasted(payload);
-        setLoadingMessage("Waiting confirmation");
+        setLoadingMessage("Waiting for confirmation");
       },
       confirmed: (payload: ApproveSettlementParsedPayload) => {
         callbacks && callbacks.confirmed && callbacks.confirmed(payload);
@@ -188,34 +187,35 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     };
 
   const onAcceptClick = React.useCallback(() => {
-    if (escrow && escrowId) {
+    if (escrowData && escrowId) {
       approveSettlement(
         escrowId,
-        escrow?.settlement!.latestSettlementOfferBuyer,
-        escrow?.settlement!.latestSettlementOfferSeller,
+        escrowData?.settlement!.latestSettlementOfferBuyer,
+        escrowData?.settlement!.latestSettlementOfferSeller,
         approveSettlementOfferCallbacks,
       ).catch((e) => {
         setIsLoading(false);
         toast.error(e);
       });
     }
-  }, [escrowId, escrow]);
+  }, [escrowId, escrowData]);
 
   const ModalBody = React.useCallback(() => {
-    if (!escrow) {
-      return <ModalBodySkeleton />;
-    }
-
-    if (!(isLoading || [BUYER, SELLER].includes(escrow.connectedUser))) {
-      return <Forbidden onClose={onModalClose} />;
+    if (!escrowData) {
+      return null;
     }
 
     return (
       <>
         <Amount
-          precision={escrow.token.decimals}
-          amount={displayableAmount(escrow.amount, escrow.token.decimals)}
-          tokenSymbol={escrow.token?.symbol ? escrow.token.symbol : "..."}
+          precision={escrowData.token.decimals}
+          amount={displayableAmount(
+            escrowData.amount,
+            escrowData.token.decimals,
+          )}
+          tokenSymbol={
+            escrowData.token?.symbol ? escrowData.token.symbol : "..."
+          }
         />
 
         <Subtitle>Settlement Summary</Subtitle>
@@ -238,14 +238,14 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
                 {labelAmountSplit?.seller.amount}{" "}
                 <TokenSymbol>
                   {labelAmountSplit?.seller.symbol}
-                  {escrow.connectedUser === SELLER && "*"}
+                  {escrowData.connectedUser === SELLER && "*"}
                 </TokenSymbol>{" "}
                 ({labelAmountSplit?.seller.percentage}%)
               </span>
             }
             marker={MARKER.seller}
           />
-          {escrow.connectedUser === SELLER && (
+          {escrowData.connectedUser === SELLER && (
             <LabelFees>
               * Fees will be deducted proportionally from your share
             </LabelFees>
@@ -253,15 +253,15 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         </ContainerDataDisplayer>
       </>
     );
-  }, [escrow, labelSeller, labelBuyer, labelAmountSplit]);
+  }, [escrowData, labelSeller, labelBuyer, labelAmountSplit]);
 
   const openNegotiateModal = async () => {
     onModalClose("change");
 
-    if (escrow) {
+    if (escrowData) {
       const settlementModalProps: ISettlementApproveModalProps = {
         escrowId,
-        escrowData: escrow,
+        escrowData,
         deferredPromise,
         callbacks,
       };
@@ -270,11 +270,11 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
   };
 
   const ModalFooter = React.useCallback(() => {
-    if (!escrow) {
+    if (!escrowData) {
       return null;
     }
 
-    if (success || escrow.status.claimed) {
+    if (success || escrowData.status.claimed) {
       return (
         <ContainerButtons>
           <Button fullWidth variant="primary" onClick={() => onModalClose()}>
@@ -291,7 +291,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
           </Button>
           <Button
             variant="primary"
-            disabled={isLoading}
+            disabled={isLoadingAnything}
             fullWidth
             onClick={onAcceptClick}
           >
@@ -304,21 +304,24 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         <Button fullWidth variant="secondary" onClick={openNegotiateModal}>
           Change
         </Button>
-        <Button fullWidth variant="primary" onClick={onModalClose}>
+        <Button fullWidth variant="primary" onClick={() => onModalClose()}>
           Close
         </Button>
       </ContainerButtons>
     );
-  }, [displayActionButtons, isLoading, escrow]);
+  }, [displayActionButtons, isLoadingAnything, escrowData]);
 
   return (
-    <ScopedModal
-      title={title}
-      body={<ModalBody />}
-      footer={<ModalFooter />}
-      onClose={onModalClose}
-      isLoading={isLoading}
-      loadingMessage={loadingMessage}
-    />
+    <div ref={closeHandlerRef}>
+      <ScopedModal
+        title={title}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
+        onClose={onModalClose}
+        isLoading={isLoadingAnything}
+        loadingMessage={loadingMessage}
+        modalAction={modalAction}
+      />
+    </div>
   );
 }

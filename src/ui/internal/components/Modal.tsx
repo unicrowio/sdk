@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { CloseIcon } from "../assets/CloseIcon";
 import { Loading } from "./Loading";
+import { useInterval } from "./../hooks/useInterval";
 
 export const ModalWrapper = styled.div`
   display: flex;
@@ -73,7 +74,7 @@ export const ModalFooter = styled.footer`
 export const ModalLoading = styled.div`
   position: fixed;
   z-index: 99999999;
-  top: 0;
+  top: -22px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -88,6 +89,7 @@ export const ModalLoading = styled.div`
 
 export const ModalLoadingMessage = styled.p`
   z-index: 999;
+  position: relative;
 
   font-family: 'Bai Jamjuree';
   font-style: normal;
@@ -95,9 +97,15 @@ export const ModalLoadingMessage = styled.p`
   font-size: 24px;
   line-height: 24px;
 
-  color: #6259ff;
+  color: #4944ad;
+  margin-top: 6px;
 
   text-align: center;
+
+  span {
+    position: absolute;
+    left: 100%;
+  }
 `;
 
 export interface TModalProps {
@@ -111,11 +119,17 @@ export interface ModalAction {
   reason?: string;
 }
 
-export const Modal = ({
-  isLoading = false,
-  loadingMessage = "",
-  children,
-}: TModalProps) => {
+export const Modal = ({ isLoading, loadingMessage, children }: TModalProps) => {
+  const [dots, setDots] = React.useState("...");
+
+  useInterval(() => {
+    if (dots === "...") {
+      setDots("");
+    } else {
+      setDots(`${dots}.`);
+    }
+  }, 500);
+
   return (
     <ModalWrapper>
       <StyledModalContent>
@@ -125,7 +139,10 @@ export const Modal = ({
             <ModalLoading>
               <div>
                 <Loading />
-                <ModalLoadingMessage>{loadingMessage}</ModalLoadingMessage>
+                <ModalLoadingMessage>
+                  {loadingMessage ? loadingMessage : "Loading"}
+                  <span>{dots}</span>
+                </ModalLoadingMessage>
               </div>
             </ModalLoading>
           )}

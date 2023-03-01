@@ -8,13 +8,12 @@ import {
 } from "../../../ui/internal/components";
 import { arbitrate, getEscrowData } from "../../../core";
 import { toast } from "../notification/toast";
-import { IArbitrateModalProps, IGetEscrowData } from "../../../typing";
+import { IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
-import { Forbidden } from "../components/Forbidden";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
+import { ModalAction } from "../components/Modal";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -27,22 +26,27 @@ export const Arbitrate = ({
 }: IArbitrateModalProps) => {
   const {
     isLoading,
-    loadingMessage,
     setIsLoading,
+    loadingMessage,
+    setLoadingMessage,
     setSuccess,
-    error,
     setError,
     success,
     onModalClose,
-    setLoadingMessage,
   } = useModalStates({ deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const { isCorrectNetwork } = useNetworkCheck();
 
+  const [escrowData, isLoadingEscrow, error] = useAsync(
+    escrowId,
+    getEscrowData,
+    onModalClose,
+  );
+
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [sellerValue, setSellerValue] = React.useState<string>("");
   const [buyerValue, setBuyerValue] = React.useState<string>("");
-  const [escrow, setEscrow] = React.useState<IGetEscrowData | null>(null);
   const [focus, setFocus] = React.useState<"seller" | "buyer">("seller");
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const isLoadingAnything = isLoading || isLoadingEscrow;
 
   const arbitrateCallbacks = {
     ...callbacks,
@@ -52,42 +56,30 @@ export const Arbitrate = ({
     },
   };
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      try {
-        setIsLoading(true);
+  React.useEffect(() => {
+    if (escrowData) {
+      if (escrowData.arbitration?.arbitrated) {
+        setBuyerValue(escrowData.splitBuyer.toString());
+        setSellerValue(escrowData.splitSeller.toString());
+      }
 
-        setLoadingMessage("Getting Arbitration information");
-
-        const escrowData: IGetEscrowData = await getEscrowData(escrowId);
-
-        setEscrow(escrowData);
-        if (escrowData.arbitration?.arbitrated) {
-          setBuyerValue(escrowData.splitBuyer.toString());
-          setSellerValue(escrowData.splitSeller.toString());
-        }
-      } catch (error: any) {
-        toast.error(error);
-        onModalClose();
-      } finally {
-        setLoadingMessage("");
-        setIsLoading(false);
+      if (escrowData.connectedUser !== "arbitrator") {
+        setModalAction({
+          isForbidden: true,
+          reason: "Only the arbitrator defined in the escrow can arbitrate it",
+        });
       }
     }
-  };
-
-  React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+  }, [escrowData]);
 
   const confirm = (event: any) => {
     event.preventDefault();
 
-    if (!escrow) return null;
+    if (!escrowData) return null;
 
     setIsLoading(true);
     arbitrate(
-      escrow.escrowId,
+      escrowData.escrowId,
       Number(buyerValue),
       Number(sellerValue),
       arbitrateCallbacks,
@@ -120,17 +112,8 @@ export const Arbitrate = ({
   };
 
   const ModalBody = () => {
-    if (!escrow) {
-      return <ModalBodySkeleton />;
-    }
-
-    if (escrow.connectedUser !== "arbitrator") {
-      return (
-        <Forbidden
-          onClose={onModalClose}
-          description="Only the arbitrator defined in the escrow can arbitrate it"
-        />
-      );
+    if (!escrowData) {
+      return null;
     }
 
     return (
@@ -138,7 +121,7 @@ export const Arbitrate = ({
         <InputText
           autoFocus={focus === "seller"}
           required
-          disabled={!!success || escrow.arbitration?.arbitrated}
+          disabled={!!success || escrowData.arbitration?.arbitrated}
           name="seller"
           id="seller"
           label="Seller should receive"
@@ -151,10 +134,10 @@ export const Arbitrate = ({
             content: <AdornmentContent>%</AdornmentContent>,
           }}
           adornmentEnd={{
-            content: escrow && (
+            content: escrowData && (
               <FormattedPercentageAmountAdornment
-                amount={escrow?.amount}
-                tokenInfo={escrow?.token}
+                amount={escrowData?.amount}
+                tokenInfo={escrowData?.token}
                 percentage={sellerValue}
               />
             ),
@@ -164,7 +147,7 @@ export const Arbitrate = ({
         <InputText
           autoFocus={focus === "buyer"}
           required
-          disabled={!!success || escrow.arbitration?.arbitrated}
+          disabled={!!success || escrowData.arbitration?.arbitrated}
           name="buyer"
           id="buyer"
           label="Buyer should receive"
@@ -177,10 +160,10 @@ export const Arbitrate = ({
             content: <AdornmentContent>%</AdornmentContent>,
           }}
           adornmentEnd={{
-            content: escrow && (
+            content: escrowData && (
               <FormattedPercentageAmountAdornment
-                amount={escrow?.amount}
-                tokenInfo={escrow?.token}
+                amount={escrowData?.amount}
+                tokenInfo={escrowData?.token}
                 percentage={buyerValue}
               />
             ),
@@ -192,31 +175,37 @@ export const Arbitrate = ({
   };
 
   const ModalFooter = () => {
-    if (!escrow?.arbitration) {
+    if (!escrowData || !escrowData?.arbitration) {
       return null;
     }
 
     if (
       success ||
-      (escrow.connectedUser === "arbitrator" && escrow.arbitration.arbitrated)
+      (escrowData.connectedUser === "arbitrator" &&
+        escrowData.arbitration.arbitrated)
     ) {
       return (
         <Button
-          disabled={isLoading}
+          disabled={isLoadingAnything}
           fullWidth
           variant="tertiary"
-          onClick={onModalClose}
+          onClick={() => onModalClose()}
         >
           Close
         </Button>
       );
     }
     if (
-      escrow.connectedUser === "arbitrator" &&
-      !escrow.arbitration.arbitrated
+      escrowData.connectedUser === "arbitrator" &&
+      !escrowData.arbitration.arbitrated
     ) {
       return (
-        <Button disabled={isLoading} fullWidth variant="primary" type="submit">
+        <Button
+          disabled={isLoadingAnything}
+          fullWidth
+          variant="primary"
+          type="submit"
+        >
           {error ? "Retry" : "Confirm"}
         </Button>
       );
@@ -229,11 +218,12 @@ export const Arbitrate = ({
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={confirm}>
       <ScopedModal
         title={"Arbitrate the payment"}
-        body={ModalBody()}
-        footer={ModalFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </form>
   );

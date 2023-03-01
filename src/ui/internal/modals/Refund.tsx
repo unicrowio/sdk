@@ -1,6 +1,5 @@
 import {
   EscrowStatus,
-  IGetEscrowData,
   IRefundModalProps,
   IRefundTransactionCallbacks,
   IRefundTransactionPayload,
@@ -21,95 +20,60 @@ import {
 } from "../../../helpers";
 import { toast } from "../notification/toast";
 import { refund, getEscrowData } from "../../../core";
-import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
+import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
     success,
     setSuccess,
-    isLoading,
     setIsLoading,
+    isLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const { isCorrectNetwork } = useNetworkCheck();
 
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
+  const [escrowData, isLoadingEsrow, error] = useAsync(
+    props.escrowId,
+    getEscrowData,
+    onModalClose,
     null,
   );
 
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
-  );
-
-  const [paymentStatus, setPaymentStatus] = React.useState<
-    string | undefined
-  >();
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
+  const isLoadingAnything = isLoadingEsrow || isLoading;
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(props.escrowId)
-        .then(async (data: IGetEscrowData) => {
-          setEscrowData(data);
-          if (data.connectedUser !== SELLER) {
-            setModalAction({
-              isForbidden: false,
-              reason: "Only the seller can refund the payment",
-            });
-            return;
-          }
-
-          if (data.status.claimed) {
-            setModalAction({
-              isForbidden: false,
-              reason: "The payment cannot be refunded via Unicrow anymore",
-            });
-            return;
-          }
-
-          setModalAction({
-            isForbidden: true,
-          });
-
-          if (data.status.state === EscrowStatus.CHALLENGED) {
-            setPaymentStatus(
-              `${EscrowStatus.CHALLENGED} by ${data?.status.latestChallengeBy}`,
-            );
-            return;
-          }
-
-          setPaymentStatus(data.status.state);
-        })
-        .catch((e) => {
-          toast.error(e);
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      if (escrowData.connectedUser !== SELLER) {
+        setModalAction({
+          isForbidden: true,
+          reason: "Only the seller can refund the payment",
+        });
+      } else if (escrowData.status.claimed) {
+        setModalAction({
+          isForbidden: true,
+          reason: "The payment cannot be refunded via Unicrow anymore",
+        });
+      } else if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        setPaymentStatus(
+          `${EscrowStatus.CHALLENGED} by ${escrowData?.status.latestChallengeBy}`,
+        );
+      }
+
+      setPaymentStatus(escrowData.status.state);
+    }
+  }, [escrowData]);
 
   const refundCallbacks: IRefundTransactionCallbacks = {
     connectingWallet: () => {
@@ -135,7 +99,7 @@ export function RefundModal(props: IRefundModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IRefundTransactionPayload) => {
       props.callbacks &&
@@ -159,13 +123,7 @@ export function RefundModal(props: IRefundModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return <ModalBodySkeleton />;
-    }
-
-    if (!(isLoading || modalAction.isForbidden)) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
+      return null;
     }
 
     const isExpired = escrowData.challengePeriodEnd.getTime() <= Date.now();
@@ -218,10 +176,6 @@ export function RefundModal(props: IRefundModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!(isLoading || modalAction.isForbidden)) {
-      return null;
-    }
-
     if (!escrowData) {
       return null;
     }
@@ -241,7 +195,7 @@ export function RefundModal(props: IRefundModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -254,8 +208,9 @@ export function RefundModal(props: IRefundModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </div>
   );

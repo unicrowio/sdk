@@ -1,6 +1,5 @@
 import {
   EscrowStatus,
-  IGetEscrowData,
   IReleasedTransactionPayload,
   IReleaseModalProps,
   IReleaseTransactionCallbacks,
@@ -20,14 +19,12 @@ import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { release } from "../../../core/release";
 import { getEscrowData } from "../../../core/getEscrowData";
-import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
+import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {
@@ -37,77 +34,45 @@ export function ReleaseModal(props: IReleaseModalProps) {
     setIsLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
+
+  const [escrowData, isLoadingEscrow, error] = useAsync(
+    props.escrowId,
+    getEscrowData,
+    onModalClose,
+  );
+
   const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const { isCorrectNetwork } = useNetworkCheck();
-
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
-    null,
-  );
-
-  const [paymentStatus, setPaymentStatus] = React.useState<
-    string | undefined
-  >();
-
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
-  );
-
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const isLoadingAnything = isLoadingEscrow || isLoading;
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      setIsLoading(true);
-      setLoadingMessage("Getting Escrow information");
-      getEscrowData(props.escrowId)
-        .then(async (data: IGetEscrowData) => {
-          setEscrowData(data);
-
-          if (data.connectedUser !== "buyer") {
-            setModalAction({
-              isForbidden: false,
-              reason: "Only the buyer can release the payment",
-            });
-            return;
-          }
-
-          if (data.status.claimed) {
-            setModalAction({
-              isForbidden: false,
-              reason: "The payment is already claimed",
-            });
-            return;
-          }
-
-          setPaymentStatus(data.status.state);
-
-          if (data.status.state === EscrowStatus.CHALLENGED) {
-            setPaymentStatus(
-              `${EscrowStatus.CHALLENGED} by ${data.status.latestChallengeBy}`,
-            );
-          }
-
-          setModalAction({
-            isForbidden: true,
-          });
-        })
-        .catch((e) => {
-          toast.error(e);
-          onModalClose();
-        })
-        .finally(() => {
-          setLoadingMessage("");
-          setIsLoading(false);
-        });
-    }
-  };
-
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      if (escrowData.connectedUser !== "buyer") {
+        setModalAction({
+          isForbidden: true,
+          reason: "Only the buyer can release the payment",
+        });
+      } else if (escrowData.status.claimed) {
+        setModalAction({
+          isForbidden: true,
+          reason: "The payment is already claimed",
+        });
+      }
+
+      setPaymentStatus(escrowData.status.state);
+
+      if (escrowData.status.state === EscrowStatus.CHALLENGED) {
+        setPaymentStatus(
+          `${EscrowStatus.CHALLENGED} by ${escrowData.status.latestChallengeBy}`,
+        );
+      }
+    }
+  }, [escrowData]);
 
   const releaseCallbacks: IReleaseTransactionCallbacks = {
     connectingWallet: () => {
@@ -133,7 +98,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IReleasedTransactionPayload) => {
       props.callbacks &&
@@ -156,13 +121,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return <ModalBodySkeleton />;
-    }
-
-    if (!(isLoading || modalAction.isForbidden)) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
+      return null;
     }
 
     return (
@@ -212,17 +171,15 @@ export function ReleaseModal(props: IReleaseModalProps) {
       return null;
     }
 
-    if (!(isLoading || modalAction.isForbidden)) {
-      return null;
-    }
-
+    const cantReleaseAnymore =
+      escrowData.status.state === EscrowStatus.PERIOD_EXPIRED;
     let buttonChildren;
     let buttonOnClick;
 
-    if (!(error || success)) {
+    if (!(error || success || cantReleaseAnymore)) {
       buttonChildren = "Confirm Release";
       buttonOnClick = onRelease;
-    } else if (success) {
+    } else if (success || cantReleaseAnymore) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
     } else {
@@ -231,7 +188,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -244,8 +201,9 @@ export function ReleaseModal(props: IReleaseModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </div>
   );

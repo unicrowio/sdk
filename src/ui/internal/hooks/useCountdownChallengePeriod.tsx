@@ -3,7 +3,7 @@ import React from "react";
 
 const hasExpired = (period: Date) => period && Date.now() > period.getTime();
 const getCountdown = (date, prefix) =>
-  prefix + " " + countdownChallengePeriod(date).replace(" remaining", "");
+  `${prefix} ${countdownChallengePeriod(date).replace(" remaining", "")}`;
 
 const getChallengedBy = (data) => {
   return data.status.latestChallengeBy === null
@@ -44,13 +44,15 @@ export const useCountdownChallengePeriod = (escrowData) => {
   };
 
   const startCountdown = () => {
+    if (!challenge.current) return;
+
     timer.current && resetCountdown();
     timer.current = setInterval(() => {
+      let prefix;
+      let date;
       const { end, start, challengedBy, neverChallenged, connectedUser } =
         challenge.current;
       const challengedByYou = challengedBy === connectedUser;
-      let prefix;
-      let date;
 
       if (startExpired || neverChallenged) {
         date = end;
@@ -111,7 +113,6 @@ export const useCountdownChallengePeriod = (escrowData) => {
 
     if (!timer.current || countdown?.current === "...") {
       startCountdown();
-      return;
     }
   }, [timer?.current, countdown.current, endExpired, startExpired]);
 

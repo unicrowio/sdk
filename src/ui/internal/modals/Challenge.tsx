@@ -4,7 +4,6 @@ import {
   IChallengeModalProps,
   IChallengeTransactionCallbacks,
   IChallengeTransactionPayload,
-  IGetEscrowData,
 } from "../../../typing";
 import {
   Subtitle,
@@ -30,14 +29,11 @@ import { toast } from "../notification/toast";
 import { challenge } from "../../../core/challenge";
 import { getEscrowData } from "../../../core/getEscrowData";
 import styled from "styled-components";
-import { Forbidden } from "../components/Forbidden";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { SpinnerIcon } from "../assets/SpinnerIcon";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 import { useAsync } from "../hooks/useAsync";
+import { SpinnerIcon } from "../assets/SpinnerIcon";
 import { ModalAction } from "../components/Modal";
 
 const InfoContainer = styled.div`
@@ -54,6 +50,7 @@ const InfoText = styled.p`
   line-height: 22px;
   text-align: center;
   color: #322ca2;
+  margin: 0;
 `;
 
 export function ChallengeModal(props: IChallengeModalProps) {
@@ -65,8 +62,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     setLoadingMessage,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const [modalAction, setModalAction] = React.useState<ModalAction>();
+
   const [escrowData, isLoadingEscrow, error] = useAsync(
     props.escrowId,
     getEscrowData,
@@ -74,24 +70,19 @@ export function ChallengeModal(props: IChallengeModalProps) {
     null,
   );
 
-  const [paymentStatus, setPaymentStatus] = React.useState<
-    string | undefined
-  >();
-
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [paymentStatus, setPaymentStatus] = React.useState<string>();
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
   const isLoadingAnything = isLoadingEscrow || isLoading;
-
-  const {
-    labelChallengePeriod,
-    countdown,
-    challengedBy,
-    updateChallenge,
-    startChallenge,
-    startExpired,
-    canChallenge,
-  } = useCountdownChallengePeriod(escrowData);
 
   React.useEffect(() => {
     if (escrowData) {
+      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      }
+
       if (escrowData.status.state === EscrowStatus.CHALLENGED) {
         const who =
           escrowData.status.latestChallengeBy === escrowData.connectedUser
@@ -104,6 +95,16 @@ export function ChallengeModal(props: IChallengeModalProps) {
       setPaymentStatus(escrowData.status.state);
     }
   }, [escrowData]);
+
+  const {
+    labelChallengePeriod,
+    countdown,
+    challengedBy,
+    updateChallenge,
+    startChallenge,
+    startExpired,
+    canChallenge,
+  } = useCountdownChallengePeriod(escrowData);
 
   const challengeCallbacks: IChallengeTransactionCallbacks = {
     connectingWallet: () => {
@@ -129,7 +130,8 @@ export function ChallengeModal(props: IChallengeModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
+      updateChallenge(escrowData);
     },
     confirmed: (payload: IChallengeTransactionPayload) => {
       props.callbacks &&
@@ -137,6 +139,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Challenged");
+      startChallenge();
 
       setPaymentStatus(`${EscrowStatus.CHALLENGED} by you`);
       setSuccess(payload);
@@ -153,14 +156,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
 
   const ModalBody = () => {
     if (!escrowData) {
-      return <ModalBodySkeleton />;
-    }
-
-    const isSeller = escrowData.connectedUser === SELLER; // SIGNED AS SELLER
-    const isBuyer = escrowData.connectedUser === BUYER; // SIGNED AS BUYER
-
-    if (!(isBuyer || isSeller)) {
-      return <Forbidden onClose={onModalClose} />;
+      return null;
     }
 
     return (
@@ -231,10 +227,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
       return null;
     }
 
-    if (modalAction?.isForbidden || (!isSeller && !isBuyer)) {
-      return <Forbidden onClose={onModalClose} />;
-    }
-
     if (
       isSeller &&
       (escrowData.status.latestChallengeBy === SELLER ||
@@ -293,8 +285,9 @@ export function ChallengeModal(props: IChallengeModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </div>
   );

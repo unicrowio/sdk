@@ -53,6 +53,7 @@ export const getExchangeRates = async (
     }
 
     uniqueTokenSymbols.forEach((symbol) => {
+      if (!symbol) return;
       const upperCaseSymbol = symbol.toUpperCase();
       if (STABLE_COINS.includes(upperCaseSymbol)) {
         // 1 to 1 conversion for stable coins against USD

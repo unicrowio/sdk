@@ -12,7 +12,9 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { isWeb3WalletInstalled } from "../../../wallet";
 import { ModalError } from "./ModalError";
 import { metamaskUrl } from "../../../helpers/constants";
+import { Forbidden } from "./Forbidden";
 import { ModalBodySkeleton } from "./ModalBodySkeleton";
+import { stopAsync } from "../hooks/useAsync";
 
 interface ScopedModalProps {
   title: string;
@@ -21,6 +23,7 @@ interface ScopedModalProps {
   isLoading: boolean;
   loadingMessage: string;
   onClose?: () => any;
+  modalAction?: any;
 }
 
 export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
@@ -28,24 +31,56 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
 ): JSX.Element => {
   const { WithNetworkCheck } = useNetworkCheck();
   const metamaskInstalled = isWeb3WalletInstalled();
+  const { isForbidden = false, reason } = props.modalAction || {};
+  const [bodyIsEmpty, setBodyIsEmpty] = React.useState(true);
+
+  React.useEffect(() => {
+    return () => stopAsync();
+  }, []);
+
+  React.useEffect(() => {
+    // fancy way of checking whether a component is empty / returning null
+    const bodyContent = React.Children.toArray(props.body)[0] as any;
+
+    setBodyIsEmpty([null, false, undefined].includes(bodyContent?.type()));
+  }, [props?.body]);
 
   const BodyWithFooter = React.useCallback(
     () =>
       WithNetworkCheck(
-        props.body ? (
-          <ModalBody>
-            <>
-              {props.body}
-              <ModalFooter>
-                <>{props.footer}</>
-              </ModalFooter>
-            </>
-          </ModalBody>
-        ) : (
-          <ModalBodySkeleton />
-        ),
+        <>
+          {isForbidden && (
+            <Forbidden description={reason} onClose={props.onClose} />
+          )}
+          {!metamaskInstalled && (
+            <ModalError
+              onClick={() => window.open(metamaskUrl)}
+              type="noMetaMask"
+            />
+          )}
+          {!isForbidden && metamaskInstalled && (
+            <ModalBody>
+              {bodyIsEmpty && <ModalBodySkeleton />}
+              {!bodyIsEmpty && (
+                <>
+                  {props.body}
+                  <ModalFooter>
+                    <>{props.footer}</>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalBody>
+          )}
+        </>,
       ),
-    [props.body, props.footer, WithNetworkCheck],
+    [
+      props.body,
+      props.footer,
+      WithNetworkCheck,
+      metamaskInstalled,
+      isForbidden,
+      reason,
+    ],
   );
 
   return (
@@ -56,15 +91,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
           <CloseIcon />
         </ModalHeaderClose>
       </ModalHeader>
-
-      {metamaskInstalled ? (
-        <BodyWithFooter />
-      ) : (
-        <ModalError
-          onClick={() => window.open(metamaskUrl)}
-          type="noMetaMask"
-        />
-      )}
+      <BodyWithFooter />
     </Modal>
   );
 };

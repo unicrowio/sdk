@@ -9,15 +9,14 @@ import { approveArbitrator } from "../../../core/approveArbitrator";
 import { proposeArbitrator } from "../../../core/proposeArbitrator";
 import { toast } from "../notification/toast";
 import { FormattedPercentageAmountAdornment } from "../../../ui/internal/components/FormattedPercentageAmountAdornment";
-import { IArbitrateModalProps, IGetEscrowData } from "../../../typing";
+import { EscrowStatus, IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
-import { Forbidden } from "../components/Forbidden";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { useAsync } from "../hooks/useAsync";
+import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
 
 /**
  * Approve the Arbitrator proposed
@@ -29,123 +28,110 @@ export const AddApproveArbitrator = ({
   callbacks,
 }: IArbitrateModalProps) => {
   const {
-    setLoadingMessage,
+    isLoading,
     loadingMessage,
     setIsLoading,
     setSuccess,
-    error,
     setError,
     success,
     onModalClose,
-    isLoading,
   } = useModalStates({ deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const { isCorrectNetwork } = useNetworkCheck();
 
-  const [escrowData, setEscrowData] = React.useState<IGetEscrowData | null>(
+  const [escrowData, isLoadingEscrow, error] = useAsync(
+    escrowId,
+    getEscrowData,
+    onModalClose,
     null,
+    true,
   );
 
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [arbitrator, setArbitrator] = React.useState<string>("");
   const [arbitratorFee, setArbitratorFee] = React.useState<string>("");
-
   const [action, setAction] = React.useState<
     "initial" | "new" | "edit" | "view" | "added" | "editing"
   >("initial");
-
   const [title, setTitle] = React.useState<string>("Arbitrator Proposal");
-
   const [focus, setFocus] = React.useState<"arbitrator" | "arbitratorFee">(
     "arbitrator",
   );
-
-  const loadData = async () => {
-    if (isCorrectNetwork) {
-      try {
-        setIsLoading(true);
-
-        setLoadingMessage("Getting Arbitration information");
-        const escrow: IGetEscrowData = await getEscrowData(escrowId);
-        setEscrowData(escrow);
-
-        // Buyer or Seller should propose an arbitrator
-        if (!escrow.arbitration) {
-          setAction("new");
-          setTitle("Propose an Arbitrator");
-          setArbitrator("");
-          setArbitratorFee("");
-          return;
-        }
-
-        // Seller who proposed the arbitrator
-        if (
-          escrow.connectedUser === SELLER &&
-          escrow.arbitration.consensusSeller
-        ) {
-          setAction("view");
-          setTitle("Arbitrator Proposal");
-          setArbitrator(escrow.arbitration.arbitrator);
-          setArbitratorFee(String(escrow.arbitration.arbitratorFee));
-          return;
-        }
-
-        // Buyer who proposed the arbitrator
-        if (
-          escrow.connectedUser === BUYER &&
-          escrow.arbitration.consensusBuyer
-        ) {
-          setAction("view");
-          setTitle("Arbitrator Proposal");
-          setArbitrator(escrow.arbitration.arbitrator);
-          setArbitratorFee(String(escrow.arbitration.arbitratorFee));
-          return;
-        }
-
-        // buyer or seller should accept the arbitrator proposal
-        if (
-          escrow.arbitration.consensusBuyer &&
-          escrow.arbitration.consensusSeller
-        ) {
-          setTitle("Arbitrator Proposal");
-          setArbitrator(escrow.arbitration.arbitrator);
-          setArbitratorFee(String(escrow.arbitration.arbitratorFee));
-          setAction("edit");
-          return;
-        }
-
-        setArbitrator(escrow.arbitration.arbitrator);
-        setArbitratorFee(escrow.arbitration.arbitratorFee.toString());
-        setAction("edit");
-      } catch (error: any) {
-        toast.error(error);
-        onModalClose();
-      } finally {
-        setLoadingMessage("");
-        setIsLoading(false);
-      }
-    }
-  };
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const isLoadingAnything = isLoadingEscrow || isLoading;
 
   React.useEffect(() => {
-    loadData();
-  }, [isCorrectNetwork]);
+    if (escrowData) {
+      const escrowClosedStates = [
+        EscrowStatus.SETTLED,
+        EscrowStatus.PERIOD_EXPIRED,
+        EscrowStatus.RELEASED,
+        EscrowStatus.REFUNDED,
+      ];
 
-  const approveCallbacks = {
-    ...callbacks,
-    connected: (address: string) => {
-      setLoadingMessage("Connected");
-      callbacks.connected && callbacks.connected(address);
-    },
-  };
+      if (![BUYER, SELLER].includes(escrowData.connectedUser)) {
+        setModalAction({
+          isForbidden: true,
+        });
+      } else if (escrowClosedStates.includes(escrowData?.status.state)) {
+        setModalAction({
+          isForbidden: true,
+          reason: "The escrow has already been closed",
+        });
+      }
+
+      // Buyer or Seller should propose an arbitrator
+      if (!escrowData.arbitration) {
+        setAction("new");
+        setTitle("Propose an Arbitrator");
+        setArbitrator("");
+        setArbitratorFee("");
+        return;
+      }
+
+      // Seller who proposed the arbitrator
+      if (
+        escrowData.connectedUser === SELLER &&
+        escrowData.arbitration.consensusSeller
+      ) {
+        setAction("view");
+        setTitle("Arbitrator Proposal");
+        setArbitrator(escrowData.arbitration.arbitrator);
+        setArbitratorFee(String(escrowData.arbitration.arbitratorFee));
+        return;
+      }
+
+      // Buyer who proposed the arbitrator
+      if (
+        escrowData.connectedUser === BUYER &&
+        escrowData.arbitration.consensusBuyer
+      ) {
+        setAction("view");
+        setTitle("Arbitrator Proposal");
+        setArbitrator(escrowData.arbitration.arbitrator);
+        setArbitratorFee(String(escrowData.arbitration.arbitratorFee));
+        return;
+      }
+
+      // buyer or seller should accept the arbitrator proposal
+      if (
+        escrowData.arbitration.consensusBuyer &&
+        escrowData.arbitration.consensusSeller
+      ) {
+        setTitle("Arbitrator Proposal");
+        setArbitrator(escrowData.arbitration.arbitrator);
+        setArbitratorFee(String(escrowData.arbitration.arbitratorFee));
+        setAction("edit");
+        return;
+      }
+
+      setArbitrator(escrowData.arbitration.arbitrator);
+      setArbitratorFee(escrowData.arbitration.arbitratorFee.toString());
+      setAction("edit");
+    }
+  }, [escrowData]);
 
   const confirm = () => {
     setIsLoading(true);
-    proposeArbitrator(
-      escrowId,
-      arbitrator,
-      Number(arbitratorFee),
-      approveCallbacks,
-    )
+    proposeArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
       .then(() => {
         setError(null);
         setSuccess("Arbitrator Proposal Sent");
@@ -165,12 +151,7 @@ export const AddApproveArbitrator = ({
 
   const accept = () => {
     setIsLoading(true);
-    approveArbitrator(
-      escrowId,
-      arbitrator,
-      Number(arbitratorFee),
-      approveCallbacks,
-    )
+    approveArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
       .then(() => {
         setSuccess("Arbitrator Approved");
         toast.success("Arbitrator Approved");
@@ -196,128 +177,8 @@ export const AddApproveArbitrator = ({
     }
   };
 
-  const ModalFooter = () => {
-    const isBuyer = escrowData?.connectedUser === BUYER;
-    const isSeller = escrowData?.connectedUser === SELLER;
-
-    if (!(escrowData && (isBuyer || isSeller))) {
-      return null;
-    }
-
-    if (action === "view" || action === "added") {
-      return (
-        <Button
-          disabled={isLoading}
-          fullWidth
-          variant="tertiary"
-          onClick={onModalClose}
-        >
-          Close
-        </Button>
-      );
-    }
-
-    if (action === "edit") {
-      return (
-        <Stack direction="row" style={{ width: "100%" }}>
-          <Button
-            disabled={isLoading}
-            fullWidth
-            variant="secondary"
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              setError(null);
-              setAction("editing");
-            }}
-          >
-            Change
-          </Button>
-
-          <Button
-            disabled={isLoading}
-            fullWidth
-            variant="primary"
-            type="submit"
-          >
-            {error ? "Retry" : "Accept"}
-          </Button>
-        </Stack>
-      );
-    }
-
-    if (action === "editing") {
-      return (
-        <Stack direction="row" style={{ width: "100%" }}>
-          <Button
-            disabled={isLoading}
-            fullWidth
-            variant="tertiary"
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              setError(null);
-              if (escrowData.arbitration) {
-                setArbitrator(escrowData.arbitration.arbitrator);
-                setArbitratorFee(String(escrowData?.arbitration.arbitratorFee));
-              }
-              setAction("edit");
-            }}
-          >
-            Back
-          </Button>
-
-          <Button
-            disabled={isLoading}
-            fullWidth
-            variant="primary"
-            type="submit"
-          >
-            {error ? "Retry" : "Confirm"}
-          </Button>
-        </Stack>
-      );
-    }
-
-    if (action === "new") {
-      return (
-        <Stack direction="row" style={{ width: "100%" }}>
-          <Button
-            disabled={isLoading}
-            fullWidth
-            variant="tertiary"
-            type="button"
-            onClick={onModalClose}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            disabled={isLoading}
-            fullWidth
-            variant="primary"
-            type="submit"
-          >
-            {error ? "Retry" : "Confirm"}
-          </Button>
-        </Stack>
-      );
-    }
-
-    return null;
-  };
-
   const ModalBody = () => {
-    if (!escrowData) {
-      return <ModalBodySkeleton />;
-    }
-
-    if (
-      escrowData?.connectedUser !== BUYER &&
-      escrowData?.connectedUser !== SELLER
-    ) {
-      return <Forbidden onClose={onModalClose} />;
-    }
+    if (!escrowData) return null;
 
     return (
       <Stack>
@@ -355,8 +216,8 @@ export const AddApproveArbitrator = ({
           adornmentEnd={{
             content: escrowData.arbitration && (
               <FormattedPercentageAmountAdornment
-                amount={escrowData?.amount}
-                tokenInfo={escrowData?.token}
+                amount={escrowData.amount}
+                tokenInfo={escrowData.token}
                 percentage={arbitratorFee}
               />
             ),
@@ -367,15 +228,120 @@ export const AddApproveArbitrator = ({
     );
   };
 
+  const ModalFooter = () => {
+    if (action === "view" || action === "added") {
+      return (
+        <Button
+          disabled={isLoadingAnything}
+          fullWidth
+          variant="tertiary"
+          onClick={() => onModalClose()}
+        >
+          Close
+        </Button>
+      );
+    }
+
+    if (action === "edit") {
+      return (
+        <Stack direction="row" style={{ width: "100%" }}>
+          <Button
+            disabled={isLoadingAnything}
+            fullWidth
+            variant="secondary"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setError(null);
+              setAction("editing");
+            }}
+          >
+            Change
+          </Button>
+
+          <Button
+            disabled={isLoadingAnything}
+            fullWidth
+            variant="primary"
+            type="submit"
+          >
+            {error ? "Retry" : "Accept"}
+          </Button>
+        </Stack>
+      );
+    }
+
+    if (action === "editing") {
+      return (
+        <Stack direction="row" style={{ width: "100%" }}>
+          <Button
+            disabled={isLoadingAnything}
+            fullWidth
+            variant="tertiary"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setError(null);
+              if (escrowData.arbitration) {
+                setArbitrator(escrowData.arbitration.arbitrator);
+                setArbitratorFee(String(escrowData?.arbitration.arbitratorFee));
+              }
+              setAction("edit");
+            }}
+          >
+            Back
+          </Button>
+
+          <Button
+            disabled={isLoadingAnything}
+            fullWidth
+            variant="primary"
+            type="submit"
+          >
+            {error ? "Retry" : "Confirm"}
+          </Button>
+        </Stack>
+      );
+    }
+
+    if (action === "new") {
+      return (
+        <Stack direction="row" style={{ width: "100%" }}>
+          <Button
+            disabled={isLoadingAnything}
+            fullWidth
+            variant="tertiary"
+            type="button"
+            onClick={() => onModalClose()}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            disabled={isLoadingAnything}
+            fullWidth
+            variant="primary"
+            type="submit"
+          >
+            {error ? "Retry" : "Confirm"}
+          </Button>
+        </Stack>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <form ref={closeHandlerRef} autoComplete="off" onSubmit={handleSubmit}>
       <ScopedModal
         title={title}
-        body={ModalBody()}
-        footer={ModalFooter()}
+        body={<ModalBody />}
+        footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </form>
   );

@@ -1,22 +1,16 @@
-import type * as CSS from "csstype";
 import React from "react";
-import { claimMultiple } from "../../../core";
 import {
-  IBalanceDetailed,
   IClaimMultipleModalProps,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
 } from "../../../typing";
-import { BigCheckIcon } from "../assets/BigCheckIcon";
 import { Button, ScopedModal, Table } from "../components";
-import { TableRow } from "../components/TableRow";
+import { BalancesTable } from "../components/BalancesTable";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
+import { claimMultiple } from "../../../core";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-
-interface IBalanceWithTokenUSD extends IBalanceDetailed {
-  amountInUSD?: string;
-}
+import { stopAsync } from "../hooks/useAsync";
 
 export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   const {
@@ -29,7 +23,10 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
+
   const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const amountClaimable = props.balances?.readyForClaim?.length;
+
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
       setIsLoading(true);
@@ -54,7 +51,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
     },
     confirmed: (payload: IClaimTransactionPayload) => {
       props.callbacks &&
@@ -62,62 +59,45 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Claimed");
+      stopAsync();
 
-      setIsLoading(false);
       setSuccess(payload);
+      setIsLoading(false);
     },
   };
 
   const onHandleMultipleClaim = () => {
+    setIsLoading(true);
+
     claimMultiple(props.escrowIds, claimCallbacks).catch((e) => {
       setIsLoading(false);
+      toast.error(e);
     });
   };
 
-  const ClaimSuccessful = () => {
-    const wrapperStyles: CSS.Properties = {
-      margin: "0 auto",
-      textAlign: "center",
-      fontWeight: 500,
-    };
-    return (
-      <div style={wrapperStyles}>
-        <BigCheckIcon />
-        <p>All balances claimed!</p>
-      </div>
-    );
-  };
-
   const ModalBody = () => {
-    return success ? (
-      <ClaimSuccessful />
-    ) : (
-      <Table>
-        <thead>
-          <tr>
-            <th>Currency</th>
-            <th>USD Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.balances.readyForClaim.map((balance: IBalanceWithTokenUSD) =>
-            TableRow(balance),
-          )}
-        </tbody>
-      </Table>
+    if (!props.balances?.readyForClaim) {
+      return null;
+    }
+
+    return (
+      <BalancesTable
+        balances={props.balances.readyForClaim}
+        onModalClose={onModalClose}
+        setIsLoading={() => {}}
+        success={success}
+      />
     );
   };
-
-  console.log("pwe", "props.balances", props.balances);
 
   const ModalFooter = () => {
     let buttonChildren;
     let buttonOnClick;
 
-    if (!(error || success)) {
+    if (!(error || success) && amountClaimable > 0) {
       buttonChildren = "Confirm";
       buttonOnClick = onHandleMultipleClaim;
-    } else if (success) {
+    } else if (success || amountClaimable === 0) {
       buttonChildren = "Close";
       buttonOnClick = onModalClose;
     } else {
@@ -126,11 +106,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
     }
 
     return (
-      <Button
-        fullWidth
-        disabled={isLoading || props.balances.readyForClaim.length === 0}
-        onClick={buttonOnClick}
-      >
+      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -139,11 +115,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
   return (
     <div ref={closeHandlerRef}>
       <ScopedModal
-        title={
-          props.balances.readyForClaim.length > 1
-            ? "Claim Balances"
-            : "Claim Payment"
-        }
+        title={amountClaimable > 1 ? "Claim Balances" : "Claim Payment"}
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}

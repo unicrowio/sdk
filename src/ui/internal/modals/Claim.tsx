@@ -1,30 +1,19 @@
 import React from "react";
 import {
-  EscrowStatus,
-  IBalanceDetailed,
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
+  IBalanceDetailed,
+  EscrowStatus,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
-import { Button, Table, ScopedModal, TokenSymbol } from "../components";
+import { Button, ScopedModal } from "../components";
 import { toast } from "../notification/toast";
-import { Forbidden } from "../components/Forbidden";
 import { getSingleBalance, claim } from "../../../core";
-import {
-  displayDecimals,
-  formatAmountToUSD,
-  getExchangeRates,
-} from "../../../helpers";
-import { useNetworkCheck } from "../hooks/useNetworkCheck";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { ModalBodySkeleton } from "../components/ModalBodySkeleton";
-import Skeleton from "@material-ui/lab/Skeleton";
-
-interface IBalanceWithTokenUSD extends IBalanceDetailed {
-  amountInUSD?: string;
-}
+import { stopAsync, useAsync } from "../hooks/useAsync";
+import { BalancesTable } from "../components/BalancesTable";
 
 export function ClaimModal(props: IClaimModalProps) {
   const {
@@ -34,116 +23,41 @@ export function ClaimModal(props: IClaimModalProps) {
     setIsLoading,
     loadingMessage,
     setLoadingMessage,
-    error,
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
-  const { isCorrectNetwork } = useNetworkCheck();
 
-  const [modalAction, setModalAction] = React.useState<ModalAction>(
-    {} as ModalAction,
+  const [escrowBalance, isLoadingBalance, error] = useAsync(
+    props.escrowId,
+    getSingleBalance,
+    onModalClose,
+    null,
   );
 
-  const [escrowBalance, setEscrowBalance] =
-    React.useState<IBalanceWithTokenUSD>();
-
-  const getBalance = React.useCallback(async () => {
-    if (isCorrectNetwork) {
-      try {
-        setIsLoading(true);
-        setLoadingMessage("Getting Escrow information");
-
-        const _escrowBalance: IBalanceWithTokenUSD = await getSingleBalance(
-          Number(props.escrowId),
-        );
-
-        const exchangeValues = await getExchangeRates([
-          _escrowBalance.token.symbol!,
-        ]);
-
-        const exchangeValue = exchangeValues[_escrowBalance.token.symbol!];
-
-        if (exchangeValue) {
-          _escrowBalance.amountInUSD = formatAmountToUSD(
-            _escrowBalance.amountBN,
-            exchangeValue,
-          );
-        } else {
-          _escrowBalance.amountInUSD = "n/a (error)";
-        }
-
-        setEscrowBalance(_escrowBalance);
-
-        if (_escrowBalance.connectedUser === "other") {
-          setModalAction({
-            isForbidden: true,
-          });
-        }
-
-        if (_escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
-          setModalAction({
-            isForbidden: true,
-            reason:
-              "The escrow has been challenged and its period has not expired yet",
-          });
-        }
-
-        if (_escrowBalance.status.claimed) {
-          setModalAction({
-            isForbidden: true,
-            reason: "This escrow has already been claimed",
-          });
-        }
-      } catch (error: any) {
-        toast.error(error);
-        onModalClose();
-      } finally {
-        setLoadingMessage("");
-        setIsLoading(false);
-      }
-    }
-  }, [isCorrectNetwork, props.escrowId, onModalClose]);
+  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const [isLoadingTable, setLoadingTable] = React.useState(false);
+  const [modalAction, setModalAction] = React.useState<ModalAction>();
+  const isLoadingAnything = isLoadingBalance || isLoadingTable || isLoading;
 
   React.useEffect(() => {
-    if (props.escrowId && !escrowBalance) {
-      getBalance();
-    }
-  }, [isCorrectNetwork, props.escrowId, escrowBalance]);
-
-  const renderClaimableBalance = React.useCallback(() => {
-    if (isCorrectNetwork) {
-      if (isLoading || !escrowBalance) {
-        return (
-          <tr>
-            <td>
-              <Skeleton width="100%" height={25} />
-            </td>
-          </tr>
-        );
+    if (escrowBalance && !success) {
+      if (escrowBalance.connectedUser === "other") {
+        setModalAction({
+          isForbidden: true,
+        });
+      } else if (escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
+        setModalAction({
+          isForbidden: true,
+          reason:
+            "The escrow has been challenged and its period has not expired yet",
+        });
+      } else if (escrowBalance.status.claimed) {
+        setModalAction({
+          isForbidden: true,
+          reason: "This escrow has already been claimed",
+        });
       }
-
-      const amount = Number(escrowBalance.displayableAmount);
-      const decimals = displayDecimals(escrowBalance.token.symbol!);
-      const symbol = escrowBalance?.token?.symbol;
-
-      return (
-        <tr>
-          <td>
-            {amount.toFixed(decimals)}{" "}
-            {symbol ? (
-              <TokenSymbol>{symbol}</TokenSymbol>
-            ) : (
-              <Skeleton width={32} height={25} />
-            )}
-          </td>
-          <td>
-            {"$"}
-            {escrowBalance.amountInUSD}
-          </td>
-        </tr>
-      );
     }
-  }, [escrowBalance, isLoading, isCorrectNetwork]);
+  }, [escrowBalance, success]);
 
   const claimCallbacks: IClaimTransactionCallbacks = {
     connectingWallet: () => {
@@ -169,7 +83,8 @@ export function ClaimModal(props: IClaimModalProps) {
       props.callbacks &&
         props.callbacks.broadcasted &&
         props.callbacks.broadcasted(payload);
-      setLoadingMessage("Waiting confirmation");
+      setLoadingMessage("Waiting for confirmation");
+      stopAsync();
     },
     confirmed: (payload: IClaimTransactionPayload) => {
       props.callbacks &&
@@ -177,7 +92,6 @@ export function ClaimModal(props: IClaimModalProps) {
         props.callbacks.confirmed(payload);
 
       toast.success("Claimed");
-
       setSuccess(payload);
       setIsLoading(false);
     },
@@ -191,30 +105,22 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalBody = () => {
-    if (!escrowBalance) {
-      return <ModalBodySkeleton />;
-    }
-    if (!(isLoading || !modalAction.isForbidden)) {
-      return (
-        <Forbidden onClose={onModalClose} description={modalAction.reason} />
-      );
+    if (!escrowBalance && !success) {
+      return null;
     }
 
     return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Currency</th>
-            <th>USD Value</th>
-          </tr>
-        </thead>
-        <tbody>{renderClaimableBalance()}</tbody>
-      </Table>
+      <BalancesTable
+        balances={[escrowBalance]}
+        onModalClose={onModalClose}
+        setIsLoading={setLoadingTable}
+        success={success}
+      />
     );
   };
 
   const ModalFooter = () => {
-    if (!(escrowBalance && (isLoading || !modalAction.isForbidden))) {
+    if (!escrowBalance && !success) {
       return null;
     }
 
@@ -233,7 +139,7 @@ export function ClaimModal(props: IClaimModalProps) {
     }
 
     return (
-      <Button fullWidth disabled={isLoading} onClick={buttonOnClick}>
+      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
         {buttonChildren}
       </Button>
     );
@@ -246,8 +152,9 @@ export function ClaimModal(props: IClaimModalProps) {
         body={<ModalBody />}
         footer={<ModalFooter />}
         onClose={onModalClose}
-        isLoading={isLoading}
+        isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
+        modalAction={modalAction}
       />
     </div>
   );
