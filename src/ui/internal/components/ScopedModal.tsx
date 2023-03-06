@@ -9,9 +9,6 @@ import {
 } from "../../../ui/internal/components/Modal";
 import { CloseIcon } from "../assets/CloseIcon";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
-import { isWeb3WalletInstalled } from "../../../wallet";
-import { ModalError } from "./ModalError";
-import { metamaskUrl } from "../../../helpers/constants";
 import { Forbidden } from "./Forbidden";
 import { ModalBodySkeleton } from "./ModalBodySkeleton";
 import { stopAsync } from "../hooks/useAsync";
@@ -30,7 +27,6 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
   props,
 ): JSX.Element => {
   const { WithNetworkCheck } = useNetworkCheck();
-  const metamaskInstalled = isWeb3WalletInstalled();
   const { isForbidden = false, reason } = props.modalAction || {};
   const [bodyIsEmpty, setBodyIsEmpty] = React.useState(true);
 
@@ -52,13 +48,8 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
           {isForbidden && (
             <Forbidden description={reason} onClose={props.onClose} />
           )}
-          {!metamaskInstalled && (
-            <ModalError
-              onClick={() => window.open(metamaskUrl)}
-              type="noMetaMask"
-            />
-          )}
-          {!isForbidden && metamaskInstalled && (
+
+          {!isForbidden && (
             <ModalBody>
               {bodyIsEmpty && <ModalBodySkeleton />}
               {!bodyIsEmpty && (
@@ -73,14 +64,7 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
           )}
         </>,
       ),
-    [
-      props.body,
-      props.footer,
-      WithNetworkCheck,
-      metamaskInstalled,
-      isForbidden,
-      reason,
-    ],
+    [props.body, props.footer, WithNetworkCheck, isForbidden, reason],
   );
 
   return (

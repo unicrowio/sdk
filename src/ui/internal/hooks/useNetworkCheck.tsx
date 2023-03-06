@@ -1,14 +1,17 @@
 import React from "react";
 import {
   isCorrectNetworkConnected,
+  isWeb3WalletInstalled,
   startListeningNetwork,
   stopListeningNetwork,
   switchNetwork,
 } from "wallet";
 import { ModalError } from "ui/internal/components/ModalError";
 import { DefaultNetwork } from "typing";
+import { metamaskUrl } from "../../../helpers/constants";
 
 export const useNetworkCheck = () => {
+  const metamaskInstalled = isWeb3WalletInstalled();
   const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<
     boolean | undefined
   >(undefined);
@@ -41,14 +44,17 @@ export const useNetworkCheck = () => {
 
   const WithNetworkCheck = React.useCallback(
     (Body: JSX.Element) =>
-      isCorrectNetwork === undefined ? (
-        <></>
+      !metamaskInstalled ? (
+        <ModalError
+          onClick={() => window.open(metamaskUrl)}
+          type="noMetaMask"
+        />
       ) : isCorrectNetwork ? (
         Body
       ) : (
         <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />
       ),
-    [isCorrectNetwork],
+    [isCorrectNetwork, metamaskInstalled],
   );
 
   return {
