@@ -93,7 +93,7 @@ export const connect = async (): Promise<string | null> => {
  * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
 export const switchNetwork = async (name: DefaultNetwork) => {
-  if (!isWeb3WalletInstalled()) return null;
+  if (!isWeb3WalletInstalled()) throw Error("No wallet installed");
   const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
     networks[name];
 
@@ -174,7 +174,8 @@ export const autoSwitchNetwork = async (
 /**
  * Get parameters of the network that the wallet is connected to
  *
- * @returns Network parameters
+ * @returns Network info of where the wallet switched to
+ * @throws Error if no wallet is installed or if the user rejected adding or switching to the network
  */
 export const getNetwork = async (): Promise<ethers.providers.Network> => {
   const provider = await getWeb3Provider();
