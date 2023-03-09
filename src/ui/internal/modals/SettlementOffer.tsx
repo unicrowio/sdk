@@ -76,7 +76,7 @@ export function SettlementOfferModal({
         };
 
         if (data && data.status.latestSettlementOfferBy) {
-          onModalClose();
+          onModalClose("change");
           renderModal(ApproveSettlementModal, settlementModalProps);
         }
 
