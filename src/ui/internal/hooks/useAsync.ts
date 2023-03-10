@@ -20,7 +20,7 @@ export const useAsync = (
 
   React.useEffect(() => {
     if (error) {
-      toast.error("error");
+      toast.error(error);
       onModalClose && onModalClose();
     }
   }, [error]);
