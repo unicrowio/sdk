@@ -2,7 +2,7 @@ import { UnicrowArbitrator__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import {
   ArbitrateParsedPayload,
-  IArbitrationTransactionCallbacks,
+  IArbitrateTransactionCallbacks,
 } from "../typing";
 import { errorHandler } from "./internal/errorHandler";
 import {
@@ -25,7 +25,7 @@ export const arbitrate = async (
   escrowId: number,
   splitBuyer: number,
   splitSeller: number,
-  callbacks?: IArbitrationTransactionCallbacks,
+  callbacks?: IArbitrateTransactionCallbacks,
 ): Promise<ArbitrateParsedPayload> => {
   try {
     callbacks && callbacks.connectingWallet && callbacks.connectingWallet();

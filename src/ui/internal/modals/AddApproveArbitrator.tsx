@@ -9,7 +9,12 @@ import { approveArbitrator } from "../../../core/approveArbitrator";
 import { proposeArbitrator } from "../../../core/proposeArbitrator";
 import { toast } from "../notification/toast";
 import { FormattedPercentageAmountAdornment } from "../../../ui/internal/components/FormattedPercentageAmountAdornment";
-import { EscrowStatus, IArbitrateModalProps } from "../../../typing";
+import {
+  EscrowStatus,
+  IApproveOrProposeArbitrationModalProps,
+  IProposeArbitrationTransactionCallbacks,
+  IApproveArbitrationTransactionCallbacks,
+} from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
@@ -26,7 +31,7 @@ export const AddApproveArbitrator = ({
   escrowId,
   deferredPromise,
   callbacks,
-}: IArbitrateModalProps) => {
+}: IApproveOrProposeArbitrationModalProps) => {
   const {
     isLoading,
     loadingMessage,
@@ -131,7 +136,12 @@ export const AddApproveArbitrator = ({
 
   const confirm = () => {
     setIsLoading(true);
-    proposeArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
+    proposeArbitrator(
+      escrowId,
+      arbitrator,
+      Number(arbitratorFee),
+      callbacks as IProposeArbitrationTransactionCallbacks,
+    )
       .then(() => {
         setError(null);
         setSuccess("Arbitrator Proposal Sent");
@@ -151,7 +161,12 @@ export const AddApproveArbitrator = ({
 
   const accept = () => {
     setIsLoading(true);
-    approveArbitrator(escrowId, arbitrator, Number(arbitratorFee), callbacks)
+    approveArbitrator(
+      escrowId,
+      arbitrator,
+      Number(arbitratorFee),
+      callbacks as IApproveArbitrationTransactionCallbacks,
+    )
       .then(() => {
         setSuccess("Arbitrator Approved");
         toast.success("Arbitrator Approved");

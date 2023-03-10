@@ -105,7 +105,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalBody = () => {
-    if (!escrowBalance && !success) {
+    if (!(escrowBalance || success)) {
       return null;
     }
 
@@ -120,7 +120,7 @@ export function ClaimModal(props: IClaimModalProps) {
   };
 
   const ModalFooter = () => {
-    if (!escrowBalance && !success) {
+    if (!(escrowBalance || success)) {
       return null;
     }
 
