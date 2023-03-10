@@ -58,6 +58,6 @@ export const getTokenInfo = async (
     return tokenInfo;
   }
 
-  toast.error(`Can't get token info from tokenAddress ${tokenAddress}`);
+  toast.error(`Can't get info from tokenAddress: ${tokenAddress}`);
   return null;
 };
