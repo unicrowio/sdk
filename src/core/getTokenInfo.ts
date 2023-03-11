@@ -1,5 +1,5 @@
 import { ERC20__factory } from "@unicrowio/ethers-types";
-import { toast } from "ui/internal/notification/toast";
+import { toast } from "../ui/internal/notification/toast";
 import { ETH_ADDRESS, isSameAddress } from "../helpers";
 import { IToken } from "../typing";
 import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
