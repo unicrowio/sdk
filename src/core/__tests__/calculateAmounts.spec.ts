@@ -1,7 +1,5 @@
 import { tShares, CalculateAmountsInput } from "../../typing";
-import {
-  calculateAmounts,
-} from "../calculateAmounts";
+import { calculateAmounts } from "../calculateAmounts";
 
 // formula how to get the bip value of percentage
 // rule of three
