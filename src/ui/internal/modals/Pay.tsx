@@ -203,7 +203,7 @@ export function PayModal(props: IPaymentModalProps) {
 
     if (!(error || success)) {
       buttonChildren = `Pay ${props.paymentProps.amount} ${
-        tokenInfo ? tokenInfo.symbol : "-"
+        tokenInfo ? tokenInfo.symbol : "ETH"
       }`;
       buttonOnClick = onPayClick;
     } else if (success) {

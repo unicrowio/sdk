@@ -45,7 +45,7 @@ export interface IAmountProps {
 export const Amount = ({
   amount,
   precision,
-  tokenSymbol,
+  tokenSymbol = "ETH",
   status,
 }: IAmountProps) => {
   return (
