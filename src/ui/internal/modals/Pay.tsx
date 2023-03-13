@@ -52,6 +52,8 @@ export function PayModal(props: IPaymentModalProps) {
     props.paymentProps.tokenAddress,
     getTokenInfo,
     onModalClose,
+    "",
+    true,
   );
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);

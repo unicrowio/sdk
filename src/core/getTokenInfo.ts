@@ -7,11 +7,16 @@ const fetchTokenInfo = async (tokenAddress: string) => {
   const provider = getJsonRpcProvider();
   const token = ERC20__factory.connect(tokenAddress, provider!);
 
-  return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
-    address: tokenAddress,
-    symbol: results[0],
-    decimals: results[1],
-  }));
+  try {
+    await token.symbol();
+    return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
+      address: tokenAddress,
+      symbol: results[0],
+      decimals: results[1],
+    }));
+  } catch (e) {
+    console.error(e);
+  }
 };
 /**
  * Gets info of an ERC20 token based on its address.
@@ -52,6 +57,6 @@ export const getTokenInfo = async (
     return tokenInfo;
   }
 
-  console.error(`Can't get token info from this address: ${tokenAddress}`);
+  console.error(`Can't get info from tokenAddress: ${tokenAddress}`);
   return null;
 };

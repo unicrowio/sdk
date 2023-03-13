@@ -1,8 +1,5 @@
-import {
-  calculateAmounts,
-  Shares,
-  CalculateAmountsInput,
-} from "../calculateAmounts";
+import { tShares, CalculateAmountsInput } from "../../typing";
+import { calculateAmounts } from "../calculateAmounts";
 
 // formula how to get the bip value of percentage
 // rule of three
@@ -17,7 +14,7 @@ describe("calculateAmounts", () => {
     const splitMarketplace = 10;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts(
+    const result: tShares = calculateAmounts(
       {
         amount: 1000,
         splitBuyer,
@@ -35,7 +32,7 @@ describe("calculateAmounts", () => {
       amountProtocol: 10,
       amountMarketplace: 100,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
   it("should return the same result from the Sheet1 - release, refunded, settled, no artibitrator", () => {
     const splitSeller = 80;
@@ -44,7 +41,7 @@ describe("calculateAmounts", () => {
     const splitMarketplace = 10;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -59,7 +56,7 @@ describe("calculateAmounts", () => {
       amountProtocol: 8,
       amountMarketplace: 80,
       amountArbitrator: 40,
-    } as Shares;
+    } as tShares;
 
     expect(result).toEqual(r);
   });
@@ -71,7 +68,7 @@ describe("calculateAmounts", () => {
     const splitMarketplace = 10;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts(
+    const result: tShares = calculateAmounts(
       {
         amount: 1000,
         splitBuyer,
@@ -89,7 +86,7 @@ describe("calculateAmounts", () => {
       amountProtocol: 8,
       amountMarketplace: 80,
       amountArbitrator: 50,
-    } as Shares);
+    } as tShares);
   });
 });
 
@@ -101,7 +98,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -116,7 +113,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
       amountProtocol: 10,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: split 50/50", () => {
@@ -126,7 +123,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -141,7 +138,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
       amountProtocol: 5,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: split 80 (splitSeller) / 20 (buyer)", () => {
@@ -151,7 +148,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -166,7 +163,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
       amountProtocol: 8,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Refunded by splitSeller", () => {
@@ -176,7 +173,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -191,7 +188,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
       amountProtocol: 0,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Refunded by splitSeller", () => {
@@ -201,7 +198,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -216,7 +213,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
       amountProtocol: 0,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 });
 
@@ -228,7 +225,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const splitMarketplace = 10;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -243,7 +240,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
       amountProtocol: 10,
       amountMarketplace: 100,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: split 50/50", () => {
@@ -253,7 +250,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const splitMarketplace = 10;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -268,7 +265,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
       amountProtocol: 5,
       amountMarketplace: 50,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: split 80 (splitSeller) / 20 (buyer)", () => {
@@ -278,7 +275,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const splitMarketplace = 10;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -293,7 +290,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
       amountProtocol: 8,
       amountMarketplace: 80,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Refunded by splitSeller", () => {
@@ -303,7 +300,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -318,7 +315,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
       amountProtocol: 0,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 });
 
@@ -330,7 +327,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const splitMarketplace = 10;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -345,7 +342,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
       amountProtocol: 10,
       amountMarketplace: 100,
       amountArbitrator: 50,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Arbitrator splits payment 50/50", () => {
@@ -355,7 +352,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const splitMarketplace = 10;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts(
+    const result: tShares = calculateAmounts(
       {
         amount: 1000,
         splitBuyer,
@@ -373,7 +370,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
       amountProtocol: 5,
       amountMarketplace: 50,
       amountArbitrator: 50,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Arbitrator splits 80(seller)/20(splitBuyer)", () => {
@@ -383,7 +380,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const splitMarketplace = 10;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts(
+    const result: tShares = calculateAmounts(
       {
         amount: 1000,
         splitBuyer,
@@ -401,7 +398,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
       amountProtocol: 8,
       amountMarketplace: 80,
       amountArbitrator: 50,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Refunded by arbitrator (0/100 split)", () => {
@@ -411,7 +408,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const splitMarketplace = 0;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts(
+    const result: tShares = calculateAmounts(
       {
         amount: 1000,
         splitBuyer,
@@ -429,7 +426,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
       amountProtocol: 0,
       amountMarketplace: 0,
       amountArbitrator: 50,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: Refunded by seller", () => {
@@ -439,7 +436,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const splitMarketplace = 0;
     const arbitratorFee = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -454,7 +451,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
       amountProtocol: 0,
       amountMarketplace: 0,
       amountArbitrator: 0,
-    } as Shares);
+    } as tShares);
   });
 
   it("should calculate considering the final state: splitBuyer and seller agree on 50/50", () => {
@@ -464,7 +461,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const splitMarketplace = 10;
     const arbitratorFee = 5;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -479,7 +476,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
       amountProtocol: 5,
       amountMarketplace: 50,
       amountArbitrator: 25,
-    } as Shares);
+    } as tShares);
   });
 });
 
@@ -490,7 +487,7 @@ describe("Fees Calculation - 0% marketplace fee, 1% platform, ", () => {
     const splitProtocol = 1;
     const splitMarketplace = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 1000,
       splitBuyer,
       splitSeller,
@@ -504,7 +501,7 @@ describe("Fees Calculation - 0% marketplace fee, 1% platform, ", () => {
       amountSeller: 495,
       amountProtocol: 5,
       amountMarketplace: 0,
-    } as Shares);
+    } as tShares);
   });
 });
 
@@ -515,7 +512,7 @@ describe("Fees Calculation - 0% marketplace fee, 0% platform, with 12 amount ", 
     const splitProtocol = 0;
     const splitMarketplace = 0;
 
-    const result: Shares = calculateAmounts({
+    const result: tShares = calculateAmounts({
       amount: 12,
       splitBuyer,
       splitSeller,
@@ -529,7 +526,7 @@ describe("Fees Calculation - 0% marketplace fee, 0% platform, with 12 amount ", 
       amountSeller: 6,
       amountProtocol: 0,
       amountMarketplace: 0,
-    } as Shares);
+    } as tShares);
   });
 });
 
@@ -539,7 +536,7 @@ it("Amount 1000, seller should receive 100% and platform 1%", () => {
   const splitProtocol = 1;
   const splitMarketplace = 0;
 
-  const result: Shares = calculateAmounts({
+  const result: tShares = calculateAmounts({
     amount: 1000,
     splitBuyer,
     splitSeller,
@@ -553,7 +550,7 @@ it("Amount 1000, seller should receive 100% and platform 1%", () => {
     amountSeller: 990,
     amountProtocol: 10,
     amountMarketplace: 0,
-  } as Shares);
+  } as tShares);
 });
 
 it("Amount 1.000.000.000.000.000.000.000, seller should receive 100% and platform 1%", () => {
@@ -562,7 +559,7 @@ it("Amount 1.000.000.000.000.000.000.000, seller should receive 100% and platfor
   const splitProtocol = 1;
   const splitMarketplace = 0;
 
-  const result: Shares = calculateAmounts({
+  const result: tShares = calculateAmounts({
     amount: 1e21,
     splitBuyer,
     splitSeller,
@@ -576,5 +573,5 @@ it("Amount 1.000.000.000.000.000.000.000, seller should receive 100% and platfor
     amountSeller: 990000000000000000000,
     amountProtocol: 10000000000000000000,
     amountMarketplace: 0,
-  } as Shares);
+  } as tShares);
 });

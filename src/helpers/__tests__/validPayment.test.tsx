@@ -25,7 +25,7 @@ describe("Valid payments function", () => {
         ...params,
         seller: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    ).rejects.toThrow(/seller is an invalid address./);
+    ).rejects.toThrow("seller is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.");
   });
 
   it("Should throw an error given an invalid marketplace address ", async () => {
@@ -34,7 +34,7 @@ describe("Valid payments function", () => {
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    ).rejects.toThrow(/marketplace is an invalid address./);
+    ).rejects.toThrow("marketplace is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.");
   });
 
   it("Should throw an error given an invalid arbitrator address ", async () => {
@@ -43,7 +43,7 @@ describe("Valid payments function", () => {
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    ).rejects.toThrow(/marketplace is an invalid address./);
+    ).rejects.toThrow("marketplace is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.");
   });
 
   it("Should throw an error given an invalid token address ", async () => {
@@ -52,7 +52,7 @@ describe("Valid payments function", () => {
         ...params,
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
-    ).rejects.toThrow(/marketplace is an invalid address./);
+    ).rejects.toThrow("marketplace is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.");
   });
 
   it("Should throw an error given invalid amount", async () => {

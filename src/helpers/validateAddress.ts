@@ -1,3 +1,4 @@
+import { ERC20__factory } from "@unicrowio/ethers-types";
 import { ensToAddress } from "./ensToAddress";
 import { isValidAddress } from "./isValidAddress";
 
@@ -45,7 +46,7 @@ export const validateAddress = (address: ValidAddressProps) => {
   const result = Object.entries(address)
     .map((item) => {
       if (!isValidAddress(item[1])) {
-        return `${item[0]} is an invalid address.`;
+        return `${item[0]} is invalid: ${item[1]}.`;
       }
       return undefined;
     })
