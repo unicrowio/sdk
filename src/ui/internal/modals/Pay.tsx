@@ -122,6 +122,7 @@ export function PayModal(props: IPaymentModalProps) {
             tokenInfo?.decimals || 18,
             tokenInfo?.symbol || "",
           )}
+          tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}
           status={paymentStatus}
         />

@@ -38,6 +38,7 @@ const Style = styled.div`
 export interface IAmountProps {
   amount: string;
   tokenSymbol: string;
+  tokenAddress: string;
   status?: string;
   precision?: number;
 }
@@ -46,6 +47,7 @@ export const Amount = ({
   amount,
   precision,
   tokenSymbol = "ETH",
+  tokenAddress,
   status,
 }: IAmountProps) => {
   return (
@@ -54,15 +56,18 @@ export const Amount = ({
         <strong>
           {formatAmount(amount, precision || 18, tokenSymbol || "")}
         </strong>
-        {tokenSymbol ? (
-          <span>{tokenSymbol}</span>
-        ) : (
-          <Skeleton
-            style={{ display: "inline-block" }} // needed to not wrap the skeleton to a new line
-            width={85}
-            height={55}
-          />
-        )}
+        {tokenSymbol && <span>{tokenSymbol}</span>}
+
+        {
+          // if tokenAddress is defined but tokenSymbol is not == we are loading the token info
+          tokenAddress && !tokenSymbol && (
+            <Skeleton
+              style={{ display: "inline-block" }} // needed to not wrap the skeleton to a new line
+              width={85}
+              height={55}
+            />
+          )
+        }
       </div>
       {status && <Chip>{status}</Chip>}
     </Style>
