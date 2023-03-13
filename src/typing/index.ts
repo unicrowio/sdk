@@ -762,21 +762,42 @@ export interface IArbitrateTransactionPayload {
 }
 
 /**
- * Callbacks specific to arbitrator-related functions
+ * Callbacks specific to arbitrate-related functions
  */
-export interface IArbitrationTransactionCallbacks
+export interface IArbitrateTransactionCallbacks
   extends IGenericTransactionCallbacks {
   /** Called when the transaction is broadcasted */
   broadcasted?: (
     data: IArbitrationTransactionPayload | IArbitrateTransactionPayload,
   ) => void;
   /** Called when the transaction is minted */
-  confirmed?: (
-    data:
-      | ProposalArbitratorParsedPayload
-      | ApproveArbitratorParsedPayload
-      | ArbitrateParsedPayload,
+  confirmed?: (data: ArbitrateParsedPayload) => void;
+}
+
+/**
+ * Callbacks specific to functions related approving an arbitrator
+ */
+export interface IApproveArbitrationTransactionCallbacks
+  extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
+  broadcasted?: (
+    data: IArbitrationTransactionPayload | IArbitrateTransactionPayload,
   ) => void;
+  /** Called when the transaction is minted */
+  confirmed?: (data: ApproveArbitratorParsedPayload) => void;
+}
+
+/**
+ * Callbacks specific to functions related proposing an arbitrator
+ */
+export interface IProposeArbitrationTransactionCallbacks
+  extends IGenericTransactionCallbacks {
+  /** Called when the transaction is broadcasted */
+  broadcasted?: (
+    data: IArbitrationTransactionPayload | IArbitrateTransactionPayload,
+  ) => void;
+  /** Called when the transaction is minted */
+  confirmed?: (data: ProposalArbitratorParsedPayload) => void;
 }
 
 /**
@@ -839,10 +860,18 @@ export interface IChallengeModalProps {
   callbacks?: IChallengeTransactionCallbacks;
 }
 
-export interface IArbitrationModalProps {
+export interface IArbitrateModalProps {
   escrowId: number;
   deferredPromise: Deferred<any>;
-  callbacks?: IArbitrationTransactionCallbacks;
+  callbacks?: IArbitrateTransactionCallbacks;
+}
+
+export interface IApproveOrProposeArbitrationModalProps {
+  escrowId: number;
+  deferredPromise: Deferred<any>;
+  callbacks?:
+    | IApproveArbitrationTransactionCallbacks
+    | IProposeArbitrationTransactionCallbacks;
 }
 
 export type tConnectedUser =
@@ -1227,7 +1256,7 @@ export interface IArbitrateModalProps {
   /** ID of the escrow that the transaction created or acted upon */
   escrowId: number;
   deferredPromise: Deferred<any>;
-  callbacks?: IArbitrationTransactionCallbacks;
+  callbacks?: IArbitrateTransactionCallbacks;
 }
 
 /**

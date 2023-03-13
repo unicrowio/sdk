@@ -1,7 +1,7 @@
 import { UnicrowArbitrator__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import {
-  IArbitrationTransactionCallbacks,
+  IProposeArbitrationTransactionCallbacks,
   ProposalArbitratorParsedPayload,
 } from "../typing";
 import { errorHandler } from "./internal/errorHandler";
@@ -23,7 +23,7 @@ export const proposeArbitrator = async (
   escrowId: number,
   arbitrator: string,
   arbitratorFee: number,
-  callbacks?: IArbitrationTransactionCallbacks,
+  callbacks?: IProposeArbitrationTransactionCallbacks,
 ): Promise<ProposalArbitratorParsedPayload> => {
   try {
     validateAddress({ arbitrator });

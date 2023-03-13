@@ -175,7 +175,7 @@ export const Arbitrate = ({
   };
 
   const ModalFooter = () => {
-    if (!escrowData || !escrowData?.arbitration) {
+    if (!(escrowData && escrowData?.arbitration)) {
       return null;
     }
 

@@ -1,8 +1,5 @@
 import Deferred from "helpers/deferred";
-import {
-  IArbitrationModalProps,
-  IArbitrationTransactionCallbacks,
-} from "typing";
+import { IArbitrateModalProps, IArbitrateTransactionCallbacks } from "typing";
 import { renderModal } from "ui/internal/config/render";
 import { Arbitrate } from "ui/internal/modals";
 
@@ -14,11 +11,11 @@ import { Arbitrate } from "ui/internal/modals";
  */
 export const arbitrate = async (
   escrowId: number,
-  callbacks?: IArbitrationTransactionCallbacks,
+  callbacks?: IArbitrateTransactionCallbacks,
 ) => {
   const deferredPromise = new Deferred<string>();
 
-  const arbitrateModalProps: IArbitrationModalProps = {
+  const arbitrateModalProps: IArbitrateModalProps = {
     escrowId,
     deferredPromise,
     callbacks,
