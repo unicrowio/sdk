@@ -122,6 +122,7 @@ export function PayModal(props: IPaymentModalProps) {
             tokenInfo?.decimals || 18,
             tokenInfo?.symbol || "",
           )}
+          tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}
           status={paymentStatus}
         />
@@ -203,7 +204,7 @@ export function PayModal(props: IPaymentModalProps) {
 
     if (!(error || success)) {
       buttonChildren = `Pay ${props.paymentProps.amount} ${
-        tokenInfo ? tokenInfo.symbol : "-"
+        tokenInfo ? tokenInfo.symbol : "ETH"
       }`;
       buttonOnClick = onPayClick;
     } else if (success) {
