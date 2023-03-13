@@ -1,5 +1,4 @@
 import { ERC20__factory } from "@unicrowio/ethers-types";
-import { toast } from "../ui/internal/notification/toast";
 import { ETH_ADDRESS, isSameAddress } from "../helpers";
 import { IToken } from "../typing";
 import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
@@ -9,7 +8,7 @@ const fetchTokenInfo = async (tokenAddress: string) => {
   const token = ERC20__factory.connect(tokenAddress, provider!);
 
   try {
-    await token.name();
+    await token.symbol();
     return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
       address: tokenAddress,
       symbol: results[0],
@@ -58,6 +57,6 @@ export const getTokenInfo = async (
     return tokenInfo;
   }
 
-  toast.error(`Can't get info from tokenAddress: ${tokenAddress}`);
+  console.error(`Can't get info from tokenAddress: ${tokenAddress}`);
   return null;
 };
