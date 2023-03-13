@@ -1,8 +1,8 @@
 {
   "name": "@unicrowio/sdk",
-  "version": "0.0.42",
-  "author": "Unicrow Dev Team <hi@unicrowio.com>",
-  "license": "ISC",
+  "version": "0.0.43",
+  "author": "Unicrow <hello@unicrow.io>",
+  "license": "MIT",
   "description": "Universal Escrow SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -65,6 +65,22 @@
     "styled-components": "^5.3.5",
     "swr": "^2.0.3"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unicrowio/sdk.git"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "web3",
+    "crypto",
+    "payment",
+    "sdk"
+  ],
+  "bugs": {
+    "url": "https://github.com/unicrowio/sdk/issues"
+  },
+  "homepage": "https://docs.unicrow.io",
   "typedoc": {
     "entryPoint": "./src/index.ts",
     "displayName": "Unicrow SDK",
