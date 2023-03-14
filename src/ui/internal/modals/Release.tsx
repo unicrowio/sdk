@@ -41,6 +41,8 @@ export function ReleaseModal(props: IReleaseModalProps) {
     props.escrowId,
     getEscrowData,
     onModalClose,
+    null,
+    true,
   );
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
