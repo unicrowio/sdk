@@ -150,7 +150,10 @@ export function PayModal(props: IPaymentModalProps) {
           )}
           <DataDisplayer
             label="Challenge Period"
-            value={displayChallengePeriod(props.paymentProps.challengePeriod)}
+            value={displayChallengePeriod(
+              props.paymentProps.challengePeriod,
+              true,
+            )}
             marker={MARKER.challengePeriod}
           />
           {props.paymentProps.challengePeriodExtension > 0 && (
@@ -158,6 +161,7 @@ export function PayModal(props: IPaymentModalProps) {
               label="Challenge Period Extension"
               value={displayChallengePeriod(
                 props.paymentProps.challengePeriodExtension,
+                true,
               )}
               marker={MARKER.challengePeriodExtension}
             />
