@@ -14,24 +14,26 @@ const fetchTokenInfo = async (tokenAddress: string, withName?: boolean) => {
   try {
     await token.symbol();
     const promises = [token.symbol(), token.decimals()];
-    return Promise.all(withName ? [...promises, token.name()] : promises).then((results) => {
-      const [symbol, decimals] = results;
-      const result = {
-        address: tokenAddress,
-        symbol,
-        decimals
-      };
+    return Promise.all(withName ? [...promises, token.name()] : promises).then(
+      (results) => {
+        const [symbol, decimals] = results;
+        const result = {
+          address: tokenAddress,
+          symbol,
+          decimals,
+        };
 
-      if (withName) {
-        const name = results[3];
-        return {
-          ...result,
-          name,
-        } as ITokenWithName;
-      }
+        if (withName) {
+          const name = results[3];
+          return {
+            ...result,
+            name,
+          } as ITokenWithName;
+        }
 
-      return result as IToken;
-    });
+        return result as IToken;
+      },
+    );
   } catch (e) {
     console.error(e);
   }

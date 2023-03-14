@@ -837,7 +837,7 @@ export interface IClaimTransactionCallbacks
 }
 
 export interface IPaymentModalProps {
-  paymentProps: IPaymentProps;
+  paymentProps: IPaymentPropsData;
   deferredPromise: Deferred<any>;
   callbacks?: IPayTransactionCallbacks;
 }
