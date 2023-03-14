@@ -31,7 +31,10 @@ const formatDate = (diff: IDiff): string => {
   return formattedString;
 };
 
-export const displayChallengePeriod = (challengePeriod: number): string => {
+export const displayChallengePeriod = (
+  challengePeriod: number,
+  useLongFormat?,
+): string => {
   if (challengePeriod <= 0) {
     return "-";
   }
@@ -41,5 +44,11 @@ export const displayChallengePeriod = (challengePeriod: number): string => {
 
   const diff = period.diff(now, ["days", "hours", "minutes", "seconds"]);
 
-  return formatDate(diff);
+  return useLongFormat
+    ? formatDate(diff)
+        .replace("d", " days")
+        .replace("h", " hours")
+        .replace("min", " minutes")
+        .replace("sec", " seconds")
+    : formatDate(diff);
 };
