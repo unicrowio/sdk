@@ -3,7 +3,7 @@
   "version": "0.0.43",
   "author": "Unicrow <hello@unicrow.io>",
   "license": "MIT",
-  "description": "Universal Escrow SDK",
+  "description": "Unicrow SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
