@@ -43,17 +43,20 @@ export const useNetworkCheck = () => {
   }, [isCorrectNetwork]);
 
   const WithNetworkCheck = React.useCallback(
-    (Body: JSX.Element) =>
-      !metamaskInstalled ? (
-        <ModalError
-          onClick={() => window.open(metamaskUrl)}
-          type="noMetaMask"
-        />
-      ) : isCorrectNetwork ? (
-        Body
-      ) : (
-        <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />
-      ),
+    (Body: JSX.Element) => (
+      <>
+        {!metamaskInstalled && (
+          <ModalError
+            onClick={() => window.open(metamaskUrl)}
+            type="noMetaMask"
+          />
+        )}
+        {isCorrectNetwork === false && (
+          <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />
+        )}
+        {isCorrectNetwork && Body}
+      </>
+    ),
     [isCorrectNetwork, metamaskInstalled],
   );
 
