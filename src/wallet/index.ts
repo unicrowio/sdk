@@ -78,8 +78,6 @@ export const connect = async (): Promise<string | null> => {
       walletAddress = _accounts[0];
       return _accounts[0];
     }
-  } else {
-    return null;
   }
 
   return walletAddress;
@@ -302,7 +300,6 @@ export const isWeb3WalletInstalled = () => {
   if (typeof window === "undefined") {
     throw new Error("Should run through Browser");
   }
-
   return !!window?.ethereum?.isMetaMask;
 };
 
