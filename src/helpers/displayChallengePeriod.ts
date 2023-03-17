@@ -50,5 +50,10 @@ export const displayChallengePeriod = (
         .replace("h", " hours")
         .replace("min", " minutes")
         .replace("sec", " seconds")
+        // if there is only one of an unit, remove the 's'
+        .replace("1 days", "1 day")
+        .replace("1 hours", "1 hour")
+        .replace("1 minute", "1 minute")
+        .replace("1 seconds", "1 second")
     : formatDate(diff);
 };
