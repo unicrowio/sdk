@@ -27,30 +27,12 @@ import {
 } from ".../../helpers";
 import { toast } from "../notification/toast";
 import { challenge } from "../../../core/challenge";
-import styled from "styled-components";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 import { ModalAction } from "../components/Modal";
 import { useEscrowData } from "ui/internal/hooks/useEscrowData";
-
-const InfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const InfoText = styled.p`
-  font-family: 'Work Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 22px;
-  text-align: center;
-  color: #322ca2;
-  margin: 0;
-`;
 
 export function ChallengeModal(props: IChallengeModalProps) {
   const {
@@ -208,14 +190,6 @@ export function ChallengeModal(props: IChallengeModalProps) {
     );
   };
 
-  const Info = ({ message }: { message: string }) => {
-    return (
-      <InfoContainer>
-        <InfoText>{message}</InfoText>
-      </InfoContainer>
-    );
-  };
-
   const ModalFooter = () => {
     const isSeller = escrowData?.connectedUser === SELLER; // SIGNED AS SELLER
     const isBuyer = escrowData?.connectedUser === BUYER; // SIGNED AS BUYER
@@ -231,13 +205,17 @@ export function ChallengeModal(props: IChallengeModalProps) {
         escrowData.status.latestChallengeBy === null)
     ) {
       return (
-        <Info message="You are the current payee. You don't need to challenge." />
+        <Button fullWidth onClick={() => onModalClose()}>
+          Close
+        </Button>
       );
     }
 
     if (isBuyer && escrowData.status.latestChallengeBy === BUYER) {
       return (
-        <Info message="You are the current payee. You don't need to challenge." />
+        <Button fullWidth onClick={() => onModalClose()}>
+          Close
+        </Button>
       );
     }
 
