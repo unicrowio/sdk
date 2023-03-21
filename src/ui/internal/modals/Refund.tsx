@@ -19,14 +19,14 @@ import {
   addressWithYou,
 } from "../../../helpers";
 import { toast } from "../notification/toast";
-import { refund, getEscrowData } from "../../../core";
+import { refund } from "../../../core";
 import { MARKER } from "../../../config/marker";
 import { useModalStates } from "ui/internal/hooks/useModalStates";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { useCountdownChallengePeriod } from "ui/internal/hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
-import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { useEscrowData } from "ui/internal/hooks/useEscrowData";
 
 export function RefundModal(props: IRefundModalProps) {
   const {
@@ -39,17 +39,16 @@ export function RefundModal(props: IRefundModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [escrowData, isLoadingEsrow, error] = useAsync(
-    props.escrowId,
-    getEscrowData,
-    onModalClose,
-    null,
-  );
+  const {
+    data: escrowData,
+    isLoading: isLoadingEscrow,
+    error,
+  } = useEscrowData(props.escrowId);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalAction, setModalAction] = React.useState<ModalAction>();
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
-  const isLoadingAnything = isLoadingEsrow || isLoading;
+  const isLoadingAnything = isLoadingEscrow || isLoading;
   const { labelChallengePeriod, countdown } =
     useCountdownChallengePeriod(escrowData);
 
