@@ -18,13 +18,12 @@ import {
 import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { release } from "../../../core/release";
-import { getEscrowData } from "../../../core/getEscrowData";
 import { MARKER } from "../../../config/marker";
 import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
-import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { useEscrowData } from "ui/internal/hooks/useEscrowData";
 
 export function ReleaseModal(props: IReleaseModalProps) {
   const {
@@ -37,13 +36,11 @@ export function ReleaseModal(props: IReleaseModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [escrowData, isLoadingEscrow, error] = useAsync(
-    props.escrowId,
-    getEscrowData,
-    onModalClose,
-    null,
-    true,
-  );
+  const {
+    data: escrowData,
+    isLoading: isLoadingEscrow,
+    error,
+  } = useEscrowData(props.escrowId);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
