@@ -3,17 +3,17 @@ import {
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
   IClaimModalProps,
-  IBalanceDetailed,
   EscrowStatus,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { Button, ScopedModal } from "../components";
 import { toast } from "../notification/toast";
-import { getSingleBalance, claim } from "../../../core";
+import { claim } from "../../../core";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { stopAsync, useAsync } from "../hooks/useAsync";
+import { stopAsync } from "../hooks/useAsync";
 import { BalancesTable } from "../components/BalancesTable";
+import { useSingleBalance } from "ui/internal/hooks/useSingleBalance";
 
 export function ClaimModal(props: IClaimModalProps) {
   const {
@@ -26,12 +26,11 @@ export function ClaimModal(props: IClaimModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [escrowBalance, isLoadingBalance, error] = useAsync(
-    props.escrowId,
-    getSingleBalance,
-    onModalClose,
-    null,
-  );
+  const {
+    data: escrowBalance,
+    isLoading: isLoadingBalance,
+    error,
+  } = useSingleBalance(props.escrowId);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [isLoadingTable, setLoadingTable] = React.useState(false);
