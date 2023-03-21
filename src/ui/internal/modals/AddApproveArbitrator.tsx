@@ -45,7 +45,7 @@ export const AddApproveArbitrator = ({
     data: escrowData,
     isLoading: isLoadingEscrow,
     error,
-  } = useEscrowData(escrowId);
+  } = useEscrowData({ escrowId });
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [arbitrator, setArbitrator] = React.useState<string>("");

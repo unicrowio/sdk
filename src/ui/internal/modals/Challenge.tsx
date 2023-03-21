@@ -66,7 +66,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     data: escrowData,
     isLoading: isLoadingEscrow,
     error,
-  } = useEscrowData(props.escrowId, 1000);
+  } = useEscrowData({ escrowId: props.escrowId, refreshInterval: 1000 });
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [paymentStatus, setPaymentStatus] = React.useState<string>();

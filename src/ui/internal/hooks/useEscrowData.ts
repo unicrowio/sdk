@@ -15,8 +15,7 @@ export const useEscrowData = ({
   defaultValue,
 }: IUseEscrowData) => {
   const { isCorrectNetwork } = useNetworkCheck();
-  if (!isCorrectNetwork)
-    return { data: null, isLoading: false, error: null };
+  if (!isCorrectNetwork) return { data: null, isLoading: false, error: null };
 
   if (defaultValue)
     return { data: defaultValue, isLoading: false, error: null };

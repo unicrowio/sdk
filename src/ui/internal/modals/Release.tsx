@@ -40,7 +40,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     data: escrowData,
     isLoading: isLoadingEscrow,
     error,
-  } = useEscrowData(props.escrowId);
+  } = useEscrowData({ escrowId: props.escrowId });
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [paymentStatus, setPaymentStatus] = React.useState<string>();

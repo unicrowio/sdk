@@ -43,7 +43,7 @@ export function RefundModal(props: IRefundModalProps) {
     data: escrowData,
     isLoading: isLoadingEscrow,
     error,
-  } = useEscrowData(props.escrowId);
+  } = useEscrowData({ escrowId: props.escrowId });
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalAction, setModalAction] = React.useState<ModalAction>();

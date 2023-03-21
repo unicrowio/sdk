@@ -39,7 +39,7 @@ export const Arbitrate = ({
     data: escrowData,
     isLoading: isLoadingEscrow,
     error,
-  } = useEscrowData(escrowId);
+  } = useEscrowData({ escrowId });
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [sellerValue, setSellerValue] = React.useState<string>("");

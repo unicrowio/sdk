@@ -15,7 +15,7 @@ import {
 import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import { toast } from "../notification/toast";
 import styled from "styled-components";
-import { approveSettlement, getEscrowData } from "../../../core";
+import { approveSettlement } from "../../../core";
 import {
   ContainerDataDisplayer,
   DataDisplayer,
@@ -25,9 +25,9 @@ import { displayableAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 
 import { MARKER } from "../../../config/marker";
-import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { useEscrowData } from "ui/internal/hooks/useEscrowData";
 
 const ContainerButtons = styled.div`
   display: flex;
@@ -57,12 +57,10 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise });
 
-  const [escrowData, isLoadingEscrow] = useAsync(
+  const { data: escrowData, isLoading: isLoadingEscrow } = useEscrowData({
     escrowId,
-    propsData ? null : getEscrowData, // this only runs if propsData is null
-    onModalClose,
-    propsData,
-  );
+    defaultValue: propsData,
+  });
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalAction, setModalAction] = React.useState<ModalAction>();
