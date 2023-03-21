@@ -35,10 +35,11 @@ const Style = styled.div`
   }
 `;
 
+// TODO pass the entire tokenInfo instead of each prop
 export interface IAmountProps {
   amount: string;
   tokenSymbol: string;
-  tokenAddress: string;
+  tokenAddress?: string; // todo remove this prop
   status?: string;
   precision?: number;
 }
