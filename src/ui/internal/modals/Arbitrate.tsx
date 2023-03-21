@@ -6,14 +6,14 @@ import {
   FormattedPercentageAmountAdornment,
   ScopedModal,
 } from "../../../ui/internal/components";
-import { arbitrate, getEscrowData } from "../../../core";
+import { arbitrate } from "../../../core";
 import { toast } from "../notification/toast";
 import { IArbitrateModalProps } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { AdornmentContent } from "../components/InputText";
-import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { ModalAction } from "../components/Modal";
+import { useEscrowData } from "ui/internal/hooks/useEscrowData";
 
 /**
  * Arbitrator should arbitrate the escrow payment
@@ -35,11 +35,11 @@ export const Arbitrate = ({
     onModalClose,
   } = useModalStates({ deferredPromise });
 
-  const [escrowData, isLoadingEscrow, error] = useAsync(
-    escrowId,
-    getEscrowData,
-    onModalClose,
-  );
+  const {
+    data: escrowData,
+    isLoading: isLoadingEscrow,
+    error,
+  } = useEscrowData(escrowId);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [sellerValue, setSellerValue] = React.useState<string>("");

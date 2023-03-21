@@ -16,12 +16,11 @@ import {
   IApproveArbitrationTransactionCallbacks,
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
-import { getEscrowData } from "../../../core/getEscrowData";
 import { ScopedModal } from "../components";
 import { BUYER, SELLER } from "../../../helpers";
-import { useAsync } from "../hooks/useAsync";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { useEscrowData } from "ui/internal/hooks/useEscrowData";
 
 /**
  * Approve the Arbitrator proposed
@@ -42,13 +41,11 @@ export const AddApproveArbitrator = ({
     onModalClose,
   } = useModalStates({ deferredPromise });
 
-  const [escrowData, isLoadingEscrow, error] = useAsync(
-    escrowId,
-    getEscrowData,
-    onModalClose,
-    null,
-    true,
-  );
+  const {
+    data: escrowData,
+    isLoading: isLoadingEscrow,
+    error,
+  } = useEscrowData(escrowId);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [arbitrator, setArbitrator] = React.useState<string>("");
