@@ -64,7 +64,14 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
           )}
         </>,
       ),
-    [props.body, props.footer, WithNetworkCheck, isForbidden, reason, bodyIsEmpty],
+    [
+      props.body,
+      props.footer,
+      WithNetworkCheck,
+      isForbidden,
+      reason,
+      bodyIsEmpty,
+    ],
   );
 
   return (
