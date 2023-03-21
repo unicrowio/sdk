@@ -27,14 +27,13 @@ import {
 } from ".../../helpers";
 import { toast } from "../notification/toast";
 import { challenge } from "../../../core/challenge";
-import { getEscrowData } from "../../../core/getEscrowData";
 import styled from "styled-components";
 import { MARKER } from "../../../config/marker";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
-import { useAsync } from "../hooks/useAsync";
 import { SpinnerIcon } from "../assets/SpinnerIcon";
 import { ModalAction } from "../components/Modal";
+import { useEscrowData } from "ui/internal/hooks/useEscrowData";
 
 const InfoContainer = styled.div`
   display: flex;
@@ -63,12 +62,11 @@ export function ChallengeModal(props: IChallengeModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [escrowData, isLoadingEscrow, error] = useAsync(
-    props.escrowId,
-    getEscrowData,
-    onModalClose,
-    null,
-  );
+  const {
+    data: escrowData,
+    isLoading: isLoadingEscrow,
+    error,
+  } = useEscrowData(props.escrowId, 1000);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [paymentStatus, setPaymentStatus] = React.useState<string>();
