@@ -48,7 +48,8 @@ export const useCountdownChallengePeriod = (escrowData) => {
 
     timer.current && resetCountdown();
     timer.current = setInterval(() => {
-      let prefix, date;
+      let prefix;
+      let date;
       const { end, start, challengedBy, neverChallenged, connectedUser } =
         challenge.current;
       const challengedByYou = challengedBy === connectedUser;

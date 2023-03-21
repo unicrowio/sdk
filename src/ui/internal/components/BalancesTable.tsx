@@ -1,18 +1,14 @@
 import React from "react";
-import {
-  displayDecimals,
-  formatAmountToUSD,
-  getExchangeRates,
-} from "../../../helpers";
+import { displayDecimals, formatAmountToUSD } from "../../../helpers";
 import { IBalanceDetailed } from "../../../typing";
 import { TokenSymbol } from ".";
-import { useAsync } from "../hooks/useAsync";
 import Skeleton from "@material-ui/lab/Skeleton";
 import styled from "styled-components";
 import type * as CSS from "csstype";
 import { BigCheckIcon } from "../assets/BigCheckIcon";
 import { Table } from "../components";
 import { STABLE_COINS } from "helpers/getExchangeRates";
+import { useExchangeRates } from "ui/internal/hooks/useExchangeRates";
 
 interface IBalanceWithTokenUSD extends IBalanceDetailed {
   amountInUSD?: string;
@@ -73,10 +69,8 @@ const TableRow = (
       isStableCoin && balance.amountBN.toNumber().toFixed(2),
     );
 
-  const [exchangeValues, , errorExchange] = useAsync(
-    [balance?.token?.symbol],
-    isStableCoin ? null : getExchangeRates,
-    onModalClose,
+  const { data: exchangeValues, error: errorExchange } = useExchangeRates(
+    balance?.token?.symbol,
   );
 
   React.useEffect(() => {

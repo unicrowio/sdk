@@ -1,6 +1,6 @@
 import React from "react";
 
-export const useModalCloseHandler = (onModalClose) => {
+export const useModalCloseHandler = (onModalClose: VoidFunction) => {
   const ref = React.useRef(null);
 
   const handleClickOutside = (event) => {

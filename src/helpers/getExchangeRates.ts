@@ -1,6 +1,6 @@
 export const STABLE_COINS = ["DAI", "USDC", "USDT"];
 
-interface IResult {
+export interface IResult {
   [key: string]: number | undefined;
 }
 
