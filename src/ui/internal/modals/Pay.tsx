@@ -1,5 +1,4 @@
 import React from "react";
-import { getTokenInfo } from "../../../core/getTokenInfo";
 import {
   EscrowStatus,
   IPaymentModalProps,
@@ -27,8 +26,9 @@ import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
 import { getCurrentWalletAddress } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
-import { useAsync } from "../hooks/useAsync";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
+import { useTokenInfo } from "ui/internal/hooks/useTokenInfo";
+import { useAsync } from "ui/internal/hooks/useAsync";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -48,13 +48,11 @@ export function PayModal(props: IPaymentModalProps) {
     null,
   );
 
-  const [tokenInfo, isLoadingToken, errorToken] = useAsync(
-    props.paymentProps.tokenAddress,
-    getTokenInfo,
-    onModalClose,
-    "",
-    true,
-  );
+  const {
+    data: tokenInfo,
+    isLoading: isLoadingToken,
+    error: errorToken,
+  } = useTokenInfo(props.paymentProps.tokenAddress);
 
   const closeHandlerRef = useModalCloseHandler(onModalClose);
   const [modalTitle, setModalTitle] = React.useState("Payment");
