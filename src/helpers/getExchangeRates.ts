@@ -6,66 +6,80 @@ export interface IResult {
 
 interface IGeckoRespObj {
   [key: string]: { usd: number | undefined };
-  ethereum: { usd: number | undefined };
 }
 
-const API_COINGECKO =
-  "https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=";
+// ChainId-CoinGeckoNetworkId mapping
+const CG_NETWORK_ID = {
+  42161: "arbitrum-one",
+  5: "ethereum", // Goerli
+  5777: "ethereum", // Unicrow Testnet
+};
 
-const getCoinGeckoObj = async (
-  normalizedSymbols: string[],
-): Promise<IGeckoRespObj | void> => {
+const API_COINGECKO =
+  "https://api.coingecko.com/api/v3/simple/price?vs_currencies=USD&ids=";
+const API_COINGECKO_TOKENS =
+  "https://api.coingecko.com/api/v3/simple/token_price/";
+
+const getCoinGeckoPrices = async (
+  network: string,
+  tokensAddresses: string[],
+): Promise<IResult | void> => {
+  let response = {} as IResult;
+
+  // ETH needs a different call
+  const ethIdx = tokensAddresses.indexOf(
+    "0x0000000000000000000000000000000000000000",
+  );
+  if (ethIdx > -1) {
+    const coinGeckoEthResp = await fetch(`${API_COINGECKO}ethereum`);
+
+    if (!coinGeckoEthResp.ok) {
+      throw new Error("Error while getting eth exchange values");
+    }
+
+    const coinGeckoEthRespJson =
+      (await coinGeckoEthResp.json()) as IGeckoRespObj;
+
+    response["0x0000000000000000000000000000000000000000"] =
+      coinGeckoEthRespJson.ethereum?.usd;
+
+    if (tokensAddresses.length === 1) {
+      return response;
+    }
+  }
+
   const coinGeckoResp = await fetch(
-    `${API_COINGECKO}${normalizedSymbols.join(",")}`,
+    `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddresses.join(
+      ",",
+    )}&vs_currencies=USD`,
   );
 
   if (!coinGeckoResp.ok) {
-    throw new Error("Error while getting exchange values");
+    throw new Error("Error while getting tokens exchange values");
   }
 
-  const response = await coinGeckoResp.json();
+  const coinGeckoRespJson = (await coinGeckoResp.json()) as IGeckoRespObj;
 
-  return response as IGeckoRespObj;
+  for (const address in coinGeckoRespJson) {
+    response[address] = coinGeckoRespJson[address]?.usd;
+  }
+
+  return response;
 };
 
 export const getExchangeRates = async (
-  tokensSymbols: string[],
+  chainId: number,
+  tokensAddresses: string[],
 ): Promise<IResult> => {
-  const result = {} as IResult;
+  let result = {} as IResult;
 
   try {
-    const uniqueTokenSymbols = Array.from(new Set(tokensSymbols));
-    const nonStableSymbols = uniqueTokenSymbols.filter(
-      (token) => !STABLE_COINS.includes(token),
-    );
+    const uniqueTokensAddresses = Array.from(new Set(tokensAddresses));
 
-    uniqueTokenSymbols.forEach((symbol: string) => {
-      result[symbol] = undefined;
-    });
-
-    let geckoRespObj = {} as IGeckoRespObj | any;
-    if (nonStableSymbols.length > 0) {
-      const normalizedSymbols = nonStableSymbols.map((symbol) =>
-        symbol === "ETH" ? "ETHEREUM" : symbol,
-      );
-
-      geckoRespObj = await getCoinGeckoObj(normalizedSymbols);
-    }
-
-    uniqueTokenSymbols.forEach((symbol) => {
-      if (!symbol) return;
-      const upperCaseSymbol = symbol.toUpperCase();
-      if (STABLE_COINS.includes(upperCaseSymbol)) {
-        // 1 to 1 conversion for stable coins against USD
-        result[upperCaseSymbol] = 1;
-      } else if (upperCaseSymbol === "ETH") {
-        result[upperCaseSymbol] = geckoRespObj?.ethereum?.usd;
-      } else {
-        result[upperCaseSymbol] = geckoRespObj
-          ? geckoRespObj[symbol.toLowerCase()]?.usd
-          : undefined;
-      }
-    });
+    result = (await getCoinGeckoPrices(
+      CG_NETWORK_ID[chainId],
+      uniqueTokensAddresses,
+    )) as IResult | any;
   } catch (error) {
     console.error(error);
   }
