@@ -1,6 +1,6 @@
-import { utils } from "ethers";
+import { ethers } from "ethers";
 
 export const isValidAddress = (address: string) => {
   if (!address || address?.trim() === "") return false;
-  return utils.isAddress(address.trim());
+  return ethers.isAddress(address.trim());
 };

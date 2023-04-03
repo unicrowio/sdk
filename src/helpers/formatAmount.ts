@@ -1,18 +1,17 @@
-import BigNumber from "bignumber.js";
-import { displayableAmountBN, displayDecimals } from "./displayAmount";
+import { displayableAmountBI, displayDecimals } from "./displayAmount";
 
 export const formatAmount = (
-  amount: string | number | BigNumber,
+  amount: string | number | bigint,
   precision: number,
   symbol: string,
 ): string => {
   try {
-    const bnPrecision = new BigNumber(10).pow(precision);
-    const _amount = BigNumber.isBigNumber(amount)
-      ? amount
-      : new BigNumber(amount).times(bnPrecision);
+    const bnPrecision = BigInt(Math.pow(10, precision));
 
-    return displayableAmountBN(_amount, precision).toFixed(
+    const _amount =
+      typeof amount === "bigint" ? amount : BigInt(amount) * bnPrecision;
+
+    return displayableAmountBI(_amount, precision).toFixed(
       displayDecimals(symbol),
     );
   } catch (error) {

@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { ZERO } from "../helpers";
 import {
   CalculateAmountsInput,
   CalculateFunction,
@@ -7,43 +5,55 @@ import {
   tSplits,
 } from "../typing";
 
-// Functions
+// Used to calculate WEI amounts
+export const calculatePercentageInt = (
+  percentage: number,
+  amount: bigint,
+): bigint => {
+  // Round percentage to 16 decimal places (max)
+  const percentageStr: string = percentage.toFixed(16);
 
-const calculatePercentage = (n1: number, n2: number) => {
-  return n1 > 0 ? new BigNumber(n1).multipliedBy(n2).dividedBy(100) : ZERO;
+  // Calculate the number of decimal places
+  const decimalIndex: number = percentageStr.indexOf(".");
+  const decimalPlaces: number =
+    decimalIndex >= 0 ? percentageStr.length - decimalIndex - 1 : 0;
+
+  // Calculate the divisor based on the number of decimal places
+  const percentageInt: bigint = BigInt(percentageStr.replace(".", ""));
+  const divisor: bigint = BigInt(10 ** decimalPlaces);
+
+  return percentageInt > 0n
+    ? (percentageInt * amount) / divisor // Shift the decimal point
+    : 0n;
 };
 
-const calculateShares = (newSplit: tSplits, amount: number) =>
+// Used to calculate percentages (of percentages)
+export const calculatePercentageFloat = (
+  percentage: number,
+  amount: number,
+): number => {
+  return percentage > 0 ? (percentage / 100) * amount : 0;
+};
+
+const calculateShares = (newSplit: tSplits, amount: bigint) =>
   ({
-    amountBuyer: calculatePercentage(
-      newSplit.splitBuyer.toNumber(),
+    amountBuyer: calculatePercentageInt(newSplit.splitBuyer, amount),
+    amountSeller: calculatePercentageInt(newSplit.splitSeller, amount),
+    amountProtocol: calculatePercentageInt(newSplit.splitProtocol, amount),
+    amountMarketplace: calculatePercentageInt(
+      newSplit.splitMarketplace,
       amount,
-    ).toNumber(),
-    amountSeller: calculatePercentage(
-      newSplit.splitSeller.toNumber(),
-      amount,
-    ).toNumber(),
-    amountProtocol: calculatePercentage(
-      amount,
-      newSplit.splitProtocol.toNumber(),
-    ).toNumber(),
-    amountMarketplace: calculatePercentage(
-      amount,
-      newSplit.splitMarketplace.toNumber(),
-    ).toNumber(),
-    amountArbitrator: calculatePercentage(
-      newSplit.splitArbitrator.toNumber(),
-      amount,
-    ).toNumber(),
+    ),
+    amountArbitrator: calculatePercentageInt(newSplit.splitArbitrator, amount),
   }) as tShares;
 
 const zeroSplits = () => {
   return {
-    splitBuyer: ZERO,
-    splitProtocol: ZERO,
-    splitSeller: ZERO,
-    splitMarketplace: ZERO,
-    splitArbitrator: ZERO,
+    splitBuyer: 0,
+    splitProtocol: 0,
+    splitSeller: 0,
+    splitMarketplace: 0,
+    splitArbitrator: 0,
   } as tSplits;
 };
 
@@ -57,20 +67,24 @@ const calculateSharesWithoutArbitration = ({
 }: CalculateFunction): tShares => {
   const newSplit = zeroSplits();
 
-  newSplit.splitProtocol = calculatePercentage(splitProtocol, splitSeller);
-  newSplit.splitMarketplace = calculatePercentage(
+  newSplit.splitProtocol = calculatePercentageFloat(splitProtocol, splitSeller);
+  newSplit.splitMarketplace = calculatePercentageFloat(
     splitMarketplace,
     splitSeller,
   );
 
-  newSplit.splitArbitrator = calculatePercentage(arbitratorFee, splitSeller);
+  newSplit.splitArbitrator = calculatePercentageFloat(
+    arbitratorFee,
+    splitSeller,
+  );
 
-  newSplit.splitSeller = new BigNumber(splitSeller)
-    .minus(newSplit.splitProtocol)
-    .minus(newSplit.splitMarketplace)
-    .minus(newSplit.splitArbitrator);
+  newSplit.splitSeller =
+    splitSeller -
+    newSplit.splitProtocol -
+    newSplit.splitMarketplace -
+    newSplit.splitArbitrator;
 
-  newSplit.splitBuyer = new BigNumber(splitBuyer);
+  newSplit.splitBuyer = splitBuyer;
 
   const shares = calculateShares(newSplit, amount);
 
@@ -86,26 +100,21 @@ const calculateSharesWithArbitration = ({
   arbitratorFee = 0,
 }: CalculateFunction): tShares => {
   const newSplit = zeroSplits();
-  newSplit.splitArbitrator = new BigNumber(arbitratorFee);
-  newSplit.splitProtocol = calculatePercentage(splitProtocol, splitSeller);
+  newSplit.splitArbitrator = arbitratorFee;
+  newSplit.splitProtocol = calculatePercentageFloat(splitProtocol, splitSeller);
 
-  newSplit.splitMarketplace = calculatePercentage(
+  newSplit.splitMarketplace = calculatePercentageFloat(
     splitMarketplace,
     splitSeller,
   );
 
-  newSplit.splitSeller = new BigNumber(splitSeller)
-    .minus(newSplit.splitMarketplace)
-    .minus(newSplit.splitProtocol)
-    .minus(
-      new BigNumber(arbitratorFee).multipliedBy(splitSeller).dividedBy(100),
-    );
+  newSplit.splitSeller =
+    splitSeller -
+    newSplit.splitMarketplace -
+    newSplit.splitProtocol -
+    (arbitratorFee * splitSeller) / 100;
 
-  newSplit.splitBuyer = new BigNumber(splitBuyer).minus(
-    new BigNumber(arbitratorFee)
-      .multipliedBy(new BigNumber(splitBuyer))
-      .dividedBy(100),
-  );
+  newSplit.splitBuyer = splitBuyer - (arbitratorFee * splitBuyer) / 100;
 
   const shares = calculateShares(newSplit, amount);
 
@@ -114,7 +123,7 @@ const calculateSharesWithArbitration = ({
 
 /**
  * Calculates how the amounts of an escrow are split between all relevant parties.
- * If settled by an arbitrator, this is considered in the calculation (arbitrator gets full share )
+ * If settled by an arbitrator, this is considered in the calculation (arbitrator gets full share)
  *
  * @param data - Input data for the calculation (total amount in the escrow, and % splits)
  * @returns Shares of the escrow for each party (incl. fees) in token's or ETH's WEI

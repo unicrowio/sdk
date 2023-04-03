@@ -6,7 +6,7 @@ const developmentRpcUrl =
   globalThis.development || "https://rpc-net.unicrow.io";
 
 export interface UnicrowNetwork {
-  chainId: number;
+  chainId: bigint;
   chainName: string;
   displayName: string;
   nativeCurrency: {

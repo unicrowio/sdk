@@ -3,7 +3,7 @@ export { isValidAddress } from "./isValidAddress";
 export { displayChallengePeriod } from "./displayChallengePeriod";
 export {
   displayableAmount,
-  displayableAmountBN,
+  displayableAmountBI,
   displayDecimals,
 } from "./displayAmount";
 export { formatAmountToUSD } from "./formatAmountToUSD";

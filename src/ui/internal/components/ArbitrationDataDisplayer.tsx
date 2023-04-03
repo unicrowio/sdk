@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const ArbitrationDataDisplayer = ({ data }: Props) => {
-  const { arbitrator: arbitration, connectedUser } = data;
+  const { ensAddresses, arbitration, connectedUser } = data;
 
   if (arbitration?.arbitrator && connectedUser === "arbitrator") {
     return (
@@ -28,7 +28,7 @@ export const ArbitrationDataDisplayer = ({ data }: Props) => {
           label="Arbitrator"
           value={reduceAddress(
             arbitration.arbitrator,
-            arbitration.ensAddresses?.arbitrator,
+            ensAddresses?.arbitrator,
           )}
           copy={arbitration.arbitrator}
           marker={MARKER.arbitrator}

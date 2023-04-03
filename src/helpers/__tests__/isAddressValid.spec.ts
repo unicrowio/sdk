@@ -1,4 +1,4 @@
-import { constants } from "ethers";
+import { ethers } from "ethers";
 import { InvalidAddressError, validateAddress } from "../validateAddress";
 
 describe("test the function validateAddress", () => {
@@ -24,7 +24,7 @@ describe("test the function validateAddress", () => {
   });
 
   it("should accept constants.AddressZero as address", () => {
-    const addressZero = constants.AddressZero;
+    const addressZero = ethers.ZeroAddress;
     const fn = () => validateAddress({ addressZero });
 
     expect(fn).not.toThrow();

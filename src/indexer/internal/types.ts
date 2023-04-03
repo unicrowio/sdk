@@ -1,8 +1,7 @@
-import { BigNumber as BigNumberJs } from "bignumber.js";
 import { EscrowStatus } from "../../typing";
 
 export interface EscrowStatusView {
-  amount: BigNumberJs; // ERC20 | Ether
+  amount: bigint; // ERC20 | Ether
   escrow_id: number;
   status: keyof typeof EscrowStatus;
 

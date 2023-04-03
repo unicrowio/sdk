@@ -21,7 +21,7 @@ import {
   getWeb3Provider,
   getCurrentWalletAddress,
   autoSwitchNetwork,
-} from "../wallet/index";
+} from "../wallet";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
 
 import { parsePay } from "./internal/parsers/eventPay";
@@ -159,7 +159,7 @@ export const pay = async (
   const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
-  const providerSigner = provider.getSigner();
+  const providerSigner = await provider.getSigner();
 
   const tokenInfo = await getTokenInfo(tokenAddress);
 

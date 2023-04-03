@@ -1,10 +1,10 @@
 import { IToken } from "../../../typing";
-import { displayableAmountBN } from "../../../helpers";
-import BigNumber from "bignumber.js";
+import { displayableAmountBI } from "../../../helpers";
+import { calculatePercentageInt } from "../../../core/calculateAmounts";
 import React from "react";
 
 interface PropsTypes {
-  amount: BigNumber; // ERC20 | Ether
+  amount: bigint; // ERC20 | Ether
   tokenInfo: IToken;
   percentage: string;
 }
@@ -20,8 +20,8 @@ export const FormattedPercentageAmountAdornment = ({
     return null;
   }
 
-  const value = displayableAmountBN(
-    amount.times(_percentage / 100),
+  const value = displayableAmountBI(
+    calculatePercentageInt(_percentage, amount),
     tokenInfo.decimals,
   ).toFixed(2);
 

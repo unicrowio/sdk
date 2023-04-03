@@ -1,15 +1,10 @@
-import BigNumber from "bignumber.js";
 import { formatToUSD } from "./formatToUSD";
 
 export const formatAmountToUSD = (
-  amount: string | number | BigNumber,
+  amount: string | number | bigint,
   exchangeValue: number,
 ): string => {
-  const _amountInUSD = BigNumber.isBigNumber(amount)
-    ? amount
-    : new BigNumber(amount);
-  const amountInUSD = _amountInUSD
-    .times(new BigNumber(exchangeValue))
-    .toNumber();
+  const _amount = typeof amount === "number" ? amount : Number(amount);
+  const amountInUSD = _amount * exchangeValue;
   return formatToUSD(amountInUSD);
 };

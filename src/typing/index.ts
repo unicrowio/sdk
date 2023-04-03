@@ -1,6 +1,5 @@
 import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
-import { BigNumber as BigNumberJs } from "bignumber.js";
 
 export type tTokenSymbol = "DAI" | "USDT" | "USDC" | "ETH" | string;
 
@@ -26,7 +25,7 @@ export interface IToken {
  */
 export interface IPaymentProps {
   /** Amount in token */
-  amount: string | BigNumberJs | number;
+  amount: string | bigint | number;
   /** Whom is the payment for */
   seller: string;
   /** Initial challenge period (in seconds) */
@@ -129,7 +128,7 @@ export interface IEscrowStatus {
 
 export interface IEscrowData {
   /** Amount in token's (or ETH's) wei unit */
-  amount: BigNumberJs; // ERC20 | Ether
+  amount: bigint; // ERC20 | Ether
 
   /** ID of the escrow that the transaction created or acted upon */
   escrowId: number;
@@ -837,7 +836,7 @@ export interface IClaimTransactionCallbacks
 }
 
 export interface IPaymentModalProps {
-  paymentProps: IPaymentProps;
+  paymentProps: IPaymentPropsData;
   deferredPromise: Deferred<any>;
   callbacks?: IPayTransactionCallbacks;
 }
@@ -903,10 +902,10 @@ export interface IBalance {
  */
 export interface IBalanceDetailed extends IBalance {
   /** Amount converted to human readable form */
-  displayableAmount: string | BigNumberJs;
+  displayableAmount: string | bigint;
 
-  /** Helper field used when calculating with other BigNumber fields */
-  amountBN: BigNumberJs;
+  /** Helper field used when calculating with other bigint fields */
+  amountBI: number;
 
   /** User's role in the escrow ('buyer' | 'seller' | 'arbitrator' | 'marketplace' | 'other') */
   connectedUser: tConnectedUser;
@@ -937,7 +936,7 @@ export interface IBalanceDetailed extends IBalance {
  *        amount: "1586200000000000000",
  *        total: "1586200000000000000",
  *        displayableAmount: "1.5862",
- *        amountBN: "1.5862"
+ *        amountBI: "1.5862"
  *     }
  *   ],
  *   readyForClaim: [
@@ -956,7 +955,7 @@ export interface IBalanceDetailed extends IBalance {
  *        amount: "1786200000",
  *        total: "1786200000",
  *        displayableAmount: "1786.2",
- *        amountBN: "1786.2"
+ *        amountBI: "1786.2"
  *     },
  *     {
  *        token: {
@@ -973,7 +972,7 @@ export interface IBalanceDetailed extends IBalance {
  *        amount: "2379300000",
  *        total: "2379300000",
  *        displayableAmount: "2379.3",
- *        amountBN: "2379.3"
+ *        amountBI: "2379.3"
  *     }
  *   ]
  * }
@@ -1120,7 +1119,7 @@ export interface IndexerInstance {
    *        amount: "1586200000000000000",
    *        total: "1586200000000000000",
    *        displayableAmount: "1.5862",
-   *        amountBN: "1.5862"
+   *        amountBI: "1.5862"
    *     }
    *   ],
    *   readyForClaim: [
@@ -1139,7 +1138,7 @@ export interface IndexerInstance {
    *        amount: "1786200000",
    *        total: "1786200000",
    *        displayableAmount: "1786.2",
-   *        amountBN: "1786.2"
+   *        amountBI: "1786.2"
    *     },
    *     {
    *        token: {
@@ -1156,7 +1155,7 @@ export interface IndexerInstance {
    *        amount: "2379300000",
    *        total: "2379300000",
    *        displayableAmount: "2379.3",
-   *        amountBN: "2379.3"
+   *        amountBI: "2379.3"
    *     }
    *   ]
    * }
@@ -1293,7 +1292,7 @@ export interface ICalculateStatusParams {
  */
 export interface CalculateAmountsInput {
   /** Total payment amount in ETH's or token's WEI */
-  amount: number;
+  amount: bigint;
 
   /** Buyer's gross share in % */
   splitBuyer: number;
@@ -1315,24 +1314,24 @@ export interface CalculateAmountsInput {
  * Final amounts (in WEI) sent to each party if the escrow was claimed in the defined state
  */
 export interface tShares {
-  amountBuyer: number;
-  amountSeller: number;
-  amountProtocol: number;
-  amountMarketplace: number;
-  amountArbitrator: number;
+  amountBuyer: bigint;
+  amountSeller: bigint;
+  amountProtocol: bigint;
+  amountMarketplace: bigint;
+  amountArbitrator: bigint;
 }
 
 export interface tSplits {
   /** Buyer's final share in percentage incl. fees */
-  splitBuyer: BigNumberJs;
+  splitBuyer: number;
   /** Seller's final share in percentage incl. fees */
-  splitSeller: BigNumberJs;
+  splitSeller: number;
   /** Protocol's final share in percentage incl. fees */
-  splitProtocol: BigNumberJs;
+  splitProtocol: number;
   /** Marketplace's final share in percentage incl. fees */
-  splitMarketplace: BigNumberJs;
+  splitMarketplace: number;
   /** Arbitrator's final share in percentage incl. fees */
-  splitArbitrator: BigNumberJs;
+  splitArbitrator: number;
 }
 
 export interface CalculateFunction extends CalculateAmountsInput {}
