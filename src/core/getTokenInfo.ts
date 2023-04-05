@@ -3,17 +3,37 @@ import { ETH_ADDRESS, isSameAddress } from "../helpers";
 import { IToken } from "../typing";
 import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
-const fetchTokenInfo = async (tokenAddress: string) => {
+interface ITokenWithName extends IToken {
+  name?: string;
+}
+
+const fetchTokenInfo = async (tokenAddress: string, withName?: boolean) => {
   const provider = getJsonRpcProvider();
   const token = ERC20__factory.connect(tokenAddress, provider!);
 
   try {
     await token.symbol();
-    return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
-      address: tokenAddress,
-      symbol: results[0],
-      decimals: results[1],
-    }));
+    const promises = [token.symbol(), token.decimals()];
+    return Promise.all(withName ? [...promises, token.name()] : promises).then(
+      (results) => {
+        const [symbol, decimals] = results;
+        const result = {
+          address: tokenAddress,
+          symbol,
+          decimals,
+        };
+
+        if (withName) {
+          const name = results[3];
+          return {
+            ...result,
+            name,
+          } as ITokenWithName;
+        }
+
+        return result as IToken;
+      },
+    );
   } catch (e) {
     console.error(e);
   }
@@ -27,7 +47,8 @@ const fetchTokenInfo = async (tokenAddress: string) => {
  */
 export const getTokenInfo = async (
   tokenAddress = ETH_ADDRESS,
-): Promise<IToken> => {
+  withName?: boolean,
+): Promise<IToken | ITokenWithName> => {
   if (isSameAddress(tokenAddress, ETH_ADDRESS)) {
     return {
       address: tokenAddress,
@@ -37,7 +58,7 @@ export const getTokenInfo = async (
   }
 
   const storedValue = window.localStorage.getItem(tokenAddress);
-  let tokenInfo: IToken | null = null;
+  let tokenInfo: IToken | ITokenWithName = null;
 
   // There was some value stored
   if (storedValue) {
@@ -50,7 +71,7 @@ export const getTokenInfo = async (
   }
 
   console.info("fetching new information");
-  tokenInfo = await fetchTokenInfo(tokenAddress);
+  tokenInfo = await fetchTokenInfo(tokenAddress, withName);
 
   if (tokenInfo) {
     window.localStorage.setItem(tokenAddress, JSON.stringify(tokenInfo));
