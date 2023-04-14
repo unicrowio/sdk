@@ -10,7 +10,7 @@ export const calculatePercentageInt = (
   percentage: number,
   amount: bigint,
 ): bigint => {
-  return amount * BigInt(Math.round(percentage * 1e18)) / BigInt(1e20);
+  return (amount * BigInt(Math.round(percentage * 1e18))) / BigInt(1e20);
 };
 
 // Used to calculate percentages (of percentages)
@@ -18,7 +18,7 @@ export const calculatePercentageFloat = (
   percentage: number,
   amount: number,
 ): number => {
-  return percentage > 0 ? percentage * amount / 100 : 0;
+  return percentage > 0 ? (percentage * amount) / 100 : 0;
 };
 
 const calculateShares = (newSplit: tSplits, amount: bigint) =>

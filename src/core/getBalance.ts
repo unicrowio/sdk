@@ -28,7 +28,10 @@ export const getBalance = async (
   if (tokenAddress === ETH_ADDRESS) {
     return provider.getBalance(walletAddress);
   } else {
-    const token = ERC20__factory.connect(tokenAddress, await provider.getSigner());
+    const token = ERC20__factory.connect(
+      tokenAddress,
+      await provider.getSigner(),
+    );
     return token.balanceOf(walletAddress);
   }
 };
