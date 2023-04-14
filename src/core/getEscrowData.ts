@@ -28,7 +28,7 @@ import {
   DataStructOutput,
   SettlementStructOutput,
   TokenStruct,
-} from "@unicrowio/ethers-types/src/Unicrow";
+} from "@unicrowio/ethers-types/src/contracts/Unicrow";
 
 const getConnectedUser = async ({
   buyer,
@@ -160,7 +160,7 @@ const parseToken = (data: TokenStruct): IToken | null => {
 
   // is ERC-20
   return {
-    address: data.address_,
+    address: data.address_.toString(),
     symbol: data.symbol,
     decimals: Number(data.decimals),
   };

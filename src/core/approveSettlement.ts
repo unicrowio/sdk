@@ -44,7 +44,7 @@ export const approveSettlement = async (
 
     const CrowDisputeContract = UnicrowDispute__factory.connect(
       getContractAddress("dispute"),
-      provider.getSigner(),
+      await provider.getSigner(),
     );
     const approveOfferTx = await CrowDisputeContract.approveSettlement(
       escrowId,
@@ -61,7 +61,7 @@ export const approveSettlement = async (
 
     const receiptTx = await approveOfferTx.wait();
 
-    const parsedPayload = parseApproveSettlement(receiptTx.events);
+    const parsedPayload = parseApproveSettlement(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 

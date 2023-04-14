@@ -34,7 +34,7 @@ describe("calculateAmounts", () => {
       amountArbitrator: BigInt(0),
     } as tShares);
   });
-  it("should return the same result from the Sheet1 - release, refunded, settled, no artibitrator", () => {
+  it("should return the same result from the Sheet1 - release, refunded, settled, no arbitrator", () => {
     const splitSeller = 80;
     const splitBuyer = 20;
     const splitProtocol = 1;
@@ -61,7 +61,7 @@ describe("calculateAmounts", () => {
     expect(result).toEqual(r);
   });
 
-  it("should return the same result from the Sheet1 - settled by artibitrator", () => {
+  it("should return the same result from the Sheet1 - settled by arbitrator", () => {
     const splitSeller = 80;
     const splitBuyer = 20;
     const splitProtocol = 1;

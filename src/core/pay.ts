@@ -22,7 +22,7 @@ import {
   getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet";
-import { EscrowInputStruct } from "@unicrowio/ethers-types/src/Unicrow";
+import { EscrowInputStruct } from "@unicrowio/ethers-types/src/contracts/Unicrow";
 
 import { parsePay } from "./internal/parsers/eventPay";
 import { BigNumberish } from "ethers";
@@ -189,7 +189,7 @@ export const pay = async (
 
     // Checking with equals because previous allowance value was not related to this new transaction.
     // TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
-    if (alreadyAllowedAmount.lt(bigNumberAmount)) {
+    if (alreadyAllowedAmount < bigNumberAmount) {
       // Allowing as close as we can to infinity
       const approveTx = await token.approve(UNICROW_ADDRESS, bigNumberAmount);
       // This transaction supposed to be mined very fast
@@ -265,7 +265,7 @@ export const pay = async (
 
     const receiptTx = await payTx.wait();
 
-    const parsedPayload = parsePay(receiptTx.events);
+    const parsedPayload = parsePay(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 

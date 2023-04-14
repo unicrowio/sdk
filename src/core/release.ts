@@ -34,7 +34,7 @@ export const release = async (
 
   const Unicrow = Unicrow__factory.connect(
     getContractAddress("unicrow"),
-    provider.getSigner(),
+    await provider.getSigner(),
   );
 
   try {
@@ -50,7 +50,7 @@ export const release = async (
 
     const receiptTx = await releaseTx.wait();
 
-    const parsedPayloadReleased = parseRelease(receiptTx.events);
+    const parsedPayloadReleased = parseRelease(receiptTx.logs);
 
     callbacks &&
       callbacks.confirmed &&

@@ -1,8 +1,6 @@
 import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
-export type tTokenSymbol = "DAI" | "USDT" | "USDC" | "ETH" | string;
-
 interface IEnsAddresses {
   seller?: string;
   arbitrator?: string;
@@ -13,9 +11,8 @@ interface IEnsAddresses {
  * Properties of a token, incl. decimals as in its rounding precision.
  */
 export interface IToken {
-  /** 'DAI' | 'USDT' | 'USDC' | 'ETH' | string  */
-  symbol?: tTokenSymbol;
   address?: string;
+  symbol?: string;
   /** Number of token decimals. To get "human readable" format, divide the amount by pow(10, decimals) */
   decimals?: number;
 }
@@ -667,7 +664,7 @@ export interface IPayTransactionCallbacks extends IGenericTransactionCallbacks {
   confirmed?: (data: IPayTransactionPayload) => void;
 }
 
-export interface IReleasedTransactionPayload extends ReleaseParsedPayload {}
+export type IReleasedTransactionPayload = ReleaseParsedPayload;
 
 export interface IReleasedTransactionBroadcastPayload {
   transactionHash: string;
@@ -997,7 +994,7 @@ export interface IClaimModalProps {
   callbacks?: IClaimTransactionCallbacks;
 }
 
-export interface TPaymentListQueryParams extends IQuery {}
+export type TPaymentListQueryParams = IQuery;
 
 /**
  * Used to specify paging for indexer's payments search.
@@ -1334,7 +1331,7 @@ export interface tSplits {
   splitArbitrator: number;
 }
 
-export interface CalculateFunction extends CalculateAmountsInput {}
+export type CalculateFunction = CalculateAmountsInput;
 
 export type DefaultNetwork = "arbitrum" | "goerli" | "development";
 

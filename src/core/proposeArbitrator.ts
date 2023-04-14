@@ -39,7 +39,7 @@ export const proposeArbitrator = async (
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
       getContractAddress("arbitrator"),
-      provider.getSigner(),
+      await provider.getSigner(),
     );
 
     callbacks && callbacks.broadcasting && callbacks.broadcasting();
@@ -59,7 +59,7 @@ export const proposeArbitrator = async (
 
     const receiptTx = await proposeArbitratorTx.wait();
 
-    const parsedPayload = parseProposalArbitrator(receiptTx.events);
+    const parsedPayload = parseProposalArbitrator(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 

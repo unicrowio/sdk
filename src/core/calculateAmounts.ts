@@ -10,21 +10,7 @@ export const calculatePercentageInt = (
   percentage: number,
   amount: bigint,
 ): bigint => {
-  // Round percentage to 16 decimal places (max)
-  const percentageStr: string = percentage.toFixed(16);
-
-  // Calculate the number of decimal places
-  const decimalIndex: number = percentageStr.indexOf(".");
-  const decimalPlaces: number =
-    decimalIndex >= 0 ? percentageStr.length - decimalIndex - 1 : 0;
-
-  // Calculate the divisor based on the number of decimal places
-  const percentageInt: bigint = BigInt(percentageStr.replace(".", ""));
-  const divisor: bigint = BigInt(10 ** decimalPlaces);
-
-  return percentageInt > 0n
-    ? (percentageInt * amount) / divisor // Shift the decimal point
-    : 0n;
+  return amount * BigInt(Math.round(percentage * 1e18)) / BigInt(1e20);
 };
 
 // Used to calculate percentages (of percentages)
@@ -32,7 +18,7 @@ export const calculatePercentageFloat = (
   percentage: number,
   amount: number,
 ): number => {
-  return percentage > 0 ? (percentage / 100) * amount : 0;
+  return percentage > 0 ? percentage * amount / 100 : 0;
 };
 
 const calculateShares = (newSplit: tSplits, amount: bigint) =>

@@ -34,7 +34,7 @@ export const refund = async (
 
   const smartContract = Unicrow__factory.connect(
     getContractAddress("unicrow"),
-    provider.getSigner(),
+    await provider.getSigner(),
   );
 
   try {

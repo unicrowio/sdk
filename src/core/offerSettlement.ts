@@ -43,7 +43,7 @@ export const offerSettlement = async (
 
     const crowDisputeContract = UnicrowDispute__factory.connect(
       getContractAddress("dispute"),
-      provider.getSigner(),
+      await provider.getSigner(),
     );
 
     callbacks && callbacks.broadcasting && callbacks.broadcasting();
@@ -62,7 +62,7 @@ export const offerSettlement = async (
 
     const receiptTx = await settlementTx.wait();
 
-    const parsedPayload = parseOfferSettlement(receiptTx.events);
+    const parsedPayload = parseOfferSettlement(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 

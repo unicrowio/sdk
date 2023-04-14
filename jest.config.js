@@ -15,7 +15,7 @@ const config = {
     './coverage'
   ],
   transform: {
-    '\\.[jt]sx?$': 'esbuild-jest'
+    '\\.[t]sx?$': 'ts-jest'
   },
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts|tsx)?$',
   moduleFileExtensions: ['ts', 'js', 'tsx', 'json'],

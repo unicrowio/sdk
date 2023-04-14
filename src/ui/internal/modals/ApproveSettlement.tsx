@@ -195,8 +195,8 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     if (escrowData && escrowId) {
       approveSettlement(
         escrowId,
-        escrowData?.settlement!.latestSettlementOfferBuyer,
-        escrowData?.settlement!.latestSettlementOfferSeller,
+        escrowData?.settlement?.latestSettlementOfferBuyer,
+        escrowData?.settlement?.latestSettlementOfferSeller,
         approveSettlementOfferCallbacks,
       ).catch((e) => {
         setIsLoading(false);

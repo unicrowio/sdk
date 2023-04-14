@@ -40,7 +40,7 @@ export const claimMultiple = async (
 
   const smartContract = UnicrowClaim__factory.connect(
     getContractAddress("claim"),
-    provider.getSigner(),
+    await provider.getSigner(),
   );
 
   try {
@@ -56,7 +56,7 @@ export const claimMultiple = async (
 
     const receiptTx = await claimTx.wait();
 
-    const parsedPayload = parseMultipleClaim(receiptTx.events);
+    const parsedPayload = parseMultipleClaim(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 
