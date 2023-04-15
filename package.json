@@ -1,6 +1,6 @@
 {
   "name": "@unicrowio/sdk",
-  "version": "0.0.45",
+  "version": "0.1.0",
   "author": "Unicrow <hello@unicrow.io>",
   "license": "MIT",
   "description": "Unicrow SDK",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^3.0.0-beta.0",
-    "@unicrowio/ethers-types": "^0.0.9",
+    "@unicrowio/ethers-types": "^1.1.0",
     "ethers": "^6.3.0",
     "graphql": "^16.6.0",
     "graphql-request": "^5.2.0",
