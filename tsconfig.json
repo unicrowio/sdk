@@ -1,23 +1,22 @@
 {
   "compilerOptions": {
     "strict": false,
-    "target": "es2017",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "CommonJS",
+    "lib": ["ES2022", "ESNext", "DOM"],
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
     "declaration": true,
-    "declarationMap": true,
-    "lib": ["es6", "dom"],
+    "declarationDir": "lib",
+    "sourceMap": true,
     "removeComments": false,
     "typeRoots": ["./node_modules/@types", "src/@types"],
-    "sourceMap": true,
     "outDir": "lib",
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "rootDir": "src",
     "baseUrl": "src",
     "jsx": "react",
-    "moduleResolution": "node",
     "paths": {
       "@unicrow/sdk": ["./src/index"]
     }

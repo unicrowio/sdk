@@ -34,7 +34,7 @@ export const claim = async (
 
   const smartContract = UnicrowClaim__factory.connect(
     getContractAddress("claim"),
-    provider.getSigner(),
+    await provider.getSigner(),
   );
 
   try {
@@ -49,7 +49,7 @@ export const claim = async (
 
     const receiptTx = await claimTx.wait();
 
-    const parsedPayload = parseClaim(receiptTx.events);
+    const parsedPayload = parseClaim(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 

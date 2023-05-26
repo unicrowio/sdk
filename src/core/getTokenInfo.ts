@@ -5,14 +5,14 @@ import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
   const provider = getJsonRpcProvider();
-  const token = ERC20__factory.connect(tokenAddress, provider!);
+  const token = ERC20__factory.connect(tokenAddress, provider);
 
   try {
     await token.symbol();
     return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
       address: tokenAddress,
       symbol: results[0],
-      decimals: results[1],
+      decimals: Number(results[1]),
     }));
   } catch (e) {
     console.error(e);

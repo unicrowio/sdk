@@ -1,8 +1,7 @@
-import { constants } from "ethers";
-import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 
-export const ADDRESS_ZERO = constants.AddressZero;
-export const MAX_UINT256 = constants.MaxUint256;
+export const ADDRESS_ZERO = ethers.ZeroAddress;
+export const MAX_UINT256 = ethers.MaxUint256;
 export const ONE_DAY_IN_SEC = 86400;
 
 export const ZERO_FEE_VALUE = 0;
@@ -31,12 +30,10 @@ export enum split {
 export const BUYER = "buyer";
 export const SELLER = "seller";
 
-export const ZERO = new BigNumber(0);
-
 export const CHAIN_ID = {
-  arbitrumOne: 42161,
-  goerli: 5,
-  development: 5777,
+  arbitrumOne: BigInt(42161),
+  goerli: BigInt(5),
+  development: BigInt(5777),
 };
 
 export const metamaskUrl = "https://metamask.io/download/";

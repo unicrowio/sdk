@@ -52,7 +52,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     amountArbitrator,
   } = calculateAmounts(
     {
-      amount: Number(amount.toString()),
+      amount: BigInt(amount),
       splitBuyer,
       splitSeller,
       splitProtocol,

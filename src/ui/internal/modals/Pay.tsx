@@ -120,7 +120,6 @@ export function PayModal(props: IPaymentModalProps) {
           amount={formatAmount(
             props.paymentProps.amount,
             tokenInfo?.decimals || 18,
-            tokenInfo?.symbol || "",
           )}
           tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}

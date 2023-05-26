@@ -1,8 +1,8 @@
 import React from "react";
-import { displayDecimals, formatAmountToUSD } from "../../../helpers";
+import { formatAmountToUSD } from "../../../helpers";
 import { IBalanceDetailed } from "../../../typing";
 import { TokenSymbol } from ".";
-import Skeleton from "@material-ui/lab/Skeleton";
+import Skeleton from "@mui/material/Skeleton";
 import styled from "styled-components";
 import type * as CSS from "csstype";
 import { BigCheckIcon } from "../assets/BigCheckIcon";
@@ -65,9 +65,7 @@ const TableRow = (
   const isStableCoin = STABLE_COINS.includes(balance?.token?.symbol);
 
   const [formattedAmountInUSD, setFormattedAmountInUSD] =
-    React.useState<string>(
-      isStableCoin && balance.amountBN.toNumber().toFixed(2),
-    );
+    React.useState<string>(isStableCoin && balance.amountBI.toFixed(2));
 
   const { data: exchangeValues, error: errorExchange } = useExchangeRates(
     balance?.token?.symbol,
@@ -86,7 +84,7 @@ const TableRow = (
 
       if (exchangeValue) {
         setFormattedAmountInUSD(
-          formatAmountToUSD(balance.amountBN, exchangeValue),
+          formatAmountToUSD(balance.amountBI, exchangeValue),
         );
       }
     }
@@ -107,10 +105,7 @@ const TableRow = (
       {balance.token.symbol && (
         <>
           <td>
-            {balance.amountBN
-              .toNumber()
-              .toFixed(displayDecimals(balance.token.symbol))}{" "}
-            <TokenSymbol>{balance.token.symbol}</TokenSymbol>
+            {balance.amountBI} <TokenSymbol>{balance.token.symbol}</TokenSymbol>
           </td>
           <td>
             <ExchangeCell>

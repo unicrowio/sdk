@@ -1,6 +1,5 @@
 import EventEmitter from "events";
-import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
-import { ethers } from "ethers";
+import { ethers, BrowserProvider } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
 import { CHAIN_ID } from "../helpers";
 import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
@@ -98,7 +97,7 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   registerAccountChangedListener();
 
   const addParams: any = {
-    chainId: ethers.utils.hexValue(chainId),
+    chainId: ethers.toQuantity(chainId),
     chainName,
     rpcUrls,
     nativeCurrency,
@@ -175,20 +174,17 @@ export const autoSwitchNetwork = async (
  * @returns Network info of where the wallet switched to
  * @throws Error if no wallet is installed or if the user rejected adding or switching to the network
  */
-export const getNetwork = async (): Promise<ethers.providers.Network> => {
+export const getNetwork = async (): Promise<ethers.Network> => {
   const provider = await getWeb3Provider();
 
-  let network = {
-    chainId: 0,
-    name: "unknown",
-  };
+  let network;
 
   if (provider !== null) {
     network = await provider.getNetwork();
 
     if (network.chainId === CHAIN_ID.development) {
       network = {
-        ...network,
+        chainId: network.chainId,
         name: "development",
       };
     }
@@ -281,13 +277,8 @@ export const stopListeningNetwork = () => {
   _onChangeNetworkCallbacks = [];
 };
 
-export const getWeb3Provider = async (): Promise<Web3Provider> => {
-  return isWeb3WalletInstalled()
-    ? new ethers.providers.Web3Provider(
-        window.ethereum as unknown as ExternalProvider,
-        "any",
-      )
-    : null;
+export const getWeb3Provider = async (): Promise<BrowserProvider> => {
+  return isWeb3WalletInstalled() ? new BrowserProvider(window.ethereum) : null;
 };
 
 /**

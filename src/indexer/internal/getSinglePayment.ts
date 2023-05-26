@@ -19,7 +19,7 @@ export const getSinglePayment = async (
     returningValues: [...returningValues, "status"],
   });
 
-  const response = await client.request(queryString);
+  const response: any = await client.request(queryString);
   const { escrow_status_view } = response;
 
   if (escrow_status_view?.length > 0) {

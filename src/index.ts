@@ -8,5 +8,3 @@ import { config } from "./config";
 export * from "./typing";
 
 export { core, ui, wallet, indexer, helpers, config };
-
-export default { core, ui, wallet, indexer, helpers, config };

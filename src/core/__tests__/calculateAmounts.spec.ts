@@ -16,7 +16,7 @@ describe("calculateAmounts", () => {
 
     const result: tShares = calculateAmounts(
       {
-        amount: 1000,
+        amount: BigInt(1000),
         splitBuyer,
         splitSeller,
         splitProtocol,
@@ -27,14 +27,14 @@ describe("calculateAmounts", () => {
     );
 
     expect(result).toEqual({
-      amountBuyer: 0,
-      amountSeller: 890,
-      amountProtocol: 10,
-      amountMarketplace: 100,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(0),
+      amountSeller: BigInt(890),
+      amountProtocol: BigInt(10),
+      amountMarketplace: BigInt(100),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
-  it("should return the same result from the Sheet1 - release, refunded, settled, no artibitrator", () => {
+  it("should return the same result from the Sheet1 - release, refunded, settled, no arbitrator", () => {
     const splitSeller = 80;
     const splitBuyer = 20;
     const splitProtocol = 1;
@@ -42,7 +42,7 @@ describe("calculateAmounts", () => {
     const arbitratorFee = 5;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -51,17 +51,17 @@ describe("calculateAmounts", () => {
     } as CalculateAmountsInput);
 
     const r = {
-      amountBuyer: 200,
-      amountSeller: 672,
-      amountProtocol: 8,
-      amountMarketplace: 80,
-      amountArbitrator: 40,
+      amountBuyer: BigInt(200),
+      amountSeller: BigInt(672),
+      amountProtocol: BigInt(8),
+      amountMarketplace: BigInt(80),
+      amountArbitrator: BigInt(40),
     } as tShares;
 
     expect(result).toEqual(r);
   });
 
-  it("should return the same result from the Sheet1 - settled by artibitrator", () => {
+  it("should return the same result from the Sheet1 - settled by arbitrator", () => {
     const splitSeller = 80;
     const splitBuyer = 20;
     const splitProtocol = 1;
@@ -70,7 +70,7 @@ describe("calculateAmounts", () => {
 
     const result: tShares = calculateAmounts(
       {
-        amount: 1000,
+        amount: BigInt(1000),
         splitBuyer,
         splitSeller,
         splitProtocol,
@@ -81,11 +81,11 @@ describe("calculateAmounts", () => {
     );
 
     expect(result).toEqual({
-      amountSeller: 672,
-      amountBuyer: 190,
-      amountProtocol: 8,
-      amountMarketplace: 80,
-      amountArbitrator: 50,
+      amountSeller: BigInt(672),
+      amountBuyer: BigInt(190),
+      amountProtocol: BigInt(8),
+      amountMarketplace: BigInt(80),
+      amountArbitrator: BigInt(50),
     } as tShares);
   });
 });
@@ -99,7 +99,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -108,11 +108,11 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 0,
-      amountSeller: 990,
-      amountProtocol: 10,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(0),
+      amountSeller: BigInt(990),
+      amountProtocol: BigInt(10),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -124,7 +124,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -133,11 +133,11 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 500,
-      amountSeller: 495,
-      amountProtocol: 5,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(500),
+      amountSeller: BigInt(495),
+      amountProtocol: BigInt(5),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -149,7 +149,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -158,11 +158,11 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 200,
-      amountSeller: 792,
-      amountProtocol: 8,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(200),
+      amountSeller: BigInt(792),
+      amountProtocol: BigInt(8),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -174,7 +174,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -183,11 +183,11 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 1000,
-      amountSeller: 0,
-      amountProtocol: 0,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(1000),
+      amountSeller: BigInt(0),
+      amountProtocol: BigInt(0),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -199,7 +199,7 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -208,11 +208,11 @@ describe("Fees Calculation Google Docs - 1% Unicrow fee, no arbitrator, no marke
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 1000,
-      amountSeller: 0,
-      amountProtocol: 0,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(1000),
+      amountSeller: BigInt(0),
+      amountProtocol: BigInt(0),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 });
@@ -226,7 +226,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -235,11 +235,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 0,
-      amountSeller: 890,
-      amountProtocol: 10,
-      amountMarketplace: 100,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(0),
+      amountSeller: BigInt(890),
+      amountProtocol: BigInt(10),
+      amountMarketplace: BigInt(100),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -251,7 +251,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -260,11 +260,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 500,
-      amountSeller: 445,
-      amountProtocol: 5,
-      amountMarketplace: 50,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(500),
+      amountSeller: BigInt(445),
+      amountProtocol: BigInt(5),
+      amountMarketplace: BigInt(50),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -276,7 +276,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -285,11 +285,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 200,
-      amountSeller: 712,
-      amountProtocol: 8,
-      amountMarketplace: 80,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(200),
+      amountSeller: BigInt(712),
+      amountProtocol: BigInt(8),
+      amountMarketplace: BigInt(80),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -301,7 +301,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -310,11 +310,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, no
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 1000,
-      amountSeller: 0,
-      amountProtocol: 0,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(1000),
+      amountSeller: BigInt(0),
+      amountProtocol: BigInt(0),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 });
@@ -328,7 +328,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const arbitratorFee = 5;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -337,11 +337,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 0,
-      amountSeller: 840,
-      amountProtocol: 10,
-      amountMarketplace: 100,
-      amountArbitrator: 50,
+      amountBuyer: BigInt(0),
+      amountSeller: BigInt(840),
+      amountProtocol: BigInt(10),
+      amountMarketplace: BigInt(100),
+      amountArbitrator: BigInt(50),
     } as tShares);
   });
 
@@ -354,7 +354,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
 
     const result: tShares = calculateAmounts(
       {
-        amount: 1000,
+        amount: BigInt(1000),
         splitBuyer,
         splitSeller,
         splitProtocol,
@@ -365,11 +365,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     );
 
     expect(result).toEqual({
-      amountBuyer: 475,
-      amountSeller: 420,
-      amountProtocol: 5,
-      amountMarketplace: 50,
-      amountArbitrator: 50,
+      amountBuyer: BigInt(475),
+      amountSeller: BigInt(420),
+      amountProtocol: BigInt(5),
+      amountMarketplace: BigInt(50),
+      amountArbitrator: BigInt(50),
     } as tShares);
   });
 
@@ -382,7 +382,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
 
     const result: tShares = calculateAmounts(
       {
-        amount: 1000,
+        amount: BigInt(1000),
         splitBuyer,
         splitSeller,
         splitProtocol,
@@ -393,11 +393,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     );
 
     expect(result).toEqual({
-      amountBuyer: 190,
-      amountSeller: 672,
-      amountProtocol: 8,
-      amountMarketplace: 80,
-      amountArbitrator: 50,
+      amountBuyer: BigInt(190),
+      amountSeller: BigInt(672),
+      amountProtocol: BigInt(8),
+      amountMarketplace: BigInt(80),
+      amountArbitrator: BigInt(50),
     } as tShares);
   });
 
@@ -410,7 +410,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
 
     const result: tShares = calculateAmounts(
       {
-        amount: 1000,
+        amount: BigInt(1000),
         splitBuyer,
         splitSeller,
         splitProtocol,
@@ -421,11 +421,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     );
 
     expect(result).toEqual({
-      amountBuyer: 950,
-      amountSeller: 0,
-      amountProtocol: 0,
-      amountMarketplace: 0,
-      amountArbitrator: 50,
+      amountBuyer: BigInt(950),
+      amountSeller: BigInt(0),
+      amountProtocol: BigInt(0),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(50),
     } as tShares);
   });
 
@@ -437,7 +437,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const arbitratorFee = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -446,11 +446,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 1000,
-      amountSeller: 0,
-      amountProtocol: 0,
-      amountMarketplace: 0,
-      amountArbitrator: 0,
+      amountBuyer: BigInt(1000),
+      amountSeller: BigInt(0),
+      amountProtocol: BigInt(0),
+      amountMarketplace: BigInt(0),
+      amountArbitrator: BigInt(0),
     } as tShares);
   });
 
@@ -462,7 +462,7 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     const arbitratorFee = 5;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -471,11 +471,11 @@ describe("Fees Calculation Google Docs - 10% marketplace fee, 1% Unicrow fee, 5%
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountBuyer: 500,
-      amountSeller: 420,
-      amountProtocol: 5,
-      amountMarketplace: 50,
-      amountArbitrator: 25,
+      amountBuyer: BigInt(500),
+      amountSeller: BigInt(420),
+      amountProtocol: BigInt(5),
+      amountMarketplace: BigInt(50),
+      amountArbitrator: BigInt(25),
     } as tShares);
   });
 });
@@ -488,7 +488,7 @@ describe("Fees Calculation - 0% marketplace fee, 1% platform, ", () => {
     const splitMarketplace = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 1000,
+      amount: BigInt(1000),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -496,11 +496,11 @@ describe("Fees Calculation - 0% marketplace fee, 1% platform, ", () => {
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountArbitrator: 0,
-      amountBuyer: 500,
-      amountSeller: 495,
-      amountProtocol: 5,
-      amountMarketplace: 0,
+      amountArbitrator: BigInt(0),
+      amountBuyer: BigInt(500),
+      amountSeller: BigInt(495),
+      amountProtocol: BigInt(5),
+      amountMarketplace: BigInt(0),
     } as tShares);
   });
 });
@@ -513,7 +513,7 @@ describe("Fees Calculation - 0% marketplace fee, 0% platform, with 12 amount ", 
     const splitMarketplace = 0;
 
     const result: tShares = calculateAmounts({
-      amount: 12,
+      amount: BigInt(12),
       splitBuyer,
       splitSeller,
       splitProtocol,
@@ -521,23 +521,23 @@ describe("Fees Calculation - 0% marketplace fee, 0% platform, with 12 amount ", 
     } as CalculateAmountsInput);
 
     expect(result).toEqual({
-      amountArbitrator: 0,
-      amountBuyer: 6,
-      amountSeller: 6,
-      amountProtocol: 0,
-      amountMarketplace: 0,
+      amountArbitrator: BigInt(0),
+      amountBuyer: BigInt(6),
+      amountSeller: BigInt(6),
+      amountProtocol: BigInt(0),
+      amountMarketplace: BigInt(0),
     } as tShares);
   });
 });
 
-it("Amount 1000, seller should receive 100% and platform 1%", () => {
+it("Amount 1000), seller should receive 100% and platform 1%", () => {
   const splitSeller = 100;
   const splitBuyer = 0;
   const splitProtocol = 1;
   const splitMarketplace = 0;
 
   const result: tShares = calculateAmounts({
-    amount: 1000,
+    amount: BigInt(1000),
     splitBuyer,
     splitSeller,
     splitProtocol,
@@ -545,22 +545,22 @@ it("Amount 1000, seller should receive 100% and platform 1%", () => {
   } as CalculateAmountsInput);
 
   expect(result).toEqual({
-    amountArbitrator: 0,
-    amountBuyer: 0,
-    amountSeller: 990,
-    amountProtocol: 10,
-    amountMarketplace: 0,
+    amountArbitrator: BigInt(0),
+    amountBuyer: BigInt(0),
+    amountSeller: BigInt(990),
+    amountProtocol: BigInt(10),
+    amountMarketplace: BigInt(0),
   } as tShares);
 });
 
-it("Amount 1.000.000.000.000.000.000.000, seller should receive 100% and platform 1%", () => {
+it("Amount 1.000.000.000.000.000.000.000), seller should receive 100% and platform 1%", () => {
   const splitSeller = 100;
   const splitBuyer = 0;
   const splitProtocol = 1;
   const splitMarketplace = 0;
 
   const result: tShares = calculateAmounts({
-    amount: 1e21,
+    amount: BigInt(1e21),
     splitBuyer,
     splitSeller,
     splitProtocol,
@@ -568,10 +568,10 @@ it("Amount 1.000.000.000.000.000.000.000, seller should receive 100% and platfor
   } as CalculateAmountsInput);
 
   expect(result).toEqual({
-    amountArbitrator: 0,
-    amountBuyer: 0,
-    amountSeller: 990000000000000000000,
-    amountProtocol: 10000000000000000000,
-    amountMarketplace: 0,
+    amountArbitrator: BigInt(0),
+    amountBuyer: BigInt(0),
+    amountSeller: BigInt(990000000000000000000),
+    amountProtocol: BigInt(10000000000000000000),
+    amountMarketplace: BigInt(0),
   } as tShares);
 });

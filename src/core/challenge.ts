@@ -37,7 +37,7 @@ export const challenge = async (
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
     const smartContract = UnicrowDispute__factory.connect(
       getContractAddress("dispute"),
-      provider.getSigner(),
+      await provider.getSigner(),
     );
 
     callbacks && callbacks.broadcasting && callbacks.broadcasting();

@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { calculateAmounts } from "../core";
 import { IGetEscrowData } from "../typing";
 import { isSameAddress } from "./isSameAddress";
@@ -24,7 +23,7 @@ export const getSplitFromLoggedUser = (
   const { amountBuyer, amountSeller, amountArbitrator, amountMarketplace } =
     calculateAmounts(
       {
-        amount: amount.toNumber(),
+        amount,
         splitBuyer,
         splitSeller,
         splitProtocol,
@@ -50,7 +49,7 @@ export const getSplitFromLoggedUser = (
     return amountArbitrator;
   }
 
-  return 0; // The user is not a party or is not logged (seller, buyer, marketplace, arbitrator)
+  return BigInt(0); // The user is not a party or is not logged (seller, buyer, marketplace, arbitrator)
 };
 
 export const calculateSplit = (
@@ -59,5 +58,5 @@ export const calculateSplit = (
 ) =>
   group.reduce((acc, current) => {
     const amount = getSplitFromLoggedUser(current, walletUserAddress);
-    return acc.plus(amount);
-  }, new BigNumber(0));
+    return acc + amount;
+  }, BigInt(0));

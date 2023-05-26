@@ -2,7 +2,7 @@ import { formatAmount } from "../../../helpers/formatAmount";
 import React from "react";
 import styled from "styled-components";
 import { Chip } from "../../../ui/internal/components/Chip";
-import Skeleton from "@material-ui/lab/Skeleton";
+import Skeleton from "@mui/material/Skeleton";
 
 const Style = styled.div`
   display: flex;
@@ -54,9 +54,7 @@ export const Amount = ({
   return (
     <Style>
       <div>
-        <strong>
-          {formatAmount(amount, precision || 18, tokenSymbol || "")}
-        </strong>
+        <strong>{formatAmount(amount, precision || 18)}</strong>
         {tokenSymbol && <span>{tokenSymbol}</span>}
 
         {

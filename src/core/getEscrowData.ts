@@ -1,5 +1,3 @@
-import { BigNumber } from "ethers";
-import { BigNumber as BigNumberJs } from "bignumber.js";
 import { getContractAddress } from "../config";
 import {
   ADDRESS_ZERO,
@@ -30,7 +28,7 @@ import {
   DataStructOutput,
   SettlementStructOutput,
   TokenStruct,
-} from "@unicrowio/ethers-types/src/Unicrow";
+} from "@unicrowio/ethers-types/src/contracts/Unicrow";
 
 const getConnectedUser = async ({
   buyer,
@@ -88,7 +86,7 @@ const parseEscrow = (
   );
   const tokenAddress: string = data.currency;
   const challengePeriod: number = data.challengeExtension.toNumber();
-  const amount: BigNumber = data.amount;
+  const amount: bigint = data.amount;
 
   // Consensus
   const consensusBuyer: number = data.consensus[consensus.BUYER];
@@ -101,8 +99,6 @@ const parseEscrow = (
 
   const claimed = Boolean(data.claimed);
   const marketplace: string | null = nullOrValue(data.marketplace);
-
-  const amountBigNumberJs = new BigNumberJs(amount.toString());
 
   const status = calculateStatus({
     seller,
@@ -121,7 +117,7 @@ const parseEscrow = (
     challengePeriodEnd,
     status,
     escrowId,
-    amount: amountBigNumberJs,
+    amount,
     // Addresses
     marketplace,
     buyer,
@@ -164,7 +160,7 @@ const parseToken = (data: TokenStruct): IToken | null => {
 
   // is ERC-20
   return {
-    address: data.address_,
+    address: data.address_.toString(),
     symbol: data.symbol,
     decimals: Number(data.decimals),
   };

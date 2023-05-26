@@ -1,7 +1,5 @@
-import { BigNumber } from "ethers";
-
-export const checkBalance = (balance: BigNumber, amount: BigNumber) => {
-  if (balance.lt(amount)) {
+export const checkBalance = (balance: bigint, amount: bigint) => {
+  if (balance < amount) {
     throw new Error("Insufficient Balance");
   }
 };

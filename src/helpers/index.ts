@@ -1,11 +1,7 @@
 export { countdownChallengePeriod } from "./countdownChallengePeriod";
 export { isValidAddress } from "./isValidAddress";
 export { displayChallengePeriod } from "./displayChallengePeriod";
-export {
-  displayableAmount,
-  displayableAmountBN,
-  displayDecimals,
-} from "./displayAmount";
+export { displayableAmount, displayableAmountBI } from "./displayAmount";
 export { formatAmountToUSD } from "./formatAmountToUSD";
 export { percentageToBips } from "./percentageToBips";
 export { bipsToPercentage } from "./bipsToPercentage";

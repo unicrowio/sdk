@@ -12,7 +12,7 @@ import { buildQuery } from "./queryBuilder";
  * List of the Payments from Indexer.
  *
  * @param client: GraphQLClient
- * @param query: TPaymentListQueryParams
+ * @param query: IQuery
  * @param pagination?: IPage - if not provided, return the first 20 records by default
  *
  * @returns {Promise<IGetPaymentListResponse>}
@@ -24,7 +24,7 @@ export const getPaymentList = async (
 ): Promise<IGetPaymentListResponse> => {
   const queryString = buildQuery({ query, pagination });
 
-  const response = await client.request(queryString);
+  const response: any = await client.request(queryString);
 
   const { escrow_status_aggregate, escrow_status_view } = response;
 

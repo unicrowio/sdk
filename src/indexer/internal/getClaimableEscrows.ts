@@ -5,7 +5,7 @@ export const getClaimableEscrows = async (
   client: GraphQLClient,
   walletUserAddress: string,
 ): Promise<string[]> => {
-  const response = await client.request(buildClaimableQuery, {
+  const response: any = await client.request(buildClaimableQuery, {
     walletUserAddress,
   });
 

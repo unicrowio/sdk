@@ -12,6 +12,7 @@ import {
   Button,
   ScopedModal,
 } from "../../../ui/internal/components";
+import { calculatePercentageInt } from "../../../core/calculateAmounts";
 import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import { toast } from "../notification/toast";
 import styled from "styled-components";
@@ -73,8 +74,14 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
       const _splitSeller =
         escrowData.settlement.latestSettlementOfferSeller / 100;
 
-      const _amountBuyer = escrowData.amount.times(_splitBuyer);
-      const _amountSeller = escrowData.amount.times(_splitSeller);
+      const _amountBuyer = calculatePercentageInt(
+        _splitBuyer,
+        escrowData.amount,
+      );
+      const _amountSeller = calculatePercentageInt(
+        _splitSeller,
+        escrowData.amount,
+      );
 
       const _amountBuyerDisplayable = displayableAmount(
         _amountBuyer,
@@ -188,8 +195,8 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     if (escrowData && escrowId) {
       approveSettlement(
         escrowId,
-        escrowData?.settlement!.latestSettlementOfferBuyer,
-        escrowData?.settlement!.latestSettlementOfferSeller,
+        escrowData?.settlement?.latestSettlementOfferBuyer,
+        escrowData?.settlement?.latestSettlementOfferSeller,
         approveSettlementOfferCallbacks,
       ).catch((e) => {
         setIsLoading(false);

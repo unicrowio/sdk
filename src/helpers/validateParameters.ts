@@ -43,8 +43,13 @@ export const validateParameters = async (data: IValidateProps) => {
     throw new Error("Buyer cannot be the same as the seller");
   }
 
-  if (amount <= 0) {
-    throw new Error("Invalid amount");
+  try {
+    const _amount = BigInt(amount);
+    if (_amount <= 0) {
+      throw new Error(`Invalid amount (${amount}<=0)`);
+    }
+  } catch (e: any) {
+    throw new Error(`Invalid amount: ${amount} error: ${e.message}`);
   }
 
   if (

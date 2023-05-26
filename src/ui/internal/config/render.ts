@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import React, { FunctionComponent } from "react";
 import { tag } from "helpers";
 import { jss } from "./jss";
@@ -35,33 +35,19 @@ jss
   })
   .attach();
 
-const CreateReactElement = React.createElement;
-
 const ROOT_UNICROW_SDK_ELEMENT = "rootUnicrowSDkElement";
 
 /**
  * Creates a modal within .rootUnicrowSDkElement (use props you want to pass to React.createElement for your component).
  */
 export const renderModal = (component: FunctionComponent<any>, props?: any) => {
-  let container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
+  let rootUnicrowSDkElement = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
 
-  if (!container) {
-    const rootUnicrowSDkElement = document.createElement("div");
+  if (!rootUnicrowSDkElement) {
+    rootUnicrowSDkElement = document.createElement("div");
     rootUnicrowSDkElement.id = ROOT_UNICROW_SDK_ELEMENT;
     document.documentElement.append(rootUnicrowSDkElement);
-  }
-
-  container = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
-
-  ReactDOM.render(CreateReactElement(component, props), container);
-};
-
-/**
- * Destroys modal if any present.
- */
-export const umountModal = () => {
-  const root = document.getElementById(ROOT_UNICROW_SDK_ELEMENT);
-  if (root) {
-    ReactDOM.unmountComponentAtNode(root);
+    const root = createRoot(rootUnicrowSDkElement!);
+    root.render(React.createElement(component, props));
   }
 };

@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   IGetEscrowData,
   IToken,
@@ -39,9 +38,8 @@ export const parseEscrowData = (
       item.split_protocol,
     ]);
 
-  const amount = BigNumber.isBigNumber(item.amount)
-    ? item.amount
-    : new BigNumber(item.amount);
+  const amount =
+    typeof item.amount === "bigint" ? item.amount : BigInt(item.amount);
 
   const buyer = item.buyer;
   const seller = item.seller;

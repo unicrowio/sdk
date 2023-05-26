@@ -24,7 +24,7 @@ const getCoinGeckoPrices = async (
   network: string,
   tokensAddresses: string[],
 ): Promise<IResult | void> => {
-  let response = {} as IResult;
+  const response = {} as IResult;
 
   // ETH needs a different call
   const ethIdx = tokensAddresses.indexOf(

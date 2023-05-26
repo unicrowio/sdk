@@ -2,13 +2,18 @@ import {
   calculateSplit,
   groupBy,
   displayableAmount,
-  displayableAmountBN,
+  displayableAmountBI,
 } from "../../helpers";
 import { GraphQLClient } from "graphql-request";
 import { getTokenInfo } from "../../core";
-import { GetResponseUserBalance, IToken, IBalance } from "../../typing";
+import {
+  GetResponseUserBalance,
+  IToken,
+  IBalance,
+  IEscrowStatus,
+  EscrowStatus,
+} from "../../typing";
 import { buildBalanceQuery } from "./queryBalance";
-import BigNumber from "bignumber.js";
 import { parseEscrowData } from "./parseEscrowData";
 import { EscrowStatusView } from "indexer/internal/types";
 
@@ -22,7 +27,7 @@ const fetchTokenInfo = async (balances: IBalance[]) => {
 };
 
 const prepareResponseData = (balance: any, tokens: IToken[]) => {
-  const _amount = new BigNumber(balance.amount);
+  const _amount = BigInt(balance.amount);
   const tokenInfo = tokens.find((t) => t.address === balance.token.address);
 
   return {
@@ -30,27 +35,23 @@ const prepareResponseData = (balance: any, tokens: IToken[]) => {
     token: { ...tokenInfo },
     total: _amount,
     displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
-    amountBN: displayableAmountBN(_amount, tokenInfo.decimals),
+    amountBI: displayableAmountBI(_amount, tokenInfo.decimals),
   };
 };
 
-const mapData = (
-  _group,
-  status: "Pending" | "Ready to claim",
-  walletUserAddress: string,
-) =>
+const mapData = (_group, status: IEscrowStatus, walletUserAddress: string) =>
   Object.keys(_group)
     .map((key) => {
       const total = calculateSplit(_group[key], walletUserAddress);
       return {
+        amount: total.toString(),
         token: {
           address: key,
         },
         status,
-        amount: total.toString(),
       };
     })
-    .filter((item: any) => new BigNumber(item.amount).gt(0)) as IBalance[];
+    .filter((item: any) => BigInt(item.amount) > 0) as IBalance[];
 
 /**
  * Read how much balance does the provided account have in the contract
@@ -85,12 +86,22 @@ export const getUserBalance = async (
 
   const pendingData: IBalance[] = mapData(
     groupPendingTokens,
-    "Pending",
+    {
+      state: EscrowStatus.UNPAID,
+      claimed: false,
+      latestChallengeBy: null,
+      latestSettlementOfferBy: null,
+    },
     walletUserAddress,
   );
   const readyData: IBalance[] = mapData(
     groupReadyTokens,
-    "Ready to claim",
+    {
+      state: EscrowStatus.PERIOD_EXPIRED,
+      claimed: false,
+      latestChallengeBy: null,
+      latestSettlementOfferBy: null,
+    },
     walletUserAddress,
   );
 
