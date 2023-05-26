@@ -1,6 +1,6 @@
 {
   "name": "@unicrowio/sdk",
-  "version": "0.0.45",
+  "version": "1.0.0-beta.0",
   "author": "Unicrow <hello@unicrow.io>",
   "license": "MIT",
   "description": "Unicrow SDK",
