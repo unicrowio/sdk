@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { getHost } from "../../config";
+
 /**
  * Returns the url of the RPC provider.
  *

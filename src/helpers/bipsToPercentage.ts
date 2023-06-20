@@ -3,4 +3,4 @@
  * @returns
  */
 export const bipsToPercentage = (values: number[] | bigint[]) =>
-  values.map((value) => value / 100);
+  values.map((value) => Number(value) / 100);
