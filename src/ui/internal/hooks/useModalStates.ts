@@ -1,5 +1,6 @@
 import Deferred from "../../../helpers/deferred";
 import { Dispatch, useState } from "react";
+import { unmountModal } from "../config/render";
 
 export interface TUseModalStates {
   isLoading: boolean;
@@ -39,6 +40,8 @@ export const useModalStates = ({
     } else {
       deferredPromise.resolve(success);
     }
+
+    unmountModal();
   };
 
   return {
