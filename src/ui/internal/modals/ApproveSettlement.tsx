@@ -213,11 +213,8 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     return (
       <>
         <Amount
+          amount={escrowData.amount}
           precision={escrowData.token.decimals}
-          amount={displayableAmount(
-            escrowData.amount,
-            escrowData.token.decimals,
-          )}
           tokenSymbol={
             escrowData.token?.symbol ? escrowData.token.symbol : "..."
           }

@@ -117,10 +117,8 @@ export function PayModal(props: IPaymentModalProps) {
     return (
       <>
         <Amount
-          amount={formatAmount(
-            props.paymentProps.amount,
-            tokenInfo?.decimals || 18,
-          )}
+          amount={props.paymentProps.amount}
+          precision={tokenInfo?.decimals}
           tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}
           status={paymentStatus}
@@ -206,9 +204,10 @@ export function PayModal(props: IPaymentModalProps) {
     let buttonOnClick;
 
     if (!(error || success)) {
-      buttonChildren = `Pay ${props.paymentProps.amount} ${
-        tokenInfo ? tokenInfo.symbol : "ETH"
-      }`;
+      buttonChildren = `Pay ${formatAmount(
+        props.paymentProps.amount,
+        tokenInfo?.decimals || 18,
+      )} ${tokenInfo ? tokenInfo.symbol : "ETH"}`;
       buttonOnClick = onPayClick;
     } else if (success) {
       buttonChildren = "Close";
