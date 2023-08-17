@@ -20,7 +20,7 @@ import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import {
   addressWithYou,
   reduceAddress,
-  displayableAmount,
+  formatAmount,
   BUYER,
   SELLER,
   displayChallengePeriod,
@@ -142,7 +142,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     return (
       <>
         <Amount
-          amount={escrowData.amount}
+          amount={formatAmount(escrowData.amount, escrowData.token.decimals)}
           precision={escrowData.token.decimals}
           tokenSymbol={escrowData.token.symbol}
           status={paymentStatus}

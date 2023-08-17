@@ -44,7 +44,7 @@ export const validateParameters = async (data: IValidateProps) => {
   }
 
   try {
-    const _amount = BigInt(amount);
+    const _amount = parseFloat(amount);
     if (_amount <= 0) {
       throw new Error(`Invalid amount (${amount}<=0)`);
     }

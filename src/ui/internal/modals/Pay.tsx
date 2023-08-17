@@ -204,10 +204,9 @@ export function PayModal(props: IPaymentModalProps) {
     let buttonOnClick;
 
     if (!(error || success)) {
-      buttonChildren = `Pay ${formatAmount(
-        props.paymentProps.amount,
-        tokenInfo?.decimals || 18,
-      )} ${tokenInfo ? tokenInfo.symbol : "ETH"}`;
+      buttonChildren = `Pay ${props.paymentProps.amount} ${
+        tokenInfo ? tokenInfo.symbol : "ETH"
+      }`;
       buttonOnClick = onPayClick;
     } else if (success) {
       buttonChildren = "Close";

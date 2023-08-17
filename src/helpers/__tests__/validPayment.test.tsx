@@ -6,7 +6,7 @@ const params: IValidateProps = {
   buyer: "0x484Ee4Eb8CB165F4FBFd897f84283142C8f1fD3a",
   arbitrator: "0x7bD733DBc10A1cD04e1e51cC89450941c928ee62",
   marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928ee62",
-  amount: 1n,
+  amount: "1",
   challengePeriod: 1,
   challengePeriodExtension: 1,
   arbitratorFee: 1,
@@ -67,7 +67,7 @@ describe("Valid payments function", () => {
     await expect(async () =>
       validateParameters({
         ...params,
-        amount: 0n,
+        amount: "0",
       }),
     ).rejects.toThrow(/Invalid amount/);
   });

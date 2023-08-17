@@ -1,15 +1,27 @@
-import { displayableAmountBI } from "./displayAmount";
+import { ethers } from "ethers";
 
 export const formatAmount = (
-  amount: string | number | bigint,
-  precision: number,
+  amount: bigint,
+  precision: number | bigint,
 ): string => {
   try {
-    const uxAmount = displayableAmountBI(BigInt(amount), precision);
-    return uxAmount.toString();
+    return ethers.formatUnits(amount, precision);
   } catch (error) {
     throw new Error(
-      `Invalid amount: '${amount}'. It should be a valid number.`,
+      `Invalid amount: '${amount}'. It should be a valid bigint.`,
+    );
+  }
+};
+
+export const parseAmount = (
+  amount: string,
+  precision: number | bigint,
+): bigint => {
+  try {
+    return ethers.parseUnits(amount, precision);
+  } catch (error) {
+    throw new Error(
+      `Invalid amount: '${amount}'. It should be a valid string.`,
     );
   }
 };

@@ -14,7 +14,7 @@ import {
 } from "../../../ui/internal/components";
 import {
   reduceAddress,
-  displayableAmount,
+  formatAmount,
   SELLER,
   addressWithYou,
 } from "../../../helpers";
@@ -129,7 +129,7 @@ export function RefundModal(props: IRefundModalProps) {
     return (
       <>
         <Amount
-          amount={escrowData.amount}
+          amount={formatAmount(escrowData.amount, escrowData.token.decimals)}
           precision={escrowData.token.decimals}
           tokenSymbol={escrowData.token.symbol}
           status={paymentStatus}

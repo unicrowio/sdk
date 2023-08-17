@@ -1,9 +1,4 @@
-import {
-  calculateSplit,
-  groupBy,
-  displayableAmount,
-  displayableAmountBI,
-} from "../../helpers";
+import { calculateSplit, groupBy, formatAmount } from "../../helpers";
 import { GraphQLClient } from "graphql-request";
 import { getTokenInfo } from "../../core";
 import {
@@ -27,31 +22,29 @@ const fetchTokenInfo = async (balances: IBalance[]) => {
 };
 
 const prepareResponseData = (balance: any, tokens: IToken[]) => {
-  const _amount = BigInt(balance.amount);
   const tokenInfo = tokens.find((t) => t.address === balance.token.address);
 
   return {
     ...balance,
     token: { ...tokenInfo },
-    total: _amount,
-    displayableAmount: displayableAmount(_amount, tokenInfo.decimals),
-    amountBI: displayableAmountBI(_amount, tokenInfo.decimals),
+    solidityAmount: balance.solidityAmount,
+    displayableAmount: formatAmount(balance.solidityAmount, tokenInfo.decimals),
   };
 };
 
 const mapData = (_group, status: IEscrowStatus, walletUserAddress: string) =>
   Object.keys(_group)
     .map((key) => {
-      const total = calculateSplit(_group[key], walletUserAddress);
+      const amount = calculateSplit(_group[key], walletUserAddress);
       return {
-        amount: total.toString(),
+        solidityAmount: amount,
         token: {
           address: key,
         },
         status,
       };
     })
-    .filter((item: any) => BigInt(item.amount) > 0) as IBalance[];
+    .filter((item: any) => BigInt(item.solidityAmount) > 0) as IBalance[];
 
 /**
  * Read how much balance does the provided account have in the contract

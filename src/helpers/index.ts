@@ -1,7 +1,6 @@
 export { countdownChallengePeriod } from "./countdownChallengePeriod";
 export { isValidAddress } from "./isValidAddress";
 export { displayChallengePeriod } from "./displayChallengePeriod";
-export { displayableAmount, displayableAmountBI } from "./displayAmount";
 export { formatAmountToUSD } from "./formatAmountToUSD";
 export { percentageToBips } from "./percentageToBips";
 export { bipsToPercentage } from "./bipsToPercentage";
@@ -19,4 +18,4 @@ export { validateAddress } from "./validateAddress";
 export { validateParameters } from "./validateParameters";
 export { getSplitFromLoggedUser } from "./calculateSplit";
 export { tag } from "./tag";
-export { formatAmount } from "./formatAmount";
+export { formatAmount, parseAmount } from "./formatAmount";

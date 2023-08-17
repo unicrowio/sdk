@@ -37,7 +37,7 @@ const Style = styled.div`
 
 // TODO pass the entire tokenInfo instead of each prop
 export interface IAmountProps {
-  amount: bigint;
+  amount: string;
   tokenSymbol: string;
   tokenAddress?: string; // todo remove this prop
   status?: string;
@@ -54,7 +54,7 @@ export const Amount = ({
   return (
     <Style>
       <div>
-        <strong>{formatAmount(amount, precision || 18)}</strong>
+        <strong>{amount}</strong>
         {tokenSymbol && <span>{tokenSymbol}</span>}
 
         {

@@ -22,7 +22,7 @@ import {
   DataDisplayer,
 } from "../components/DataDisplayer";
 import { renderModal } from "../config/render";
-import { displayableAmount, BUYER, SELLER } from "../../../helpers";
+import { formatAmount, BUYER, SELLER } from "../../../helpers";
 import { SettlementOfferModal } from "./SettlementOffer";
 
 import { MARKER } from "../../../config/marker";
@@ -83,12 +83,12 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
         escrowData.amount,
       );
 
-      const _amountBuyerDisplayable = displayableAmount(
+      const _amountBuyerDisplayable = formatAmount(
         _amountBuyer,
         escrowData.token.decimals,
       );
 
-      const _sellerBuyerDisplayable = displayableAmount(
+      const _sellerBuyerDisplayable = formatAmount(
         _amountSeller,
         escrowData.token.decimals,
       );
@@ -99,7 +99,6 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
           symbol: escrowData.token.symbol,
           percentage: escrowData.settlement.latestSettlementOfferBuyer,
         },
-
         seller: {
           amount: _sellerBuyerDisplayable,
           symbol: escrowData.token.symbol,
@@ -213,7 +212,7 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
     return (
       <>
         <Amount
-          amount={escrowData.amount}
+          amount={formatAmount(escrowData.amount, escrowData.token.decimals)}
           precision={escrowData.token.decimals}
           tokenSymbol={
             escrowData.token?.symbol ? escrowData.token.symbol : "..."

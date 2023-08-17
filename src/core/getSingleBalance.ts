@@ -1,8 +1,4 @@
-import {
-  getSplitFromLoggedUser,
-  displayableAmount,
-  displayableAmountBI,
-} from "../helpers";
+import { getSplitFromLoggedUser, formatAmount } from "../helpers";
 import { IBalanceDetailed } from "../typing";
 import { getEscrowData } from "./getEscrowData";
 
@@ -26,9 +22,8 @@ export const getSingleBalance = async (
       decimals: escrowData.token.decimals,
     },
     status: escrowData.status,
-    amount: amount.toString(),
-    amountBI: displayableAmountBI(amount, escrowData.token.decimals),
-    displayableAmount: displayableAmount(amount, escrowData.token.decimals),
+    solidityAmount: amount,
+    displayableAmount: formatAmount(amount, escrowData.token.decimals),
     connectedUser: escrowData.connectedUser,
     walletAddress: escrowData.walletAddress,
   };

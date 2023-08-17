@@ -65,7 +65,7 @@ const TableRow = (
   const isStableCoin = STABLE_COINS.includes(balance?.token?.symbol);
 
   const [formattedAmountInUSD, setFormattedAmountInUSD] =
-    React.useState<string>(isStableCoin && balance.amountBI.toFixed(2));
+    React.useState<string>(balance.displayableAmount);
 
   const { data: exchangeValues, error: errorExchange } = useExchangeRates(
     balance?.token?.symbol,
@@ -84,7 +84,7 @@ const TableRow = (
 
       if (exchangeValue) {
         setFormattedAmountInUSD(
-          formatAmountToUSD(balance.amountBI, exchangeValue),
+          formatAmountToUSD(balance.displayableAmount, exchangeValue),
         );
       }
     }
@@ -105,7 +105,8 @@ const TableRow = (
       {balance.token.symbol && (
         <>
           <td>
-            {balance.amountBI} <TokenSymbol>{balance.token.symbol}</TokenSymbol>
+            {balance.displayableAmount}{" "}
+            <TokenSymbol>{balance.token.symbol}</TokenSymbol>
           </td>
           <td>
             <ExchangeCell>

@@ -1,5 +1,5 @@
 import { IToken } from "../../../typing";
-import { displayableAmountBI } from "../../../helpers";
+import { formatAmount } from "../../../helpers";
 import { calculatePercentageInt } from "../../../core/calculateAmounts";
 import React from "react";
 
@@ -20,10 +20,10 @@ export const FormattedPercentageAmountAdornment = ({
     return null;
   }
 
-  const value = displayableAmountBI(
+  const value = formatAmount(
     calculatePercentageInt(_percentage, amount),
     tokenInfo.decimals,
-  ).toFixed(2);
+  );
 
   return (
     <div style={{ whiteSpace: "nowrap" }}>

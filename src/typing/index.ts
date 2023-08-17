@@ -22,7 +22,7 @@ export interface IToken {
  */
 export interface IPaymentProps {
   /** Amount in token */
-  amount: bigint;
+  amount: string;
   /** Whom is the payment for */
   seller: string;
   /** Initial challenge period (in seconds) */
@@ -882,7 +882,7 @@ export type tConnectedUser =
  */
 export interface IBalance {
   /** Amount in ETH's or token's WEI */
-  amount: string;
+  solidityAmount: bigint;
 
   /** Amount converted to USD (using Coingecko's API on the client side) */
   amountInUSD?: string;
@@ -899,10 +899,7 @@ export interface IBalance {
  */
 export interface IBalanceDetailed extends IBalance {
   /** Amount converted to human readable form */
-  displayableAmount: string | bigint;
-
-  /** Helper field used when calculating with other bigint fields */
-  amountBI: number;
+  displayableAmount: string;
 
   /** User's role in the escrow ('buyer' | 'seller' | 'arbitrator' | 'marketplace' | 'other') */
   connectedUser: tConnectedUser;

@@ -19,7 +19,7 @@ import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import { toast } from "../notification/toast";
 import { release } from "../../../core/release";
 import { MARKER } from "../../../config/marker";
-import { addressWithYou, reduceAddress, displayableAmount } from "helpers";
+import { addressWithYou, reduceAddress, formatAmount } from "helpers";
 import { useCountdownChallengePeriod } from "../hooks/useCountdownChallengePeriod";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
@@ -126,7 +126,7 @@ export function ReleaseModal(props: IReleaseModalProps) {
     return (
       <>
         <Amount
-          amount={escrowData.amount}
+          amount={formatAmount(escrowData.amount, escrowData.token.decimals)}
           precision={escrowData.token.decimals}
           tokenSymbol={escrowData.token.symbol}
           status={paymentStatus}
