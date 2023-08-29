@@ -36,7 +36,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
   const tokenAddress: string | null = nullOrValue(currency);
 
   const arbitratorFee = arbitrator
-    ? bipsToPercentage([_arbitrator_fee.toNumber()])[0]
+    ? bipsToPercentage([Number(_arbitrator_fee)])[0]
     : 0;
 
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
@@ -69,7 +69,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     paidAt: toDate(paid_at),
-    escrowId: escrow_id.toNumber(),
+    escrowId: Number(escrow_id),
     arbitrator,
     arbitratorFee,
     buyer: buyer.toString(),
@@ -82,8 +82,8 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     marketplaceFee,
     tokenAddress,
     claimed: !!claimed,
-    consensusBuyer,
-    consensusSeller,
+    consensusBuyer: Number(consensusBuyer),
+    consensusSeller: Number(consensusSeller),
     splitBuyer,
     splitSeller,
     splitMarketplace,
