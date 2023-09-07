@@ -14,5 +14,5 @@ type Event =
   | "ApproveOffer";
 
 export const getEventByName = (name: Event, events: any[]) => {
-  return events.find((event) => event.fragment.name === name);
+  return events.find((event) => event.fragment && event.fragment.name === name);
 };

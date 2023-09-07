@@ -15,7 +15,7 @@ export const parseProposalArbitrator = (
     name: _event.event,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
-    escrowId: escrowId.toNumber(),
+    escrowId: Number(escrowId),
     arbitrator,
     arbitratorFee: arbitrator_fee,
     proposer,

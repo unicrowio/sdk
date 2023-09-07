@@ -15,7 +15,7 @@ export const parseApproveArbitrator = (
     name: proposalEvent.event,
     transactionHash: proposalEvent.transactionHash,
     blockNumber: proposalEvent.blockNumber,
-    escrowId: escrowId.toNumber(),
+    escrowId: Number(escrowId),
     arbitrator,
     arbitratorFee: arbitrator_fee,
     statusArbitration: "ArbitratorApproved",

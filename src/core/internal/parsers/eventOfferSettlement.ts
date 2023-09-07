@@ -21,7 +21,7 @@ export const parseOfferSettlement = (
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     settlementOfferAt: toDate(settlement_offer_at),
-    escrowId: escrow_id.toNumber(),
+    escrowId: Number(escrow_id),
     latestSettlementOfferAddress: latest_settlement_offer_address.toString(),
     latestSettlementOfferBuyer: lsoBuyer,
     latestSettlementOfferSeller: lsoSeller,

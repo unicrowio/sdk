@@ -16,7 +16,7 @@ export const parseClaim = (events: any[]): ClaimParsedPayload => {
     name: _event.event,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
-    escrowId: escrow_id.toNumber(),
+    escrowId: Number(escrow_id),
     amountBuyer: amount_buyer.toString(),
     amountSeller: amount_seller.toString(),
     amountMarketplace: amount_marketplace.toString(),

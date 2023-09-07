@@ -1,10 +1,5 @@
 import { ReleaseParsedPayload } from "../../../typing";
-import {
-  ADDRESS_ZERO,
-  bipsToPercentage,
-  nullOrValue,
-  toDate,
-} from "../../../helpers";
+import { bipsToPercentage, nullOrValue, toDate } from "../../../helpers";
 import { getEventByName } from "./common";
 
 export const parseRelease = (events: any[]): ReleaseParsedPayload => {
@@ -47,7 +42,7 @@ export const parseRelease = (events: any[]): ReleaseParsedPayload => {
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     releasedAt: toDate(released_at),
-    escrowId: escrow_id.toNumber(),
+    escrowId: Number(escrow_id),
     buyer: buyer.toString(),
     seller: seller.toString(),
     challengePeriodExtension: Number(challengeExtension?.toString()),

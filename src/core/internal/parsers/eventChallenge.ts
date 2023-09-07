@@ -40,7 +40,7 @@ export const parseChallenge = (tx: any): ChallengeParsedPayload => {
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     challengedAt: toDate(challenged_at),
-    escrowId: escrow_id.toNumber(),
+    escrowId: Number(escrow_id),
     buyer: buyer.toString(),
     seller: seller.toString(),
     challengePeriodExtension: Number(challengeExtension?.toString()),

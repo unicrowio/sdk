@@ -42,7 +42,7 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
     name: _event.event,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
-    escrowId: escrowId.toNumber(),
+    escrowId: Number(escrowId),
     settledAt: toDate(settled_at),
     buyer: buyer.toString(),
     seller: seller.toString(),

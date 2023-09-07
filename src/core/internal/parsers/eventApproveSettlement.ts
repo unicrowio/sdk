@@ -48,7 +48,7 @@ export const parseApproveSettlement = (
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     settledAt: toDate(approved_at),
-    escrowId: escrow_id.toNumber(),
+    escrowId: Number(escrow_id),
     buyer: buyer.toString(),
     seller: seller.toString(),
     challengePeriodExtension: Number(challengeExtension?.toString()),
