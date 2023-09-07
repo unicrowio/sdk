@@ -4,7 +4,7 @@ import {
   IClaimTransactionCallbacks,
   IClaimTransactionPayload,
 } from "../../../typing";
-import { Button, ScopedModal, Table } from "../components";
+import { Button, ScopedModal } from "../components";
 import { BalancesTable } from "../components/BalancesTable";
 import { useModalStates } from "../hooks/useModalStates";
 import { toast } from "../notification/toast";
@@ -82,6 +82,7 @@ export function ClaimMultipleModal(props: IClaimMultipleModalProps) {
 
     return (
       <BalancesTable
+        chainId={props.chainId}
         balances={props.balances.readyForClaim}
         onModalClose={onModalClose}
         setIsLoading={() => {}}

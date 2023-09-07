@@ -2,6 +2,7 @@ import Deferred from "helpers/deferred";
 import { IClaimModalProps, IClaimTransactionCallbacks } from "typing";
 import { renderModal } from "ui/internal/config/render";
 import { ClaimModal } from "ui/internal/modals";
+import { getNetwork } from "../../wallet";
 
 /**
  * Displays how much the connected user has in the selected escrow and allows them to claim the escrow.
@@ -17,7 +18,10 @@ export const claim = async (
 ) => {
   const deferredPromise = new Deferred<string>();
 
+  let chainId = Number((await getNetwork())?.chainId);
+
   const claimModalProps: IClaimModalProps = {
+    chainId,
     escrowId,
     callbacks,
     deferredPromise,

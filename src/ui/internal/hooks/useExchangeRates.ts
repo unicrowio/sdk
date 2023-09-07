@@ -1,16 +1,15 @@
-import { IResult, STABLE_COINS } from "helpers/getExchangeRates";
+import { IResult } from "helpers/getExchangeRates";
 import useSWR from "swr";
 import { getExchangeRates } from "../../../helpers";
 
-export const useExchangeRates = (symbol: string, refreshInterval = 0) => {
-  // check if symbol is a stable coin, if yes, we don't need to get rate in USD
-  if (STABLE_COINS.includes(symbol)) {
-    return { data: null, isLoading: false, error: null };
-  }
-
+export const useExchangeRates = (
+  chainId: number,
+  tokensAddresses: string[],
+  refreshInterval = 0,
+) => {
   const { data, isLoading, error } = useSWR<IResult>(
-    [symbol],
-    getExchangeRates,
+    [chainId, tokensAddresses],
+    ([chainId, tokensAddresses]) => getExchangeRates(chainId, tokensAddresses),
     {
       refreshInterval,
       revalidateIfStale: true,

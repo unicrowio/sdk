@@ -7,7 +7,6 @@ import styled from "styled-components";
 import type * as CSS from "csstype";
 import { BigCheckIcon } from "../assets/BigCheckIcon";
 import { Table } from "../components";
-import { STABLE_COINS } from "helpers/getExchangeRates";
 import { useExchangeRates } from "ui/internal/hooks/useExchangeRates";
 
 interface IBalanceWithTokenUSD extends IBalanceDetailed {
@@ -30,6 +29,7 @@ const ClaimSuccessful = (amount) => {
 };
 
 export const BalancesTable = ({
+  chainId,
   balances,
   onModalClose,
   setIsLoading,
@@ -48,7 +48,7 @@ export const BalancesTable = ({
           </thead>
           <tbody>
             {balances.map((balance: IBalanceWithTokenUSD) =>
-              TableRow(balance, onModalClose, setIsLoading),
+              TableRow(chainId, balance, onModalClose, setIsLoading),
             )}
           </tbody>
         </Table>
@@ -58,28 +58,28 @@ export const BalancesTable = ({
 };
 
 const TableRow = (
+  chainId: number,
   balance: IBalanceWithTokenUSD,
   onModalClose,
   setIsLoading,
 ) => {
-  const isStableCoin = STABLE_COINS.includes(balance?.token?.symbol);
-
   const [formattedAmountInUSD, setFormattedAmountInUSD] =
     React.useState<string>(balance.displayableAmount);
 
   const { data: exchangeValues, error: errorExchange } = useExchangeRates(
-    balance?.token?.symbol,
+    chainId,
+    [balance?.token?.address],
   );
 
   React.useEffect(() => {
-    if (balance && isStableCoin) {
+    if (balance) {
       setIsLoading(false);
     }
   }, []);
 
   React.useEffect(() => {
     if (exchangeValues) {
-      const exchangeValue = exchangeValues[balance.token.symbol];
+      const exchangeValue = exchangeValues[balance.token.address];
       setIsLoading(false);
 
       if (exchangeValue) {

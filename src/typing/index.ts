@@ -979,6 +979,7 @@ export interface GetResponseUserBalance {
 }
 
 export interface IClaimMultipleModalProps {
+  chainId: number;
   escrowIds: number[];
   balances: GetResponseUserBalance;
   deferredPromise: Deferred<any>;
@@ -986,6 +987,7 @@ export interface IClaimMultipleModalProps {
 }
 
 export interface IClaimModalProps {
+  chainId: number;
   escrowId: number;
   deferredPromise: Deferred<any>;
   callbacks?: IClaimTransactionCallbacks;

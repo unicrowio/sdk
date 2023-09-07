@@ -110,6 +110,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
     return (
       <BalancesTable
+        chainId={props.chainId}
         balances={[escrowBalance]}
         onModalClose={onModalClose}
         setIsLoading={setLoadingTable}

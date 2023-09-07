@@ -6,6 +6,7 @@ import {
 } from "typing";
 import { renderModal } from "ui/internal/config/render";
 import { ClaimMultipleModal } from "ui/internal/modals";
+import { getNetwork } from "../../wallet";
 
 /**
  * Displays a modal that summarizes user's balance in all the provided escrows. The balances have to
@@ -23,7 +24,10 @@ export const claimMultiple = async (
 ) => {
   const deferredPromise = new Deferred<string>();
 
+  let chainId = Number((await getNetwork())?.chainId);
+
   const claimMultipleModalProps: IClaimMultipleModalProps = {
+    chainId,
     escrowIds,
     balances,
     callbacks,
