@@ -81,8 +81,13 @@ export const useCountdownChallengePeriod = (escrowData) => {
 
   React.useEffect(() => {
     if (escrowData) {
-      const newData = JSON.stringify(escrowData);
-      const oldData = JSON.stringify(data?.current);
+      // BigInt can't be stringified
+      const newData = JSON.stringify(escrowData, (_, v) =>
+        typeof v === "bigint" ? v.toString() : v,
+      );
+      const oldData = JSON.stringify(data?.current, (_, v) =>
+        typeof v === "bigint" ? v.toString() : v,
+      );
 
       if (newData !== oldData) {
         updateChallenge(escrowData);

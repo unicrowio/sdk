@@ -16,14 +16,12 @@ import {
   ISettlement,
   IToken,
 } from "../typing";
-
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import {
   getWeb3Provider,
   getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet";
-
 import {
   DataStructOutput,
   SettlementStructOutput,
@@ -79,13 +77,13 @@ const parseEscrow = (
   const seller: string = data.seller;
   const buyer: string = data.buyer;
   const challengePeriodStart: Date = new Date(
-    data.challengePeriodStart.toNumber() * 1000,
+    Number(data.challengePeriodStart) * 1000,
   );
   const challengePeriodEnd: Date = new Date(
-    data.challengePeriodEnd.toNumber() * 1000,
+    Number(data.challengePeriodEnd) * 1000,
   );
   const tokenAddress: string = data.currency;
-  const challengePeriod: number = data.challengeExtension.toNumber();
+  const challengePeriod: number = Number(data.challengeExtension);
   const amount: bigint = data.amount;
 
   // Consensus
