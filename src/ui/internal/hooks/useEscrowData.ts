@@ -27,5 +27,9 @@ export const useEscrowData = ({
     },
   );
 
+  if (error) {
+    console.error("Error while retrieving escrow data. Error:", error);
+  }
+
   return { data, isLoading, error };
 };
