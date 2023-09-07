@@ -7,7 +7,6 @@ export { bipsToPercentage } from "./bipsToPercentage";
 export { isSameAddress } from "./isSameAddress";
 export { toDate } from "./toDate";
 export { checkBalance } from "./checkBalance";
-export { parse } from "./toBigNumber";
 export { getExchangeRates } from "./getExchangeRates";
 export * from "./constants";
 export { reduceAddress, addressWithYou } from "./addressFormat";

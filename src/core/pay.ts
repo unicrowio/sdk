@@ -5,7 +5,7 @@ import {
   ETH_ADDRESS,
   validateParameters,
   checkBalance,
-  parse,
+  parseAmount,
 } from "../helpers";
 import { getContractAddress } from "../config";
 import {
@@ -16,16 +16,13 @@ import {
 import { getBalance } from "./getBalance";
 import { getTokenInfo } from "../core/getTokenInfo";
 import { errorHandler } from "./internal/errorHandler";
-
 import {
   getWeb3Provider,
   getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/contracts/Unicrow";
-
 import { parsePay } from "./internal/parsers/eventPay";
-import { BigNumberish } from "ethers";
 
 /**
  * Deposits a payment into an escrow and returns its data.
@@ -169,18 +166,18 @@ export const pay = async (
 
   const UNICROW_ADDRESS = getContractAddress("unicrow");
 
-  let bigNumberAmount: BigNumberish;
+  let solidityAmount: bigint;
   if (tokenAddress === ETH_ADDRESS) {
-    bigNumberAmount = parse(amount, 18);
+    solidityAmount = parseAmount(amount, 18);
     const balance = await getBalance(tokenAddress);
-    checkBalance(balance, bigNumberAmount);
+    checkBalance(balance, solidityAmount);
   } else {
     const token = ERC20__factory.connect(tokenAddress, providerSigner);
     const tokenDecimalNumber = await token.decimals();
 
-    bigNumberAmount = parse(amount, tokenDecimalNumber);
+    solidityAmount = parseAmount(amount, tokenDecimalNumber);
     const balance = await getBalance(tokenAddress);
-    checkBalance(balance, bigNumberAmount);
+    checkBalance(balance, solidityAmount);
 
     const alreadyAllowedAmount = await token.allowance(
       walletAddress,
@@ -189,9 +186,9 @@ export const pay = async (
 
     // Checking with equals because previous allowance value was not related to this new transaction.
     // TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
-    if (alreadyAllowedAmount < bigNumberAmount) {
+    if (alreadyAllowedAmount < solidityAmount) {
       // Allowing as close as we can to infinity
-      const approveTx = await token.approve(UNICROW_ADDRESS, bigNumberAmount);
+      const approveTx = await token.approve(UNICROW_ADDRESS, solidityAmount);
       // This transaction supposed to be mined very fast
       await approveTx.wait();
     }
@@ -229,7 +226,7 @@ export const pay = async (
     currency: tokenAddress,
     challengePeriod,
     challengeExtension: challengePeriodExtension,
-    amount: bigNumberAmount,
+    amount: solidityAmount,
   };
 
   try {
@@ -238,14 +235,14 @@ export const pay = async (
     let payTx: any;
 
     const isETH = tokenAddress === ETH_ADDRESS;
-    // { value: bigNumberAmount } should be passed only in case of Ethers
+    // { value: solidityAmount } should be passed only in case of Ethers
     if (isETH) {
       payTx = await smartContract.pay(
         payInput,
         _arbitrator,
         arbitratorFeeValue,
         {
-          value: bigNumberAmount,
+          value: solidityAmount,
         },
       );
     } else {
