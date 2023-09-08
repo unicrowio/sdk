@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": false,
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "NodeNext",
     "lib": ["ES2022", "ESNext", "DOM"],
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
