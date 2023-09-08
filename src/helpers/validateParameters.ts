@@ -1,5 +1,7 @@
-import { IValidateProps } from "../typing";
+import { IToken, IValidateProps } from "../typing";
 import { ETH_ADDRESS } from "./constants";
+import { parseAmount } from "./formatAmount";
+import { getTokenInfo } from "../core";
 import {
   validateAddress,
   validateEns,
@@ -33,8 +35,10 @@ export const validateParameters = async (data: IValidateProps) => {
     marketplace,
   });
 
+  let token: IToken;
   try {
     validateAddress({ ...addrs.common, tokenAddress });
+    token = await getTokenInfo(tokenAddress);
   } catch (e: any) {
     throw new Error(e.message);
   }
@@ -44,12 +48,12 @@ export const validateParameters = async (data: IValidateProps) => {
   }
 
   try {
-    const _amount = parseFloat(amount);
+    const _amount = parseAmount(amount.toString(), token.decimals);
     if (_amount <= 0) {
-      throw new Error(`Invalid amount (${amount}<=0)`);
+      throw new Error(`Invalid amount (${amount}<=0).`);
     }
   } catch (e: any) {
-    throw new Error(`Invalid amount: ${amount} error: ${e.message}`);
+    throw new Error(`Invalid amount: ${amount} error: ${e.message}.`);
   }
 
   if (

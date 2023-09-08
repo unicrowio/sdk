@@ -4,20 +4,19 @@ import { IToken } from "../typing";
 import { getJsonRpcProvider } from "./internal/getJsonRpcProvider";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
-  const provider = getJsonRpcProvider();
-  const token = ERC20__factory.connect(tokenAddress, provider);
-
   try {
-    await token.symbol();
+    const provider = getJsonRpcProvider();
+    const token = ERC20__factory.connect(tokenAddress, provider);
     return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
       address: tokenAddress,
       symbol: results[0],
       decimals: Number(results[1]),
     }));
   } catch (e) {
-    console.error(e);
+    console.error("Error fetching token information", e);
   }
 };
+
 /**
  * Gets info of an ERC20 token based on its address.
  *

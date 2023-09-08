@@ -7,9 +7,7 @@ export const formatAmount = (
   try {
     return ethers.formatUnits(amount, precision);
   } catch (error) {
-    throw new Error(
-      `Invalid amount: '${amount}'. It should be a valid bigint.`,
-    );
+    throw new Error(`Formatting error, invalid amount: '${amount}'.`);
   }
 };
 
@@ -20,8 +18,6 @@ export const parseAmount = (
   try {
     return ethers.parseUnits(amount, precision);
   } catch (error) {
-    throw new Error(
-      `Invalid amount: '${amount}'. It should be a valid string.`,
-    );
+    throw new Error(`Parsing error, invalid amount: '${amount}'.`);
   }
 };
