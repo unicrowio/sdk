@@ -11,7 +11,7 @@ const params: IValidateProps = {
   challengePeriodExtension: 1,
   arbitratorFee: 1,
   marketplaceFee: 1,
-  tokenAddress: "0x7bD733DBc10A1cD04e1e51cC89450941c928ee62",
+  tokenAddress: "0x0000000000000000000000000000000000000000",
 };
 
 describe("Valid payments function", () => {
