@@ -22,7 +22,7 @@ export interface IToken {
  */
 export interface IPaymentProps {
   /** Amount in token */
-  amount: string;
+  amount: string | number | bigint;
   /** Whom is the payment for */
   seller: string;
   /** Initial challenge period (in seconds) */

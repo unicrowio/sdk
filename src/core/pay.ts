@@ -4,7 +4,6 @@ import {
   ZERO_FEE_VALUE,
   ETH_ADDRESS,
   validateParameters,
-  checkBalance,
   parseAmount,
 } from "../helpers";
 import { getContractAddress } from "../config";
@@ -146,7 +145,6 @@ export const pay = async (
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
 
   const provider = await getWeb3Provider();
-
   if (!provider) {
     throw new Error("Wallet not connected");
   }
@@ -158,52 +156,9 @@ export const pay = async (
 
   const providerSigner = await provider.getSigner();
 
-  const tokenInfo = await getTokenInfo(tokenAddress);
-
-  if (!tokenInfo) {
-    throw new Error("Could not get token info");
-  }
-
-  const UNICROW_ADDRESS = getContractAddress("unicrow");
-
-  let solidityAmount: bigint;
-  if (tokenAddress === ETH_ADDRESS) {
-    solidityAmount = parseAmount(amount, 18);
-    const balance = await getBalance(tokenAddress);
-    checkBalance(balance, solidityAmount);
-  } else {
-    const token = ERC20__factory.connect(tokenAddress, providerSigner);
-    const tokenDecimalNumber = await token.decimals();
-
-    solidityAmount = parseAmount(amount, tokenDecimalNumber);
-    const balance = await getBalance(tokenAddress);
-    checkBalance(balance, solidityAmount);
-
-    const alreadyAllowedAmount = await token.allowance(
-      walletAddress,
-      UNICROW_ADDRESS,
-    );
-
-    // Checking with equals because previous allowance value was not related to this new transaction.
-    // TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
-    if (alreadyAllowedAmount < solidityAmount) {
-      // Allowing as close as we can to infinity
-      const approveTx = await token.approve(UNICROW_ADDRESS, solidityAmount);
-      // This transaction supposed to be mined very fast
-      await approveTx.wait();
-    }
-  }
-
-  const smartContract = Unicrow__factory.connect(
-    UNICROW_ADDRESS,
-    providerSigner,
-  );
-
-  // solidity doesn't work with decimal points
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
   const marketplaceAddress = marketplace || ADDRESS_ZERO;
-
   const addrs = await validateParameters({
     seller,
     arbitrator,
@@ -216,8 +171,34 @@ export const pay = async (
     amount,
     buyer: walletAddress,
   });
-
   const _arbitrator = addrs.common.arbitrator || ADDRESS_ZERO;
+
+  const tokenInfo = await getTokenInfo(tokenAddress);
+  let solidityAmount = parseAmount(amount.toString(), tokenInfo.decimals);
+  const balance = await getBalance(tokenAddress);
+  if (balance < solidityAmount) {
+    throw new Error("Insufficient Balance");
+  }
+
+  const unicrowAddress = getContractAddress("unicrow");
+
+  if (tokenAddress != ETH_ADDRESS) {
+    const token = ERC20__factory.connect(tokenAddress, providerSigner);
+
+    const alreadyAllowedAmount = await token.allowance(
+      walletAddress,
+      unicrowAddress,
+    );
+
+    // Checking with equals because previous allowance value was not related to this new transaction.
+    // TODO: Maybe we should approve an infinity amount to contract in order to prevent this transaction request
+    if (alreadyAllowedAmount < solidityAmount) {
+      // Allowing as close as we can to infinity
+      const approveTx = await token.approve(unicrowAddress, solidityAmount);
+      // This transaction supposed to be mined very fast
+      await approveTx.wait();
+    }
+  }
 
   const payInput: EscrowInputStruct = {
     seller: addrs.common.seller,
@@ -232,25 +213,16 @@ export const pay = async (
   try {
     callbacks && callbacks.broadcasting && callbacks.broadcasting();
 
-    let payTx: any;
+    const unicrowSc = Unicrow__factory.connect(unicrowAddress, providerSigner);
 
-    const isETH = tokenAddress === ETH_ADDRESS;
+    let payTx: any;
     // { value: solidityAmount } should be passed only in case of Ethers
-    if (isETH) {
-      payTx = await smartContract.pay(
-        payInput,
-        _arbitrator,
-        arbitratorFeeValue,
-        {
-          value: solidityAmount,
-        },
-      );
+    if (tokenAddress === ETH_ADDRESS) {
+      payTx = await unicrowSc.pay(payInput, _arbitrator, arbitratorFeeValue, {
+        value: solidityAmount,
+      });
     } else {
-      payTx = await smartContract.pay(
-        payInput,
-        _arbitrator,
-        arbitratorFeeValue,
-      );
+      payTx = await unicrowSc.pay(payInput, _arbitrator, arbitratorFeeValue);
     }
 
     callbacks &&
