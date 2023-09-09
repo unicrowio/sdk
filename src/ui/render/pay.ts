@@ -126,13 +126,16 @@ export const pay = async (
     // || '' => hack to not throw in validateParameters, so that we can show "No wallet installed" within the modal
     const walletAddress = (await getCurrentWalletAddress()) || "";
 
-    const addrs = await validateParameters({ ...data, buyer: walletAddress });
+    const { addresses } = await validateParameters({
+      ...data,
+      buyer: walletAddress,
+    });
 
-    Object.entries(addrs.common).forEach(([key, value]) => {
+    Object.entries(addresses.common).forEach(([key, value]) => {
       paymentProps[key] = value;
     });
 
-    data.ensAddresses = addrs.ens;
+    data.ensAddresses = addresses.ens;
   } catch (error: any) {
     toast.error(error);
     return;

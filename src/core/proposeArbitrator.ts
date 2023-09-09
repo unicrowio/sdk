@@ -6,7 +6,7 @@ import {
 } from "../typing";
 import { errorHandler } from "./internal/errorHandler";
 import { autoSwitchNetwork, getWeb3Provider } from "../wallet";
-import { validateAddress } from "../helpers";
+import { validateAddresses } from "../helpers";
 import { parseProposalArbitrator } from "./internal/parsers/eventProposalArbitrator";
 
 /**
@@ -26,7 +26,7 @@ export const proposeArbitrator = async (
   callbacks?: IProposeArbitrationTransactionCallbacks,
 ): Promise<ProposalArbitratorParsedPayload> => {
   try {
-    validateAddress({ arbitrator });
+    validateAddresses({ arbitrator });
 
     callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
     const provider = await getWeb3Provider();

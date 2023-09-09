@@ -26,7 +26,7 @@ describe("Valid payments function", () => {
         seller: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
     ).rejects.toThrow(
-      "seller is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.",
+      "Address: 0x7bD733DBc10A1cD04e1e51cC89450941c928 (seller) is invalid.",
     );
   });
 
@@ -37,7 +37,7 @@ describe("Valid payments function", () => {
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
     ).rejects.toThrow(
-      "marketplace is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.",
+      "Address: 0x7bD733DBc10A1cD04e1e51cC89450941c928 (marketplace) is invalid.",
     );
   });
 
@@ -48,7 +48,7 @@ describe("Valid payments function", () => {
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
     ).rejects.toThrow(
-      "marketplace is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.",
+      "Address: 0x7bD733DBc10A1cD04e1e51cC89450941c928 (marketplace) is invalid.",
     );
   });
 
@@ -59,7 +59,7 @@ describe("Valid payments function", () => {
         marketplace: "0x7bD733DBc10A1cD04e1e51cC89450941c928",
       }),
     ).rejects.toThrow(
-      "marketplace is invalid: 0x7bD733DBc10A1cD04e1e51cC89450941c928.",
+      "Address: 0x7bD733DBc10A1cD04e1e51cC89450941c928 (marketplace) is invalid.",
     );
   });
 
@@ -67,7 +67,25 @@ describe("Valid payments function", () => {
     await expect(async () =>
       validateParameters({
         ...params,
+        amount: "asd",
+      }),
+    ).rejects.toThrow(/Invalid amount/);
+  });
+
+  it("Should throw an error given zero as amount", async () => {
+    await expect(async () =>
+      validateParameters({
+        ...params,
         amount: "0",
+      }),
+    ).rejects.toThrow(/Invalid amount/);
+  });
+
+  it("Should throw an error given a negative amount", async () => {
+    await expect(async () =>
+      validateParameters({
+        ...params,
+        amount: -0.1,
       }),
     ).rejects.toThrow(/Invalid amount/);
   });

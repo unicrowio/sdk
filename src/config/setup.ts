@@ -1,4 +1,3 @@
-import { getHost } from "./getHost";
 import { IConfig } from "../typing";
 import { networks as DefaultNetworks } from "../wallet/networks";
 
@@ -37,10 +36,8 @@ export const setupNetwork = ({
   };
 
   globalThis.autoSwitchNetwork = autoSwitchNetwork;
-  globalThis.mainnetRPCUrl = mainnetRPCUrl || getHost("mainnet");
+  globalThis.mainnetRPCUrl =
+    mainnetRPCUrl || DefaultNetworks.mainnet?.rpcUrls[0];
 };
 
-setupNetwork({
-  autoSwitchNetwork: false,
-  defaultNetwork: "arbitrum",
-});
+setupNetwork({});

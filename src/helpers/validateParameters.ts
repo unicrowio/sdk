@@ -3,19 +3,19 @@ import { ETH_ADDRESS } from "./constants";
 import { parseAmount } from "./formatAmount";
 import { getTokenInfo } from "../core";
 import {
-  validateAddress,
-  validateEns,
-  AddressToReturn,
-} from "./validateAddress";
+  validateAddresses,
+  resolveEns,
+  ResolvedAddrs,
+} from "./validateAddresses";
 
-export interface AddressesToCheck {
-  arbitrator?: string;
-  marketplace?: string;
-  seller?: string;
-  tokenAddress?: string;
+export interface validAddrsToken {
+  addresses: ResolvedAddrs;
+  token: IToken;
 }
 
-export const validateParameters = async (data: IValidateProps) => {
+export const validateParameters = async (
+  data: IValidateProps,
+): Promise<validAddrsToken> => {
   const {
     seller,
     arbitrator,
@@ -29,18 +29,26 @@ export const validateParameters = async (data: IValidateProps) => {
     buyer,
   } = data;
 
-  const addrs: AddressToReturn = await validateEns({
+  const addresses = await resolveEns({
     seller,
     arbitrator,
     marketplace,
   });
 
-  let token: IToken;
   try {
-    validateAddress({ ...addrs.common, tokenAddress });
-    token = await getTokenInfo(tokenAddress);
+    validateAddresses({ ...addresses.common, tokenAddress });
   } catch (e: any) {
     throw new Error(e.message);
+  }
+
+  let token: IToken;
+  try {
+    token = await getTokenInfo(tokenAddress);
+  } catch (e: any) {
+    throw new Error(
+      "Failed to fetch token info (or invalid token address). Error:",
+      e.message,
+    );
   }
 
   if (buyer.toLowerCase() === seller.toLowerCase()) {
@@ -48,9 +56,9 @@ export const validateParameters = async (data: IValidateProps) => {
   }
 
   try {
-    const _amount = parseAmount(amount.toString(), token.decimals);
-    if (_amount <= 0) {
-      throw new Error(`Invalid amount (${amount}<=0).`);
+    const solidityAmount = parseAmount(amount.toString(), token.decimals);
+    if (solidityAmount <= 0) {
+      throw new Error(`Invalid amount: ${amount} <= 0.`);
     }
   } catch (e: any) {
     throw new Error(`Invalid amount: ${amount} error: ${e.message}.`);
@@ -98,5 +106,8 @@ export const validateParameters = async (data: IValidateProps) => {
     throw new Error("Invalid marketplace fee");
   }
 
-  return addrs;
+  return {
+    addresses,
+    token,
+  };
 };

@@ -159,7 +159,7 @@ export const pay = async (
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
   const marketplaceAddress = marketplace || ADDRESS_ZERO;
-  const addrs = await validateParameters({
+  const { addresses, token } = await validateParameters({
     seller,
     arbitrator,
     arbitratorFee: paymentProps.arbitratorFee,
@@ -171,13 +171,12 @@ export const pay = async (
     amount,
     buyer: walletAddress,
   });
-  const _arbitrator = addrs.common.arbitrator || ADDRESS_ZERO;
+  const _arbitrator = addresses.common.arbitrator || ADDRESS_ZERO;
 
-  const tokenInfo = await getTokenInfo(tokenAddress);
-  let solidityAmount = parseAmount(amount.toString(), tokenInfo.decimals);
+  let solidityAmount = parseAmount(amount.toString(), token.decimals);
   const balance = await getBalance(tokenAddress);
   if (balance < solidityAmount) {
-    throw new Error("Insufficient Balance");
+    throw new Error(`Insufficient balance: ${balance} < ${solidityAmount}`);
   }
 
   const unicrowAddress = getContractAddress("unicrow");
@@ -201,8 +200,8 @@ export const pay = async (
   }
 
   const payInput: EscrowInputStruct = {
-    seller: addrs.common.seller,
-    marketplace: addrs.common.marketplace,
+    seller: addresses.common.seller,
+    marketplace: addresses.common.marketplace,
     marketplaceFee: marketplaceFeeValue,
     currency: tokenAddress,
     challengePeriod,

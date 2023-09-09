@@ -1,5 +1,7 @@
 import { CHAIN_ID } from "../helpers";
 const arbitrumRpcUrl = globalThis.arbitrum || "https://arb1.arbitrum.io/rpc";
+const mainnetRpcUrl =
+  "https://mainnet.infura.io/v3/68b30eaff3a24581ae1c8b12581b5043";
 const arbitrumTestnetmRpcUrl =
   globalThis.goerli || "https://goerli-rollup.arbitrum.io/rpc";
 const developmentRpcUrl =
@@ -30,6 +32,18 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     },
     rpcUrls: [arbitrumRpcUrl],
     blockExplorerUrls: ["https://arbiscan.io/"],
+  },
+  mainnet: {
+    chainId: CHAIN_ID.mainnet,
+    chainName: "Ethereum",
+    displayName: "Ethereum Mainnet",
+    nativeCurrency: {
+      name: "Ethereum",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    rpcUrls: [mainnetRpcUrl],
+    blockExplorerUrls: ["https://etherscan.io/"],
   },
   goerli: {
     chainId: CHAIN_ID.goerli,

@@ -12,7 +12,7 @@ export { reduceAddress, addressWithYou } from "./addressFormat";
 export { nullOrValue } from "./nullOrValue";
 export { calculateSplit } from "./calculateSplit";
 export { groupBy } from "./groupBy";
-export { validateAddress } from "./validateAddress";
+export { validateAddresses } from "./validateAddresses";
 export { validateParameters } from "./validateParameters";
 export { getSplitFromLoggedUser } from "./calculateSplit";
 export { tag } from "./tag";
