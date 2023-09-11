@@ -49,9 +49,10 @@ export const renderModal = (component: FunctionComponent<any>, props?: any) => {
     rootUnicrowSDkElement = document.createElement("div");
     rootUnicrowSDkElement.id = ROOT_UNICROW_SDK_ELEMENT;
     document.documentElement.append(rootUnicrowSDkElement);
-    root = createRoot(rootUnicrowSDkElement!);
-    root.render(React.createElement(component, props));
   }
+
+  root = createRoot(rootUnicrowSDkElement!);
+  root.render(React.createElement(component, props));
 };
 
 export const unmountModal = () => {
