@@ -13,14 +13,12 @@ import {
   Button,
   DataDisplayer,
 } from "../../../ui/internal/components";
-
 import { useModalStates } from "../../../ui/internal/hooks/useModalStates";
 import {
   displayChallengePeriod,
   addressWithYou,
   reduceAddress,
   ADDRESS_ZERO,
-  formatAmount,
 } from "../../../helpers";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
@@ -117,7 +115,7 @@ export function PayModal(props: IPaymentModalProps) {
     return (
       <>
         <Amount
-          amount={props.paymentProps.amount}
+          amount={props.paymentProps.amount.toString()}
           precision={tokenInfo?.decimals}
           tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}

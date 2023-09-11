@@ -1,4 +1,3 @@
-import { formatAmount } from "../../../helpers/formatAmount";
 import React from "react";
 import styled from "styled-components";
 import { Chip } from "../../../ui/internal/components/Chip";
@@ -46,7 +45,6 @@ export interface IAmountProps {
 
 export const Amount = ({
   amount,
-  precision,
   tokenSymbol = "ETH",
   tokenAddress,
   status,
