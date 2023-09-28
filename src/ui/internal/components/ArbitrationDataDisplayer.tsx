@@ -15,7 +15,7 @@ export const ArbitrationDataDisplayer = ({ data }: Props) => {
     return (
       <DataDisplayer
         label="Arbitrator Fee"
-        value={`${arbitration.arbitratorFee || "..."}%`}
+        value={`${arbitration.arbitratorFee || "0 "}%`}
         marker={MARKER.arbitratorFee}
       />
     );
@@ -36,7 +36,7 @@ export const ArbitrationDataDisplayer = ({ data }: Props) => {
         {connectedUser === SELLER && (
           <DataDisplayer
             label="Arbitrator Fee"
-            value={`${arbitration.arbitratorFee || "..."}%`}
+            value={`${arbitration.arbitratorFee || "0 "}%`}
             marker={MARKER.arbitratorFee}
           />
         )}

@@ -173,7 +173,7 @@ export function PayModal(props: IPaymentModalProps) {
               <DataDisplayer
                 label="Arbitrator Fee"
                 value={`${
-                  props.paymentProps.arbitratorFee?.toString() || "... "
+                  props.paymentProps.arbitratorFee?.toString() || "0 "
                 }%`}
                 marker={MARKER.arbitratorFee}
               />
