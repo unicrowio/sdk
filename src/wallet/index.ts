@@ -8,7 +8,7 @@ import { config } from "../config";
 let walletAddress: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
 let chainChangedListener: EventEmitter | null = null;
-let _onChangeNetworkCallbacks: Array<(networkId: number) => void> = [];
+let _onChangeNetworkCallbacks: Array<(networkId: bigint) => void> = [];
 let _onChangeWalletCallbacks: Array<(walletAddress: string) => void> = [];
 
 const handleAccountsChanged = (accounts: string[]) => {
@@ -30,11 +30,11 @@ const handleAccountsChanged = (accounts: string[]) => {
 };
 
 const handleChainChanged = (networkId: string) => {
-  const _networkId = Number(networkId);
+  const _networkId = BigInt(networkId);
 
   _onChangeNetworkCallbacks.length > 0 &&
     _onChangeNetworkCallbacks.forEach(
-      (callback: (networkId: number) => void) => callback(_networkId),
+      (callback: (networkId: bigint) => void) => callback(_networkId),
     );
 };
 
@@ -246,7 +246,7 @@ export const startListening = (
  * @param onChangeNetworkCallback Function to be called when the wallet switches to another network
  */
 export const startListeningNetwork = (
-  onChangeNetworkCallback: (networkId: number) => void,
+  onChangeNetworkCallback: (networkId: bigint) => void,
 ) => {
   if (isWeb3WalletInstalled()) {
     _onChangeNetworkCallbacks.push(onChangeNetworkCallback);
