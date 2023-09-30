@@ -51,10 +51,14 @@ export const renderModal = (component: FunctionComponent<any>, props?: any) => {
     document.documentElement.append(rootUnicrowSDkElement);
   }
 
-  root = createRoot(rootUnicrowSDkElement!);
+  if (!root) {
+    root = createRoot(rootUnicrowSDkElement!);
+  }
+
   root.render(React.createElement(component, props));
 };
 
 export const unmountModal = () => {
   root?.unmount();
+  root = undefined;
 };
