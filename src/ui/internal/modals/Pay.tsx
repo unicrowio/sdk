@@ -104,11 +104,12 @@ export function PayModal(props: IPaymentModalProps) {
     },
   };
 
-  const onPayClick = () => {
-    pay(props.paymentProps, payCallbacks).catch((e) => {
-      setIsLoading(false);
+  const onPayClick = async () => {
+    setIsLoading(true);
+    await pay(props.paymentProps, payCallbacks).catch((e) => {
       toast.error(e);
     });
+    setIsLoading(false);
   };
 
   const ModalBody = () => {
