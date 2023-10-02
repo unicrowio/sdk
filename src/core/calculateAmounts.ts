@@ -6,11 +6,15 @@ import {
 } from "../typing";
 
 // Used to calculate WEI amounts
+// Allow for up to 2 decimal places (percentage) to avoid loss of precision
 export const calculatePercentageInt = (
   percentage: number,
   amount: bigint,
 ): bigint => {
-  return (amount * BigInt(Math.round(percentage * 1e18))) / BigInt(1e20);
+  const scaleFactor = 1e2;
+  const scaledPercentage = BigInt(Math.round(percentage * scaleFactor));
+  const result = (amount * scaledPercentage) / (BigInt(scaleFactor) * 100n);
+  return result;
 };
 
 // Used to calculate percentages (of percentages)

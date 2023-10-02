@@ -4,6 +4,7 @@ export { displayChallengePeriod } from "./displayChallengePeriod";
 export { formatAmountToUSD } from "./formatAmountToUSD";
 export { percentageToBips } from "./percentageToBips";
 export { bipsToPercentage } from "./bipsToPercentage";
+export { roundPercentage } from "./roundPercentage";
 export { isSameAddress } from "./isSameAddress";
 export { toDate } from "./toDate";
 export { getExchangeRates } from "./getExchangeRates";

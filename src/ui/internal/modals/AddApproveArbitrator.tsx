@@ -17,7 +17,7 @@ import {
 } from "../../../typing";
 import { useModalStates } from "../hooks/useModalStates";
 import { ScopedModal } from "../components";
-import { BUYER, SELLER } from "../../../helpers";
+import { BUYER, SELLER, roundPercentage } from "../../../helpers";
 import { ModalAction } from "../components/Modal";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useEscrowData } from "ui/internal/hooks/useEscrowData";
@@ -189,6 +189,12 @@ export const AddApproveArbitrator = ({
     }
   };
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.target.value = String(roundPercentage(Number(event.target.value)));
+    setArbitratorFee(event.target.value);
+    setFocus("arbitratorFee");
+  };
+
   const ModalBody = () => {
     if (!escrowData) return null;
 
@@ -214,10 +220,7 @@ export const AddApproveArbitrator = ({
           name="arbitratorFee"
           id="arbitratorFee"
           label="Fee"
-          onChange={(event) => {
-            setArbitratorFee(event.target.value);
-            setFocus("arbitratorFee");
-          }}
+          onChange={handleInputChange}
           value={arbitratorFee}
           min="0"
           max="100"

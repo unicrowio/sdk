@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 import {
   InputText,
   Button,
@@ -6,6 +6,7 @@ import {
   FormattedPercentageAmountAdornment,
   ScopedModal,
 } from "../../../ui/internal/components";
+import { roundPercentage } from "../../../helpers/roundPercentage";
 import { arbitrate } from "../../../core";
 import { toast } from "../notification/toast";
 import { IArbitrateModalProps } from "../../../typing";
@@ -99,16 +100,20 @@ export const Arbitrate = ({
       });
   };
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement & { name: "buyer" | "seller" }>,
+  ) => {
+    event.target.value = String(roundPercentage(Number(event.target.value)));
+
     if (event.target.name === "seller") {
       setSellerValue(event.target.value);
       setBuyerValue(String(100 - Number(event.target.value)));
-      setFocus("seller");
     } else {
       setSellerValue(String(100 - Number(event.target.value)));
       setBuyerValue(event.target.value);
-      setFocus("buyer");
     }
+
+    setFocus(event.target.name);
   };
 
   const ModalBody = () => {

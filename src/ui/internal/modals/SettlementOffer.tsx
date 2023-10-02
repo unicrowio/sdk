@@ -11,7 +11,7 @@ import { Button } from "../../../ui/internal/components/Button";
 import styled from "styled-components";
 import { offerSettlement } from "../../../core/offerSettlement";
 import { toast } from "../notification/toast";
-import { SELLER, BUYER } from "../../../helpers";
+import { SELLER, BUYER, roundPercentage } from "../../../helpers";
 import { FormattedPercentageAmountAdornment } from "../../../ui/internal/components/FormattedPercentageAmountAdornment";
 import { renderModal } from "../config/render";
 import { ApproveSettlementModal } from "./ApproveSettlement";
@@ -133,9 +133,11 @@ export function SettlementOfferModal({
     return ["Buyer should get back", "You should receive"];
   }, [escrowData]);
 
-  const handleChange = (
+  const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement & { name: "buyer" | "seller" }>,
   ) => {
+    event.target.value = String(roundPercentage(Number(event.target.value)));
+
     if (event.target.name === "seller") {
       setSellerValue(event.target.value);
       setBuyerValue(String(100 - Number(event.target.value)));
@@ -269,7 +271,7 @@ export function SettlementOfferModal({
           key="buyer"
           label={labelBuyer}
           placeholder="0"
-          onChange={handleChange}
+          onChange={handleInputChange}
           value={buyerValue}
           min="0"
           max="100"
@@ -302,7 +304,7 @@ export function SettlementOfferModal({
           min="0"
           max="100"
           type="number"
-          onChange={handleChange}
+          onChange={handleInputChange}
           adornmentStart={{
             content: <AdornmentContent>%</AdornmentContent>,
           }}
