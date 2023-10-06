@@ -1,14 +1,9 @@
 import { ChallengeParsedPayload } from "../../../typing";
-import {
-  ADDRESS_ZERO,
-  bipsToPercentage,
-  nullOrValue,
-  toDate,
-} from "../../../helpers";
+import { bipsToPercentage, nullOrValue, toDate } from "../../../helpers";
 import { getEventByName } from "./common";
 
-export const parseChallenge = (tx: any): ChallengeParsedPayload => {
-  const _event = getEventByName("Challenge", tx.events);
+export const parseChallenge = (events: any): ChallengeParsedPayload => {
+  const _event = getEventByName("Challenge", events);
 
   const [escrow_id, challenged_at, escrow] = _event.args;
 

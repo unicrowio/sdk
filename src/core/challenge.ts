@@ -51,7 +51,7 @@ export const challenge = async (
 
     const receiptTx = await challengeTx.wait();
 
-    const parsedPayload = parseChallenge(receiptTx);
+    const parsedPayload = parseChallenge(receiptTx.logs);
 
     callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayload);
 
