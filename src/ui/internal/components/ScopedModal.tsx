@@ -19,6 +19,7 @@ interface ScopedModalProps {
   footer: ReactNode;
   isLoading: boolean;
   loadingMessage: string;
+  closeable?: boolean;
   onClose?: () => any;
   modalAction?: any;
 }
@@ -78,9 +79,13 @@ export const ScopedModal: React.FunctionComponent<ScopedModalProps> = (
     <Modal isLoading={props.isLoading} loadingMessage={props.loadingMessage}>
       <ModalHeader>
         <ModalHeaderTitle>{props.title}</ModalHeaderTitle>
-        <ModalHeaderClose onClick={props.onClose}>
-          <CloseIcon />
-        </ModalHeaderClose>
+        {props.closeable ? (
+          <ModalHeaderClose onClick={props.onClose}>
+            <CloseIcon />
+          </ModalHeaderClose>
+        ) : (
+          <></>
+        )}
       </ModalHeader>
       <BodyWithFooter />
     </Modal>

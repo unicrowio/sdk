@@ -39,6 +39,8 @@ export interface IPaymentProps {
   arbitratorFee?: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
+  /** A url to redirect to, when the payment is done (or canceled) */
+  callbackUrl?: string;
 }
 
 export interface IValidateProps extends IPaymentProps {

@@ -52,7 +52,9 @@ export function PayModal(props: IPaymentModalProps) {
     error: errorToken,
   } = useTokenInfo(props.paymentProps.tokenAddress);
 
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const closeHandlerRef = useModalCloseHandler(
+    props.paymentProps?.callbackUrl ? () => {} : onModalClose,
+  );
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
@@ -201,6 +203,23 @@ export function PayModal(props: IPaymentModalProps) {
   const ModalFooter = () => {
     let buttonChildren;
     let buttonOnClick;
+    let buttonCallback = <></>;
+
+    if (props.paymentProps?.callbackUrl) {
+      buttonCallback = (
+        <Button
+          fullWidth
+          variant="secondary"
+          style={{ marginTop: 15 }}
+          disabled={isLoadingAnything}
+          onClick={() =>
+            (window.location.href = props.paymentProps.callbackUrl)
+          }
+        >
+          Cancel
+        </Button>
+      );
+    }
 
     if (!(error || success)) {
       buttonChildren = `Pay ${props.paymentProps.amount} ${
@@ -209,16 +228,25 @@ export function PayModal(props: IPaymentModalProps) {
       buttonOnClick = onPayClick;
     } else if (success) {
       buttonChildren = "Close";
-      buttonOnClick = onModalClose;
+      if (props.paymentProps?.callbackUrl) {
+        buttonCallback = <></>;
+        buttonOnClick = () =>
+          (window.location.href = props.paymentProps.callbackUrl);
+      } else {
+        buttonOnClick = onModalClose;
+      }
     } else {
       buttonChildren = "Retry";
       buttonOnClick = onPayClick;
     }
 
     return (
-      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
-        {buttonChildren}
-      </Button>
+      <>
+        <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
+          {buttonChildren}
+        </Button>
+        {buttonCallback}
+      </>
     );
   };
 
@@ -228,6 +256,7 @@ export function PayModal(props: IPaymentModalProps) {
         title={modalTitle}
         body={<ModalBody />}
         footer={<ModalFooter />}
+        closeable={props.paymentProps?.callbackUrl ? false : true}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
