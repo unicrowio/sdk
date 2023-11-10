@@ -209,7 +209,7 @@ export function PayModal(props: IPaymentModalProps) {
       buttonCallback = (
         <Button
           fullWidth
-          variant="secondary"
+          variant="tertiary"
           style={{ marginTop: 15 }}
           disabled={isLoadingAnything}
           onClick={() =>
