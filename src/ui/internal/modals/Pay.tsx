@@ -182,19 +182,16 @@ export function PayModal(props: IPaymentModalProps) {
               />
             </>
           )}
-          {props.paymentProps.marketplace &&
-            props.paymentProps.marketplace?.toLowerCase() !==
-              ADDRESS_ZERO.toLowerCase() && (
-              <DataDisplayer
-                label="Marketplace Address"
-                value={reduceAddress(
-                  props.paymentProps.marketplace,
-                  props.paymentProps.ensAddresses?.marketplace,
-                )}
-                copy={props.paymentProps.marketplace}
-                marker={MARKER.marketplace}
-              />
-            )}
+          {props.paymentProps.reference ? (
+            <DataDisplayer
+              label="Reference"
+              value={props.paymentProps.reference}
+              copy={props.paymentProps.reference}
+              marker={MARKER.reference}
+            />
+          ) : (
+            <></>
+          )}
         </ContainerDataDisplayer>
       </>
     );
