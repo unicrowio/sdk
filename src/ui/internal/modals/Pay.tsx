@@ -60,8 +60,30 @@ export function PayModal(props: IPaymentModalProps) {
     EscrowStatus.UNPAID,
   );
   const [buyer, setBuyer] = React.useState<string | null>();
+  const [callbackCountdown, setCallbackCountdown] = React.useState<number>(10);
+  const [startCountdown, setStartCountdown] = React.useState<boolean>(false);
   const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
   const error = errorWallet || errorToken;
+
+  React.useEffect(() => {
+    let interval;
+
+    if (startCountdown) {
+      if (callbackCountdown > 0) {
+        interval = setInterval(() => {
+          setCallbackCountdown((currentCount) => Math.max(currentCount - 1, 0));
+        }, 1000);
+      } else {
+        window.location.href = props.paymentProps.callbackUrl;
+      }
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [startCountdown, callbackCountdown]);
 
   const payCallbacks: IPayTransactionCallbacks = {
     connectingWallet: () => {
@@ -226,6 +248,8 @@ export function PayModal(props: IPaymentModalProps) {
     } else if (success) {
       buttonChildren = "Close";
       if (props.paymentProps?.callbackUrl) {
+        setStartCountdown(true);
+        buttonChildren = `Back to merchant in ... ${callbackCountdown}s`;
         buttonCallback = <></>;
         buttonOnClick = () =>
           (window.location.href = props.paymentProps.callbackUrl);
