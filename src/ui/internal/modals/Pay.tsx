@@ -52,14 +52,38 @@ export function PayModal(props: IPaymentModalProps) {
     error: errorToken,
   } = useTokenInfo(props.paymentProps.tokenAddress);
 
-  const closeHandlerRef = useModalCloseHandler(onModalClose);
+  const closeHandlerRef = useModalCloseHandler(
+    props.paymentProps?.callbackUrl ? () => {} : onModalClose,
+  );
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
     EscrowStatus.UNPAID,
   );
   const [buyer, setBuyer] = React.useState<string | null>();
+  const [callbackCountdown, setCallbackCountdown] = React.useState<number>(10);
+  const [startCountdown, setStartCountdown] = React.useState<boolean>(false);
   const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
   const error = errorWallet || errorToken;
+
+  React.useEffect(() => {
+    let interval;
+
+    if (startCountdown) {
+      if (callbackCountdown > 0) {
+        interval = setInterval(() => {
+          setCallbackCountdown((currentCount) => Math.max(currentCount - 1, 0));
+        }, 1000);
+      } else {
+        window.location.href = props.paymentProps.callbackUrl;
+      }
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [startCountdown, callbackCountdown]);
 
   const payCallbacks: IPayTransactionCallbacks = {
     connectingWallet: () => {
@@ -180,19 +204,16 @@ export function PayModal(props: IPaymentModalProps) {
               />
             </>
           )}
-          {props.paymentProps.marketplace &&
-            props.paymentProps.marketplace?.toLowerCase() !==
-              ADDRESS_ZERO.toLowerCase() && (
-              <DataDisplayer
-                label="Marketplace Address"
-                value={reduceAddress(
-                  props.paymentProps.marketplace,
-                  props.paymentProps.ensAddresses?.marketplace,
-                )}
-                copy={props.paymentProps.marketplace}
-                marker={MARKER.marketplace}
-              />
-            )}
+          {props.paymentProps.reference ? (
+            <DataDisplayer
+              label="Reference"
+              value={props.paymentProps.reference}
+              copy={props.paymentProps.reference}
+              marker={MARKER.reference}
+            />
+          ) : (
+            <></>
+          )}
         </ContainerDataDisplayer>
       </>
     );
@@ -201,6 +222,23 @@ export function PayModal(props: IPaymentModalProps) {
   const ModalFooter = () => {
     let buttonChildren;
     let buttonOnClick;
+    let buttonCallback = <></>;
+
+    if (props.paymentProps?.callbackUrl) {
+      buttonCallback = (
+        <Button
+          fullWidth
+          variant="tertiary"
+          style={{ marginTop: 15 }}
+          disabled={isLoadingAnything}
+          onClick={() =>
+            (window.location.href = props.paymentProps.callbackUrl)
+          }
+        >
+          Cancel
+        </Button>
+      );
+    }
 
     if (!(error || success)) {
       buttonChildren = `Pay ${props.paymentProps.amount} ${
@@ -209,16 +247,27 @@ export function PayModal(props: IPaymentModalProps) {
       buttonOnClick = onPayClick;
     } else if (success) {
       buttonChildren = "Close";
-      buttonOnClick = onModalClose;
+      if (props.paymentProps?.callbackUrl) {
+        setStartCountdown(true);
+        buttonChildren = `Back to merchant in ... ${callbackCountdown}s`;
+        buttonCallback = <></>;
+        buttonOnClick = () =>
+          (window.location.href = props.paymentProps.callbackUrl);
+      } else {
+        buttonOnClick = onModalClose;
+      }
     } else {
       buttonChildren = "Retry";
       buttonOnClick = onPayClick;
     }
 
     return (
-      <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
-        {buttonChildren}
-      </Button>
+      <>
+        <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
+          {buttonChildren}
+        </Button>
+        {buttonCallback}
+      </>
     );
   };
 
@@ -228,6 +277,7 @@ export function PayModal(props: IPaymentModalProps) {
         title={modalTitle}
         body={<ModalBody />}
         footer={<ModalFooter />}
+        closeable={props.paymentProps?.callbackUrl ? false : true}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}
