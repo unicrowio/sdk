@@ -53,7 +53,7 @@ export function PayModal(props: IPaymentModalProps) {
   } = useTokenInfo(props.paymentProps.tokenAddress);
 
   const closeHandlerRef = useModalCloseHandler(
-    props.paymentProps?.callbackUrl ? () => {} : onModalClose,
+    props.paymentProps?.cancelUrl ? () => {} : onModalClose,
   );
   const [modalTitle, setModalTitle] = React.useState("Payment");
   const [paymentStatus, setPaymentStatus] = React.useState<EscrowStatus>(
@@ -224,16 +224,14 @@ export function PayModal(props: IPaymentModalProps) {
     let buttonOnClick;
     let buttonCallback = <></>;
 
-    if (props.paymentProps?.callbackUrl) {
+    if (props.paymentProps?.cancelUrl) {
       buttonCallback = (
         <Button
           fullWidth
           variant="tertiary"
           style={{ marginTop: 15 }}
           disabled={isLoadingAnything}
-          onClick={() =>
-            (window.location.href = props.paymentProps.callbackUrl)
-          }
+          onClick={() => (window.location.href = props.paymentProps?.cancelUrl)}
         >
           Cancel
         </Button>
@@ -277,7 +275,7 @@ export function PayModal(props: IPaymentModalProps) {
         title={modalTitle}
         body={<ModalBody />}
         footer={<ModalFooter />}
-        closeable={props.paymentProps?.callbackUrl ? false : true}
+        closeable={props.paymentProps?.cancelUrl ? false : true}
         onClose={onModalClose}
         isLoading={isLoadingAnything}
         loadingMessage={loadingMessage}

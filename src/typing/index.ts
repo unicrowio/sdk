@@ -41,7 +41,9 @@ export interface IPaymentProps {
   challengePeriodExtension?: number;
   /** (UI only) A reference for the payment to display */
   reference?: string;
-  /** (UI only) A url to redirect to, when the payment is done or canceled */
+  /** (UI only) A url to redirect to, when the payment is canceled */
+  cancelUrl?: string;
+  /** (UI only) A url to redirect to, when the payment is done */
   callbackUrl?: string;
 }
 
