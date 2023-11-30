@@ -75,7 +75,7 @@ const prettifyMessage = (message) => {
 const t = (
   message: any,
   type: "info" | "error" | "success" | "warning" = "error",
-  duration = 5000,
+  duration = 10000,
 ) => {
   const toastContainer = tag("div");
   const span = `<span style="margin-left: 8px">${prettifyMessage(
