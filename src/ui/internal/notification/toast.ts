@@ -50,14 +50,14 @@ const colorText = {
   success: "#00D615",
   info: "#6259FF",
   error: "#ED6855",
-  warning: "#FFCA28",
+  warning: "#F4BE4E",
 };
 
 const colorBg = {
   success: "#CCFFD2",
   info: "#6259FFd1",
   error: "#FFD0CC",
-  warning: "#000000",
+  warning: "#FFF4CC",
 };
 
 const prettifyMessage = (message) => {

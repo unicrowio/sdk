@@ -4,6 +4,7 @@ import { networks, UnicrowNetwork } from "./networks";
 import { CHAIN_ID } from "../helpers";
 import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
 import { config } from "../config";
+import { toast } from "../ui/internal/notification/toast";
 
 let walletAddress: string | null = null;
 let accountChangedListener: EventEmitter | null = null;
@@ -65,6 +66,8 @@ const registerAccountChangedListener = () => {
  */
 export const connect = async (): Promise<string | null> => {
   if (isWeb3WalletInstalled() && !walletAddress) {
+    toast.warning("Wallet not connected. Please connect your wallet.");
+
     registerAccountChangedListener();
 
     const _accounts = await window.ethereum.request({
@@ -300,9 +303,8 @@ export const isWeb3WalletInstalled = () => {
  */
 export const getCurrentWalletAddress = async () => {
   try {
-    await connect();
+    return await connect();
   } catch (e) {
-    throw new Error("Wallet not connected. Please connect your wallet.");
+    throw new Error("Wallect connection rejected. Wallet not connected.");
   }
-  return walletAddress;
 };
