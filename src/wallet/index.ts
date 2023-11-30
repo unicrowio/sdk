@@ -299,6 +299,10 @@ export const isWeb3WalletInstalled = () => {
  * @returns Account address
  */
 export const getCurrentWalletAddress = async () => {
-  await connect();
+  try {
+    await connect();
+  } catch (e) {
+    throw new Error("Wallet not connected. Please connect your wallet.");
+  }
   return walletAddress;
 };
