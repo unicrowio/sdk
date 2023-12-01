@@ -2,6 +2,7 @@ import React from "react";
 import {
   isCorrectNetworkConnected,
   isWeb3WalletInstalled,
+  isWeb3WalletConnected,
   startListeningNetwork,
   stopListeningNetwork,
   switchNetwork,
@@ -12,6 +13,7 @@ import { metamaskUrl } from "../../../helpers/constants";
 
 export const useNetworkCheck = () => {
   const metamaskInstalled = isWeb3WalletInstalled();
+  const walletConnected = isWeb3WalletConnected();
   const [isCorrectNetwork, setIsCorrectNetwork] = React.useState<
     boolean | undefined
   >(undefined);
@@ -51,13 +53,13 @@ export const useNetworkCheck = () => {
             type="noMetaMask"
           />
         )}
-        {isCorrectNetwork === false && (
+        {metamaskInstalled && walletConnected && !isCorrectNetwork && (
           <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />
         )}
-        {isCorrectNetwork && Body}
+        {metamaskInstalled && walletConnected && isCorrectNetwork && Body}
       </>
     ),
-    [isCorrectNetwork, metamaskInstalled],
+    [metamaskInstalled, walletConnected, isCorrectNetwork],
   );
 
   return {

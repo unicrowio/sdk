@@ -4,6 +4,7 @@ import {
   IPaymentModalProps,
   IPayTransactionCallbacks,
   IPayTransactionPayload,
+  IEnsAddresses,
 } from "../../../typing";
 import { pay } from "../../../core/pay";
 import {
@@ -18,15 +19,15 @@ import {
   displayChallengePeriod,
   addressWithYou,
   reduceAddress,
-  ADDRESS_ZERO,
+  validateParameters,
 } from "../../../helpers";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
-import { getCurrentWalletAddress } from "../../../wallet";
+import { isWeb3WalletConnected } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useTokenInfo } from "ui/internal/hooks/useTokenInfo";
-import { useAsync } from "ui/internal/hooks/useAsync";
+import { useWallet } from "../hooks/useWallet";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -39,12 +40,7 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [walletUser, isLoadingWallet, errorWallet] = useAsync(
-    {},
-    getCurrentWalletAddress,
-    onModalClose,
-    null,
-  );
+  const { walletUser, isLoadingWallet, isErrorWallet } = useWallet();
 
   const {
     data: tokenInfo,
@@ -62,8 +58,28 @@ export function PayModal(props: IPaymentModalProps) {
   const [buyer, setBuyer] = React.useState<string | null>();
   const [callbackCountdown, setCallbackCountdown] = React.useState<number>(10);
   const [startCountdown, setStartCountdown] = React.useState<boolean>(false);
+  const [ensAddresses, setEnsAddresses] = React.useState<IEnsAddresses>(null);
   const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
-  const error = errorWallet || errorToken;
+  const error = isErrorWallet || errorToken;
+
+  React.useEffect(() => {
+    const validate = async () => {
+      if (!isErrorWallet && isWeb3WalletConnected) {
+        const { addresses } = await validateParameters({
+          ...props.paymentProps,
+          buyer: walletUser || "",
+        });
+
+        Object.entries(addresses.common).forEach(([key, value]) => {
+          props.paymentProps[key] = value;
+        });
+
+        setEnsAddresses(addresses.ens);
+      }
+    };
+
+    validate();
+  }, [walletUser, isLoadingWallet, isErrorWallet]);
 
   React.useEffect(() => {
     let interval;
@@ -153,7 +169,7 @@ export function PayModal(props: IPaymentModalProps) {
             value={addressWithYou(
               props.paymentProps.seller,
               walletUser,
-              props.paymentProps.ensAddresses?.seller,
+              ensAddresses?.seller,
             )}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}
@@ -190,7 +206,7 @@ export function PayModal(props: IPaymentModalProps) {
                 label="Arbitrator"
                 value={reduceAddress(
                   props.paymentProps.arbitrator,
-                  props.paymentProps.ensAddresses?.arbitrator,
+                  ensAddresses?.arbitrator,
                 )}
                 copy={props.paymentProps.arbitrator}
                 marker={MARKER.arbitrator}

@@ -1,7 +1,7 @@
 import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
-interface IEnsAddresses {
+export interface IEnsAddresses {
   seller?: string;
   arbitrator?: string;
   marketplace?: string;
@@ -839,7 +839,7 @@ export interface IClaimTransactionCallbacks
 }
 
 export interface IPaymentModalProps {
-  paymentProps: IPaymentPropsData;
+  paymentProps: IPaymentProps;
   deferredPromise: Deferred<any>;
   callbacks?: IPayTransactionCallbacks;
 }
