@@ -66,7 +66,9 @@ const registerAccountChangedListener = () => {
  */
 export const connect = async (): Promise<string | null> => {
   if (isWeb3WalletInstalled() && !walletAddress) {
-    toast.warning("Wallet not connected. Please connect your wallet.");
+    if (!(await isWeb3WalletConnected())) {
+      toast.warning("Wallet not connected. Please connect your wallet.");
+    }
 
     registerAccountChangedListener();
 
@@ -295,6 +297,19 @@ export const isWeb3WalletInstalled = () => {
     throw new Error("Should run through Browser");
   }
   return !!window?.ethereum?.isMetaMask;
+};
+
+/**
+ * Check if a web3 wallet is connected
+ *
+ * @returns boolean
+ * @throws If this is not run in a browser
+ */
+export const isWeb3WalletConnected = async () => {
+  const accounts = await window.ethereum.request({
+    method: "eth_accounts",
+  });
+  return !!accounts.length;
 };
 
 /**
