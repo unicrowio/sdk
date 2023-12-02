@@ -28,6 +28,7 @@ import { MARKER } from "../../../config/marker";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useTokenInfo } from "ui/internal/hooks/useTokenInfo";
 import { useWallet } from "../hooks/useWallet";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -40,6 +41,7 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
+  const { isCorrectNetwork } = useNetworkCheck();
   const { walletUser, isLoadingWallet, isErrorWallet } = useWallet();
 
   const {
@@ -59,7 +61,8 @@ export function PayModal(props: IPaymentModalProps) {
   const [callbackCountdown, setCallbackCountdown] = React.useState<number>(10);
   const [startCountdown, setStartCountdown] = React.useState<boolean>(false);
   const [ensAddresses, setEnsAddresses] = React.useState<IEnsAddresses>(null);
-  const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
+  const isLoadingAnything =
+    isCorrectNetwork && (isLoadingToken || isLoadingWallet || isLoading);
   const error = isErrorWallet || errorToken;
 
   React.useEffect(() => {

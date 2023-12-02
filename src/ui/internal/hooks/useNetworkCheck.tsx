@@ -53,7 +53,7 @@ export const useNetworkCheck = () => {
             type="noMetaMask"
           />
         )}
-        {metamaskInstalled && walletConnected && !isCorrectNetwork && (
+        {metamaskInstalled && !isCorrectNetwork && (
           <ModalError type="wrongNetwork" onClick={onNetworkSwitch} />
         )}
         {metamaskInstalled && walletConnected && isCorrectNetwork && Body}
