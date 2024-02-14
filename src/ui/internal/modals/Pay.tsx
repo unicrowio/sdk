@@ -30,6 +30,21 @@ import { useTokenInfo } from "ui/internal/hooks/useTokenInfo";
 import { useWallet } from "../hooks/useWallet";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
 
+//TODO: move this somewhere to utils
+function formatAmount(amount: string, maxDecimals: number): string {
+  const num = parseFloat(amount);
+  if (Number.isInteger(num)) {
+      // No decimals if the number is an integer
+      return num.toString();
+  } else {
+      // Determine the actual number of decimal places
+      const actualDecimals = (amount.split('.')[1] || '').length;
+      // Use the smaller of actualDecimals and maxDecimals
+      const decimalPlaces = Math.min(actualDecimals, maxDecimals);
+      return num.toFixed(decimalPlaces);
+  }
+}
+
 export function PayModal(props: IPaymentModalProps) {
   const {
     success,
@@ -159,7 +174,7 @@ export function PayModal(props: IPaymentModalProps) {
     return (
       <>
         <Amount
-          amount={props.paymentProps.amount.toString()}
+          amount={formatAmount(props.paymentProps.amount.toString(), 4)}
           precision={tokenInfo?.decimals}
           tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}
