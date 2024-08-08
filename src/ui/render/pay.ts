@@ -8,6 +8,7 @@ import { renderModal } from "ui/internal/config/render";
 import { PayModal } from "ui/internal/modals";
 
 /**
+ * TODO: update this example with a reference field
  * Opens a payment modal, which summarizes the escrow parameters for the user (buyer) and displays a button to Pay.
  * If the user is on an incorrect network, it asks them to switch (and provides network configuration automatically).
  *

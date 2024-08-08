@@ -109,6 +109,8 @@ const parseEscrow = (
     latestSettlementOfferAddress,
   });
 
+  const reference = data.paymentReference;
+
   return {
     challengePeriod,
     challengePeriodStart,
@@ -123,6 +125,7 @@ const parseEscrow = (
     token: {
       address: tokenAddress,
     },
+    reference,
     // Splits
     splitMarketplace,
     splitBuyer,
@@ -130,7 +133,7 @@ const parseEscrow = (
     splitProtocol,
     // Consensus
     consensusBuyer,
-    consensusSeller,
+    consensusSeller
   };
 };
 
@@ -184,6 +187,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
 };
 
 /**
+ * //TODO: update with reference
  * Get all information about an escrow: Escrow details, Token, Arbitration, Settlement
  *
  * Returns null if some attributes, like arbitration or settlement are not specified

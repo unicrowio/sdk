@@ -157,6 +157,16 @@ export function ReleaseModal(props: IReleaseModalProps) {
             copy={escrowData.marketplace}
             marker={MARKER.marketplace}
           />
+          {escrowData.reference ? (
+            <DataDisplayer
+              label="Reference"
+              value={escrowData.reference}
+              copy={escrowData.reference}
+              marker={MARKER.reference}
+            />
+          ) : (
+            <></>
+          )}
         </ContainerDataDisplayer>
       </>
     );

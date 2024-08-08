@@ -39,7 +39,7 @@ export interface IPaymentProps {
   arbitratorFee?: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
-  /** (UI only) A reference for the payment to display */
+  /** A reference used to identify the payment or provide information for arbitration */
   reference?: string;
   /** (UI only) A url to redirect to, when the payment is canceled */
   cancelUrl?: string;
@@ -91,6 +91,7 @@ export interface IEscrowStatus {
 }
 
 /**
+ * TODO: add reference
  * Full information about the escrow
  *
  * @example // A returned object might look e.g. like this:
@@ -147,6 +148,9 @@ export interface IEscrowData {
   seller: string;
   /** Information about the payment token  */
   token: IToken;
+
+  /** Payment reference, e.g. order ID or information for an arbitrator */
+  reference: string;
 
   /** How much a challenge period will extend by if challenged */
   challengePeriod: number;
