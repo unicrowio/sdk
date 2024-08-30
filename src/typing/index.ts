@@ -40,7 +40,7 @@ export interface IPaymentProps {
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
   /** A reference used to identify the payment or provide information for arbitration */
-  reference?: string;
+  paymentReference?: string;
   /** (UI only) A url to redirect to, when the payment is canceled */
   cancelUrl?: string;
   /** (UI only) A url to redirect to, when the payment is done */
@@ -150,7 +150,7 @@ export interface IEscrowData {
   token: IToken;
 
   /** Payment reference, e.g. order ID or information for an arbitrator */
-  reference: string;
+  paymentReference: string;
 
   /** How much a challenge period will extend by if challenged */
   challengePeriod: number;
@@ -1342,7 +1342,7 @@ export interface tSplits {
 
 export type CalculateFunction = CalculateAmountsInput;
 
-export type DefaultNetwork = "arbitrum" | "goerli" | "development";
+export type DefaultNetwork = "arbitrum" | "development" | "sepolia";
 
 export type Network = {
   rpcUrl: string;

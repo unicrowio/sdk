@@ -14,7 +14,7 @@ interface Network {
 
 declare module globalThis {
   var arbitrum: string | undefined;
-  var goerli: string | undefined;
+  var sepolia: string | undefined;
   var development: string | undefined;
   var mainnetRPCUrl: string | undefined;
   var defaultNetwork: Network = {};

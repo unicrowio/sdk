@@ -6,6 +6,12 @@ const contracts = {
     arbitrator: "0xF1447b0fda912a6857B5d77d7cDE9663266896cf",
     claim: "0x40F83551803051676eB7Cb0374176d03db247b97",
   },
+  sepolia: {
+    unicrow: "0xEC8eaCfC2Dd1614b7182676A118088a204F69b86",
+    dispute: "0x335ba877387646815cb189f9883dF98aa0913EAF",
+    arbitrator: "0x310Da0C6c224C14168e7bBEd632797A79B9eff95",
+    claim: "0xAF6eC0acE0Ac7CB7865313523cAE83Cfaaa788e0",
+  },
   // Private RPC development Unicrow Contract Addresses
   development: {
     unicrow: "0x229A9DEd51df3D9680A8f82a433b13eF7Cfc9978",

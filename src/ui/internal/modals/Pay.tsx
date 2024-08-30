@@ -34,14 +34,14 @@ import { useNetworkCheck } from "../hooks/useNetworkCheck";
 function formatAmount(amount: string, maxDecimals: number): string {
   const num = parseFloat(amount);
   if (Number.isInteger(num)) {
-      // No decimals if the number is an integer
-      return num.toString();
+    // No decimals if the number is an integer
+    return num.toString();
   } else {
-      // Determine the actual number of decimal places
-      const actualDecimals = (amount.split('.')[1] || '').length;
-      // Use the smaller of actualDecimals and maxDecimals
-      const decimalPlaces = Math.min(actualDecimals, maxDecimals);
-      return num.toFixed(decimalPlaces);
+    // Determine the actual number of decimal places
+    const actualDecimals = (amount.split(".")[1] || "").length;
+    // Use the smaller of actualDecimals and maxDecimals
+    const decimalPlaces = Math.min(actualDecimals, maxDecimals);
+    return num.toFixed(decimalPlaces);
   }
 }
 
@@ -273,9 +273,10 @@ export function PayModal(props: IPaymentModalProps) {
     }
 
     if (!(error || success)) {
-      buttonChildren = `Pay ${formatAmount(props.paymentProps.amount.toString(), 4)} ${
-        tokenInfo ? tokenInfo.symbol : "ETH"
-      }`;
+      buttonChildren = `Pay ${formatAmount(
+        props.paymentProps.amount.toString(),
+        4,
+      )} ${tokenInfo ? tokenInfo.symbol : "ETH"}`;
       buttonOnClick = onPayClick;
     } else if (success) {
       buttonChildren = "Close";

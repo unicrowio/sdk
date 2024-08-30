@@ -141,7 +141,7 @@ export const pay = async (
     arbitrator,
     arbitratorFee = ZERO_FEE_VALUE,
     challengePeriodExtension = 0,
-    reference = ""
+    paymentReference = "",
   } = paymentProps;
 
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
@@ -161,7 +161,8 @@ export const pay = async (
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
   const marketplaceAddress = marketplace || ADDRESS_ZERO;
-  const { addresses, token } = await validateParameters({ //TODO: consider validating reference, e.g. limiting its length
+  const { addresses, token } = await validateParameters({
+    //TODO: consider validating reference, e.g. limiting its length
     seller,
     arbitrator,
     arbitratorFee: paymentProps.arbitratorFee,
@@ -184,6 +185,7 @@ export const pay = async (
   const unicrowAddress = getContractAddress("unicrow");
 
   if (tokenAddress != ETH_ADDRESS) {
+    console.log("not ETH");
     const token = ERC20__factory.connect(tokenAddress, providerSigner);
 
     const alreadyAllowedAmount = await token.allowance(
@@ -210,6 +212,7 @@ export const pay = async (
     challengePeriod,
     challengeExtension: challengePeriodExtension,
     amount: solidityAmount,
+    paymentReference: paymentReference,
   };
 
   try {

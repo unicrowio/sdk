@@ -133,7 +133,7 @@ const parseEscrow = (
     splitProtocol,
     // Consensus
     consensusBuyer,
-    consensusSeller
+    consensusSeller,
   };
 };
 

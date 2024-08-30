@@ -33,8 +33,8 @@ export const SELLER = "seller";
 export const CHAIN_ID = {
   arbitrumOne: BigInt(42161),
   mainnet: BigInt(1),
-  goerli: BigInt(5),
   development: BigInt(5777),
+  sepolia: BigInt(11155111),
 };
 
 export const metamaskUrl = "https://metamask.io/download/";
