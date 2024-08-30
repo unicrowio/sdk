@@ -52,7 +52,7 @@
     "@ethersproject/wallet": "^5.7.0",
     "@mui/material": "^5.14.3",
     "@mui/styles": "^5.14.3",
-    "@unicrowio/ethers-types": "^1.1.2",
+    "@unicrowio/ethers-types": "@unicrowio/ethers-types@1.2.0-beta.0",
     "ethers": "^6.6.7",
     "graphql": "^16.7.1",
     "graphql-request": "^6.1.0",
