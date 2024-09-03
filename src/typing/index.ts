@@ -1354,7 +1354,6 @@ export interface IConfig {
   networks?: Networks;
   defaultNetwork?: DefaultNetwork;
   autoSwitchNetwork?: boolean;
-  mainnetRPCUrl?: string;
 }
 
 export default {};

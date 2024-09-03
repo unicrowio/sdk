@@ -96,7 +96,7 @@ export const connect = async (): Promise<string | null> => {
  */
 export const switchNetwork = async (name: DefaultNetwork) => {
   if (!isWeb3WalletInstalled()) throw Error("No wallet installed");
-  const { chainName, rpcUrls, chainId, nativeCurrency, blockExplorerUrls } =
+  const { chainName, chainId, nativeCurrency, blockExplorerUrls } =
     networks[name];
 
   registerAccountChangedListener();
@@ -104,7 +104,6 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   const addParams: any = {
     chainId: ethers.toQuantity(chainId),
     chainName,
-    rpcUrls,
     nativeCurrency,
     blockExplorerUrls,
   };
