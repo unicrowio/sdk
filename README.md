@@ -50,6 +50,7 @@ await result = unicrowSdk.ui.pay({
   marketplaceFee: “<%>”,               // a fee that the marketplace charges
   arbitrator: “<address_or_ens>”,      // a 3rd party arbitrator
   arbitratorFee: “<%>”,                // a fee that the arbitrator charges
+  paymentReference: "<string_or_null>" // a reference for the payment
 })                                     // * - required parameters
 
 const escrowId = result.escrowId

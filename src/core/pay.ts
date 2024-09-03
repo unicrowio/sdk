@@ -82,7 +82,8 @@ import { parsePay } from "./internal/parsers/eventPay";
  *   marketplace: "0xf8C03F09b4f53FDc05b57c7846da5F428798f187",
  *   marketplaceFee: 5,
  *   arbitrator: "0x3C86F543e64810E1d843809B2b70a4FDcC3b9B66",
- *   arbitratorFee: 2
+ *   arbitratorFee: 2,
+ *   paymentReference: "escrow-123"
  * }, {
  *   confirmed: (payload) {
  *     // print out payload
@@ -119,7 +120,8 @@ import { parsePay } from "./internal/parsers/eventPay";
  *    amountSeller: "923100000",
  *    amountMarketplace: "50000000",
  *    amountArbitrator: "20000000",
- *    amountProtocol: "690000"
+ *    amountProtocol: "690000",
+ *    paymentReference: "escrow-123"
  * }
  * @param paymentProps - Payment details
  * @param callbacks - Pass code to any of these to be executed when the respective step takes place in the wallet
@@ -140,6 +142,7 @@ export const pay = async (
     arbitrator,
     arbitratorFee = ZERO_FEE_VALUE,
     challengePeriodExtension = 0,
+    paymentReference,
   } = paymentProps;
 
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
@@ -207,6 +210,7 @@ export const pay = async (
     challengePeriod,
     challengeExtension: challengePeriodExtension,
     amount: solidityAmount,
+    paymentReference,
   };
 
   try {

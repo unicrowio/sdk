@@ -1,6 +1,6 @@
 {
   "name": "@unicrowio/sdk",
-  "version": "1.0.0-beta.12",
+  "version": "1.2.0-beta.0",
   "author": "Unicrow <hello@unicrow.io>",
   "license": "MIT",
   "description": "Unicrow SDK",
@@ -52,8 +52,8 @@
     "@ethersproject/wallet": "^5.7.0",
     "@mui/material": "^5.14.3",
     "@mui/styles": "^5.14.3",
-    "@unicrowio/ethers-types": "^1.1.2",
-    "ethers": "^6.6.7",
+    "@unicrowio/ethers-types": "^1.2.0-beta.0",
+    "ethers": "^6.13.2",
     "graphql": "^16.7.1",
     "graphql-request": "^6.1.0",
     "jss": "^10.10.0",
