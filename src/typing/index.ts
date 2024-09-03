@@ -39,8 +39,8 @@ export interface IPaymentProps {
   arbitratorFee?: number;
   /** By how much will the challenge period get extended after a challenge (in seconds) */
   challengePeriodExtension?: number;
-  /** (UI only) A reference for the payment to display */
-  reference?: string;
+  /** A reference for the payment */
+  paymentReference?: string | null;
   /** (UI only) A url to redirect to, when the payment is canceled */
   cancelUrl?: string;
   /** (UI only) A url to redirect to, when the payment is done */
@@ -458,6 +458,8 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   amountArbitrator: string;
   /** Current protocol feee (in ETH or token) based on the latest status of the escrow */
   amountProtocol: string;
+  /** A reference for the payment */
+  paymentReference?: string | null;
 }
 
 /**

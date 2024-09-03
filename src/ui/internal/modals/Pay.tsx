@@ -204,12 +204,12 @@ export function PayModal(props: IPaymentModalProps) {
               />
             </>
           )}
-          {props.paymentProps.reference ? (
+          {props.paymentProps.paymentReference ? (
             <DataDisplayer
               label="Reference"
-              value={props.paymentProps.reference}
-              copy={props.paymentProps.reference}
-              marker={MARKER.reference}
+              value={props.paymentProps.paymentReference}
+              copy={props.paymentProps.paymentReference}
+              marker={MARKER.paymentReference}
             />
           ) : (
             <></>

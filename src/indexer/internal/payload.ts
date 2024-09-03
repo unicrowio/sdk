@@ -1,5 +1,5 @@
 /*
-  Default values for returning values from escrow_status_view and
+  Default values for returning values from escrow_status_view
  */
 export const returningValues = [
   "name",
@@ -42,6 +42,6 @@ export const returningValues = [
   "amount_protocol",
   "amount_arbitrator",
   "amount_marketplace",
-  "reference",
+  "paymentReference",
   "status",
 ];
