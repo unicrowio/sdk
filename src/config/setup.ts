@@ -1,23 +1,14 @@
-import { IConfig } from "../typing";
-import { networks as DefaultNetworks } from "../wallet/networks";
+import { networks } from "../wallet/networks";
 
-export const setupNetwork = ({
-  defaultNetwork = "arbitrum",
+export const setupNetwork = (
+  chainId = BigInt(42161),
   autoSwitchNetwork = false,
-}: IConfig) => {
-  globalThis.defaultNetwork = {
-    name:
-      defaultNetwork ||
-      DefaultNetworks[defaultNetwork]?.chainName ||
-      DefaultNetworks.arbitrum?.chainName,
-    displayName:
-      DefaultNetworks[defaultNetwork]?.displayName ||
-      DefaultNetworks.arbitrum?.displayName,
-    chainId: defaultNetwork
-      ? DefaultNetworks[defaultNetwork].chainId
-      : DefaultNetworks.arbitrum.chainId,
-  };
+) => {
+  let network = networks.find((network) => network.chainId === chainId);
+  if (!network) throw new Error(`Network ${chainId} is not supported yet.`);
+
+  globalThis.defaultNetwork = network;
   globalThis.autoSwitchNetwork = autoSwitchNetwork;
 };
 
-setupNetwork({});
+setupNetwork();

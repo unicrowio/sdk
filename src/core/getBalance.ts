@@ -15,14 +15,14 @@ import { ETH_ADDRESS } from "../helpers";
 export const getBalance = async (
   tokenAddress: string | null = ETH_ADDRESS,
 ): Promise<bigint> => {
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
   const walletAddress = await getCurrentWalletAddress();
 
   if (!(provider && walletAddress)) {
     throw new Error("Error on Get Balance, Account Not connected");
   }
 
-  autoSwitchNetwork();
+  await autoSwitchNetwork();
 
   if (tokenAddress === ETH_ADDRESS) {
     return provider.getBalance(walletAddress);

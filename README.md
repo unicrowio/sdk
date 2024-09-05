@@ -74,17 +74,16 @@ unicrowSdk.ui.release(escrowId)
 unicrowSdk.ui.claim(escrowId)
 ```
 
-### Change network
+### Default network and autoswitch
 
-The SDK is by default configured to interact with the Arbitrum One network and asks the user to switch to it automatically when any contract-interacting functions are called. We currently support also Ethereum Goerli* and Unicrow’s private RPC. The automated switch can also be turned off (in such a case, an error is thrown).
+To set a default network (for the supported networks, see `wallet/networks.ts`) and (optionally) request a switch when the wallet is connected to a different one:
 
-\*We chose to deploy on Ethereum Goerli instead of Arbitrum Goerli because of larger support for "stablecoins", DEXes, etc.
 
 ```js
-unicrowSdk.config({
-  defaultNetwork: “<arbitrum|goerli|development>”,
-  autoSwitchNetwork: <true|false> // optional, defaults to true
-})
+unicrowSdk.config(
+  defaultNetwork: “<chainId>”,
+  autoSwitchNetwork: <true|false> // optional, defaults to false
+)
 ```
 
 For more examples, check out the [SDK Tutorial](https://github.com/unicrowio/sdk-tutorial).

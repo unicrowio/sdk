@@ -1,7 +1,7 @@
 import { Unicrow__factory } from "@unicrowio/ethers-types";
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import { bipsToPercentage } from "../helpers";
-import { getBrowserProvider } from "./internal/getBrowserProvider";
+import { getWeb3Provider } from "../wallet";
 
 /**
  * Retrieves information about the protocol fee and returns its percentage.
@@ -10,9 +10,11 @@ import { getBrowserProvider } from "./internal/getBrowserProvider";
  * @returns The protocol fee in percentage
  */
 export const getProtocolFee = async () => {
+  let provider = getWeb3Provider();
+
   const smartContract = Unicrow__factory.connect(
-    getContractAddress("unicrow"),
-    getBrowserProvider(),
+    (await getContractsAddresses()).unicrow,
+    provider,
   );
 
   const fee = await smartContract.protocolFee();

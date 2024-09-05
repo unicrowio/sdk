@@ -7,7 +7,6 @@ import {
   switchNetwork,
 } from "wallet";
 import { ModalError } from "ui/internal/components/ModalError";
-import { DefaultNetwork } from "typing";
 import { metamaskUrl } from "../../../helpers/constants";
 
 export const useNetworkCheck = () => {
@@ -38,7 +37,7 @@ export const useNetworkCheck = () => {
   const onNetworkSwitch = React.useCallback(async () => {
     setIsCorrectNetwork(await isCorrectNetworkConnected());
     if (!isCorrectNetwork) {
-      await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
+      await switchNetwork(globalThis.defaultNetwork.chainId);
     }
   }, [isCorrectNetwork]);
 

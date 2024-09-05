@@ -5,7 +5,7 @@ import {
   getCurrentWalletAddress,
   getWeb3Provider,
 } from "../wallet";
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import {
   ChallengeParsedPayload,
   IChallengeTransactionCallbacks,
@@ -24,7 +24,7 @@ export const challenge = async (
   callbacks?: IChallengeTransactionCallbacks,
 ): Promise<ChallengeParsedPayload> => {
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
 
   if (!provider) {
     throw new Error("Error on Challenge, Account Not connected");
@@ -36,7 +36,7 @@ export const challenge = async (
     const walletAddress = await getCurrentWalletAddress();
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
     const smartContract = UnicrowDispute__factory.connect(
-      getContractAddress("dispute"),
+      (await getContractsAddresses()).dispute,
       await provider.getSigner(),
     );
 

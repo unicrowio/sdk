@@ -1,4 +1,4 @@
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { IRefundTransactionCallbacks } from "../typing";
 import {
@@ -21,7 +21,7 @@ export const refund = async (
   callbacks?: IRefundTransactionCallbacks,
 ): Promise<string> => {
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
 
   if (!provider) {
     throw new Error("Error on Refund, Account Not connected");
@@ -33,7 +33,7 @@ export const refund = async (
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = Unicrow__factory.connect(
-    getContractAddress("unicrow"),
+    (await getContractsAddresses()).unicrow,
     await provider.getSigner(),
   );
 

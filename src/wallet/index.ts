@@ -1,8 +1,7 @@
 import EventEmitter from "events";
 import { ethers, BrowserProvider } from "ethers";
 import { networks, UnicrowNetwork } from "./networks";
-import { CHAIN_ID } from "../helpers";
-import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
+import { IGenericTransactionCallbacks } from "typing";
 import { config } from "../config";
 import { toast } from "../ui/internal/notification/toast";
 
@@ -90,22 +89,23 @@ export const connect = async (): Promise<string | null> => {
 /**
  * Asks user's web3 wallet to switch to a selected network
  *
- * @param name - Name of one of the configured networks ('arbitrum', 'development', or 'goerli' in standard SDK installation)
+ * @param chainId - chainId of one of the supported networks (see `networks.ts`)
  * @returns Name of the network that the wallet was switched to.
  * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
-export const switchNetwork = async (name: DefaultNetwork) => {
+export const switchNetwork = async (chainId: bigint) => {
   if (!isWeb3WalletInstalled()) throw Error("No wallet installed");
-  const { chainName, chainId, nativeCurrency, blockExplorerUrls } =
-    networks[name];
+
+  let network = networks.find((network) => network.chainId === chainId);
+  if (!network) throw new Error(`Network ${chainId} is not supported yet.`);
 
   registerAccountChangedListener();
 
   const addParams: any = {
     chainId: ethers.toQuantity(chainId),
-    chainName,
-    nativeCurrency,
-    blockExplorerUrls,
+    chainName: network.chainName,
+    nativeCurrency: network.nativeCurrency,
+    blockExplorerUrls: network.blockExplorerUrls,
   };
 
   const switchParams: any = { chainId: addParams.chainId };
@@ -143,10 +143,10 @@ export const switchNetwork = async (name: DefaultNetwork) => {
   const connected = await getNetwork();
 
   if (connected.chainId === chainId) {
-    config({ defaultNetwork: name });
+    config(connected.chainId);
   }
 
-  return name;
+  return network;
 };
 
 /**
@@ -164,7 +164,7 @@ export const autoSwitchNetwork = async (
 
   if (!isCorrectNetwork) {
     if (globalThis.autoSwitchNetwork || force) {
-      await switchNetwork(globalThis.defaultNetwork.name);
+      await switchNetwork(globalThis.defaultNetwork.chainId);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {
       throw new Error("Unsupported network");
@@ -173,28 +173,14 @@ export const autoSwitchNetwork = async (
 };
 
 /**
- * Get parameters of the network that the wallet is connected to
+ * Get the network the wallet is currently connected to
  *
- * @returns Network info of where the wallet switched to
+ * @returns Network or null if no provider is available
  * @throws Error if no wallet is installed or if the user rejected adding or switching to the network
  */
 export const getNetwork = async (): Promise<ethers.Network> => {
-  const provider = await getWeb3Provider();
-
-  let network;
-
-  if (provider !== null) {
-    network = await provider.getNetwork();
-
-    if (network.chainId === CHAIN_ID.development) {
-      network = {
-        chainId: network.chainId,
-        name: "development",
-      };
-    }
-  }
-
-  return network;
+  const provider = getWeb3Provider();
+  return provider !== null ? await provider.getNetwork() : null;
 };
 
 /**
@@ -202,9 +188,7 @@ export const getNetwork = async (): Promise<ethers.Network> => {
  *
  * @returns List and parameters of all configured networks
  */
-export const getSupportedNetworks: () => {
-  [name: string]: UnicrowNetwork;
-} = () => networks;
+export const getSupportedNetworks: () => UnicrowNetwork[] = () => networks;
 
 /**
  * Checks, based on chainId comparison, if the wallet is connected to the default network
@@ -281,7 +265,7 @@ export const stopListeningNetwork = () => {
   _onChangeNetworkCallbacks = [];
 };
 
-export const getWeb3Provider = async (): Promise<BrowserProvider> => {
+export const getWeb3Provider = (): BrowserProvider | null => {
   return isWeb3WalletInstalled() ? new BrowserProvider(window.ethereum) : null;
 };
 

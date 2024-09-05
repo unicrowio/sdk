@@ -1,5 +1,5 @@
 import { UnicrowDispute__factory } from "@unicrowio/ethers-types";
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import {
   ApproveSettlementParsedPayload,
   ISettlementApproveTransactionCallbacks,
@@ -31,7 +31,7 @@ export const approveSettlement = async (
 ): Promise<ApproveSettlementParsedPayload> => {
   try {
     callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-    const provider = await getWeb3Provider();
+    const provider = getWeb3Provider();
 
     if (!provider) {
       throw new Error("Error on Approve Offer, Account Not connected");
@@ -43,7 +43,7 @@ export const approveSettlement = async (
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
     const CrowDisputeContract = UnicrowDispute__factory.connect(
-      getContractAddress("dispute"),
+      (await getContractsAddresses()).dispute,
       await provider.getSigner(),
     );
     const approveOfferTx = await CrowDisputeContract.approveSettlement(

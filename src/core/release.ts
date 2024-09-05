@@ -1,5 +1,5 @@
 import { Unicrow__factory } from "@unicrowio/ethers-types";
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import { IReleaseTransactionCallbacks, ReleaseParsedPayload } from "../typing";
 import {
   autoSwitchNetwork,
@@ -21,7 +21,7 @@ export const release = async (
   callbacks?: IReleaseTransactionCallbacks,
 ): Promise<ReleaseParsedPayload> => {
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
 
   if (!provider) {
     throw new Error("Error on Release, Account Not connected");
@@ -33,7 +33,7 @@ export const release = async (
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const Unicrow = Unicrow__factory.connect(
-    getContractAddress("unicrow"),
+    (await getContractsAddresses()).unicrow,
     await provider.getSigner(),
   );
 

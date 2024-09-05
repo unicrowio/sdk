@@ -1,4 +1,4 @@
-import { DefaultNetwork } from "config/setup";
+import { UnicrowNetwork } from "../wallet/networks";
 
 declare global {
   interface Window {
@@ -6,18 +6,8 @@ declare global {
   }
 }
 
-interface Network {
-  name: DefaultNetwork;
-  chainId: number;
-  rpcUrl: string;
-}
-
 declare module globalThis {
-  var arbitrum: string | undefined;
-  var goerli: string | undefined;
-  var development: string | undefined;
-  var mainnetRPCUrl: string | undefined;
-  var defaultNetwork: Network = {};
+  var defaultNetwork: UnicrowNetwork[];
   var autoSwitchNetwork: boolean;
 }
 
