@@ -1,4 +1,4 @@
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import {
   ADDRESS_ZERO,
   consensus,
@@ -271,7 +271,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
 export const getEscrowData = async (
   escrowId: number,
 ): Promise<IGetEscrowData> => {
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
 
   if (!provider) {
     throw new Error("Error on Getting Escrow Data, Account Not connected");
@@ -280,7 +280,7 @@ export const getEscrowData = async (
   await autoSwitchNetwork();
 
   const Unicrow = Unicrow__factory.connect(
-    getContractAddress("unicrow"),
+    (await getContractsAddresses()).unicrow,
     provider,
   );
 

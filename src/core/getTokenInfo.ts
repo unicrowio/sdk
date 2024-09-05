@@ -1,11 +1,11 @@
 import { ERC20__factory } from "@unicrowio/ethers-types";
 import { ETH_ADDRESS, isSameAddress } from "../helpers";
 import { IToken } from "../typing";
-import { getBrowserProvider } from "./internal/getBrowserProvider";
+import { getWeb3Provider } from "../wallet";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
   try {
-    const provider = getBrowserProvider();
+    const provider = getWeb3Provider();
     const token = ERC20__factory.connect(tokenAddress, provider);
     return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
       address: tokenAddress,

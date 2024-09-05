@@ -1,5 +1,5 @@
 import { UnicrowArbitrator__factory } from "@unicrowio/ethers-types";
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import {
   IProposeArbitrationTransactionCallbacks,
   ProposalArbitratorParsedPayload,
@@ -29,7 +29,7 @@ export const proposeArbitrator = async (
     validateAddresses({ arbitrator });
 
     callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-    const provider = await getWeb3Provider();
+    const provider = getWeb3Provider();
 
     if (!provider) {
       throw new Error("Error on Adding Arbitrator. Account not connected");
@@ -38,7 +38,7 @@ export const proposeArbitrator = async (
     await autoSwitchNetwork(callbacks);
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
-      getContractAddress("arbitrator"),
+      (await getContractsAddresses()).arbitrator,
       await provider.getSigner(),
     );
 

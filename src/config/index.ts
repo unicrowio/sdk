@@ -1,3 +1,3 @@
 export { setupNetwork as config } from "./setup";
-export { getContractAddress } from "./getContractAddress";
+export { getContractsAddresses } from "./getContractsAddresses";
 export { MARKER } from "./marker";

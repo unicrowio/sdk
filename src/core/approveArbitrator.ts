@@ -1,6 +1,6 @@
 import { UnicrowArbitrator__factory } from "@unicrowio/ethers-types";
 
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import {
   ApproveArbitratorParsedPayload,
   IApproveArbitrationTransactionCallbacks,
@@ -31,7 +31,7 @@ export const approveArbitrator = async (
 ): Promise<ApproveArbitratorParsedPayload> => {
   try {
     callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-    const provider = await getWeb3Provider();
+    const provider = getWeb3Provider();
 
     if (!provider) {
       throw new Error("Error on Approving the Arbiter. Account not connected");
@@ -43,7 +43,7 @@ export const approveArbitrator = async (
     callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
     const crowArbitratorContract = UnicrowArbitrator__factory.connect(
-      getContractAddress("arbitrator"),
+      (await getContractsAddresses()).arbitrator,
       await provider.getSigner(),
     );
 

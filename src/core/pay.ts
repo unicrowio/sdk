@@ -6,14 +6,13 @@ import {
   validateParameters,
   parseAmount,
 } from "../helpers";
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import {
   IPaymentProps,
   IPayTransactionCallbacks,
   PayParsedPayload,
 } from "../typing";
 import { getBalance } from "./getBalance";
-import { getTokenInfo } from "../core/getTokenInfo";
 import { errorHandler } from "./internal/errorHandler";
 import {
   getWeb3Provider,
@@ -147,7 +146,7 @@ export const pay = async (
 
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
 
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
   if (!provider) {
     throw new Error("Wallet not connected");
   }
@@ -182,7 +181,7 @@ export const pay = async (
     throw new Error(`Insufficient balance: ${balance} < ${solidityAmount}`);
   }
 
-  const unicrowAddress = getContractAddress("unicrow");
+  const unicrowAddress = (await getContractsAddresses()).unicrow;
 
   if (tokenAddress != ETH_ADDRESS) {
     const token = ERC20__factory.connect(tokenAddress, providerSigner);

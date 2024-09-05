@@ -1,4 +1,4 @@
-import { getContractAddress } from "../config";
+import { getContractsAddresses } from "../config";
 import { UnicrowClaim__factory } from "@unicrowio/ethers-types";
 import {
   MultipleClaimParsedPayload,
@@ -27,7 +27,7 @@ export const claimMultiple = async (
   callbacks?: IClaimTransactionCallbacks,
 ): Promise<MultipleClaimParsedPayload> => {
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
-  const provider = await getWeb3Provider();
+  const provider = getWeb3Provider();
 
   if (!provider) {
     throw new Error("Error on Claiming, Account Not connected");
@@ -39,7 +39,7 @@ export const claimMultiple = async (
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
   const smartContract = UnicrowClaim__factory.connect(
-    getContractAddress("claim"),
+    (await getContractsAddresses()).claim,
     await provider.getSigner(),
   );
 
