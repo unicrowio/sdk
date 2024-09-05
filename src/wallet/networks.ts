@@ -2,8 +2,7 @@ import { CHAIN_ID } from "../helpers";
 const arbitrumRpcUrl = globalThis.arbitrum || "https://arb1.arbitrum.io/rpc";
 const mainnetRpcUrl =
   "https://mainnet.infura.io/v3/68b30eaff3a24581ae1c8b12581b5043";
-const developmentRpcUrl =
-  globalThis.development || "http://127.0.0.1:8545/";
+const developmentRpcUrl = globalThis.development || "http://127.0.0.1:8545/";
 const arbitrumSepoliaRpcUrl =
   globalThis.arbitrumSepolia || "https://sepolia-rollup.arbitrum.io/rpc";
 

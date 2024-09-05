@@ -10,7 +10,9 @@ export const setupNetwork = ({
   const fallbacks = {
     arbitrum:
       networks?.arbitrum?.rpcUrl || DefaultNetworks.arbitrum?.rpcUrls[0],
-    arbitrumSepolia: networks?.arbitrumSepolia?.rpcUrl || DefaultNetworks.arbitrumSepolia?.rpcUrls[0],
+    arbitrumSepolia:
+      networks?.arbitrumSepolia?.rpcUrl ||
+      DefaultNetworks.arbitrumSepolia?.rpcUrls[0],
     development:
       networks?.development?.rpcUrl || DefaultNetworks.development?.rpcUrls[0],
   };
@@ -18,7 +20,8 @@ export const setupNetwork = ({
   if (networks?.arbitrum)
     globalThis.arbitrum = globalThis.arbitrum || fallbacks.arbitrum;
   if (networks?.arbitrumSepolia)
-    globalThis.arbitrumSepolia = globalThis.arbitrumSepolia || fallbacks.arbitrumSepolia;
+    globalThis.arbitrumSepolia =
+      globalThis.arbitrumSepolia || fallbacks.arbitrumSepolia;
   if (networks?.development)
     globalThis.development = globalThis.development || fallbacks.development;
 

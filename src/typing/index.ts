@@ -2,7 +2,7 @@ import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
 export interface IEnsAddresses {
-  buyer?: string
+  buyer?: string;
   seller?: string;
   arbitrator?: string;
   marketplace?: string;

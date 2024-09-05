@@ -85,7 +85,9 @@ export function PayModal(props: IPaymentModalProps) {
       if (!isErrorWallet && isWeb3WalletConnected) {
         const { addresses } = await validateParameters({
           ...props.paymentProps,
-          buyer: props.paymentProps.buyer ? props.paymentProps.buyer : walletUser || "",
+          buyer: props.paymentProps.buyer
+            ? props.paymentProps.buyer
+            : walletUser || "",
         });
 
         Object.entries(addresses.common).forEach(([key, value]) => {
@@ -198,7 +200,7 @@ export function PayModal(props: IPaymentModalProps) {
               value={addressWithYou(
                 props.paymentProps.buyer,
                 walletUser,
-                ensAddresses?.buyer
+                ensAddresses?.buyer,
               )}
               copy={props.paymentProps.buyer}
               marker={MARKER.buyer}

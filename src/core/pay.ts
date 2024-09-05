@@ -157,8 +157,8 @@ export const pay = async (
   const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
-  const buyer = paymentProps.buyer == null ?  ADDRESS_ZERO : paymentProps.buyer;
-  
+  const buyer = paymentProps.buyer == null ? ADDRESS_ZERO : paymentProps.buyer;
+
   const providerSigner = await provider.getSigner();
 
   const marketplaceFeeValue = 100 * marketplaceFee;
