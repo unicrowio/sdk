@@ -10,15 +10,15 @@ export const setupNetwork = ({
   const fallbacks = {
     arbitrum:
       networks?.arbitrum?.rpcUrl || DefaultNetworks.arbitrum?.rpcUrls[0],
-    sepolia: networks?.sepolia?.rpcUrl || DefaultNetworks.sepolia?.rpcUrls[0],
+    arbitrumSepolia: networks?.arbitrumSepolia?.rpcUrl || DefaultNetworks.arbitrumSepolia?.rpcUrls[0],
     development:
       networks?.development?.rpcUrl || DefaultNetworks.development?.rpcUrls[0],
   };
 
   if (networks?.arbitrum)
     globalThis.arbitrum = globalThis.arbitrum || fallbacks.arbitrum;
-  if (networks?.sepolia)
-    globalThis.sepolia = globalThis.sepolia || fallbacks.sepolia;
+  if (networks?.arbitrumSepolia)
+    globalThis.arbitrumSepolia = globalThis.arbitrumSepolia || fallbacks.arbitrumSepolia;
   if (networks?.development)
     globalThis.development = globalThis.development || fallbacks.development;
 

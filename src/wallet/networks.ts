@@ -3,9 +3,9 @@ const arbitrumRpcUrl = globalThis.arbitrum || "https://arb1.arbitrum.io/rpc";
 const mainnetRpcUrl =
   "https://mainnet.infura.io/v3/68b30eaff3a24581ae1c8b12581b5043";
 const developmentRpcUrl =
-  globalThis.development || "https://rpc-net.unicrow.io";
-const sepoliaRpcUrl =
-  globalThis.sepolia || "https://ethereum-sepolia-rpc.publicnode.com";
+  globalThis.development || "http://127.0.0.1:8545/";
+const arbitrumSepoliaRpcUrl =
+  globalThis.arbitrumSepolia || "https://sepolia-rollup.arbitrum.io/rpc";
 
 export interface UnicrowNetwork {
   chainId: bigint;
@@ -56,15 +56,16 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     },
     rpcUrls: [developmentRpcUrl],
   },
-  sepolia: {
-    chainId: CHAIN_ID.sepolia,
-    chainName: "Ethereum Sepolia Testnet",
-    displayName: "Ethereum Sepolia Testnet",
+  arbitrumSepolia: {
+    chainId: CHAIN_ID.arbitrumSepolia,
+    chainName: "Arbitrum Sepolia Testnet",
+    displayName: "Arbitrum Sepolia",
     nativeCurrency: {
       name: "ETH",
       symbol: "ETH",
       decimals: 18,
     },
-    rpcUrls: [sepoliaRpcUrl],
+    rpcUrls: [arbitrumSepoliaRpcUrl],
+    blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
   },
 };

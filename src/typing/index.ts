@@ -2,6 +2,7 @@ import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
 export interface IEnsAddresses {
+  buyer?: string
   seller?: string;
   arbitrator?: string;
   marketplace?: string;
@@ -21,14 +22,16 @@ export interface IToken {
  * Payment data input
  */
 export interface IPaymentProps {
-  /** Amount in token */
-  amount: string | number | bigint;
   /** Whom is the payment for */
   seller: string;
-  /** Initial challenge period (in seconds) */
-  challengePeriod: number;
+  /** Amount in token */
+  amount: string | number | bigint;
   /** Address of the token used in the payment (skip or set to null for ETH) */
   tokenAddress?: string;
+  /** Initial challenge period (in seconds) */
+  challengePeriod: number;
+  /** By how much will the challenge period get extended after a challenge (in seconds) */
+  challengePeriodExtension?: number;
   /** address of a marketplace that has facilitated the payment */
   marketplace?: string;
   /** Marketplace fee in % (can be 0 even if a marketplace was set but doesn't charge fee)  */
@@ -37,10 +40,10 @@ export interface IPaymentProps {
   arbitrator?: string | null;
   /** Arbitrator's fee in %. Can be 0 */
   arbitratorFee?: number;
-  /** By how much will the challenge period get extended after a challenge (in seconds) */
-  challengePeriodExtension?: number;
   /** A reference used to identify the payment or provide information for arbitration */
   paymentReference?: string;
+  /** Who's the buyer, i.e. who can release the payment or whom should a refund be sent to. Leave empty to assign the user's wallet */
+  buyer?: string;
   /** (UI only) A url to redirect to, when the payment is canceled */
   cancelUrl?: string;
   /** (UI only) A url to redirect to, when the payment is done */
@@ -59,7 +62,7 @@ export enum EscrowStatus {
   UNPAID = "Unpaid",
   PAID = "Paid",
   RELEASED = "Released",
-  PERIOD_EXPIRED = "Period Expired",
+  PERIOD_EXPIRED = "Challenge Period Ended",
   REFUNDED = "Refunded",
   CHALLENGED = "Challenged",
   SETTLED = "Settled",
@@ -1342,7 +1345,7 @@ export interface tSplits {
 
 export type CalculateFunction = CalculateAmountsInput;
 
-export type DefaultNetwork = "arbitrum" | "development" | "sepolia";
+export type DefaultNetwork = "arbitrum" | "development" | "arbitrumSepolia";
 
 export type Network = {
   rpcUrl: string;

@@ -33,6 +33,7 @@ export const validateParameters = async (
     seller,
     arbitrator,
     marketplace,
+    buyer
   });
 
   try {

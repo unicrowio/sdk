@@ -13,7 +13,7 @@ import {
   PayParsedPayload,
 } from "../typing";
 import { getBalance } from "./getBalance";
-import { getTokenInfo } from "../core/getTokenInfo";
+// import { getTokenInfo } from "../core/getTokenInfo";
 import { errorHandler } from "./internal/errorHandler";
 import {
   getWeb3Provider,
@@ -22,6 +22,7 @@ import {
 } from "../wallet";
 import { EscrowInputStruct } from "@unicrowio/ethers-types/src/contracts/Unicrow";
 import { parsePay } from "./internal/parsers/eventPay";
+import { ContractRunner, Provider } from "ethers";
 
 /**
  * //TODO: update this example with a reference field
@@ -156,13 +157,15 @@ export const pay = async (
   const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
+  const buyer = paymentProps.buyer == null ?  ADDRESS_ZERO : paymentProps.buyer;
+  
   const providerSigner = await provider.getSigner();
 
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
   const marketplaceAddress = marketplace || ADDRESS_ZERO;
   const { addresses, token } = await validateParameters({
-    //TODO: consider validating reference, e.g. limiting its length
+    //TODO: consider validating the reference, e.g. limiting its length
     seller,
     arbitrator,
     arbitratorFee: paymentProps.arbitratorFee,
@@ -172,7 +175,7 @@ export const pay = async (
     challengePeriodExtension: paymentProps.challengePeriodExtension,
     tokenAddress,
     amount,
-    buyer: walletAddress,
+    buyer,
   });
   const _arbitrator = addresses.common.arbitrator || ADDRESS_ZERO;
 
@@ -185,7 +188,6 @@ export const pay = async (
   const unicrowAddress = getContractAddress("unicrow");
 
   if (tokenAddress != ETH_ADDRESS) {
-    console.log("not ETH");
     const token = ERC20__factory.connect(tokenAddress, providerSigner);
 
     const alreadyAllowedAmount = await token.allowance(
@@ -203,8 +205,8 @@ export const pay = async (
     }
   }
 
-  //TODO: when we manage to compile new ABI, add the reference here
   const payInput: EscrowInputStruct = {
+    buyer: addresses.common.buyer,
     seller: addresses.common.seller,
     marketplace: addresses.common.marketplace,
     marketplaceFee: marketplaceFeeValue,
@@ -221,7 +223,6 @@ export const pay = async (
     const unicrowSc = Unicrow__factory.connect(unicrowAddress, providerSigner);
 
     let payTx: any;
-    // { value: solidityAmount } should be passed only in case of Ethers
     if (tokenAddress === ETH_ADDRESS) {
       payTx = await unicrowSc.pay(payInput, _arbitrator, arbitratorFeeValue, {
         value: solidityAmount,

@@ -109,7 +109,7 @@ const parseEscrow = (
     latestSettlementOfferAddress,
   });
 
-  const reference = data.paymentReference;
+  const paymentReference = data.paymentReference;
 
   return {
     challengePeriod,
@@ -125,7 +125,7 @@ const parseEscrow = (
     token: {
       address: tokenAddress,
     },
-    reference,
+    paymentReference,
     // Splits
     splitMarketplace,
     splitBuyer,

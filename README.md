@@ -75,13 +75,12 @@ unicrowSdk.ui.claim(escrowId)
 
 ### Change network
 
-The SDK is by default configured to interact with the Arbitrum One network and asks the user to switch to it automatically when any contract-interacting functions are called. We currently support also Ethereum Sepolia* and Unicrow’s private RPC. The automated switch can also be turned off (in such a case, an error is thrown).
+The SDK is by default configured to interact with the Arbitrum One network and asks the user to switch to it automatically when any contract-interacting functions are called. We currently support also Arbitrum Sepolia and Unicrow’s private RPC. The automated switch can also be turned off (in such a case, an error is thrown).
 
-\*We chose to deploy on Ethereum Sepolia instead of Arbitrum Sepolia because of larger support for "stablecoins", DEXes, etc.
 
 ```js
 unicrowSdk.config({
-  defaultNetwork: “<arbitrum|sepolia|development>”,
+  defaultNetwork: “<arbitrum|arbitrumSepolia|development>”,
   autoSwitchNetwork: <true|false> // optional, defaults to true
 })
 ```

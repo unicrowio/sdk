@@ -14,5 +14,5 @@ export const MARKER = {
   challengePeriod: "How long will it be possible to challenge the payment",
   challengePeriodExtension:
     "How long will a new challenge period last after a challenge",
-  reference: "Text reference (e.g. order ID)",
+  paymentReference: "Text reference (e.g. order ID)",
 };

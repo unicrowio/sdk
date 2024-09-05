@@ -11,7 +11,7 @@ interface IGeckoRespObj {
 // ChainId-CoinGeckoNetworkId mapping
 const CG_NETWORK_ID = {
   42161: "arbitrum-one",
-  11155111: "sepolia", // Sepolia
+  421614: "arbitrumSepolia", // Sepolia
   5777: "ethereum", // Unicrow Testnet
 };
 
