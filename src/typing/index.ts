@@ -261,7 +261,9 @@ export interface ApproveSettlementParsedPayload extends GenericParsedTxPayload {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -311,7 +313,9 @@ export interface ArbitrateParsedPayload extends GenericParsedTxPayload {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -361,7 +365,9 @@ export interface ChallengeParsedPayload extends GenericParsedTxPayload {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -439,6 +445,8 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
   tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -488,67 +496,48 @@ export interface ProposalArbitratorParsedPayload
 export interface ReleaseParsedPayload extends GenericParsedTxPayload {
   /** Date/time when the escrow was released */
   releasedAt: Date;
-
   /** Escrow buyer (who paid and released the escrow) */
   buyer: string;
-
   /** Seller (to whom the payment was paid and released) */
   seller: string;
-
   /** What was the challenge period extension */
   challengePeriodExtension: number;
-
   /** When did the last challenge period start */
   challengePeriodStart: Date;
-
   /** When did the last challenge period end */
   challengePeriodEnd: Date;
-
   /** Marketplace address */
   marketplace: string;
-
   /** Marketplace fee (in %) */
   marketplaceFee: number;
-
-  /** Payment token address (null for ETH) */
-  currency: string;
-
+  /** Token used in the payment (null for ETH) */
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** If the payment was claimed (always true in this case since release automatically claims) */
   claimed: boolean;
-
   /** Buyer's consensus about the escrow (always positive in this case since the buyer just released) */
   consensusBuyer: number;
-
   /** Seller's consensus */
   consensusSeller: number;
-
   /** Buyer's split (0 in this case) */
   splitBuyer: number;
-
   /** Seller's split (100 in this case) */
   splitSeller: number;
-
   /** Marketplace fee (in %) */
   splitMarketplace: number;
-
   /** Protocol fee (in %) */
   splitProtocol: number;
-
   /** Total escrow amount in ETH's or token's WEI */
   amount: string;
-
   /** Amount that was sent to the buyer (0 in this case) */
   amountBuyer: string;
-
   /** Amount that was sent to the buyer (total amount - fees in this case) */
   amountSeller: string;
-
   /** Amount sent to the marketplace in ETH's or token's WEI */
   amountMarketplace: string;
-
   /** Amount sent to the protocol in ETH's or token's WEI */
   amountProtocol: string;
-
   /** Amount sent to the arbitrator in ETH's or token's WEI */
   amountArbitrator: string;
 }
@@ -624,8 +613,11 @@ export interface IPayTransactionPayload {
   /** Marketplace fee (%, can be 0 even if a marketplace was defined) */
   marketplaceFee?: number;
 
-  /** Address of the escrowed token (null for ETH) */
+  /** Token used in the payment (null for ETH) */
   tokenAddress?: string;
+
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
 
   /** If the payment was claimed (always false here) */
   claimed?: boolean;

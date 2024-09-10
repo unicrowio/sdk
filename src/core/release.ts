@@ -41,7 +41,7 @@ export const release = async (
     // FIX-ME: No need to get signer if the contract reference is initialized globally
     callbacks && callbacks.broadcasting && callbacks.broadcasting();
     const releaseTx = await Unicrow.release(escrowId);
-
+    
     callbacks &&
       callbacks.broadcasted &&
       callbacks.broadcasted({
@@ -51,10 +51,8 @@ export const release = async (
     const receiptTx = await releaseTx.wait();
 
     const parsedPayloadReleased = parseRelease(receiptTx.logs);
-
-    callbacks &&
-      callbacks.confirmed &&
-      callbacks.confirmed(parsedPayloadReleased);
+    
+    callbacks && callbacks.confirmed && callbacks.confirmed(parsedPayloadReleased);
 
     return parsedPayloadReleased;
   } catch (error) {

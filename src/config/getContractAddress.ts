@@ -7,11 +7,18 @@ const contracts = {
     claim: "0x40F83551803051676eB7Cb0374176d03db247b97",
   },
   arbitrumSepolia: {
-    unicrow: "0x5880500B6582f59B6ad7dF173fb17E8205689Cc2",
-    dispute: "0x19EbA0BE87dF312d9041240ddE468507adaC9e0A",
-    arbitrator: "0x9D0FeAa4DfCa9e3Ae18ad97f90231E9a7C963D84",
-    claim: "0x888B745df64eF65399429e1DB3663BCFa5d73a97",
+    unicrow: "0x6d98b03C09EaD582a77C093bdb2d3E85683Aa956",
+    dispute: "0x3dC5d22716599e7FcD1bbB1752544D9dfa7e719E",
+    arbitrator: "0xdB400Dd10a4A645c2C1429b3A48F1449E7e4F64A",
+    claim: "0x7761D841D83c5Aeb876DB2b110798C668cd83872",
   },
+  development: {
+    // replace these with your local deployment addresses 
+    unicrow: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    dispute: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    arbitrator: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    claim: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+  }
 };
 
 type tGetAddress = "unicrow" | "dispute" | "arbitrator" | "claim";

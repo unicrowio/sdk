@@ -28,6 +28,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     consensus,
     splits,
     amount,
+    paymentReference
   ] = escrow;
 
   // parsers
@@ -81,6 +82,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     marketplace,
     marketplaceFee,
     tokenAddress,
+    paymentReference,
     claimed: !!claimed,
     consensusBuyer: Number(consensusBuyer),
     consensusSeller: Number(consensusSeller),

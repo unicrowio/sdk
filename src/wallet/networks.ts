@@ -46,8 +46,8 @@ export const networks: { [name: string]: UnicrowNetwork } = {
   },
   development: {
     chainId: CHAIN_ID.development,
-    chainName: "Unicrow Testnet",
-    displayName: "Unicrow Testnet",
+    chainName: "Development testnet",
+    displayName: "Development Testnet",
     nativeCurrency: {
       name: "ETH",
       symbol: "ETH",

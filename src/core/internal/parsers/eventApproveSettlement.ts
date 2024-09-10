@@ -33,6 +33,7 @@ export const parseApproveSettlement = (
     consensus,
     splits,
     amount,
+    paymentReference
   ] = escrow;
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
@@ -42,6 +43,7 @@ export const parseApproveSettlement = (
 
   const marketplace: string | null = nullOrValue(_marketplace);
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
+  const tokenAddress: string | null = nullOrValue(currency);
 
   return {
     name: _event.event,
@@ -56,10 +58,11 @@ export const parseApproveSettlement = (
     challengePeriodEnd: toDate(challengePeriodEnd),
     marketplace,
     marketplaceFee,
-    currency: currency.toString(),
+    tokenAddress,
+    paymentReference,
     claimed: !!claimed,
-    consensusBuyer,
-    consensusSeller,
+    consensusBuyer: Number(consensusBuyer),
+    consensusSeller: Number(consensusSeller),
     splitBuyer,
     splitSeller,
     splitMarketplace,

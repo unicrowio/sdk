@@ -26,11 +26,8 @@ const getCoinGeckoPrices = async (
 ): Promise<IResult | void> => {
   const response = {} as IResult;
 
-  // ETH needs a different call
-  const ethIdx = tokensAddresses.indexOf(
-    "0x0000000000000000000000000000000000000000",
-  );
-  if (ethIdx > -1) {
+  // if ETH address was requested, get it first
+  if (tokensAddresses.indexOf(null) >= 0) {
     const coinGeckoEthResp = await fetch(`${API_COINGECKO}ethereum`);
 
     if (!coinGeckoEthResp.ok) {
@@ -48,22 +45,24 @@ const getCoinGeckoPrices = async (
     }
   }
 
-  const coinGeckoResp = await fetch(
-    `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddresses.join(
-      ",",
-    )}&vs_currencies=USD`,
-  );
+  if (network == 'ethereum') {
+    // get a price of any tokens requested 
+    const coinGeckoResp = await fetch(
+      `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddresses.join(
+        ",",
+      )}&vs_currencies=USD`,
+    );
 
-  if (!coinGeckoResp.ok) {
-    throw new Error("Error while getting tokens exchange values");
+    if (!coinGeckoResp.ok) {
+      throw new Error("Error while getting tokens exchange values");
+    }
+
+    const coinGeckoRespJson = (await coinGeckoResp.json()) as IGeckoRespObj;
+
+    for (const address in coinGeckoRespJson) {
+      response[address] = coinGeckoRespJson[address]?.usd;
+    }
   }
-
-  const coinGeckoRespJson = (await coinGeckoResp.json()) as IGeckoRespObj;
-
-  for (const address in coinGeckoRespJson) {
-    response[address] = coinGeckoRespJson[address]?.usd;
-  }
-
   return response;
 };
 

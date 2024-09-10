@@ -166,12 +166,12 @@ export function RefundModal(props: IRefundModalProps) {
             copy={escrowData.marketplace}
             marker={MARKER.marketplace}
           />
-          {escrowData.reference ? (
+          {escrowData.paymentReference ? (
             <DataDisplayer
               label="Reference"
-              value={escrowData.reference}
-              copy={escrowData.reference}
-              marker={MARKER.reference}
+              value={escrowData.paymentReference}
+              copy={escrowData.paymentReference}
+              marker={MARKER.paymentReference}
             />
           ) : (
             <></>
