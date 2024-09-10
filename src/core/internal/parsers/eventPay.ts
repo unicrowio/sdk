@@ -28,7 +28,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
     consensus,
     splits,
     amount,
-    paymentReference
+    paymentReference,
   ] = escrow;
 
   // parsers

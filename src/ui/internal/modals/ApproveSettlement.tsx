@@ -69,10 +69,8 @@ export function ApproveSettlementModal(props: ISettlementApproveModalProps) {
 
   const labelAmountSplit = React.useMemo(() => {
     if (escrowData?.settlement) {
-      const _splitBuyer =
-        escrowData.settlement.latestSettlementOfferBuyer;
-      const _splitSeller =
-        escrowData.settlement.latestSettlementOfferSeller;
+      const _splitBuyer = escrowData.settlement.latestSettlementOfferBuyer;
+      const _splitSeller = escrowData.settlement.latestSettlementOfferSeller;
 
       const _amountBuyer = calculatePercentageInt(
         _splitBuyer,

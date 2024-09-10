@@ -45,8 +45,8 @@ const getCoinGeckoPrices = async (
     }
   }
 
-  if (network == 'ethereum') {
-    // get a price of any tokens requested 
+  if (network == "ethereum") {
+    // get a price of any tokens requested
     const coinGeckoResp = await fetch(
       `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddresses.join(
         ",",

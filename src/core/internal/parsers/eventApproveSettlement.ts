@@ -33,7 +33,7 @@ export const parseApproveSettlement = (
     consensus,
     splits,
     amount,
-    paymentReference
+    paymentReference,
   ] = escrow;
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
