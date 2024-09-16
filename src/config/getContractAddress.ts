@@ -1,10 +1,10 @@
 const contracts = {
   // Arbitrum mainnet Unicrow Contract Addresses
   arbitrum: {
-    unicrow: "0x24e9ECC6c56dcD0C875fDF181FA3A4EEf3c5D5F0",
-    dispute: "0xab32831aA9bBFEB12F1BA7B74eBFf76e45944937",
-    arbitrator: "0xF1447b0fda912a6857B5d77d7cDE9663266896cf",
-    claim: "0x40F83551803051676eB7Cb0374176d03db247b97",
+    unicrow: "0x78AEe48cCEBCcEe05F550849A7C7Baa1e0837a6D",
+    dispute: "0xdC14E36ac67Cd3B8eE25a9c2309EcE6087e93225",
+    arbitrator: "0xde62AD20611Fe51179Eb8B66c4627B3495C9B1c2",
+    claim: "0x5902AF8be15c80794C3229aD4E68aa69845Cc5fC",
   },
   arbitrumSepolia: {
     unicrow: "0x6d98b03C09EaD582a77C093bdb2d3E85683Aa956",

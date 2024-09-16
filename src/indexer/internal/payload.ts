@@ -42,6 +42,6 @@ export const returningValues = [
   "amount_protocol",
   "amount_arbitrator",
   "amount_marketplace",
-  "reference",
+  "payment_reference",
   "status",
 ];

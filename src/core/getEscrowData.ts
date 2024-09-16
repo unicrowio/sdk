@@ -87,8 +87,8 @@ const parseEscrow = (
   const amount: bigint = data.amount;
 
   // Consensus
-  const consensusBuyer: number = data.consensus[consensus.BUYER];
-  const consensusSeller: number = data.consensus[consensus.SELLER];
+  const consensusBuyer: number = Number(data.consensus[consensus.BUYER]);
+  const consensusSeller: number = Number(data.consensus[consensus.SELLER]);
 
   const splitProtocol: number = percentageUnicrow;
   const splitBuyer: number = percentageBuyer;
@@ -195,79 +195,77 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  * @example // The most simple escrow for 1 ETH with no arbitrator or marketplace returns something like this:
  * {
  *    challengePeriod: 1209600,                           // Challenge period extension in seconds
- *    challengePeriodStart: "2023-01-27T16:31:07.000Z",   // Start of the current challenge period
- *    challengePeriodEnd: "2023-02-10T16:31:07.000Z",     // End of the current challenge period
+ *    challengePeriodStart: "2024-09-12T15:07:45.000Z",   // Start of the current challenge period
+ *    challengePeriodEnd: "2024-09-26T15:07:45.000Z",     // End of the current challenge period
  *    status: {
- *       state: "Paid",                                   // Paid, CP not ended, or refunded, etc.
+ *       state: "Released",                               
  *       latestChallengeBy: null,
  *       latestSettlementOfferBy: null,
- *       claimed: false                                   // Hasen't been claimed from the escrow
+ *       claimed: true                                    // Claimed from the escrow (by buyer's Release in this case)
  *    },
- *    escrowId: 593,
- *    amount: "1000000000000000000",                      // Amount in wei
+ *    escrowId: 2,
+ *    amount: "100000000000000000",                       // Amount in wei
  *    marketplace: null,
- *    buyer: "0xD024....5861",                            // Shortened in docs, but otherwise returned in full
- *    seller: "0xA981....041D",
+ *    buyer: "0x8A62....D1D8",                            // Shortened in docs, but otherwise returned in full
+ *    seller: "0xf463b....0560",
  *    token: {
  *       address: null,
- *       decimals: 18,                                    // Use pow(10, this) to convert to standard units
+ *       decimals: 18,                                    // Use pow(10, <this>) to convert to standard units
  *       symbol: "ETH"
  *    },
+ *    paymentReference: "",                               // A text reference, e.g. order ID
  *    splitMarketplace: 0,                                // Marketplace fee
  *    splitBuyer: 0,                                      // Buyer's share in current status (0 for Paid, Released)
  *    splitSeller: 100,                                   // Seller's share in current status (100 for Paid, Released)
  *    splitProtocol: 0.69,                                // Protocol fee
- *    consensusBuyer: 0,                                  // Buyer's consensus (see contracts docs for how this works)
+ *    consensusBuyer: 1,                                  // Buyer's consensus (see contracts docs for how this works)
  *    consensusSeller: 1,                                 // Seller's consensus
  *    arbitration: null,
  *    settlement: null,
  *    connectedUser: "buyer",
- *    walletAddress: "0xd024....5861"
+ *    walletAddress: "0x8A62....D1D8"
  * }
  *
- * // An escrow with 1,000 USDT, an arbitrator and marketplace with fees, which was challenged by buyer and has a settlement offer from the seller looks like this:
+ * // An escrow with 100 USDT, an arbitrator and marketplace with fees, which was challenged by buyer and has a settlement offer from the seller looks like this:
  * {
- *    challengePeriod: 1209600,
- *    challengePeriodStart: "2023-02-10T16:32:33.000Z",
- *    challengePeriodEnd: "2023-02-24T16:32:33.000Z",
+ *    challengePeriod: 604800,
+ *    challengePeriodStart: "2024-09-12T15:19:14.000Z",
+ *    challengePeriodEnd: "2024-09-26T15:19:14.000Z",
  *    status: {
- *       state: "Challenged",
- *       latestChallengeBy: "buyer",                      // Buyer challenged
- *       latestSettlementOfferBy: "seller",               // Seller offered a settlement (see below for details)
- *       claimed: false
+ *       state: "Released",
+ *       latestChallengeBy: null,
+ *       latestSettlementOfferBy: null,
+ *       claimed: true
  *    },
- *    escrowId: 594,
- *    amount: "1000000000",
- *    marketplace: "0xf8C0....f187",                      // This address will receive a marketplace fee (below)
- *    buyer: "0xD0244....5861",
- *    seller: "0xA9813....041D",
+ *    escrowId: 3,
+ *    amount: 100000000,
+ *    marketplace: "0x696207De45d897d5a353af3c45314a2F852d5B63",
+ *    buyer: "0xF257DD5731A679E6642FCd9c53e4e26A1206527e",
+ *    seller: "0xf463b32cad657fe03921014d99490A0a58290560",
  *    token: {
- *       address: "0xFd08....Cbb9",                       // USDT Arbitrum address
- *       symbol: "USDT",                                  // Symbol from the token's contract
+ *       address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+ *       symbol: "USDT",
  *       decimals: 6
  *    },
- *    splitMarketplace: 5,                                // 5% marketplace fee (not paid if challenge is successful or payment is refunded)
- *    splitBuyer: 100,                                    // Since buyer challenged, their split is 100
- *    splitSeller: 0,                                     // Since buyer challenged, seller's split is 0
- *    splitProtocol: 0.69,                                // Protocol fee (not paid if challenge is successful)
+ *    paymentReference: "order #1337",
+ *    splitMarketplace: 10,
+ *    splitBuyer: 0,
+ *    splitSeller: 100,
+ *    splitProtocol: 0.69,
  *    consensusBuyer: 1,
- *    consensusSeller: -1,                                // This means seller is currently challenged 1st time
+ *    consensusSeller: 1,
  *    arbitration: {
- *       arbitrator: "0x3C86....9B66",                    // Address of the proposed or defined arbitrator
- *       consensusSeller: true,                           // Whether seller agreed (implicitly or explicitly) on the arbitrator
- *       consensusBuyer: true,                            // If both buyer and seller consensus is true, the arbitrator is set
- *       arbitrated: false,                               // The arbitrator hasn't stepped in yet
- *       arbitratorFee: 2                                 // Arbitrator's fee in %
+ *       arbitrator: "0x59f56CFC88E5660b7D68C4797c6484168eC8E068",
+ *       consensusSeller: true,
+ *       consensusBuyer: true,
+ *       arbitrated: false,
+ *       arbitratorFee: 2
  *    },
- *    settlement: {
- *       latestSettlementOfferAddress: "0xA981....041D",  // Who sent the latest settlement offer
- *       latestSettlementOfferBuyer: 20,                  // Buyer was offered to get 20% back
- *       latestSettlementOfferSeller: 80                  // Seller asked to receive 80% (minus fees)
- *    },
- *    connectedUser: "seller",
- *    walletAddress: "0xa9813....041d"
+ *    settlement: null,
+ *    connectedUser: "buyer",
+ *    walletAddress: "0xf257dd5731a679e6642fcd9c53e4e26a1206527e"
  * }
- *
+ * 
  * @param escrowId - ID of the escrow
  * @throws Error if escrow id doesn't exist.
  * @returns All details about the escrowed payment
