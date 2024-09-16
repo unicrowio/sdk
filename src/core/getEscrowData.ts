@@ -198,7 +198,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    challengePeriodStart: "2024-09-12T15:07:45.000Z",   // Start of the current challenge period
  *    challengePeriodEnd: "2024-09-26T15:07:45.000Z",     // End of the current challenge period
  *    status: {
- *       state: "Released",                               
+ *       state: "Released",
  *       latestChallengeBy: null,
  *       latestSettlementOfferBy: null,
  *       claimed: true                                    // Claimed from the escrow (by buyer's Release in this case)
@@ -265,7 +265,7 @@ const parse = (escrowId: number, data: DataStructOutput): any => {
  *    connectedUser: "buyer",
  *    walletAddress: "0xf257dd5731a679e6642fcd9c53e4e26a1206527e"
  * }
- * 
+ *
  * @param escrowId - ID of the escrow
  * @throws Error if escrow id doesn't exist.
  * @returns All details about the escrowed payment
