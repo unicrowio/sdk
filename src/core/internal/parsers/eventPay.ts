@@ -66,7 +66,7 @@ export const parsePay = (events: any[]): PayParsedPayload => {
   const [consensusBuyer, consensusSeller] = consensus;
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     paidAt: toDate(paid_at),

@@ -6,6 +6,7 @@ export const parseApproveSettlement = (
   events: any[],
 ): ApproveSettlementParsedPayload => {
   const _event = getEventByName("ApproveOffer", events);
+  console.log(_event);
 
   const [escrow_id, escrow, latest_settlement_offer, approved_at, amounts] =
     _event.args;
@@ -46,7 +47,7 @@ export const parseApproveSettlement = (
   const tokenAddress: string | null = nullOrValue(currency);
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     settledAt: toDate(approved_at),

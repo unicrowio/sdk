@@ -41,7 +41,7 @@ export const parseArbitrate = (events: any[]): ArbitrateParsedPayload => {
   const tokenAddress: string | null = nullOrValue(currency);
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     escrowId: Number(escrowId),

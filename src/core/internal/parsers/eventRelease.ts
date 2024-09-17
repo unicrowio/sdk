@@ -43,7 +43,7 @@ export const parseRelease = (events: any[]): ReleaseParsedPayload => {
   const tokenAddress: string | null = nullOrValue(currency);
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     releasedAt: toDate(released_at),

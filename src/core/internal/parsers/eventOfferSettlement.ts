@@ -17,7 +17,7 @@ export const parseOfferSettlement = (
   const [lsoBuyer, lsoSeller] = bipsToPercentage(latest_settlement_offer);
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     settlementOfferAt: toDate(settlement_offer_at),

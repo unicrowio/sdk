@@ -12,7 +12,7 @@ export const parseApproveArbitrator = (
   const [arbitrator_fee] = bipsToPercentage([arbitratorFee]);
 
   return {
-    name: proposalEvent.event,
+    name: proposalEvent.fragment.name,
     transactionHash: proposalEvent.transactionHash,
     blockNumber: proposalEvent.blockNumber,
     escrowId: Number(escrowId),

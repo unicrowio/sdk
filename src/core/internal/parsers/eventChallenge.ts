@@ -31,7 +31,7 @@ export const parseChallenge = (events: any): ChallengeParsedPayload => {
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     challengedAt: toDate(challenged_at),
