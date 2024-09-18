@@ -41,7 +41,7 @@ const mapData = (_group, status: IEscrowStatus, walletUserAddress: string) =>
         token: {
           address: key,
         },
-        status,
+        // status,
       };
     })
     .filter((item: any) => BigInt(item.solidityAmount) > 0) as IBalance[];

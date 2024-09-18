@@ -1,8 +1,8 @@
-import { IConfig } from "../typing";
+import { IConfig, DefaultNetwork } from "../typing";
 import { networks as DefaultNetworks } from "../wallet/networks";
 
 export const setupNetwork = ({
-  defaultNetwork = "arbitrum",
+  defaultNetwork = DefaultNetwork.Arbitrum,
   autoSwitchNetwork = false,
 }: IConfig) => {
   globalThis.defaultNetwork = {

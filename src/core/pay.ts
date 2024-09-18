@@ -13,7 +13,6 @@ import {
   PayParsedPayload,
 } from "../typing";
 import { getBalance } from "./getBalance";
-import { getTokenInfo } from "../core/getTokenInfo";
 import { errorHandler } from "./internal/errorHandler";
 import {
   getWeb3Provider,
@@ -28,12 +27,12 @@ import { parsePay } from "./internal/parsers/eventPay";
  * The function automagically connects user's wallet, checks for the balance in the selected token, asks for approval,
  * and if the address was provided in ENS format, resolves that to ETH address.
  *
- * @example // The most simple example of 1 ETH payment with 2 week challenge period and with no arbitrator or a marketplace
- * await unicrowSdk.ui.pay({
- *   seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D",
- *   amount: 1,
- *   challengePeriod: ONE_DAY_IN_SEC * 14
- * }, {
+ * @example // The most simple example of 0.1 ETH payment with 2 week challenge period and with no arbitrator or a marketplace
+ * await Unicrow.core.pay({
+ *     seller: "0xf463b32cad657fe03921014d99490A0a58290560",
+ *     amount: 0.1,
+ *     challengePeriod: 86400 * 14, // 14 days
+ *   }, {
  *   confirmed: (payload) {
  *     // print out payload
  *   }
@@ -41,22 +40,22 @@ import { parsePay } from "./internal/parsers/eventPay";
  *
  * // Console output
  * {
- *    name: "Pay",
- *    transactionHash: "0x965b682d76617355e701ad5e3ece8760f8b0e76815d7d817ee84a8cbdb1f4cd7",
- *    blockNumber: 7956,
- *    paidAt: "2023-01-27T16:31:07.000Z",
- *    escrowId: 593,
+ *    transactionHash: "0xf7d347866aaa583f7a8e63457f4afed85f40932c35ac8ffafc2a1c1dc31b19f6",
+ *    blockNumber: 252780689,
+ *    paidAt: "2024-09-12T15:07:45.000Z",
+ *    escrowId: 2,
  *    arbitrator: null,
  *    arbitratorFee: 0,
- *    buyer: "0xD0244c3B17792390010581D54951ba049dF85861",
- *    seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D",
+ *    buyer: "0x8A62e7F471ad5B5081d4A864580edd944525D1D8",
+ *    seller: "0xf463b32cad657fe03921014d99490A0a58290560",
  *    challengePeriod: 1209600,
  *    challengePeriodExtension: 1209600,
- *    challengePeriodStart: "2023-01-27T16:31:07.000Z",
- *    challengePeriodEnd: "2023-02-10T16:31:07.000Z",
+ *    challengePeriodStart: "2024-09-12T15:07:45.000Z",
+ *    challengePeriodEnd: "2024-09-26T15:07:45.000Z",
  *    marketplace: null,
  *    marketplaceFee: 0,
  *    tokenAddress: null,
+ *    paymentReference: "",
  *    claimed: false,
  *    consensusBuyer: 0,
  *    consensusSeller: 1,
@@ -64,27 +63,33 @@ import { parsePay } from "./internal/parsers/eventPay";
  *    splitSeller: 100,
  *    splitMarketplace: 0,
  *    splitProtocol: 0.69,
- *    amount: "1000000000000000000",
+ *    amount: "100000000000000000",
  *    amountBuyer: "0",
- *    amountSeller: "993100000000000000",
+ *    amountSeller: "99310000000000000",
  *    amountMarketplace: "0",
  *    amountArbitrator: "0",
- *    amountProtocol: "6900000000000000"
+ *    amountProtocol: "690000000000000"
  * }
  *
- * // Another example of 1,000 USDT payment with a marketplace and an arbitrator and a different challenge period and extension
- * await unicrowSdk.ui.pay({
- *   seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D",
- *   tokenAddress: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
- *   amount: 1000,
- *   challengePeriod: ONE_DAY_IN_SEC * 14,
- *   challengePeriod: ONE_DAY_IN_SEC * 7,
- *   marketplace: "0xf8C03F09b4f53FDc05b57c7846da5F428798f187",
- *   marketplaceFee: 5,
- *   arbitrator: "0x3C86F543e64810E1d843809B2b70a4FDcC3b9B66",
- *   arbitratorFee: 2,
- *   paymentReference: "escrow-123"
- * }, {
+ * // Another example using all the available payment parameters: 
+ * //   - tokenAddress to send 100 USDT
+ * //   - setting a different buyer 
+ * //   - a marketplace and an arbitrator with fees 
+ * //   - different challenge period and challenge period extension
+ * //   - adding a payment reference
+ * await Unicrow.core.pay({
+ *     seller: "0xf463b32cad657fe03921014d99490A0a58290560",
+ *     tokenAddress: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+ *     amount: 100,
+ *     buyer: "0xF257DD5731A679E6642FCd9c53e4e26A1206527e",
+ *     arbitrator: "0x59f56CFC88E5660b7D68C4797c6484168eC8E068",
+ *     arbitratorFee: 2,
+ *     marketplace: "0x696207De45d897d5a353af3c45314a2F852d5B63",
+ *     marketplaceFee: 10,
+ *     challengePeriod: 86400 * 14, // 14 days
+ *     challengePeriodExtension: 86400 * 7, // 7 days
+ *     paymentReference: "order #1337"
+    }, {
  *   confirmed: (payload) {
  *     // print out payload
  *   }
@@ -92,36 +97,35 @@ import { parsePay } from "./internal/parsers/eventPay";
  *
  * // Output
  * {
- *    name: "Pay",
- *    transactionHash: "0xb37166392207bbd7e89858606e3b88d11d9d00fb1f508bc0e81dc8a3a990c69f",
- *    blockNumber: 7958,
- *    paidAt: "2023-01-27T16:32:33.000Z",
- *    escrowId: 594,
- *    arbitrator: "0x3C86F543e64810E1d843809B2b70a4FDcC3b9B66",
+ *    transactionHash: "0x51766a44fb247f33e6caf31dbe01579e100dd0b96020c78358b263d86c30c96d",
+ *    blockNumber: 252783397,
+ *    paidAt: "2024-09-12T15:19:14.000Z",
+ *    escrowId: 3,
+ *    arbitrator: "0x59f56CFC88E5660b7D68C4797c6484168eC8E068",
  *    arbitratorFee: 2,
- *    buyer: "0xD0244c3B17792390010581D54951ba049dF85861",
- *    seller: "0xA98135151f8dCd5632A63CC6358f5684c62B041D",
+ *    buyer: "0xF257DD5731A679E6642FCd9c53e4e26A1206527e",
+ *    seller: "0xf463b32cad657fe03921014d99490A0a58290560",
  *    challengePeriod: 1209600,
  *    challengePeriodExtension: 604800,
- *    challengePeriodStart: "2023-01-27T16:32:33.000Z",
- *    challengePeriodEnd: "2023-02-10T16:32:33.000Z",
- *    marketplace: "0xf8C03F09b4f53FDc05b57c7846da5F428798f187",
- *    marketplaceFee: 5,
+ *    challengePeriodStart: "2024-09-12T15:19:14.000Z",
+ *    challengePeriodEnd: "2024-09-26T15:19:14.000Z",
+ *    marketplace: "0x696207De45d897d5a353af3c45314a2F852d5B63",
+ *    marketplaceFee: 10,
  *    tokenAddress: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+ *    paymentReference: "order #1337",
  *    claimed: false,
  *    consensusBuyer: 0,
  *    consensusSeller: 1,
  *    splitBuyer: 0,
  *    splitSeller: 100,
- *    splitMarketplace: 5,
+ *    splitMarketplace: 10,
  *    splitProtocol: 0.69,
- *    amount: "1000000000",
+ *    amount: "100000000",
  *    amountBuyer: "0",
- *    amountSeller: "923100000",
- *    amountMarketplace: "50000000",
- *    amountArbitrator: "20000000",
- *    amountProtocol: "690000",
- *    paymentReference: "escrow-123"
+ *    amountSeller: "87310000",
+ *    amountMarketplace: "10000000",
+ *    amountArbitrator: "2000000",
+ *    amountProtocol: "690000"
  * }
  * @param paymentProps - Payment details
  * @param callbacks - Pass code to any of these to be executed when the respective step takes place in the wallet
@@ -142,7 +146,7 @@ export const pay = async (
     arbitrator,
     arbitratorFee = ZERO_FEE_VALUE,
     challengePeriodExtension = 0,
-    paymentReference,
+    paymentReference = "",
   } = paymentProps;
 
   callbacks && callbacks.connectingWallet && callbacks.connectingWallet();
@@ -157,12 +161,15 @@ export const pay = async (
   const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
+  const buyer = paymentProps.buyer == null ? ADDRESS_ZERO : paymentProps.buyer;
+
   const providerSigner = await provider.getSigner();
 
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
   const marketplaceAddress = marketplace || ADDRESS_ZERO;
   const { addresses, token } = await validateParameters({
+    //TODO: consider validating the reference, e.g. limiting its length
     seller,
     arbitrator,
     arbitratorFee: paymentProps.arbitratorFee,
@@ -172,7 +179,7 @@ export const pay = async (
     challengePeriodExtension: paymentProps.challengePeriodExtension,
     tokenAddress,
     amount,
-    buyer: walletAddress,
+    buyer,
   });
   const _arbitrator = addresses.common.arbitrator || ADDRESS_ZERO;
 
@@ -203,6 +210,7 @@ export const pay = async (
   }
 
   const payInput: EscrowInputStruct = {
+    buyer: addresses.common.buyer,
     seller: addresses.common.seller,
     marketplace: addresses.common.marketplace,
     marketplaceFee: marketplaceFeeValue,
@@ -219,7 +227,6 @@ export const pay = async (
     const unicrowSc = Unicrow__factory.connect(unicrowAddress, providerSigner);
 
     let payTx: any;
-    // { value: solidityAmount } should be passed only in case of Ethers
     if (tokenAddress === ETH_ADDRESS) {
       payTx = await unicrowSc.pay(payInput, _arbitrator, arbitratorFeeValue, {
         value: solidityAmount,

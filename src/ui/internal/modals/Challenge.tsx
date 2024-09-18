@@ -182,6 +182,16 @@ export function ChallengeModal(props: IChallengeModalProps) {
             marker={MARKER.marketplace}
           />
           <ArbitrationDataDisplayer data={escrowData} />
+          {escrowData.paymentReference ? (
+            <DataDisplayer
+              label="Reference"
+              value={escrowData.paymentReference}
+              copy={escrowData.paymentReference}
+              marker={MARKER.paymentReference}
+            />
+          ) : (
+            <></>
+          )}
         </ContainerDataDisplayer>
       </>
     );

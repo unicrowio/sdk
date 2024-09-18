@@ -45,8 +45,8 @@ export const parseEscrowData = (
   const seller = item.seller;
 
   // Consensus
-  const consensusBuyer = item.consensus_buyer;
-  const consensusSeller = item.consensus_seller;
+  const consensusBuyer = Number(item.consensus_buyer);
+  const consensusSeller = Number(item.consensus_seller);
 
   const claimed = Boolean(item.claimed);
 

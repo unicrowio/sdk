@@ -12,7 +12,7 @@ import { parseRelease } from "./internal/parsers/eventRelease";
 /**
  * Release the escrow to the seller and to all other parties that charge a fee from it.
  *
- * @param escrowId - if of the escrow to release
+ * @param escrowId - ID of the escrow to release
  * @throws If account is not connected or if called in invalid state (e.g. already claimed / not called by the buyer)
  * @returns Payload with all info about the escrow, including how much was sent to whom (incl. fees)
  */

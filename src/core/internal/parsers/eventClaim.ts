@@ -13,7 +13,7 @@ export const parseClaim = (events: any[]): ClaimParsedPayload => {
   ] = payments;
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     escrowId: Number(escrow_id),

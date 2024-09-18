@@ -4,6 +4,7 @@ import {
   IPaymentModalProps,
   IPayTransactionCallbacks,
   IPayTransactionPayload,
+  IEnsAddresses,
 } from "../../../typing";
 import { pay } from "../../../core/pay";
 import {
@@ -18,15 +19,31 @@ import {
   displayChallengePeriod,
   addressWithYou,
   reduceAddress,
-  ADDRESS_ZERO,
+  validateParameters,
 } from "../../../helpers";
 import { ContainerDataDisplayer } from "ui/internal/components/DataDisplayer";
 import { toast } from "../notification/toast";
-import { getCurrentWalletAddress } from "../../../wallet";
+import { isWeb3WalletConnected } from "../../../wallet";
 import { MARKER } from "../../../config/marker";
 import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useTokenInfo } from "ui/internal/hooks/useTokenInfo";
-import { useAsync } from "ui/internal/hooks/useAsync";
+import { useWallet } from "../hooks/useWallet";
+import { useNetworkCheck } from "../hooks/useNetworkCheck";
+
+//TODO: move this somewhere to utils
+function formatAmount(amount: string, maxDecimals: number): string {
+  const num = parseFloat(amount);
+  if (Number.isInteger(num)) {
+    // No decimals if the number is an integer
+    return num.toString();
+  } else {
+    // Determine the actual number of decimal places
+    const actualDecimals = (amount.split(".")[1] || "").length;
+    // Use the smaller of actualDecimals and maxDecimals
+    const decimalPlaces = Math.min(actualDecimals, maxDecimals);
+    return num.toFixed(decimalPlaces);
+  }
+}
 
 export function PayModal(props: IPaymentModalProps) {
   const {
@@ -39,12 +56,8 @@ export function PayModal(props: IPaymentModalProps) {
     onModalClose,
   } = useModalStates({ deferredPromise: props.deferredPromise });
 
-  const [walletUser, isLoadingWallet, errorWallet] = useAsync(
-    {},
-    getCurrentWalletAddress,
-    onModalClose,
-    null,
-  );
+  const { isCorrectNetwork } = useNetworkCheck();
+  const { walletUser, isLoadingWallet, isErrorWallet } = useWallet();
 
   const {
     data: tokenInfo,
@@ -62,8 +75,31 @@ export function PayModal(props: IPaymentModalProps) {
   const [buyer, setBuyer] = React.useState<string | null>();
   const [callbackCountdown, setCallbackCountdown] = React.useState<number>(10);
   const [startCountdown, setStartCountdown] = React.useState<boolean>(false);
-  const isLoadingAnything = isLoadingToken || isLoadingWallet || isLoading;
-  const error = errorWallet || errorToken;
+  const [ensAddresses, setEnsAddresses] = React.useState<IEnsAddresses>(null);
+  const isLoadingAnything =
+    isCorrectNetwork && (isLoadingToken || isLoadingWallet || isLoading);
+  const error = isErrorWallet || errorToken;
+
+  React.useEffect(() => {
+    const validate = async () => {
+      if (!isErrorWallet && isWeb3WalletConnected) {
+        const { addresses } = await validateParameters({
+          ...props.paymentProps,
+          buyer: props.paymentProps.buyer
+            ? props.paymentProps.buyer
+            : walletUser || "",
+        });
+
+        Object.entries(addresses.common).forEach(([key, value]) => {
+          props.paymentProps[key] = value;
+        });
+
+        setEnsAddresses(addresses.ens);
+      }
+    };
+
+    validate();
+  }, [walletUser, isLoadingWallet, isErrorWallet]);
 
   React.useEffect(() => {
     let interval;
@@ -140,7 +176,7 @@ export function PayModal(props: IPaymentModalProps) {
     return (
       <>
         <Amount
-          amount={props.paymentProps.amount.toString()}
+          amount={formatAmount(props.paymentProps.amount.toString(), 4)}
           precision={tokenInfo?.decimals}
           tokenAddress={props.paymentProps.tokenAddress}
           tokenSymbol={tokenInfo?.symbol}
@@ -153,16 +189,20 @@ export function PayModal(props: IPaymentModalProps) {
             value={addressWithYou(
               props.paymentProps.seller,
               walletUser,
-              props.paymentProps.ensAddresses?.seller,
+              ensAddresses?.seller,
             )}
             copy={props.paymentProps.seller}
             marker={MARKER.seller}
           />
-          {buyer && (
+          {props.paymentProps.buyer && (
             <DataDisplayer
               label="Buyer"
-              value={addressWithYou(buyer, walletUser)}
-              copy={buyer}
+              value={addressWithYou(
+                props.paymentProps.buyer,
+                walletUser,
+                ensAddresses?.buyer,
+              )}
+              copy={props.paymentProps.buyer}
               marker={MARKER.buyer}
             />
           )}
@@ -190,7 +230,7 @@ export function PayModal(props: IPaymentModalProps) {
                 label="Arbitrator"
                 value={reduceAddress(
                   props.paymentProps.arbitrator,
-                  props.paymentProps.ensAddresses?.arbitrator,
+                  ensAddresses?.arbitrator,
                 )}
                 copy={props.paymentProps.arbitrator}
                 marker={MARKER.arbitrator}
@@ -239,9 +279,10 @@ export function PayModal(props: IPaymentModalProps) {
     }
 
     if (!(error || success)) {
-      buttonChildren = `Pay ${props.paymentProps.amount} ${
-        tokenInfo ? tokenInfo.symbol : "ETH"
-      }`;
+      buttonChildren = `Pay ${formatAmount(
+        props.paymentProps.amount.toString(),
+        4,
+      )} ${tokenInfo ? tokenInfo.symbol : "ETH"}`;
       buttonOnClick = onPayClick;
     } else if (success) {
       buttonChildren = "Close";

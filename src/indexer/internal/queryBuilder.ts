@@ -66,17 +66,18 @@ const buildQuery = ({
   if (pagination) {
     const offset = (pagination.page - 1) * pagination.limit;
     sentences.push(`limit: ${pagination.limit}, offset: ${offset}`);
-    const allOrWhere = whereSentence ? `(${whereSentence})` : " ";
-    aggregate = `
-        escrow_status_aggregate${allOrWhere}{
-            aggregate {
-              totalCount: count
-            }
-          }
-    `;
   } else {
     sentences.push("limit: 20, offset: 0");
   }
+
+  const allOrWhere = whereSentence ? `(${whereSentence})` : " ";
+  aggregate = `
+  escrow_status_aggregate${allOrWhere}{
+      aggregate {
+        totalCount: count
+      }
+    }
+`;
 
   // TODO: Make me customizable
   sentences.push("order_by: { paid_at: desc } ");

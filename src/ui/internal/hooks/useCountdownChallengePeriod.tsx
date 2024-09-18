@@ -74,7 +74,7 @@ export const useCountdownChallengePeriod = (escrowData) => {
   };
 
   const stopCountdown = () => {
-    setCountdown("expired");
+    setCountdown("Ended");
     setCanChallenge(false);
     clearInterval(timer.current);
   };
