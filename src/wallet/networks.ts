@@ -15,8 +15,8 @@ export interface UnicrowNetwork {
 export const networks: { [name: string]: UnicrowNetwork } = {
   arbitrum: {
     chainId: CHAIN_ID.arbitrumOne,
-    chainName: "Arbitrum One",
-    displayName: "Arbitrum",
+    chainName: "arbitrum",
+    displayName: "Arbitrum One",
     nativeCurrency: {
       name: "Arbitrum Ether",
       symbol: "ETH",
@@ -26,7 +26,7 @@ export const networks: { [name: string]: UnicrowNetwork } = {
   },
   mainnet: {
     chainId: CHAIN_ID.mainnet,
-    chainName: "Ethereum",
+    chainName: "mainnet",
     displayName: "Ethereum Mainnet",
     nativeCurrency: {
       name: "Ethereum",
@@ -37,7 +37,7 @@ export const networks: { [name: string]: UnicrowNetwork } = {
   },
   arbitrumSepolia: {
     chainId: CHAIN_ID.arbitrumSepolia,
-    chainName: "Arbitrum Sepolia Testnet",
+    chainName: "arbitrumSepolia",
     displayName: "Arbitrum Sepolia Testnet",
     nativeCurrency: {
       name: "Arbitrum Sepolia Ether",
@@ -46,32 +46,10 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     },
     blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
   },
-  sepolia: {
-    chainId: CHAIN_ID.sepolia,
-    chainName: "Ethereum Sepolia Testnet",
-    displayName: "Ehereum Sepolia Testnet",
-    nativeCurrency: {
-      name: "Sepolia Ether",
-      symbol: "ETH",
-      decimals: 18,
-    },
-    blockExplorerUrls: ["https://sepolia.etherscan.io/"],
-  },
-  goerli: {
-    chainId: CHAIN_ID.goerli,
-    chainName: "Goerli",
-    displayName: "Ethereum Goerli Testnet",
-    nativeCurrency: {
-      name: "Görli Ether",
-      symbol: "ETH",
-      decimals: 18,
-    },
-    blockExplorerUrls: ["https://goerli.etherscan.io"],
-  },
   development: {
     chainId: CHAIN_ID.development,
-    chainName: "Unicrow Testnet",
-    displayName: "Unicrow Testnet",
+    chainName: "development",
+    displayName: "Development (hardhat)",
     nativeCurrency: {
       name: "ETH",
       symbol: "ETH",

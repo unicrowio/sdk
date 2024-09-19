@@ -34,13 +34,13 @@ npm install @unicrowio/sdk
 ### Import
 
 ```js
-import unicrowSdk from "@unicrowio/sdk";
+import Unicrow from "@unicrowio/sdk";
 ```
 
 ### Pay
 
 ```js
-await result = unicrowSdk.ui.pay({
+await result = Unicrow.ui.pay({
   amount: <amount_in_ETH_or_token>,    // use whole units, not weis
   seller: “<address_or_ens>”,          // whom is the payment for*
   challengePeriod: <seconds>,          // how long can the buyer challenge*
@@ -59,30 +59,29 @@ const escrowId = result.escrowId
 ### Get escrow data
 
 ```js
-await escrowData = unicrowSdk.core.getEscrowData(escrowId)
+await escrowData = Unicrow.core.getEscrowData(escrowId)
 ```
 
 ### Release by the buyer
 
 ```js
-unicrowSdk.ui.release(escrowId)
+Unicrow.ui.release(escrowId)
 ```
 
 ### Claim by the seller (after the challenge period ended)
 
 ```js
-unicrowSdk.ui.claim(escrowId)
+Unicrow.ui.claim(escrowId)
 ```
 
 ### Change network
 
-The SDK is by default configured to interact with the Arbitrum One network and asks the user to switch to it automatically when any contract-interacting functions are called. We currently support also Ethereum Goerli* and Unicrow’s private RPC. The automated switch can also be turned off (in such a case, an error is thrown).
+The SDK is by default configured to interact with the Arbitrum One network and to ask the user to switch to it when any contract-interacting function is called. We support also the Arbitrum Sepolia Testnet. The automated switch can also be turned off (in such case, an error is thrown).
 
-\*We chose to deploy on Ethereum Goerli instead of Arbitrum Goerli because of larger support for "stablecoins", DEXes, etc.
 
 ```js
-unicrowSdk.config({
-  defaultNetwork: “<arbitrum|goerli|development>”,
+Unicrow.config({
+  defaultNetwork: “<arbitrum|arbitrumSepolia|development>”,
   autoSwitchNetwork: <true|false> // optional, defaults to true
 })
 ```

@@ -1,7 +1,8 @@
 import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
-interface IEnsAddresses {
+export interface IEnsAddresses {
+  buyer?: string;
   seller?: string;
   arbitrator?: string;
   marketplace?: string;
@@ -21,14 +22,16 @@ export interface IToken {
  * Payment data input
  */
 export interface IPaymentProps {
-  /** Amount in token */
-  amount: string | number | bigint;
   /** Whom is the payment for */
   seller: string;
-  /** Initial challenge period (in seconds) */
-  challengePeriod: number;
+  /** Amount in token */
+  amount: string | number | bigint;
   /** Address of the token used in the payment (skip or set to null for ETH) */
   tokenAddress?: string;
+  /** Initial challenge period (in seconds) */
+  challengePeriod: number;
+  /** By how much will the challenge period get extended after a challenge (in seconds) */
+  challengePeriodExtension?: number;
   /** address of a marketplace that has facilitated the payment */
   marketplace?: string;
   /** Marketplace fee in % (can be 0 even if a marketplace was set but doesn't charge fee)  */
@@ -37,10 +40,10 @@ export interface IPaymentProps {
   arbitrator?: string | null;
   /** Arbitrator's fee in %. Can be 0 */
   arbitratorFee?: number;
-  /** By how much will the challenge period get extended after a challenge (in seconds) */
-  challengePeriodExtension?: number;
-  /** A reference for the payment */
-  paymentReference?: string | null;
+  /** A reference used to identify the payment or provide information for arbitration */
+  paymentReference?: string;
+  /** Who's the buyer, i.e. who can release the payment or whom should a refund be sent to. Leave empty to assign the user's wallet */
+  buyer?: string;
   /** (UI only) A url to redirect to, when the payment is canceled */
   cancelUrl?: string;
   /** (UI only) A url to redirect to, when the payment is done */
@@ -59,7 +62,7 @@ export enum EscrowStatus {
   UNPAID = "Unpaid",
   PAID = "Paid",
   RELEASED = "Released",
-  PERIOD_EXPIRED = "Period Expired",
+  PERIOD_EXPIRED = "Challenge Period Ended",
   REFUNDED = "Refunded",
   CHALLENGED = "Challenged",
   SETTLED = "Settled",
@@ -123,6 +126,7 @@ export interface IEscrowStatus {
  *       arbitratorFee: 0
  *    },
  *    settlement: null,
+ *    paymentReference: "custom payment reference",
  *    token: {
  *       address: "0x7eD124F79447a1390281c88bB9bca2AC4F009BBE"
  *    }
@@ -147,6 +151,9 @@ export interface IEscrowData {
   seller: string;
   /** Information about the payment token  */
   token: IToken;
+
+  /** Payment reference, e.g. order ID or information for an arbitrator */
+  paymentReference: string;
 
   /** How much a challenge period will extend by if challenged */
   challengePeriod: number;
@@ -254,7 +261,9 @@ export interface ApproveSettlementParsedPayload extends GenericParsedTxPayload {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -304,7 +313,9 @@ export interface ArbitrateParsedPayload extends GenericParsedTxPayload {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -354,7 +365,9 @@ export interface ChallengeParsedPayload extends GenericParsedTxPayload {
   /** Fee for the marketplace (can be 0 even if a marketplace was set but doesn't charge fee)  */
   marketplaceFee: number;
   /** Token used in the payment (null for ETH) */
-  currency: string | null;
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** True if the payment was already withdrawn from the escrow */
   claimed: boolean;
   /** Buyer's agreement on the arbitrator */
@@ -458,7 +471,7 @@ export interface PayParsedPayload extends GenericParsedTxPayload {
   amountArbitrator: string;
   /** Current protocol feee (in ETH or token) based on the latest status of the escrow */
   amountProtocol: string;
-  /** A reference for the payment */
+  /** A text reference that was attached to the payment */
   paymentReference?: string | null;
 }
 
@@ -483,67 +496,48 @@ export interface ProposalArbitratorParsedPayload
 export interface ReleaseParsedPayload extends GenericParsedTxPayload {
   /** Date/time when the escrow was released */
   releasedAt: Date;
-
   /** Escrow buyer (who paid and released the escrow) */
   buyer: string;
-
   /** Seller (to whom the payment was paid and released) */
   seller: string;
-
   /** What was the challenge period extension */
   challengePeriodExtension: number;
-
   /** When did the last challenge period start */
   challengePeriodStart: Date;
-
   /** When did the last challenge period end */
   challengePeriodEnd: Date;
-
   /** Marketplace address */
   marketplace: string;
-
   /** Marketplace fee (in %) */
   marketplaceFee: number;
-
-  /** Payment token address (null for ETH) */
-  currency: string;
-
+  /** Token used in the payment (null for ETH) */
+  tokenAddress?: string;
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
   /** If the payment was claimed (always true in this case since release automatically claims) */
   claimed: boolean;
-
   /** Buyer's consensus about the escrow (always positive in this case since the buyer just released) */
   consensusBuyer: number;
-
   /** Seller's consensus */
   consensusSeller: number;
-
   /** Buyer's split (0 in this case) */
   splitBuyer: number;
-
   /** Seller's split (100 in this case) */
   splitSeller: number;
-
   /** Marketplace fee (in %) */
   splitMarketplace: number;
-
   /** Protocol fee (in %) */
   splitProtocol: number;
-
   /** Total escrow amount in ETH's or token's WEI */
   amount: string;
-
   /** Amount that was sent to the buyer (0 in this case) */
   amountBuyer: string;
-
   /** Amount that was sent to the buyer (total amount - fees in this case) */
   amountSeller: string;
-
   /** Amount sent to the marketplace in ETH's or token's WEI */
   amountMarketplace: string;
-
   /** Amount sent to the protocol in ETH's or token's WEI */
   amountProtocol: string;
-
   /** Amount sent to the arbitrator in ETH's or token's WEI */
   amountArbitrator: string;
 }
@@ -619,8 +613,11 @@ export interface IPayTransactionPayload {
   /** Marketplace fee (%, can be 0 even if a marketplace was defined) */
   marketplaceFee?: number;
 
-  /** Address of the escrowed token (null for ETH) */
+  /** Token used in the payment (null for ETH) */
   tokenAddress?: string;
+
+  /** A text reference that was attached to the payment */
+  paymentReference?: string;
 
   /** If the payment was claimed (always false here) */
   claimed?: boolean;
@@ -841,7 +838,7 @@ export interface IClaimTransactionCallbacks
 }
 
 export interface IPaymentModalProps {
-  paymentProps: IPaymentPropsData;
+  paymentProps: IPaymentProps;
   deferredPromise: Deferred<any>;
   callbacks?: IPayTransactionCallbacks;
 }
@@ -1340,7 +1337,11 @@ export interface tSplits {
 
 export type CalculateFunction = CalculateAmountsInput;
 
-export type DefaultNetwork = "arbitrum" | "goerli" | "development";
+export enum DefaultNetwork {
+  Arbitrum = "arbitrum",
+  ArbitrumSepolia = "arbitrumSepolia",
+  Development = "development",
+}
 
 export type Network = {
   rpcUrl: string;

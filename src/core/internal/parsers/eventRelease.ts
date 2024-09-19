@@ -27,6 +27,7 @@ export const parseRelease = (events: any[]): ReleaseParsedPayload => {
     consensus,
     splits,
     amount,
+    paymentReference,
   ] = escrow;
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
@@ -36,9 +37,10 @@ export const parseRelease = (events: any[]): ReleaseParsedPayload => {
 
   const marketplace: string | null = nullOrValue(_marketplace);
   const marketplaceFee = bipsToPercentage([_marketplaceFee.toString()])[0];
+  const tokenAddress: string | null = nullOrValue(currency);
 
   return {
-    name: _event.event,
+    name: _event.fragment.name,
     transactionHash: _event.transactionHash,
     blockNumber: _event.blockNumber,
     releasedAt: toDate(released_at),
@@ -50,10 +52,11 @@ export const parseRelease = (events: any[]): ReleaseParsedPayload => {
     challengePeriodEnd: toDate(challengePeriodEnd),
     marketplace,
     marketplaceFee,
-    currency: currency.toString(),
+    tokenAddress,
+    paymentReference,
     claimed: !!claimed,
-    consensusBuyer,
-    consensusSeller,
+    consensusBuyer: Number(consensusBuyer),
+    consensusSeller: Number(consensusSeller),
     splitBuyer,
     splitSeller,
     splitMarketplace,
