@@ -44,13 +44,13 @@ await result = Unicrow.ui.pay({
   amount: <amount_in_ETH_or_token>,    // use whole units, not weis
   seller: “<address_or_ens>”,          // whom is the payment for*
   challengePeriod: <seconds>,          // how long can the buyer challenge*
-  challengePeriodExtension: <seconds>, // by how much the challenge period will be extended after a challenge
+  challengePeriodExtension: <seconds>, // by how much the CP will be extended after a challenge
   tokenAddress: “<address>”,           // address of the payment token (null for ETH)
   marketplace: “<address_or_ens>”,     // a marketplace that processes the payment
   marketplaceFee: “<%>”,               // a fee that the marketplace charges
   arbitrator: “<address_or_ens>”,      // a 3rd party arbitrator
   arbitratorFee: “<%>”,                // a fee that the arbitrator charges
-  paymentReference: "<string_or_null>" // a reference for the payment
+  paymentReference: "<text_reference>" // a text to help identify the payment (e.g. order ID)
 })                                     // * - required parameters
 
 const escrowId = result.escrowId
@@ -74,14 +74,14 @@ Unicrow.ui.release(escrowId)
 Unicrow.ui.claim(escrowId)
 ```
 
-### Change network
+### Change the network
 
 The SDK is by default configured to interact with the Arbitrum One network and to ask the user to switch to it when any contract-interacting function is called. We support also the Arbitrum Sepolia Testnet. The automated switch can also be turned off (in such case, an error is thrown).
 
 
 ```js
 Unicrow.config({
-  defaultNetwork: “<arbitrum|arbitrumSepolia|development>”,
+  defaultNetwork: “<arbitrum|arbitrumSepolia>”,
   autoSwitchNetwork: <true|false> // optional, defaults to true
 })
 ```
