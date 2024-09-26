@@ -1,3 +1,5 @@
+import { ADDRESS_ZERO } from "./constants";
+
 export const STABLE_COINS = ["DAI", "USDC", "USDT"];
 
 export interface IResult {
@@ -26,41 +28,35 @@ const getCoinGeckoPrices = async (
 ): Promise<IResult | void> => {
   const response = {} as IResult;
 
-  // if ETH address was requested, get it first
-  if (tokensAddresses.indexOf(null) >= 0) {
-    const coinGeckoEthResp = await fetch(`${API_COINGECKO}ethereum`);
+  for (const tokensAddress of tokensAddresses) {
+  
+    if (tokensAddress == null || tokensAddress == ADDRESS_ZERO) {
+      const coinGeckoEthResp = await fetch(`${API_COINGECKO}ethereum`);
 
-    if (!coinGeckoEthResp.ok) {
-      throw new Error("Error while getting eth exchange values");
-    }
+      if (!coinGeckoEthResp.ok) {
+        throw new Error("Error while getting eth exchange values");
+      }
 
-    const coinGeckoEthRespJson =
-      (await coinGeckoEthResp.json()) as IGeckoRespObj;
+      const coinGeckoEthRespJson =
+        (await coinGeckoEthResp.json()) as IGeckoRespObj;
 
-    response["0x0000000000000000000000000000000000000000"] =
-      coinGeckoEthRespJson.ethereum?.usd;
+      response[ADDRESS_ZERO] =
+        coinGeckoEthRespJson.ethereum?.usd;
 
-    if (tokensAddresses.length === 1) {
-      return response;
-    }
-  }
+    } else {
+      const coinGeckoResp = await fetch(
+        `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddress}&vs_currencies=USD`,
+      );
 
-  if (network == "ethereum") {
-    // get a price of any tokens requested
-    const coinGeckoResp = await fetch(
-      `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddresses.join(
-        ",",
-      )}&vs_currencies=USD`,
-    );
+      if (!coinGeckoResp.ok) {
+        throw new Error("Error while getting tokens exchange values");
+      }
 
-    if (!coinGeckoResp.ok) {
-      throw new Error("Error while getting tokens exchange values");
-    }
+      const coinGeckoRespJson = (await coinGeckoResp.json()) as IGeckoRespObj;
 
-    const coinGeckoRespJson = (await coinGeckoResp.json()) as IGeckoRespObj;
-
-    for (const address in coinGeckoRespJson) {
-      response[address] = coinGeckoRespJson[address]?.usd;
+      for (const address in coinGeckoRespJson) {
+        response[address] = coinGeckoRespJson[address]?.usd;
+      }
     }
   }
   return response;

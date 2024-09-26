@@ -79,7 +79,7 @@ const TableRow = (
 
   React.useEffect(() => {
     if (exchangeValues) {
-      const exchangeValue = exchangeValues[balance.token.address];
+      const exchangeValue = exchangeValues[balance.token.address.toLowerCase()];
       setIsLoading(false);
 
       if (exchangeValue) {
