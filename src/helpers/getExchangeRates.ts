@@ -29,7 +29,6 @@ const getCoinGeckoPrices = async (
   const response = {} as IResult;
 
   for (const tokensAddress of tokensAddresses) {
-  
     if (tokensAddress == null || tokensAddress == ADDRESS_ZERO) {
       const coinGeckoEthResp = await fetch(`${API_COINGECKO}ethereum`);
 
@@ -40,9 +39,7 @@ const getCoinGeckoPrices = async (
       const coinGeckoEthRespJson =
         (await coinGeckoEthResp.json()) as IGeckoRespObj;
 
-      response[ADDRESS_ZERO] =
-        coinGeckoEthRespJson.ethereum?.usd;
-
+      response[ADDRESS_ZERO] = coinGeckoEthRespJson.ethereum?.usd;
     } else {
       const coinGeckoResp = await fetch(
         `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddress}&vs_currencies=USD`,
