@@ -24,17 +24,6 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     },
     blockExplorerUrls: ["https://arbiscan.io/"],
   },
-  mainnet: {
-    chainId: CHAIN_ID.mainnet,
-    chainName: "mainnet",
-    displayName: "Ethereum Mainnet",
-    nativeCurrency: {
-      name: "Ethereum",
-      symbol: "ETH",
-      decimals: 18,
-    },
-    blockExplorerUrls: ["https://etherscan.io/"],
-  },
   arbitrumSepolia: {
     chainId: CHAIN_ID.arbitrumSepolia,
     chainName: "arbitrumSepolia",
@@ -46,14 +35,15 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     },
     blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
   },
-  development: {
-    chainId: CHAIN_ID.development,
-    chainName: "development",
-    displayName: "Development (hardhat)",
+  base: {
+    chainId: CHAIN_ID.base,
+    chainName: "base",
+    displayName: "Base Mainnet",
     nativeCurrency: {
-      name: "ETH",
+      name: "Base",
       symbol: "ETH",
       decimals: 18,
     },
+    blockExplorerUrls: ["https://basescan.org/"],
   },
 };

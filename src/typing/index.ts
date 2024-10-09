@@ -1340,7 +1340,6 @@ export type CalculateFunction = CalculateAmountsInput;
 export enum DefaultNetwork {
   Arbitrum = "arbitrum",
   ArbitrumSepolia = "arbitrumSepolia",
-  Development = "development",
 }
 
 export type Network = {
@@ -1352,8 +1351,11 @@ export type Networks = {
 };
 
 export interface IConfig {
+  /** Allows to define custom lits of networks (requires deployment of the contracts to these networks) */
   networks?: Networks;
+  /** Which network should the SDK try to switch to when performing any action (currently supported: `arbitrum` and `arbitrumSepolia`) */
   defaultNetwork?: DefaultNetwork;
+  /** Should the SDK automaticall ask user to switch to the default network every time a core.* function is called? */
   autoSwitchNetwork?: boolean;
 }
 
