@@ -24,7 +24,7 @@ const contracts = {
     dispute: "0x383AB2D5347050106EEBBB04d216506E7b24044A",
     arbitrator: "0x8AE4BF26B94A955b154FC66eAe8607E1c932dBaB",
     claim: "0xE8A24A574D36818d88736DdE5Ed36360d1ec4a64",
-  }
+  },
 };
 
 type tGetAddress = "unicrow" | "dispute" | "arbitrator" | "claim";

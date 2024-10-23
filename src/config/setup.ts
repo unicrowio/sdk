@@ -3,7 +3,7 @@ import { networks as DefaultNetworks } from "../wallet/networks";
 
 /**
  * Allows to switch between all the supported networks.
- * 
+ *
  * @param param0 Network configuration
  */
 export const setupNetwork = ({

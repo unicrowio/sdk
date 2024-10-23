@@ -66,5 +66,5 @@ export const networks: { [name: string]: UnicrowNetwork } = {
       symbol: "ETH",
       decimals: 18,
     },
-  }
+  },
 };
