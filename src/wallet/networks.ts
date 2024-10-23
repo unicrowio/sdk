@@ -18,7 +18,7 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     chainName: "arbitrum",
     displayName: "Arbitrum One",
     nativeCurrency: {
-      name: "Arbitrum Ether",
+      name: "Ether",
       symbol: "ETH",
       decimals: 18,
     },
@@ -29,7 +29,7 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     chainName: "arbitrumSepolia",
     displayName: "Arbitrum Sepolia Testnet",
     nativeCurrency: {
-      name: "Arbitrum Sepolia Ether",
+      name: "Ether",
       symbol: "ETH",
       decimals: 18,
     },
@@ -40,10 +40,31 @@ export const networks: { [name: string]: UnicrowNetwork } = {
     chainName: "base",
     displayName: "Base Mainnet",
     nativeCurrency: {
-      name: "Base",
+      name: "Ether",
       symbol: "ETH",
       decimals: 18,
     },
     blockExplorerUrls: ["https://basescan.org/"],
   },
+  baseSepolia: {
+    chainId: CHAIN_ID.baseSepolia,
+    chainName: "baseSepolia",
+    displayName: "Base Sepolia",
+    nativeCurrency: {
+      name: "Ether",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    blockExplorerUrls: ["https://sepolia-explorer.base.org"],
+  },
+  development: {
+    chainId: CHAIN_ID.development,
+    chainName: "development",
+    displayName: "Development (hardhat)",
+    nativeCurrency: {
+      name: "ETH",
+      symbol: "ETH",
+      decimals: 18,
+    },
+  }
 };

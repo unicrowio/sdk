@@ -19,6 +19,12 @@ const contracts = {
     arbitrator: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
     claim: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
   },
+  baseSepolia: {
+    unicrow: "0x4d0eEFAB00f5Dc902563F91072e21Ea8eaaE32B8",
+    dispute: "0x383AB2D5347050106EEBBB04d216506E7b24044A",
+    arbitrator: "0x8AE4BF26B94A955b154FC66eAe8607E1c932dBaB",
+    claim: "0xE8A24A574D36818d88736DdE5Ed36360d1ec4a64",
+  }
 };
 
 type tGetAddress = "unicrow" | "dispute" | "arbitrator" | "claim";

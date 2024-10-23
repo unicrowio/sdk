@@ -32,8 +32,9 @@ export const SELLER = "seller";
 
 export const CHAIN_ID = {
   arbitrumOne: BigInt(42161),
-  base: BigInt(8453),
   arbitrumSepolia: BigInt(421614),
+  base: BigInt(8453),
+  baseSepolia: BigInt(84532),
   development: BigInt(31337),
 };
 
