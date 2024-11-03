@@ -1,6 +1,6 @@
+import { ethers } from "ethers";
 import { getContractAddress } from "../config";
 import {
-  ADDRESS_ZERO,
   consensus,
   nullOrValue,
   bipsToPercentage,
@@ -26,6 +26,8 @@ import {
   DataStructOutput,
   SettlementStructOutput,
   TokenStruct,
+  ArbitratorStructOutput,
+  EscrowStructOutput,
 } from "@unicrowio/ethers-types/src/contracts/Unicrow";
 
 const getConnectedUser = async ({
@@ -51,8 +53,10 @@ const getConnectedUser = async ({
   return { connectedUser, walletAddress };
 };
 
-const parseArbitration = (data): IArbitratorInfo | null => {
-  if (data === null || data.arbitrator === ADDRESS_ZERO) return null;
+const parseArbitration = (
+  data: ArbitratorStructOutput,
+): IArbitratorInfo | null => {
+  if (data === null || data.arbitrator === ethers.ZeroAddress) return null;
   return {
     arbitrator: data.arbitrator,
     consensusSeller: data.sellerConsensus,
@@ -64,7 +68,7 @@ const parseArbitration = (data): IArbitratorInfo | null => {
 
 const parseEscrow = (
   escrowId: number,
-  data,
+  data: EscrowStructOutput,
   latestSettlementOfferAddress?: string,
 ): IEscrowData => {
   const [
@@ -138,7 +142,7 @@ const parseEscrow = (
 };
 
 const parseSettlement = (data: SettlementStructOutput): ISettlement | null => {
-  if (data.latestSettlementOfferBy === ADDRESS_ZERO) return null;
+  if (data.latestSettlementOfferBy === ethers.ZeroAddress) return null;
 
   const [latestSettlementOfferBuyer, latestSettlementOfferSeller] =
     bipsToPercentage(data.latestSettlementOffer);
@@ -152,7 +156,7 @@ const parseSettlement = (data: SettlementStructOutput): ISettlement | null => {
 
 const parseToken = (data: TokenStruct): IToken | null => {
   // is ETH
-  if (data.address_ === ADDRESS_ZERO)
+  if (data.address_ === ethers.ZeroAddress)
     return {
       address: null,
       decimals: 18,
@@ -289,7 +293,7 @@ export const getEscrowData = async (
     escrowId,
   );
 
-  if (allEscrowData.escrow.buyer === ADDRESS_ZERO) {
+  if (allEscrowData.escrow.buyer === ethers.ZeroAddress) {
     throw new Error(`EscrowId: ${escrowId} doesn't exist`);
   }
 

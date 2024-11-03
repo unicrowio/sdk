@@ -24,7 +24,7 @@ export const claimMultiple = async (
 ) => {
   const deferredPromise = new Deferred<string>();
 
-  let chainId = Number((await getNetwork())?.chainId);
+  const chainId = Number((await getNetwork())?.chainId);
 
   const claimMultipleModalProps: IClaimMultipleModalProps = {
     chainId,

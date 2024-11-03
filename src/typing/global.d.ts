@@ -1,18 +1,11 @@
+import { UnicrowConfig } from "typing";
+
 declare global {
   interface Window {
     ethereum: any;
   }
-}
-
-interface Network {
-  name: DefaultNetwork;
-  chainId: number;
-  rpcUrl: string;
-}
-
-declare module globalThis {
-  var defaultNetwork: Network = {};
-  var autoSwitchNetwork: boolean;
+  // rome-ignore lint/style/noVar: The use of var here is intended (global variable)
+  var unicrow: UnicrowConfig;
 }
 
 /* If your module exports nothing, you'll need this line. Otherwise, delete it */

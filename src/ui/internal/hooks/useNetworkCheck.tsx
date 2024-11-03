@@ -8,8 +8,6 @@ import {
   switchNetwork,
 } from "wallet";
 import { ModalError } from "ui/internal/components/ModalError";
-import { DefaultNetwork } from "typing";
-import { metamaskUrl } from "../../../helpers/constants";
 
 export const useNetworkCheck = () => {
   const metamaskInstalled = isWeb3WalletInstalled();
@@ -28,7 +26,9 @@ export const useNetworkCheck = () => {
 
     // check when network changes
     startListeningNetwork((network) => {
-      setIsCorrectNetwork(network === globalThis.defaultNetwork.chainId);
+      setIsCorrectNetwork(
+        network === globalThis?.unicrow?.currentNetwork?.chainId,
+      );
     });
 
     return () => {
@@ -40,7 +40,7 @@ export const useNetworkCheck = () => {
   const onNetworkSwitch = React.useCallback(async () => {
     setIsCorrectNetwork(await isCorrectNetworkConnected());
     if (!isCorrectNetwork) {
-      await switchNetwork(globalThis.defaultNetwork.name as DefaultNetwork);
+      await switchNetwork(globalThis?.unicrow?.currentNetwork?.chainName);
     }
   }, [isCorrectNetwork]);
 
@@ -49,7 +49,7 @@ export const useNetworkCheck = () => {
       <>
         {!metamaskInstalled && (
           <ModalError
-            onClick={() => window.open(metamaskUrl)}
+            onClick={() => window.open("https://metamask.io/download/")}
             type="noMetaMask"
           />
         )}

@@ -33,7 +33,7 @@ const formatDate = (diff: IDiff): string => {
 
 export const displayChallengePeriod = (
   challengePeriod: number,
-  useLongFormat?,
+  useLongFormat?: boolean,
 ): string => {
   if (challengePeriod <= 0) {
     return "-";

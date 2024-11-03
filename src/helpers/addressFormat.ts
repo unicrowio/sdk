@@ -1,8 +1,8 @@
-import { ADDRESS_ZERO } from "./constants";
+import ethers from "ethers";
 import { isSameAddress } from "./isSameAddress";
 
 export const reduceAddress = (address: string, ensAddress?: string) => {
-  if (address === ADDRESS_ZERO || !address) return "-";
+  if (address === ethers.ZeroAddress || !address) return "-";
 
   const shortAddress = address.replace(
     address.substring(6, address.length - 4),

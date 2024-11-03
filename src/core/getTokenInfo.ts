@@ -1,5 +1,6 @@
+import { ethers } from "ethers";
 import { ERC20__factory } from "@unicrowio/ethers-types";
-import { ETH_ADDRESS, isSameAddress } from "../helpers";
+import { isSameAddress } from "../helpers";
 import { IToken } from "../typing";
 import { getBrowserProvider } from "./internal/getBrowserProvider";
 
@@ -25,9 +26,9 @@ const fetchTokenInfo = async (tokenAddress: string) => {
  * @returns Token address, symbol, and no. of its decimals
  */
 export const getTokenInfo = async (
-  tokenAddress = ETH_ADDRESS,
+  tokenAddress = ethers.ZeroAddress,
 ): Promise<IToken> => {
-  if (isSameAddress(tokenAddress, ETH_ADDRESS)) {
+  if (isSameAddress(tokenAddress, ethers.ZeroAddress)) {
     return {
       address: tokenAddress,
       symbol: "ETH",

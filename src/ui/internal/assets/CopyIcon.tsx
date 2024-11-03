@@ -8,6 +8,7 @@ export const CopyIcon = (props: SVGProps<SVGSVGElement>) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
+    <title>CopyIcon</title>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

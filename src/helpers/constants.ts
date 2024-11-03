@@ -1,16 +1,8 @@
-import { ethers } from "ethers";
-
-export const ADDRESS_ZERO = ethers.ZeroAddress;
-export const MAX_UINT256 = ethers.MaxUint256;
-export const ONE_DAY_IN_SEC = 86400;
-
 export const ZERO_FEE_VALUE = 0;
 
-export const ETH_ADDRESS = ADDRESS_ZERO;
-
 export enum consensus {
-  BUYER,
-  SELLER,
+  BUYER = 0,
+  SELLER = 1,
 }
 
 // TODO: It was copied from contract but should be accessed directly to prevent errors
@@ -20,22 +12,12 @@ export const WHO_SELLER = 2;
 export const WHO_MARKETPLACE = 3;
 
 export enum split {
-  BUYER,
-  SELLER,
-  MARKETPLACE,
-  CROW,
-  DEV,
+  BUYER = 0,
+  SELLER = 1,
+  MARKETPLACE = 2,
+  CROW = 3,
+  DEV = 4,
 }
 
 export const BUYER = "buyer";
 export const SELLER = "seller";
-
-export const CHAIN_ID = {
-  arbitrumOne: BigInt(42161),
-  arbitrumSepolia: BigInt(421614),
-  base: BigInt(8453),
-  baseSepolia: BigInt(84532),
-  development: BigInt(31337),
-};
-
-export const metamaskUrl = "https://metamask.io/download/";

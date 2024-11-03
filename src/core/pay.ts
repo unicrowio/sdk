@@ -1,11 +1,6 @@
+import { ethers } from "ethers";
 import { ERC20__factory, Unicrow__factory } from "@unicrowio/ethers-types";
-import {
-  ADDRESS_ZERO,
-  ZERO_FEE_VALUE,
-  ETH_ADDRESS,
-  validateParameters,
-  parseAmount,
-} from "../helpers";
+import { ZERO_FEE_VALUE, validateParameters, parseAmount } from "../helpers";
 import { getContractAddress } from "../config";
 import {
   IPaymentProps,
@@ -138,7 +133,7 @@ export const pay = async (
 ): Promise<PayParsedPayload> => {
   const {
     amount,
-    tokenAddress = ETH_ADDRESS,
+    tokenAddress = ethers.ZeroAddress,
     seller,
     challengePeriod,
     marketplace,
@@ -167,7 +162,7 @@ export const pay = async (
 
   const marketplaceFeeValue = 100 * marketplaceFee;
   const arbitratorFeeValue = 100 * arbitratorFee;
-  const marketplaceAddress = marketplace || ADDRESS_ZERO;
+  const marketplaceAddress = marketplace || ethers.ZeroAddress;
   const { addresses, token } = await validateParameters({
     //TODO: consider validating the reference, e.g. limiting its length
     seller,
@@ -181,9 +176,9 @@ export const pay = async (
     amount,
     buyer,
   });
-  const _arbitrator = addresses.common.arbitrator || ADDRESS_ZERO;
+  const _arbitrator = addresses.common.arbitrator || ethers.ZeroAddress;
 
-  let solidityAmount = parseAmount(amount.toString(), token.decimals);
+  const solidityAmount = parseAmount(amount.toString(), token.decimals);
   const balance = await getBalance(tokenAddress);
   if (balance < solidityAmount) {
     throw new Error(`Insufficient balance: ${balance} < ${solidityAmount}`);
@@ -191,7 +186,7 @@ export const pay = async (
 
   const unicrowAddress = getContractAddress("unicrow");
 
-  if (tokenAddress != ETH_ADDRESS) {
+  if (tokenAddress !== ethers.ZeroAddress) {
     const token = ERC20__factory.connect(tokenAddress, providerSigner);
 
     const alreadyAllowedAmount = await token.allowance(
@@ -227,7 +222,7 @@ export const pay = async (
     const unicrowSc = Unicrow__factory.connect(unicrowAddress, providerSigner);
 
     let payTx: any;
-    if (tokenAddress === ETH_ADDRESS) {
+    if (tokenAddress === ethers.ZeroAddress) {
       payTx = await unicrowSc.pay(
         walletAddress,
         payInput,

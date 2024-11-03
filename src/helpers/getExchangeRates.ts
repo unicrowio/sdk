@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO } from "./constants";
+import ethers from "ethers";
 
 export const STABLE_COINS = ["DAI", "USDC", "USDT"];
 
@@ -11,10 +11,9 @@ interface IGeckoRespObj {
 }
 
 // ChainId-CoinGeckoNetworkId mapping
-const CG_NETWORK_ID = {
+export const CG_NETWORK_ID = {
   42161: "arbitrum-one",
-  421614: "arbitrumSepolia", // Sepolia
-  5777: "ethereum", // Unicrow Testnet
+  421614: "arbitrumSepolia",
 };
 
 const API_COINGECKO =
@@ -29,7 +28,7 @@ const getCoinGeckoPrices = async (
   const response = {} as IResult;
 
   for (const tokensAddress of tokensAddresses) {
-    if (tokensAddress == null || tokensAddress == ADDRESS_ZERO) {
+    if (tokensAddress == null || tokensAddress === ethers.ZeroAddress) {
       const coinGeckoEthResp = await fetch(`${API_COINGECKO}ethereum`);
 
       if (!coinGeckoEthResp.ok) {
@@ -39,7 +38,7 @@ const getCoinGeckoPrices = async (
       const coinGeckoEthRespJson =
         (await coinGeckoEthResp.json()) as IGeckoRespObj;
 
-      response[ADDRESS_ZERO] = coinGeckoEthRespJson.ethereum?.usd;
+      response[ethers.ZeroAddress] = coinGeckoEthRespJson.ethereum?.usd;
     } else {
       const coinGeckoResp = await fetch(
         `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddress}&vs_currencies=USD`,
@@ -68,10 +67,13 @@ export const getExchangeRates = async (
   try {
     const uniqueTokensAddresses = Array.from(new Set(tokensAddresses));
 
-    result = (await getCoinGeckoPrices(
-      CG_NETWORK_ID[chainId],
-      uniqueTokensAddresses,
-    )) as IResult | any;
+    const cgnetid = CG_NETWORK_ID[chainId as keyof typeof CG_NETWORK_ID];
+    if (!cgnetid)
+      throw new Error(`getExchangeRates error, unmapped network: ${chainId}`);
+
+    result = (await getCoinGeckoPrices(cgnetid, uniqueTokensAddresses)) as
+      | IResult
+      | any;
   } catch (error) {
     console.error(error);
   }

@@ -238,7 +238,7 @@ export function ChallengeModal(props: IChallengeModalProps) {
     }
 
     let buttonChildren;
-    let buttonOnClick;
+    let buttonOnClick: () => void;
 
     if (!escrowData) {
       buttonChildren = "";

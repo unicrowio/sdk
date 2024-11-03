@@ -1337,27 +1337,28 @@ export interface tSplits {
 
 export type CalculateFunction = CalculateAmountsInput;
 
-export enum DefaultNetwork {
-  Arbitrum = "arbitrum",
-  ArbitrumSepolia = "arbitrumSepolia",
-  Base = "base",
-  BaseSepolia = "baseSepolia",
+export interface UnicrowNetwork {
+  chainId: bigint;
+  chainName: string;
+  displayName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorerUrls?: string[];
+  contracts?: {
+    unicrow: string;
+    dispute: string;
+    arbitrator: string;
+    claim: string;
+  };
 }
 
-export type Network = {
-  rpcUrl: string;
-};
-
-export type Networks = {
-  [key in DefaultNetwork]?: Network;
-};
-
-export interface IConfig {
-  /** Allows to define custom lits of networks (requires deployment of the contracts to these networks) */
-  networks?: Networks;
-  /** Which network should the SDK try to switch to when performing any action (currently supported: `arbitrum` and `arbitrumSepolia`) */
-  defaultNetwork?: DefaultNetwork;
-  /** Should the SDK automaticall ask user to switch to the default network every time a core.* function is called? */
+export interface UnicrowConfig {
+  /** Which network should the SDK try to switch to when performing any action */
+  currentNetwork?: UnicrowNetwork;
+  /** Should the SDK ask users to switch to the configured network every time a core function is called? */
   autoSwitchNetwork?: boolean;
 }
 
