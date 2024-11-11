@@ -1,4 +1,4 @@
-import ethers from "ethers";
+import { ethers } from "ethers";
 
 export const STABLE_COINS = ["DAI", "USDC", "USDT"];
 

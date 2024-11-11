@@ -1,4 +1,4 @@
-import ethers from "ethers";
+import { ethers } from "ethers";
 import { IToken, IValidateProps } from "../typing";
 import { parseAmount } from "./formatAmount";
 import { getTokenInfo } from "../core";

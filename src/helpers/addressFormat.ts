@@ -1,4 +1,4 @@
-import ethers from "ethers";
+import { ethers } from "ethers";
 import { isSameAddress } from "./isSameAddress";
 
 export const reduceAddress = (address: string, ensAddress?: string) => {
