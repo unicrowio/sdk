@@ -228,11 +228,11 @@ export const pay = async (
 
     let payTx: any;
     if (tokenAddress === ETH_ADDRESS) {
-      payTx = await unicrowSc.pay(payInput, _arbitrator, arbitratorFeeValue, {
+      payTx = await unicrowSc.pay(walletAddress, payInput, _arbitrator, arbitratorFeeValue, {
         value: solidityAmount,
       });
     } else {
-      payTx = await unicrowSc.pay(payInput, _arbitrator, arbitratorFeeValue);
+      payTx = await unicrowSc.pay(walletAddress, payInput, _arbitrator, arbitratorFeeValue);
     }
 
     callbacks &&

@@ -1605,10 +1605,10 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@unicrowio/ethers-types@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@unicrowio/ethers-types/-/ethers-types-1.2.1.tgz#ae2e2586057e21e76161676f058a2aceeece3ca8"
-  integrity sha512-CNQTx5Y0dL6zXR2ItgwzUmrdPW9INmM6IW44DMcSMwwUpY5ROA3YJ7iutgOa6xdvODR9e1+m0SsO8e/6BsBnwg==
+"@unicrowio/ethers-types@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@unicrowio/ethers-types/-/ethers-types-1.2.2.tgz#cb607a65721aba581cb5b32a2dc1a40b4c7434ce"
+  integrity sha512-Pw9fiFGKxgqGsqWZOT6VeJ7YqxUNaJ3NXnvp5w9KFqRV9eVRGZs2gCR5tSdDCyZagAX31rQdGmNTvf8A+FqSeg==
   dependencies:
     "@nomiclabs/hardhat-ethers" "^3.0.0-beta.0"
     ethers "^6.13.2"

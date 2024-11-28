@@ -1340,6 +1340,8 @@ export type CalculateFunction = CalculateAmountsInput;
 export enum DefaultNetwork {
   Arbitrum = "arbitrum",
   ArbitrumSepolia = "arbitrumSepolia",
+  Base = "base",
+  BaseSepolia = "baseSepolia",
 }
 
 export type Network = {
