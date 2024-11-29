@@ -161,7 +161,7 @@ export const pay = async (
   const walletAddress = await getCurrentWalletAddress();
   callbacks && callbacks.connected && callbacks.connected(walletAddress);
 
-  const buyer = paymentProps.buyer == null ? ADDRESS_ZERO : paymentProps.buyer;
+  const buyer = paymentProps.buyer == null ? walletAddress : paymentProps.buyer;
 
   const providerSigner = await provider.getSigner();
 
@@ -228,11 +228,22 @@ export const pay = async (
 
     let payTx: any;
     if (tokenAddress === ETH_ADDRESS) {
-      payTx = await unicrowSc.pay(walletAddress, payInput, _arbitrator, arbitratorFeeValue, {
-        value: solidityAmount,
-      });
+      payTx = await unicrowSc.pay(
+        walletAddress,
+        payInput,
+        _arbitrator,
+        arbitratorFeeValue,
+        {
+          value: solidityAmount,
+        },
+      );
     } else {
-      payTx = await unicrowSc.pay(walletAddress, payInput, _arbitrator, arbitratorFeeValue);
+      payTx = await unicrowSc.pay(
+        walletAddress,
+        payInput,
+        _arbitrator,
+        arbitratorFeeValue,
+      );
     }
 
     callbacks &&
