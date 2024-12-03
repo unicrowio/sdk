@@ -1,9 +1,9 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 import React, { FunctionComponent } from "react";
 import { tag } from "helpers";
 import { jss } from "./jss";
 
-let root;
+let root: Root | undefined;
 
 // load Google fonts
 if (typeof window !== "undefined") {
@@ -52,7 +52,7 @@ export const renderModal = (component: FunctionComponent<any>, props?: any) => {
   }
 
   if (!root) {
-    root = createRoot(rootUnicrowSDkElement!);
+    root = createRoot(rootUnicrowSDkElement);
   }
 
   root.render(React.createElement(component, props));

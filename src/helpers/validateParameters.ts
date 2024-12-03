@@ -1,5 +1,5 @@
+import { ethers } from "ethers";
 import { IToken, IValidateProps } from "../typing";
-import { ETH_ADDRESS } from "./constants";
 import { parseAmount } from "./formatAmount";
 import { getTokenInfo } from "../core";
 import {
@@ -25,7 +25,7 @@ export const validateParameters = async (
     challengePeriodExtension,
     arbitratorFee,
     marketplaceFee,
-    tokenAddress = ETH_ADDRESS,
+    tokenAddress = ethers.ZeroAddress,
     buyer,
   } = data;
 

@@ -7,7 +7,7 @@ export const tsup: Options = {
     'firefox109',
   ],
   platform: 'neutral',
-  splitting: true,
+  splitting: false,
   sourcemap: true,
   format: 'cjs',
   treeshake: true,

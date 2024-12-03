@@ -1,10 +1,10 @@
+import { ethers } from "ethers";
 import { ERC20__factory } from "@unicrowio/ethers-types";
 import {
   getWeb3Provider,
   getCurrentWalletAddress,
   autoSwitchNetwork,
 } from "../wallet";
-import { ETH_ADDRESS } from "../helpers";
 
 /**
  * Checks if the user has the funds to pay for the given amount ETH or ERC-20 token.
@@ -13,7 +13,7 @@ import { ETH_ADDRESS } from "../helpers";
  * @returns User's balance as BigInt of ETH's or token's WEI
  */
 export const getBalance = async (
-  tokenAddress: string | null = ETH_ADDRESS,
+  tokenAddress: string | null = ethers.ZeroAddress,
 ): Promise<bigint> => {
   const provider = await getWeb3Provider();
   const walletAddress = await getCurrentWalletAddress();
@@ -24,7 +24,7 @@ export const getBalance = async (
 
   autoSwitchNetwork();
 
-  if (tokenAddress === ETH_ADDRESS) {
+  if (tokenAddress === ethers.ZeroAddress) {
     return provider.getBalance(walletAddress);
   } else {
     const token = ERC20__factory.connect(

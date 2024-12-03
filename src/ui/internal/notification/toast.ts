@@ -60,7 +60,7 @@ const colorBg = {
   warning: "#FFF4CC",
 };
 
-const prettifyMessage = (message) => {
+const prettifyMessage = (message: any) => {
   if (!message) return;
 
   const normalized = message?.message || message;
@@ -102,8 +102,8 @@ const t = (
 };
 
 export const toast = {
-  success: (args) => t(args, "success"),
-  info: (args) => t(args, "info"),
-  error: (args) => t(args, "error"),
-  warning: (args) => t(args, "warning"),
+  success: (args: any) => t(args, "success"),
+  info: (args: any) => t(args, "info"),
+  error: (args: any) => t(args, "error"),
+  warning: (args: any) => t(args, "warning"),
 };

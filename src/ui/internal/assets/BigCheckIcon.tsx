@@ -9,6 +9,7 @@ export const BigCheckIcon = (props: SVGProps<SVGSVGElement>) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
+    <title>BigCheckIcon</title>
     <circle cx={22} cy={22} r={22} fill="#00D615" />
     <path
       fillRule="evenodd"

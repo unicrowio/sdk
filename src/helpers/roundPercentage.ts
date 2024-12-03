@@ -12,7 +12,5 @@ export const roundPercentage = (amount: number) => {
     return 0;
   }
 
-  amount = Math.round(Number(amount) * 100) / 100;
-
-  return amount;
+  return Math.round(Number(amount) * 100) / 100;
 };

@@ -1,5 +1,6 @@
 import React from "react";
-import { reduceAddress, ADDRESS_ZERO, SELLER } from "../../../helpers";
+import { ethers } from "ethers";
+import { reduceAddress, SELLER } from "../../../helpers";
 import { DataDisplayer } from "./DataDisplayer";
 import { MARKER } from "../../../config/marker";
 import { IGetEscrowData } from "typing";
@@ -21,7 +22,10 @@ export const ArbitrationDataDisplayer = ({ data }: Props) => {
     );
   }
 
-  if (arbitration?.arbitrator && arbitration.arbitrator !== ADDRESS_ZERO) {
+  if (
+    arbitration?.arbitrator &&
+    arbitration.arbitrator !== ethers.ZeroAddress
+  ) {
     return (
       <>
         <DataDisplayer

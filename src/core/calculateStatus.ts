@@ -1,4 +1,5 @@
-import { isSameAddress, ADDRESS_ZERO, BUYER, SELLER } from "../helpers";
+import { ethers } from "ethers";
+import { isSameAddress, BUYER, SELLER } from "../helpers";
 import { EscrowStatus, ICalculateStatusParams, IEscrowStatus } from "../typing";
 
 const whoMadeLatestSettlementOffer = (
@@ -7,7 +8,7 @@ const whoMadeLatestSettlementOffer = (
 ) => {
   if (
     !latest_settlement_offer_address ||
-    latest_settlement_offer_address === ADDRESS_ZERO
+    latest_settlement_offer_address === ethers.ZeroAddress
   )
     return null;
 

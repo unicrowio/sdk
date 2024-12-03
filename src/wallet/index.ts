@@ -1,9 +1,7 @@
 import EventEmitter from "events";
 import { ethers, BrowserProvider } from "ethers";
-import { networks, UnicrowNetwork } from "./networks";
-import { CHAIN_ID } from "../helpers";
-import { DefaultNetwork, IGenericTransactionCallbacks } from "typing";
-import { config } from "../config";
+import { UnicrowNetwork, IGenericTransactionCallbacks } from "typing";
+import { config, NETWORK } from "../config";
 import { toast } from "../ui/internal/notification/toast";
 
 let walletAddress: string | null = null;
@@ -41,10 +39,13 @@ const handleChainChanged = (networkId: string) => {
 
 const registerChainChangedListener = () => {
   if (!chainChangedListener) {
-    chainChangedListener = window.ethereum.on("chainChanged", (networkId) => {
-      console.info("chainChanged", networkId);
-      handleChainChanged(networkId);
-    });
+    chainChangedListener = window.ethereum.on(
+      "chainChanged",
+      (networkId: string) => {
+        console.info("chainChanged", networkId);
+        handleChainChanged(networkId);
+      },
+    );
   }
 };
 
@@ -94,18 +95,19 @@ export const connect = async (): Promise<string | null> => {
  * @returns Name of the network that the wallet was switched to.
  * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
-export const switchNetwork = async (name: DefaultNetwork) => {
+export const switchNetwork = async (name: string) => {
   if (!isWeb3WalletInstalled()) throw Error("No wallet installed");
-  const { chainName, chainId, nativeCurrency, blockExplorerUrls } =
-    networks[name];
+  if (!NETWORK[name]) throw new Error(`Unsupported network: ${name}`);
+
+  const network = NETWORK[name];
 
   registerAccountChangedListener();
 
   const addParams: any = {
-    chainId: ethers.toQuantity(chainId),
-    chainName,
-    nativeCurrency,
-    blockExplorerUrls,
+    chainId: ethers.toQuantity(network.chainId),
+    chainName: network.chainName,
+    nativeCurrency: network.nativeCurrency,
+    blockExplorerUrls: network.blockExplorerUrls,
   };
 
   const switchParams: any = { chainId: addParams.chainId };
@@ -142,8 +144,8 @@ export const switchNetwork = async (name: DefaultNetwork) => {
 
   const connected = await getNetwork();
 
-  if (connected.chainId === chainId) {
-    config({ defaultNetwork: name });
+  if (connected.chainId === network.chainId) {
+    config({ network });
   }
 
   return name;
@@ -158,13 +160,13 @@ export const switchNetwork = async (name: DefaultNetwork) => {
  */
 export const autoSwitchNetwork = async (
   callbacks?: IGenericTransactionCallbacks,
-  force: boolean = false,
+  force = false,
 ) => {
   const isCorrectNetwork = await isCorrectNetworkConnected();
 
   if (!isCorrectNetwork) {
-    if (globalThis.autoSwitchNetwork || force) {
-      await switchNetwork(globalThis.defaultNetwork.name);
+    if (globalThis.unicrow.autoSwitchNetwork || force) {
+      await switchNetwork(globalThis?.unicrow?.currentNetwork?.chainName);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {
       throw new Error("Unsupported network");
@@ -186,11 +188,8 @@ export const getNetwork = async (): Promise<ethers.Network> => {
   if (provider !== null) {
     network = await provider.getNetwork();
 
-    if (network.chainId === CHAIN_ID.development) {
-      network = {
-        chainId: network.chainId,
-        name: "development",
-      };
+    if (network.chainId === NETWORK.development.chainId) {
+      network.name = NETWORK.development.chainName;
     }
   }
 
@@ -204,7 +203,7 @@ export const getNetwork = async (): Promise<ethers.Network> => {
  */
 export const getSupportedNetworks: () => {
   [name: string]: UnicrowNetwork;
-} = () => networks;
+} = () => NETWORK;
 
 /**
  * Checks, based on chainId comparison, if the wallet is connected to the default network
@@ -213,7 +212,7 @@ export const getSupportedNetworks: () => {
  */
 export const isCorrectNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork();
-  return network.chainId === globalThis.defaultNetwork.chainId;
+  return network.chainId === globalThis?.unicrow?.currentNetwork?.chainId;
 };
 
 /**
@@ -223,7 +222,7 @@ export const isCorrectNetworkConnected = async (): Promise<boolean> => {
  */
 export const isSupportedNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork();
-  const currentNetwork = Object.values(networks).filter(
+  const currentNetwork = Object.values(NETWORK).filter(
     (n) => n.chainId === network.chainId,
   );
 

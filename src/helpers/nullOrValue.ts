@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO } from "./constants";
+import { ethers } from "ethers";
 
 export const nullOrValue = (value: any) =>
-  !value || value === ADDRESS_ZERO ? null : value?.toString();
+  !value || value === ethers.ZeroAddress ? null : value?.toString();

@@ -166,7 +166,7 @@ export function PayModal(props: IPaymentModalProps) {
 
   const onPayClick = async () => {
     setIsLoading(true);
-    
+
     await pay(props.paymentProps, payCallbacks).catch((e) => {
       toast.error(e);
     });
@@ -272,7 +272,7 @@ export function PayModal(props: IPaymentModalProps) {
           variant="tertiary"
           style={{ marginTop: 15 }}
           disabled={isLoadingAnything}
-          onClick={() => (window.location.href = props.paymentProps?.cancelUrl)}
+          onClick={() => window.location.href === props.paymentProps?.cancelUrl}
         >
           Cancel
         </Button>
@@ -292,7 +292,7 @@ export function PayModal(props: IPaymentModalProps) {
         buttonChildren = `Back to merchant in ... ${callbackCountdown}s`;
         buttonCallback = <></>;
         buttonOnClick = () =>
-          (window.location.href = props.paymentProps.callbackUrl);
+          window.location.href === props.paymentProps.callbackUrl;
       } else {
         buttonOnClick = onModalClose;
       }
