@@ -1347,7 +1347,7 @@ export interface UnicrowNetwork {
     decimals: number;
   };
   blockExplorerUrls?: string[];
-  contracts?: {
+  contracts: {
     unicrow: string;
     dispute: string;
     arbitrator: string;

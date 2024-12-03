@@ -166,7 +166,7 @@ export function PayModal(props: IPaymentModalProps) {
 
   const onPayClick = async () => {
     setIsLoading(true);
-    
+
     await pay(props.paymentProps, payCallbacks).catch((e) => {
       toast.error(e);
     });

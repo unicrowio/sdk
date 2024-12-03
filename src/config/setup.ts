@@ -12,10 +12,10 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
     },
     blockExplorerUrls: ["https://arbiscan.io/"],
     contracts: {
-      unicrow: "0x78AEe48cCEBCcEe05F550849A7C7Baa1e0837a6D",
-      dispute: "0xdC14E36ac67Cd3B8eE25a9c2309EcE6087e93225",
-      arbitrator: "0xde62AD20611Fe51179Eb8B66c4627B3495C9B1c2",
-      claim: "0x5902AF8be15c80794C3229aD4E68aa69845Cc5fC",
+      unicrow: "0xDb815D9bEaAa8d3bdc714Be3a17dCBA5eCbe876B",
+      dispute: "0x7FC340B0CfbA6071374b777dE3ACb05eb4a91908",
+      arbitrator: "0x3E454e8c0c14e605F93D6eEda474d12Ec1dAEc75",
+      claim: "0x3928C1389E47123238217F1B6D10e42Aec516EAF",
     },
   },
   arbitrumSepolia: {
@@ -29,10 +29,10 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
     },
     blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
     contracts: {
-      unicrow: "0x6d98b03C09EaD582a77C093bdb2d3E85683Aa956",
-      dispute: "0x3dC5d22716599e7FcD1bbB1752544D9dfa7e719E",
-      arbitrator: "0xdB400Dd10a4A645c2C1429b3A48F1449E7e4F64A",
-      claim: "0x7761D841D83c5Aeb876DB2b110798C668cd83872",
+      unicrow: "0x063d6472df3FdD1cec9B00cac29bcd935511f451",
+      dispute: "0xEC8eaCfC2Dd1614b7182676A118088a204F69b86",
+      arbitrator: "0x335ba877387646815cb189f9883dF98aa0913EAF",
+      claim: "0x310Da0C6c224C14168e7bBEd632797A79B9eff95",
     },
   },
   base: {
@@ -45,6 +45,12 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       decimals: 18,
     },
     blockExplorerUrls: ["https://basescan.org/"],
+    contracts: {
+      unicrow: "0x24e9ECC6c56dcD0C875fDF181FA3A4EEf3c5D5F0",
+      dispute: "0xab32831aA9bBFEB12F1BA7B74eBFf76e45944937",
+      arbitrator: "0xF1447b0fda912a6857B5d77d7cDE9663266896cf",
+      claim: "0x40F83551803051676eB7Cb0374176d03db247b97",
+    },
   },
   baseSepolia: {
     chainId: BigInt(84532),
@@ -57,10 +63,10 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
     },
     blockExplorerUrls: ["https://sepolia-explorer.base.org"],
     contracts: {
-      unicrow: "0x4d0eEFAB00f5Dc902563F91072e21Ea8eaaE32B8",
-      dispute: "0x383AB2D5347050106EEBBB04d216506E7b24044A",
-      arbitrator: "0x8AE4BF26B94A955b154FC66eAe8607E1c932dBaB",
-      claim: "0xE8A24A574D36818d88736DdE5Ed36360d1ec4a64",
+      unicrow: "0xe0Ee927Fc4B128b20Fb087F2372d21526d636945",
+      dispute: "0x81BDA62F4E0e95edaf2ED72985B93e95880D05f7",
+      arbitrator: "0xfA8b095785c87F2fc4f19BA9d9a39B3FD17F74ca",
+      claim: "0x7c27bE3C886465C9bf831E216FbadcDC4f4d9161",
     },
   },
   development: {
