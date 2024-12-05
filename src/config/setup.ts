@@ -11,6 +11,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       decimals: 18,
     },
     blockExplorerUrls: ["https://arbiscan.io/"],
+    publicRpcs: ["https://arbitrum-mainnet.infura.io"],
     contracts: {
       unicrow: "0xDb815D9bEaAa8d3bdc714Be3a17dCBA5eCbe876B",
       dispute: "0x7FC340B0CfbA6071374b777dE3ACb05eb4a91908",
@@ -28,6 +29,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       decimals: 18,
     },
     blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
+    publicRpcs: ["https://sepolia-rollup.arbitrum.io/rpc"],
     contracts: {
       unicrow: "0x063d6472df3FdD1cec9B00cac29bcd935511f451",
       dispute: "0xEC8eaCfC2Dd1614b7182676A118088a204F69b86",
@@ -45,6 +47,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       decimals: 18,
     },
     blockExplorerUrls: ["https://basescan.org/"],
+    publicRpcs: ["https://mainnet.base.org"],
     contracts: {
       unicrow: "0x24e9ECC6c56dcD0C875fDF181FA3A4EEf3c5D5F0",
       dispute: "0xab32831aA9bBFEB12F1BA7B74eBFf76e45944937",
@@ -62,6 +65,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       decimals: 18,
     },
     blockExplorerUrls: ["https://sepolia-explorer.base.org"],
+    publicRpcs: ["https://sepolia.base.org"],
     contracts: {
       unicrow: "0xe0Ee927Fc4B128b20Fb087F2372d21526d636945",
       dispute: "0x81BDA62F4E0e95edaf2ED72985B93e95880D05f7",
@@ -89,17 +93,20 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
 };
 
 /**
- * Allows to switch between supported networks (see wallet/networks.ts).
+ * Sets the target network for all subsequent SDK calls.
  *
- * @param param0 Network configuration
+ * @param {string} chainName - The `chainName` of one of Unicrow's supported networks (see: {@link module:wallet~NETWORK})
+ * @param {boolean} autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, send a chain add/switch request
  */
 export const setupNetwork = ({
-  network = NETWORK.arbitrum,
+  chainName = NETWORK.arbitrum.chainName,
   autoSwitchNetwork = false,
 }) => {
+  if (!NETWORK[chainName]) throw new Error(`Unsupported network: ${chainName}`);
+
   globalThis.unicrow = {
-    currentNetwork: network,
-    autoSwitchNetwork: autoSwitchNetwork,
+    network: NETWORK[chainName],
+    autoSwitchNetwork,
   };
 };
 

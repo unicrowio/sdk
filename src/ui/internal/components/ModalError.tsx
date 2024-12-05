@@ -46,7 +46,7 @@ export const ModalError = ({ type, onClick, error }: IModalErrorProps) => {
     },
     wrongNetwork: {
       title: "Incorrect Network",
-      buttonTitle: `Connect to ${globalThis?.unicrow?.currentNetwork?.displayName}`,
+      buttonTitle: `Connect to ${globalThis?.unicrow?.network?.displayName}`,
       description: "Please, connect to the network below",
     },
   };

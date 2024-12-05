@@ -145,7 +145,7 @@ export const switchNetwork = async (name: string) => {
   const connected = await getNetwork();
 
   if (connected.chainId === network.chainId) {
-    config({ network });
+    config({ chainName: network.chainName });
   }
 
   return name;
@@ -166,7 +166,7 @@ export const autoSwitchNetwork = async (
 
   if (!isCorrectNetwork) {
     if (globalThis.unicrow.autoSwitchNetwork || force) {
-      await switchNetwork(globalThis?.unicrow?.currentNetwork?.chainName);
+      await switchNetwork(globalThis?.unicrow?.network?.chainName);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {
       throw new Error("Unsupported network");
@@ -212,7 +212,7 @@ export const getSupportedNetworks: () => {
  */
 export const isCorrectNetworkConnected = async (): Promise<boolean> => {
   const network = await getNetwork();
-  return network.chainId === globalThis?.unicrow?.currentNetwork?.chainId;
+  return network.chainId === globalThis?.unicrow?.network?.chainId;
 };
 
 /**

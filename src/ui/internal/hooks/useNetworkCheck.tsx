@@ -25,10 +25,8 @@ export const useNetworkCheck = () => {
     });
 
     // check when network changes
-    startListeningNetwork((network) => {
-      setIsCorrectNetwork(
-        network === globalThis?.unicrow?.currentNetwork?.chainId,
-      );
+    startListeningNetwork((chainId) => {
+      setIsCorrectNetwork(chainId === globalThis?.unicrow?.network?.chainId);
     });
 
     return () => {
@@ -40,7 +38,7 @@ export const useNetworkCheck = () => {
   const onNetworkSwitch = React.useCallback(async () => {
     setIsCorrectNetwork(await isCorrectNetworkConnected());
     if (!isCorrectNetwork) {
-      await switchNetwork(globalThis?.unicrow?.currentNetwork?.chainName);
+      await switchNetwork(globalThis?.unicrow?.network?.chainName);
     }
   }, [isCorrectNetwork]);
 

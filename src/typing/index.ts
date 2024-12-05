@@ -1357,7 +1357,7 @@ export interface UnicrowNetwork {
 
 export interface UnicrowConfig {
   /** Which network should the SDK try to switch to when performing any action */
-  currentNetwork?: UnicrowNetwork;
+  network?: UnicrowNetwork;
   /** Should the SDK ask users to switch to the configured network every time a core function is called? */
   autoSwitchNetwork?: boolean;
 }
