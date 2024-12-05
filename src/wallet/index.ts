@@ -89,25 +89,26 @@ export const connect = async (): Promise<string | null> => {
 };
 
 /**
- * Asks user's web3 wallet to switch to a selected network
+ * Sends a chain switch request to the user's wallet.
  *
- * @param name - Name of one of the configured networks ('arbitrum', 'development', or 'arbitrumSepolia' in standard SDK installation)
- * @returns Name of the network that the wallet was switched to.
+ * @param name - `chainName` of one of the supported networks (see: {@link module:wallet~NETWORK})
+ * @returns `chainName` of the network that the wallet was switched to.
  * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
-export const switchNetwork = async (name: string) => {
+export const switchNetwork = async (chainName: string) => {
   if (!isWeb3WalletInstalled()) throw Error("No wallet installed");
-  if (!NETWORK[name]) throw new Error(`Unsupported network: ${name}`);
+  if (!NETWORK[chainName]) throw new Error(`Unsupported network: ${chainName}`);
 
-  const network = NETWORK[name];
+  const network = NETWORK[chainName];
 
   registerAccountChangedListener();
 
   const addParams: any = {
     chainId: ethers.toQuantity(network.chainId),
-    chainName: network.chainName,
+    chainName: network.displayName,
     nativeCurrency: network.nativeCurrency,
     blockExplorerUrls: network.blockExplorerUrls,
+    rpcUrls: network.publicRpcs,
   };
 
   const switchParams: any = { chainId: addParams.chainId };
@@ -126,8 +127,7 @@ export const switchNetwork = async (name: string) => {
       params: [switchParams], // chainId must be in hexadecimal numbers
     });
   } catch (error) {
-    // This error code indicates that the chain has not been added to MetaMask
-    // if it is not, then install it into the user MetaMask
+    // Unrecognized chain id error, this chain has not yet been added to this wallet
     if (error.code === 4902) {
       try {
         await window.ethereum.request({
@@ -135,28 +135,32 @@ export const switchNetwork = async (name: string) => {
           params: [addParams],
         });
       } catch (addError) {
-        throw new Error("User rejected network addition");
+        throw new Error("User rejected the request to add the chain");
       }
+    } else {
+      throw new Error("User rejected the network switch request");
     }
-
-    throw new Error("User rejected network switch");
   }
 
   const connected = await getNetwork();
 
   if (connected.chainId === network.chainId) {
-    config({ chainName: network.chainName });
+    config({
+      chainName,
+      autoSwitchNetwork: globalThis.unicrow.autoSwitchNetwork,
+    });
   }
 
-  return name;
+  return chainName;
 };
 
 /**
- * If non-default network is connected and if auto-switch is configured globally or requested by "force" parameter,
- * switch wallet to the default network
+ * Sends a chain switch request to the user's wallet if:
+ * - The user is connected to a different network than the one currently configured with {@link module:config~config}, and `autoSwitch` is enabled
+ * - The switch is requested by calling this function with the `force` parameter
  *
- * @param force - True to force switching to the default network
- * @throws Unsupported network error if the user is on incorrect network, and neither global settings nor the parameter requires the switch
+ * @param force - true to send a switch request to the network configured via {@link module:config~config}
+ * @throws Unsupported network error if the user is connected to a different network than the configured one, and both `autoSwitch` and `force` are false.
  */
 export const autoSwitchNetwork = async (
   callbacks?: IGenericTransactionCallbacks,
@@ -169,7 +173,7 @@ export const autoSwitchNetwork = async (
       await switchNetwork(globalThis?.unicrow?.network?.chainName);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {
-      throw new Error("Unsupported network");
+      throw new Error(`Unsupported network: ${(await getNetwork()).name}`);
     }
   }
 };
