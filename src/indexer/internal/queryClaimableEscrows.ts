@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 
 export const buildClaimableQuery = gql`
-  query getClaimableEscrows($walletUserAddress: String!) {
+  query getClaimableEscrows($walletUserAddress: String!, $network: String) {
     ready_for_claim: escrow_status_view(
       where: {
         _or: [
@@ -12,6 +12,7 @@ export const buildClaimableQuery = gql`
         _and: {
           claimed: { _eq: false }
           status: { _eq: "PERIOD_EXPIRED" }
+          { _or: [{ network: { _eq: $network } }, { network: { _is_null: true } }] }
         }
       }
     ) {
