@@ -38,7 +38,7 @@ export const useNetworkCheck = () => {
   const onNetworkSwitch = React.useCallback(async () => {
     setIsCorrectNetwork(await isCorrectNetworkConnected());
     if (!isCorrectNetwork) {
-      await switchNetwork(globalThis?.unicrow?.network?.chainName);
+      await switchNetwork(globalThis?.unicrow?.network?.chainId);
     }
   }, [isCorrectNetwork]);
 

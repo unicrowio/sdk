@@ -28,22 +28,26 @@ const handleAccountsChanged = (accounts: string[]) => {
     );
 };
 
-const handleChainChanged = (networkId: string) => {
-  const _networkId = BigInt(networkId);
-
-  _onChangeNetworkCallbacks.length > 0 &&
-    _onChangeNetworkCallbacks.forEach(
-      (callback: (networkId: bigint) => void) => callback(_networkId),
-    );
-};
-
 const registerChainChangedListener = () => {
   if (!chainChangedListener) {
     chainChangedListener = window.ethereum.on(
       "chainChanged",
-      (networkId: string) => {
-        console.info("chainChanged", networkId);
-        handleChainChanged(networkId);
+      (chainId: bigint) => {
+        console.info("chainChanged", chainId);
+
+        let network = NETWORK[chainId.toString()];
+        if (network) {
+          config({
+            chainId,
+            autoSwitchNetwork: globalThis.unicrow.autoSwitchNetwork,
+          });
+        }
+
+        _onChangeNetworkCallbacks.length > 0 &&
+          _onChangeNetworkCallbacks.forEach(
+            (callback: (networkId: bigint) => void) =>
+              callback(BigInt(chainId)),
+          );
       },
     );
   }
@@ -91,15 +95,15 @@ export const connect = async (): Promise<string | null> => {
 /**
  * Sends a chain switch request to the user's wallet.
  *
- * @param name - `chainName` of one of the supported networks (see: {@link module:wallet~NETWORK})
- * @returns `chainName` of the network that the wallet was switched to.
+ * @param name - `chainId` of one of the supported networks (see: {@link module:wallet~NETWORK})
+ * @returns `chainId` of the network that the wallet was switched to.
  * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
-export const switchNetwork = async (chainName: string) => {
+export const switchNetwork = async (chainId: bigint) => {
   if (!isWeb3WalletInstalled()) throw Error("No wallet installed");
-  if (!NETWORK[chainName]) throw new Error(`Unsupported network: ${chainName}`);
 
-  const network = NETWORK[chainName];
+  const network = NETWORK[chainId.toString()];
+  if (!network) throw new Error(`Unsupported network: ${chainId}`);
 
   registerAccountChangedListener();
 
@@ -143,15 +147,14 @@ export const switchNetwork = async (chainName: string) => {
   }
 
   const connected = await getNetwork();
-
   if (connected.chainId === network.chainId) {
     config({
-      chainName,
+      chainId,
       autoSwitchNetwork: globalThis.unicrow.autoSwitchNetwork,
     });
   }
 
-  return chainName;
+  return chainId;
 };
 
 /**
@@ -170,7 +173,7 @@ export const autoSwitchNetwork = async (
 
   if (!isCorrectNetwork) {
     if (globalThis.unicrow.autoSwitchNetwork || force) {
-      await switchNetwork(globalThis?.unicrow?.network?.chainName);
+      await switchNetwork(globalThis?.unicrow?.network?.chainId);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {
       throw new Error(`Unsupported network: ${(await getNetwork()).name}`);
@@ -193,7 +196,7 @@ export const getNetwork = async (): Promise<ethers.Network> => {
     network = await provider.getNetwork();
 
     if (network.chainId === NETWORK.development.chainId) {
-      network.name = NETWORK.development.chainName;
+      network.name = NETWORK.development.chainId.toString();
     }
   }
 

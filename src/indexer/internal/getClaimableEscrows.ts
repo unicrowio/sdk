@@ -7,7 +7,7 @@ export const getClaimableEscrows = async (
 ): Promise<string[]> => {
   const response: any = await client.request(buildClaimableQuery, {
     walletUserAddress,
-    network: globalThis?.unicrow?.network?.chainName,
+    chainId: globalThis?.unicrow?.network?.chainId,
   });
 
   const { ready_for_claim } = response;

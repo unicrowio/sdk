@@ -1,9 +1,8 @@
 import { UnicrowNetwork } from "typing";
 
 export const NETWORK: { [name: string]: UnicrowNetwork } = {
-  arbitrum: {
+  "42161": {
     chainId: BigInt(42161),
-    chainName: "arbitrum",
     displayName: "Arbitrum One",
     nativeCurrency: {
       name: "Ether",
@@ -19,9 +18,8 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       claim: "0x3928C1389E47123238217F1B6D10e42Aec516EAF",
     },
   },
-  arbitrumSepolia: {
+  "421614": {
     chainId: BigInt(421614),
-    chainName: "arbitrumSepolia",
     displayName: "Arbitrum Sepolia Testnet",
     nativeCurrency: {
       name: "Ether",
@@ -37,9 +35,8 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       claim: "0x310Da0C6c224C14168e7bBEd632797A79B9eff95",
     },
   },
-  base: {
+  "8453": {
     chainId: BigInt(8453),
-    chainName: "base",
     displayName: "Base Mainnet",
     nativeCurrency: {
       name: "Ether",
@@ -55,9 +52,8 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       claim: "0x40F83551803051676eB7Cb0374176d03db247b97",
     },
   },
-  baseSepolia: {
+  "84532": {
     chainId: BigInt(84532),
-    chainName: "baseSepolia",
     displayName: "Base Sepolia",
     nativeCurrency: {
       name: "Ether",
@@ -73,9 +69,8 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       claim: "0x7c27bE3C886465C9bf831E216FbadcDC4f4d9161",
     },
   },
-  development: {
+  "31337": {
     chainId: BigInt(31337),
-    chainName: "development",
     displayName: "Development (hardhat)",
     nativeCurrency: {
       name: "ETH",
@@ -95,17 +90,18 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
 /**
  * Sets the target network for all subsequent SDK calls.
  *
- * @param {string} chainName - The `chainName` of one of Unicrow's supported networks (see: {@link module:wallet~NETWORK})
+ * @param {bigint} chainId - `chainId` of one of Unicrow's supported networks (see: {@link module:wallet~NETWORK})
  * @param {boolean} autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, send a chain add/switch request
  */
 export const setupNetwork = ({
-  chainName = NETWORK.arbitrum.chainName,
+  chainId = BigInt("42161"),
   autoSwitchNetwork = false,
 }) => {
-  if (!NETWORK[chainName]) throw new Error(`Unsupported network: ${chainName}`);
+  let network = NETWORK[chainId.toString()];
+  if (!network) throw new Error(`Unsupported network: ${chainId}`);
 
   globalThis.unicrow = {
-    network: NETWORK[chainName],
+    network,
     autoSwitchNetwork,
   };
 };

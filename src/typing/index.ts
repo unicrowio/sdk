@@ -1339,7 +1339,6 @@ export type CalculateFunction = CalculateAmountsInput;
 
 export interface UnicrowNetwork {
   chainId: bigint;
-  chainName: string;
   displayName: string;
   nativeCurrency: {
     name: string;
