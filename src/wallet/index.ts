@@ -194,10 +194,6 @@ export const getNetwork = async (): Promise<ethers.Network> => {
 
   if (provider !== null) {
     network = await provider.getNetwork();
-
-    if (network.chainId === NETWORK.development.chainId) {
-      network.name = NETWORK.development.chainId.toString();
-    }
   }
 
   return network;
