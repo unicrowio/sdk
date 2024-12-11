@@ -3,7 +3,8 @@ import { IPage } from "../../typing";
 import { returningValues as genericValues } from "./payload";
 
 export interface IQuery {
-  escrow_id?: number;
+  chainId?: number;
+  escrowId?: number;
   seller?: string;
   buyer?: string;
   marketplace?: string;
@@ -28,8 +29,12 @@ const buildQuery = ({
   const conditions: string[] = [];
   const sentences: string[] = [];
 
-  if (query.escrow_id) {
-    conditions.push(`{ escrow_id: { _eq: "${query.escrow_id}"} }`);
+  if (query.chainId) {
+    conditions.push(`{ chain_id: { _eq: "${query.chainId}"} }`);
+  }
+
+  if (query.escrowId) {
+    conditions.push(`{ escrow_id: { _eq: "${query.escrowId}"} }`);
   }
 
   if (query.seller && query.buyer) {

@@ -20,14 +20,14 @@ export const getInstance = (url: string): IndexerInstance => {
     ) => {
       return getPaymentList(client, queryParams, pagination);
     },
-    getSinglePayment: (escrowId: number) => {
-      return getSinglePayment(client, escrowId);
+    getSinglePayment: (escrowId: number, chainId: number) => {
+      return getSinglePayment(client, escrowId, chainId);
     },
-    getUserBalance: (walletUserAddress: string) => {
-      return getUserBalance(client, walletUserAddress);
+    getUserBalance: (walletUserAddress: string, chainId: number) => {
+      return getUserBalance(client, walletUserAddress, chainId);
     },
-    getClaimableEscrows: (walletUserAddress: string) => {
-      return getClaimableEscrows(client, walletUserAddress);
+    getClaimableEscrows: (walletUserAddress: string, chainId: number) => {
+      return getClaimableEscrows(client, walletUserAddress, chainId);
     },
   };
 };

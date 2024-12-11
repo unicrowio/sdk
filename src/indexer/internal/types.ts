@@ -1,6 +1,8 @@
 import { EscrowStatus } from "../../typing";
 
 export interface EscrowStatusView {
+  chain_id: number;
+
   amount: bigint; // ERC20 | Ether
   escrow_id: number;
   status: keyof typeof EscrowStatus;
@@ -40,4 +42,6 @@ export interface EscrowStatusView {
   latest_settlement_offer_buyer?: number;
 
   paid_at: number;
+
+  payment_reference: string;
 }
