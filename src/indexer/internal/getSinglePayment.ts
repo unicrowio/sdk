@@ -4,15 +4,17 @@ import { parseEscrowData } from "./parseEscrowData";
 import { IEscrowData } from "../../typing";
 import { returningValues } from "./payload";
 
-type TEscrowId = Pick<IQuery, "escrow_id">;
+type TEscrowId = Pick<IQuery, "escrowId" | "chainId">;
 
 export const getSinglePayment = async (
   client: GraphQLClient,
   escrowId: number,
+  chainId: number,
 ): Promise<IEscrowData | null> => {
   const query: TEscrowId = {};
 
-  query.escrow_id = escrowId;
+  query.escrowId = escrowId;
+  query.chainId = chainId;
 
   const queryString = buildQuery({
     query,

@@ -2,6 +2,7 @@
   Default values for returning values from escrow_status_view
  */
 export const returningValues = [
+  "chain_id",
   "name",
   "escrow_id",
   "transaction_hash",
