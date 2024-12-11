@@ -135,7 +135,7 @@ export interface IEscrowStatus {
 
 export interface IEscrowData {
   /** Network's chain ID (returned only from the indexer) */
-  chainId: number;
+  chainId?: number;
 
   /** Amount in token's (or ETH's) wei unit */
   amount: bigint; // ERC20 | Ether
