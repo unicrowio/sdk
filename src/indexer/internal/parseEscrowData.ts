@@ -30,8 +30,6 @@ const consensusArbitration = (status, proposer, seller) => {
 export const parseEscrowData = (
   item: EscrowStatusView,
 ): Omit<IGetEscrowData, "connectedUser" | "walletAddress"> => {
-  console.log(item);
-
   const chainId = item.chain_id;
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
