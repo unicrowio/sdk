@@ -6,7 +6,7 @@ import { getUserBalance } from "./internal/getUserBalance";
 import { getClaimableEscrows } from "./internal/getClaimableEscrows";
 
 /**
- * Connects to the indexer and returnes an instance of the object with functions used to read data from the indexer
+ * Connects to the indexer and returns an instance of the object with functions used to read data from the indexer
  *
  * @param url - Url of the indexer
  */
