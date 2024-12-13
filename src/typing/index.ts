@@ -1,4 +1,3 @@
-import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
 export interface IEnsAddresses {
@@ -1001,7 +1000,27 @@ export interface IClaimModalProps {
   callbacks?: IClaimTransactionCallbacks;
 }
 
-export type TPaymentListQueryParams = IQuery;
+/**
+ * Payment list search query
+ */
+export interface TPaymentListQueryParams {
+  /** The network chain ID to filter by */
+  chainId?: number;
+  /** Specific escrow ID to retrieve */
+  escrowId?: number;
+  /** Filter by seller address */
+  seller?: string;
+  /** Filter by buyer address */
+  buyer?: string;
+  /** Filter by marketplace address */
+  marketplace?: string;
+  /** Filter by claimed status */
+  claimed?: boolean;
+  /** Search for payments made on or after this date */ 
+  dateStart?: Date;
+  /** Search for payments made on or before this date */
+  dateEnd?: Date;
+}
 
 /**
  * Used to specify paging for indexer's payments search.
@@ -1064,7 +1083,7 @@ export interface IndexerInstance {
    *
    * @example // A returned object might look e.g. like this:
    * {
-   *    chainId: 42161,
+   *    chainId: "42161",
    *    challengePeriod: 1209600,
    *    challengePeriodStart: "2023-01-24T11:54:33.000Z",
    *    challengePeriodEnd: "2023-02-07T11:54:33.000Z",

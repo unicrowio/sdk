@@ -1,20 +1,8 @@
 import { gql } from "graphql-request";
-import { IPage } from "../../typing";
+import { IPage, TPaymentListQueryParams } from "../../typing";
 import { returningValues as genericValues } from "./payload";
-
-export interface IQuery {
-  chainId?: number;
-  escrowId?: number;
-  seller?: string;
-  buyer?: string;
-  marketplace?: string;
-  claimed?: boolean;
-  dateStart?: Date;
-  dateEnd?: Date;
-}
-
 interface IBuildQuery {
-  query: IQuery;
+  query: TPaymentListQueryParams;
   returningValues?: string[];
   pagination?: IPage;
 }
