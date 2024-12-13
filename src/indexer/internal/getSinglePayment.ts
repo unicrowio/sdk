@@ -1,10 +1,10 @@
 import { GraphQLClient } from "graphql-request";
-import { buildQuery, IQuery } from "./queryBuilder";
+import { buildQuery } from "./queryBuilder";
 import { parseEscrowData } from "./parseEscrowData";
-import { IEscrowData } from "../../typing";
+import { IEscrowData, TPaymentListQueryParams } from "../../typing";
 import { returningValues } from "./payload";
 
-type TEscrowId = Pick<IQuery, "escrowId" | "chainId">;
+type TEscrowId = Pick<TPaymentListQueryParams, "escrowId" | "chainId">;
 
 export const getSinglePayment = async (
   client: GraphQLClient,

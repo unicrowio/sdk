@@ -1016,7 +1016,7 @@ export interface TPaymentListQueryParams {
   marketplace?: string;
   /** Filter by claimed status */
   claimed?: boolean;
-  /** Search for payments made on or after this date */ 
+  /** Search for payments made on or after this date */
   dateStart?: Date;
   /** Search for payments made on or before this date */
   dateEnd?: Date;
