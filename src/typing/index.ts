@@ -1,4 +1,3 @@
-import { IQuery } from "../indexer/internal/queryBuilder";
 import Deferred from "../helpers/deferred";
 
 export interface IEnsAddresses {
@@ -134,6 +133,9 @@ export interface IEscrowStatus {
  */
 
 export interface IEscrowData {
+  /** Network's chain ID (returned only from the indexer) */
+  chainId?: number;
+
   /** Amount in token's (or ETH's) wei unit */
   amount: bigint; // ERC20 | Ether
 
@@ -998,7 +1000,27 @@ export interface IClaimModalProps {
   callbacks?: IClaimTransactionCallbacks;
 }
 
-export type TPaymentListQueryParams = IQuery;
+/**
+ * Payment list search query
+ */
+export interface TPaymentListQueryParams {
+  /** The network chain ID to filter by */
+  chainId?: number;
+  /** Specific escrow ID to retrieve */
+  escrowId?: number;
+  /** Filter by seller address */
+  seller?: string;
+  /** Filter by buyer address */
+  buyer?: string;
+  /** Filter by marketplace address */
+  marketplace?: string;
+  /** Filter by claimed status */
+  claimed?: boolean;
+  /** Search for payments made on or after this date */
+  dateStart?: Date;
+  /** Search for payments made on or before this date */
+  dateEnd?: Date;
+}
 
 /**
  * Used to specify paging for indexer's payments search.
@@ -1061,6 +1083,7 @@ export interface IndexerInstance {
    *
    * @example // A returned object might look e.g. like this:
    * {
+   *    chainId: "42161",
    *    challengePeriod: 1209600,
    *    challengePeriodStart: "2023-01-24T11:54:33.000Z",
    *    challengePeriodEnd: "2023-02-07T11:54:33.000Z",
@@ -1091,13 +1114,18 @@ export interface IndexerInstance {
    *    settlement: null,
    *    token: {
    *       address: "0x7eD124F79447a1390281c88bB9bca2AC4F009BBE"
-   *    }
+   *    },
+   *    paymentReference: "Order #1337"
    * }
    *
    * @param escrowId ID of the escrow
+   * @param chainId network's chain ID
    * @returns Populated escrow data (incl. settlement, arbitration, status, etc. information)
    */
-  getSinglePayment: (escrowId: number) => Promise<IEscrowData | null>;
+  getSinglePayment: (
+    escrowId: number,
+    chainId: number,
+  ) => Promise<IEscrowData | null>;
 
   /**
    * Read how much balance does the provided account have in the contract
@@ -1161,19 +1189,25 @@ export interface IndexerInstance {
    *   ]
    * }
    * @param walletUserAddress Address of an account to get balance of
+   * @param chainId ID of the chain to get balance from
    * @returns Balance broken down by tokens and claimability
    */
   getUserBalance: (
     walletUserAddress: string,
+    chainId: number,
   ) => Promise<GetResponseUserBalance>;
 
   /**
    * Get list of escrows that are available for claiming by the provided account
    *
    * @param walletUserAddress - Address of the account
+   * @param chainId - network chain ID
    * @returns A list of escrow IDs
    */
-  getClaimableEscrows: (walletUserAddress: string) => Promise<string[]>;
+  getClaimableEscrows: (
+    walletUserAddress: string,
+    chainId: number,
+  ) => Promise<string[]>;
 }
 
 /**

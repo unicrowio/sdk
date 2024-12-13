@@ -51,13 +51,15 @@ const mapData = (_group, status: IEscrowStatus, walletUserAddress: string) =>
  *
  * @param client - Index client instance
  * @param walletUserAddress Address of an account to return the balance of
+ * @param chainId ID of the chain
  * @returns Map of balances broken down by claimability and tokens
  */
 export const getUserBalance = async (
   client: GraphQLClient,
   walletUserAddress: string,
+  chainId: number,
 ): Promise<GetResponseUserBalance> => {
-  const queryString = buildBalanceQuery(walletUserAddress);
+  const queryString = buildBalanceQuery(walletUserAddress, chainId);
 
   const response = await client.request<{
     pending: EscrowStatusView[];

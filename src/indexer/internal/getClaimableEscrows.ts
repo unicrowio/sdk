@@ -4,10 +4,14 @@ import { buildClaimableQuery } from "../internal/queryClaimableEscrows";
 export const getClaimableEscrows = async (
   client: GraphQLClient,
   walletUserAddress: string,
+  chainId: number,
 ): Promise<string[]> => {
+  // Convert chainId from number to string
+  const chainIdString = chainId.toString();
+
   const response: any = await client.request(buildClaimableQuery, {
     walletUserAddress,
-    chainId: globalThis?.unicrow?.network?.chainId,
+    chainId: chainIdString,
   });
 
   const { ready_for_claim } = response;

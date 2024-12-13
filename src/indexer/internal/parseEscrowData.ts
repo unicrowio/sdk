@@ -30,6 +30,8 @@ const consensusArbitration = (status, proposer, seller) => {
 export const parseEscrowData = (
   item: EscrowStatusView,
 ): Omit<IGetEscrowData, "connectedUser" | "walletAddress"> => {
+  const chainId = item.chain_id;
+
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
     bipsToPercentage([
       item.split_buyer,
@@ -74,6 +76,7 @@ export const parseEscrowData = (
   };
 
   const escrow = {
+    chainId,
     challengePeriod,
     challengePeriodStart,
     challengePeriodEnd,
@@ -92,6 +95,7 @@ export const parseEscrowData = (
     // Consensus
     consensusBuyer,
     consensusSeller,
+    paymentReference: item.payment_reference,
   };
 
   let settlement: ISettlement | null = null;
