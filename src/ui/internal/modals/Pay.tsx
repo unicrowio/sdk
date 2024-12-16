@@ -29,6 +29,7 @@ import { useModalCloseHandler } from "../hooks/useModalCloseHandler";
 import { useTokenInfo } from "ui/internal/hooks/useTokenInfo";
 import { useWallet } from "../hooks/useWallet";
 import { useNetworkCheck } from "../hooks/useNetworkCheck";
+import { IPaymentProps } from "typing";
 
 //TODO: move this somewhere to utils
 function formatAmount(amount: string, maxDecimals: number): string {
@@ -90,9 +91,11 @@ export function PayModal(props: IPaymentModalProps) {
             : walletUser || "",
         });
 
-        Object.entries(addresses.common).forEach(([key, value]) => {
-          props.paymentProps[key] = value;
-        });
+        Object.entries(addresses.common).forEach(
+          ([key, value]: [key: any, value: never]) => {
+            props.paymentProps[key as keyof IPaymentProps] = value;
+          },
+        );
 
         setEnsAddresses(addresses.ens);
       }
@@ -102,7 +105,7 @@ export function PayModal(props: IPaymentModalProps) {
   }, [walletUser, isLoadingWallet, isErrorWallet]);
 
   React.useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timer;
 
     if (startCountdown) {
       if (callbackCountdown > 0) {
@@ -303,7 +306,11 @@ export function PayModal(props: IPaymentModalProps) {
 
     return (
       <>
-        <Button fullWidth disabled={isLoadingAnything} onClick={buttonOnClick}>
+        <Button
+          fullWidth
+          disabled={isLoadingAnything}
+          onClick={(evt) => buttonOnClick()}
+        >
           {buttonChildren}
         </Button>
         {buttonCallback}

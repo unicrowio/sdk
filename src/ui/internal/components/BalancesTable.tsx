@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch } from "react";
 import { formatAmountToUSD } from "../../../helpers";
 import { IBalanceDetailed } from "../../../typing";
 import { TokenSymbol } from ".";
@@ -19,7 +19,7 @@ const wrapperStyles: CSS.Properties = {
   fontWeight: 500,
 };
 
-const ClaimSuccessful = (amount) => {
+const ClaimSuccessful = ({ amount }: { amount: number }) => {
   return (
     <div style={wrapperStyles}>
       <BigCheckIcon />
@@ -34,6 +34,12 @@ export const BalancesTable = ({
   onModalClose,
   setIsLoading,
   success,
+}: {
+  chainId: bigint;
+  balances: IBalanceDetailed[];
+  onModalClose: VoidFunction;
+  setIsLoading: Dispatch<React.SetStateAction<boolean>>;
+  success: string;
 }) => {
   return (
     <>
@@ -58,10 +64,10 @@ export const BalancesTable = ({
 };
 
 const TableRow = (
-  chainId: number,
+  chainId: bigint,
   balance: IBalanceWithTokenUSD,
-  onModalClose,
-  setIsLoading,
+  onModalClose: VoidFunction,
+  setIsLoading: Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const [formattedAmountInUSD, setFormattedAmountInUSD] =
     React.useState<string>(balance.displayableAmount);

@@ -134,7 +134,7 @@ export interface IEscrowStatus {
 
 export interface IEscrowData {
   /** Network's chain ID (returned only from the indexer) */
-  chainId?: number;
+  chainId?: bigint;
 
   /** Amount in token's (or ETH's) wei unit */
   amount: bigint; // ERC20 | Ether
@@ -986,7 +986,7 @@ export interface GetResponseUserBalance {
 }
 
 export interface IClaimMultipleModalProps {
-  chainId: number;
+  chainId: bigint;
   escrowIds: number[];
   balances: GetResponseUserBalance;
   deferredPromise: Deferred<any>;
@@ -994,7 +994,7 @@ export interface IClaimMultipleModalProps {
 }
 
 export interface IClaimModalProps {
-  chainId: number;
+  chainId: bigint;
   escrowId: number;
   deferredPromise: Deferred<any>;
   callbacks?: IClaimTransactionCallbacks;
@@ -1005,7 +1005,7 @@ export interface IClaimModalProps {
  */
 export interface TPaymentListQueryParams {
   /** The network chain ID to filter by */
-  chainId?: number;
+  chainId?: bigint;
   /** Specific escrow ID to retrieve */
   escrowId?: number;
   /** Filter by seller address */
@@ -1124,7 +1124,7 @@ export interface IndexerInstance {
    */
   getSinglePayment: (
     escrowId: number,
-    chainId: number,
+    chainId: bigint,
   ) => Promise<IEscrowData | null>;
 
   /**
@@ -1194,7 +1194,7 @@ export interface IndexerInstance {
    */
   getUserBalance: (
     walletUserAddress: string,
-    chainId: number,
+    chainId: bigint,
   ) => Promise<GetResponseUserBalance>;
 
   /**
@@ -1206,7 +1206,7 @@ export interface IndexerInstance {
    */
   getClaimableEscrows: (
     walletUserAddress: string,
-    chainId: number,
+    chainId: bigint,
   ) => Promise<string[]>;
 }
 

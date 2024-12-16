@@ -1,7 +1,7 @@
 import { EscrowStatus } from "../../typing";
 
 export interface EscrowStatusView {
-  chain_id: number;
+  chain_id: string;
 
   amount: bigint; // ERC20 | Ether
   escrow_id: number;

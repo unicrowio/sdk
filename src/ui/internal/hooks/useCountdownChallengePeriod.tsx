@@ -1,17 +1,18 @@
-import { countdownChallengePeriod } from "helpers/countdownChallengePeriod";
 import React from "react";
+import { countdownChallengePeriod } from "helpers/countdownChallengePeriod";
+import { IGetEscrowData } from "typing";
 
 const hasExpired = (period: Date) => period && Date.now() > period.getTime();
-const getCountdown = (date, prefix) =>
+const getCountdown = (date: Date, prefix: string) =>
   `${prefix} ${countdownChallengePeriod(date).replace(" remaining", "")}`;
 
-const getChallengedBy = (data) => {
+const getChallengedBy = (data: IGetEscrowData) => {
   return data.status.latestChallengeBy === null
     ? "buyer"
     : data.status.latestChallengeBy;
 };
 
-const extractChallengeData = (data) => ({
+const extractChallengeData = (data: IGetEscrowData) => ({
   start: data.challengePeriodStart,
   end: data.challengePeriodEnd,
   connectedUser: data.connectedUser,
@@ -19,8 +20,8 @@ const extractChallengeData = (data) => ({
   challengedBy: getChallengedBy(data),
 });
 
-export const useCountdownChallengePeriod = (escrowData) => {
-  const data = React.useRef<any>(escrowData);
+export const useCountdownChallengePeriod = (escrowData: IGetEscrowData) => {
+  const data = React.useRef<IGetEscrowData>(escrowData);
   const challenge = React.useRef<any>(null);
   const timer = React.useRef<NodeJS.Timer>();
   const [countdown, setCountdown] = React.useState<any>("...");
@@ -29,7 +30,7 @@ export const useCountdownChallengePeriod = (escrowData) => {
   const startExpired = hasExpired(challenge.current?.start);
   const endExpired = hasExpired(challenge.current?.end);
 
-  const updateChallenge = (newData) => {
+  const updateChallenge = (newData: IGetEscrowData) => {
     data.current = newData;
     challenge.current = {
       ...challenge.current,

@@ -8,7 +8,11 @@ import { nullOrValue, toDate, bipsToPercentage } from "../../helpers";
 import { calculateStatus } from "../../core/calculateStatus";
 import { EscrowStatusView } from "indexer/internal/types";
 
-const consensusArbitration = (status, proposer, seller) => {
+const consensusArbitration = (
+  status: string,
+  proposer: string,
+  seller: string,
+) => {
   if (!status) {
     return { consensusBuyer: false, consensusSeller: false };
   }
@@ -30,7 +34,7 @@ const consensusArbitration = (status, proposer, seller) => {
 export const parseEscrowData = (
   item: EscrowStatusView,
 ): Omit<IGetEscrowData, "connectedUser" | "walletAddress"> => {
-  const chainId = item.chain_id;
+  const chainId = BigInt(item.chain_id);
 
   const [splitBuyer, splitSeller, splitMarketplace, splitProtocol] =
     bipsToPercentage([

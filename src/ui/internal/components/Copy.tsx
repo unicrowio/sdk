@@ -26,10 +26,6 @@ export const CopyToClipboard = ({ content, copy }: CopyToClipboardProps) => {
   );
 };
 
-const copyToClipboard = async (text) => {
-  if ("clipboard" in navigator) {
-    return await navigator.clipboard.writeText(text);
-  } else {
-    return document.execCommand("copy", true, text);
-  }
-};
+async function copyToClipboard(text: string): Promise<void> {
+  await navigator.clipboard.writeText(text);
+}

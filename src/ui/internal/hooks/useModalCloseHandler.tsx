@@ -3,14 +3,8 @@ import React from "react";
 export const useModalCloseHandler = (onModalClose: VoidFunction) => {
   const ref = React.useRef(null);
 
-  const handleClickOutside = (event) => {
-    const KEYCODE_ESC = 27;
-
-    const escPressed =
-      event.keyCode === KEYCODE_ESC ||
-      event.which === KEYCODE_ESC ||
-      event.charCode === KEYCODE_ESC ||
-      event.key === "Escape";
+  const handleClickOutside = (event: KeyboardEvent) => {
+    const escPressed = event.key === "Escape";
 
     // since our modals are wrapped in a div or form element and positioned fixed,
     // this is the easiest way to check if the click was outside the modal

@@ -32,7 +32,11 @@ const prepareResponseData = (balance: any, tokens: IToken[]) => {
   };
 };
 
-const mapData = (_group, status: IEscrowStatus, walletUserAddress: string) =>
+const mapData = (
+  _group: any,
+  status: IEscrowStatus,
+  walletUserAddress: string,
+) =>
   Object.keys(_group)
     .map((key) => {
       const amount = calculateSplit(_group[key], walletUserAddress);
@@ -57,7 +61,7 @@ const mapData = (_group, status: IEscrowStatus, walletUserAddress: string) =>
 export const getUserBalance = async (
   client: GraphQLClient,
   walletUserAddress: string,
-  chainId: number,
+  chainId: bigint,
 ): Promise<GetResponseUserBalance> => {
   const queryString = buildBalanceQuery(walletUserAddress, chainId);
 

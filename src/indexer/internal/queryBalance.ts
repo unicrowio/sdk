@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 import { returningValues } from "./payload";
 
-export const buildBalanceQuery = (address: string, chainId: number) => {
+export const buildBalanceQuery = (address: string, chainId: bigint) => {
   const where = (op: "_nin" | "_in") => `
     where: {
           _or: [
@@ -15,7 +15,7 @@ export const buildBalanceQuery = (address: string, chainId: number) => {
               {
                 claimed: { _eq: false }
                 status: { ${op}: ["PERIOD_EXPIRED", "RELEASED", "SETTLED"] }
-                chain_id: { _eq: "${chainId}" }
+                chain_id: { _eq: "${chainId.toString()}" }
               }
         }
   `;

@@ -35,11 +35,11 @@ const registerChainChangedListener = () => {
       (chainId: bigint) => {
         console.info("chainChanged", chainId);
 
-        let network = NETWORK[chainId.toString()];
+        const network = NETWORK[chainId.toString()];
         if (network) {
           config({
             chainId,
-            autoSwitchNetwork: globalThis.unicrow.autoSwitchNetwork,
+            autoSwitchNetwork: globalThis?.unicrow?.autoSwitchNetwork,
           });
         }
 
@@ -95,7 +95,7 @@ export const connect = async (): Promise<string | null> => {
 /**
  * Sends a chain switch request to the user's wallet.
  *
- * @param name - `chainId` of one of the supported networks (see: {@link module:wallet~NETWORK})
+ * @param chainId - `chainId` of one of the supported networks (see: {@link module:wallet~NETWORK})
  * @returns `chainId` of the network that the wallet was switched to.
  * @throws Error if no wallet is present or the user rejected adding or switching to the network
  */
@@ -150,7 +150,7 @@ export const switchNetwork = async (chainId: bigint) => {
   if (connected.chainId === network.chainId) {
     config({
       chainId,
-      autoSwitchNetwork: globalThis.unicrow.autoSwitchNetwork,
+      autoSwitchNetwork: globalThis?.unicrow?.autoSwitchNetwork,
     });
   }
 
@@ -172,7 +172,7 @@ export const autoSwitchNetwork = async (
   const isCorrectNetwork = await isCorrectNetworkConnected();
 
   if (!isCorrectNetwork) {
-    if (globalThis.unicrow.autoSwitchNetwork || force) {
+    if (globalThis?.unicrow?.autoSwitchNetwork || force) {
       await switchNetwork(globalThis?.unicrow?.network?.chainId);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
     } else {

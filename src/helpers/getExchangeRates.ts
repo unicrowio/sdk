@@ -12,8 +12,8 @@ interface IGeckoRespObj {
 
 // ChainId-CoinGeckoNetworkId mapping
 export const CG_NETWORK_ID = {
-  42161: "arbitrum-one",
-  421614: "arbitrumSepolia",
+  "42161": "arbitrum-one",
+  "421614": "arbitrumSepolia",
 };
 
 const API_COINGECKO =
@@ -59,7 +59,7 @@ const getCoinGeckoPrices = async (
 };
 
 export const getExchangeRates = async (
-  chainId: number,
+  chainId: bigint,
   tokensAddresses: string[],
 ): Promise<IResult> => {
   let result = {} as IResult;
@@ -67,7 +67,8 @@ export const getExchangeRates = async (
   try {
     const uniqueTokensAddresses = Array.from(new Set(tokensAddresses));
 
-    const cgnetid = CG_NETWORK_ID[chainId as keyof typeof CG_NETWORK_ID];
+    const cgnetid =
+      CG_NETWORK_ID[chainId.toString() as keyof typeof CG_NETWORK_ID];
     if (!cgnetid)
       throw new Error(`getExchangeRates error, unmapped network: ${chainId}`);
 

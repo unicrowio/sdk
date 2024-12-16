@@ -18,7 +18,7 @@ const buildQuery = ({
   const sentences: string[] = [];
 
   if (query.chainId) {
-    conditions.push(`{ chain_id: { _eq: "${query.chainId}"} }`);
+    conditions.push(`{ chain_id: { _eq: "${query.chainId.toString()}"} }`);
   }
 
   if (query.escrowId) {

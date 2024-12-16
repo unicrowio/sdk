@@ -66,7 +66,7 @@ export function SettlementOfferModal({
   } = useModalStates({ deferredPromise });
 
   const getEscrowAndPossiblyRenderApproveModal = React.useCallback(
-    (escrowId) =>
+    (escrowId: number) =>
       getEscrowData(escrowId).then((data: IGetEscrowData) => {
         const settlementModalProps: ISettlementOfferModalProps = {
           escrowId,

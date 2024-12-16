@@ -97,7 +97,7 @@ export const setupNetwork = ({
   chainId = BigInt("42161"),
   autoSwitchNetwork = false,
 }) => {
-  let network = NETWORK[chainId.toString()];
+  const network = NETWORK[chainId.toString()];
   if (!network) throw new Error(`Unsupported network: ${chainId}`);
 
   globalThis.unicrow = {

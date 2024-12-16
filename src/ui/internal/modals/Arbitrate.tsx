@@ -73,10 +73,10 @@ export const Arbitrate = ({
     }
   }, [escrowData]);
 
-  const confirm = (event: any) => {
+  const confirm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!escrowData) return null;
+    if (!escrowData) return;
 
     setIsLoading(true);
     arbitrate(

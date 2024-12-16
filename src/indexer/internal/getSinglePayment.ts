@@ -9,12 +9,12 @@ type TEscrowId = Pick<TPaymentListQueryParams, "escrowId" | "chainId">;
 export const getSinglePayment = async (
   client: GraphQLClient,
   escrowId: number,
-  chainId: number,
+  chainId: bigint,
 ): Promise<IEscrowData | null> => {
-  const query: TEscrowId = {};
-
-  query.escrowId = escrowId;
-  query.chainId = chainId;
+  const query: TEscrowId = {
+    escrowId,
+    chainId,
+  };
 
   const queryString = buildQuery({
     query,
