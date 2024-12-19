@@ -1,7 +1,7 @@
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import { bipsToPercentage } from "../helpers";
-import { autoSwitchNetwork } from "wallet";
+import { autoSwitchNetwork } from "../wallet";
 import { getBrowserProvider } from "./internal/getBrowserProvider";
 
 /**
