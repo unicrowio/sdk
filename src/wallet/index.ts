@@ -129,7 +129,8 @@ export const switchNetwork = async (chainId: bigint) => {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [switchParams], // chainId must be in hexadecimal numbers
-    });
+    })
+    
   } catch (error) {
     // Unrecognized chain id error, this chain has not yet been added to this wallet
     if (error.code === 4902) {
@@ -152,6 +153,8 @@ export const switchNetwork = async (chainId: bigint) => {
       chainId,
       autoSwitchNetwork: globalThis?.unicrow?.autoSwitchNetwork,
     });
+  } else {
+    throw Error("Failed to switch the network")
   }
 
   return chainId;
@@ -168,13 +171,20 @@ export const switchNetwork = async (chainId: bigint) => {
 export const autoSwitchNetwork = async (
   callbacks?: IGenericTransactionCallbacks,
   force = false,
-) => {
+): Promise<boolean> => {
   const isCorrectNetwork = await isCorrectNetworkConnected();
+
+  if (globalThis?.unicrow?.network?.chainId == null) {
+    throw Error(
+      "Network not configured. Please call Unicrow.config({<chainId})",
+    );
+  }
 
   if (!isCorrectNetwork) {
     if (globalThis?.unicrow?.autoSwitchNetwork || force) {
       await switchNetwork(globalThis?.unicrow?.network?.chainId);
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
+      return true;
     } else {
       throw new Error(`Unsupported network: ${(await getNetwork()).name}`);
     }
