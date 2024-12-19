@@ -1,6 +1,7 @@
 import { Unicrow__factory } from "@unicrowio/ethers-types";
 import { getContractAddress } from "../config";
 import { bipsToPercentage } from "../helpers";
+import { autoSwitchNetwork } from "wallet";
 import { getBrowserProvider } from "./internal/getBrowserProvider";
 
 /**
@@ -10,6 +11,8 @@ import { getBrowserProvider } from "./internal/getBrowserProvider";
  * @returns The protocol fee in percentage
  */
 export const getProtocolFee = async () => {
+  await autoSwitchNetwork();
+  console.log("I'm here");
   const smartContract = Unicrow__factory.connect(
     getContractAddress("unicrow"),
     getBrowserProvider(),

@@ -3,8 +3,7 @@ import { ethers } from "ethers";
 /**
  * Returns the user's provider
  *
- * @throws Error
- * If account is not connected (=no provider given).
+ * @throws Error If the provider couldn't be retrieved
  * @returns {ethers.providers.BrowserProvider}
  */
 export const getBrowserProvider = () => {

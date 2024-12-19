@@ -125,6 +125,8 @@ export const switchNetwork = async (chainId: bigint) => {
    * https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods
    */
   try {
+    console.log("switching");
+    console.log(chainId);
     // check if the chain to connect to is installed
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
@@ -168,13 +170,22 @@ export const switchNetwork = async (chainId: bigint) => {
 export const autoSwitchNetwork = async (
   callbacks?: IGenericTransactionCallbacks,
   force = false,
-) => {
+): Promise<boolean> => {
   const isCorrectNetwork = await isCorrectNetworkConnected();
+
+  if (globalThis?.unicrow?.network?.chainId == null) {
+    throw Error(
+      "Network not configured. Please call Unicrow.config({<chainId})",
+    );
+  }
 
   if (!isCorrectNetwork) {
     if (globalThis?.unicrow?.autoSwitchNetwork || force) {
+      console.log("switching");
       await switchNetwork(globalThis?.unicrow?.network?.chainId);
+      console.log("switched?");
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
+      return true;
     } else {
       throw new Error(`Unsupported network: ${(await getNetwork()).name}`);
     }

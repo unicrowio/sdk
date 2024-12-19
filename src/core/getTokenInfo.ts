@@ -2,12 +2,13 @@ import { ethers } from "ethers";
 import { ERC20__factory } from "@unicrowio/ethers-types";
 import { isSameAddress } from "../helpers";
 import { IToken } from "../typing";
+import { autoSwitchNetwork } from "../wallet";
 import { getBrowserProvider } from "./internal/getBrowserProvider";
 
 const fetchTokenInfo = async (tokenAddress: string) => {
   try {
-    const provider = getBrowserProvider();
-    const token = ERC20__factory.connect(tokenAddress, provider);
+    await autoSwitchNetwork();
+    const token = ERC20__factory.connect(tokenAddress, getBrowserProvider());
     return Promise.all([token.symbol(), token.decimals()]).then((results) => ({
       address: tokenAddress,
       symbol: results[0],
