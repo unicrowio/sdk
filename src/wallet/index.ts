@@ -125,13 +125,12 @@ export const switchNetwork = async (chainId: bigint) => {
    * https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods
    */
   try {
-    console.log("switching");
-    console.log(chainId);
     // check if the chain to connect to is installed
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [switchParams], // chainId must be in hexadecimal numbers
-    });
+    })
+    
   } catch (error) {
     // Unrecognized chain id error, this chain has not yet been added to this wallet
     if (error.code === 4902) {
@@ -154,6 +153,8 @@ export const switchNetwork = async (chainId: bigint) => {
       chainId,
       autoSwitchNetwork: globalThis?.unicrow?.autoSwitchNetwork,
     });
+  } else {
+    throw Error("Failed to switch the network")
   }
 
   return chainId;
@@ -181,9 +182,7 @@ export const autoSwitchNetwork = async (
 
   if (!isCorrectNetwork) {
     if (globalThis?.unicrow?.autoSwitchNetwork || force) {
-      console.log("switching");
       await switchNetwork(globalThis?.unicrow?.network?.chainId);
-      console.log("switched?");
       callbacks && callbacks.switchingNetwork && callbacks.switchingNetwork();
       return true;
     } else {

@@ -11,8 +11,14 @@ import { getBrowserProvider } from "./internal/getBrowserProvider";
  * @returns The protocol fee in percentage
  */
 export const getProtocolFee = async () => {
-  await autoSwitchNetwork();
-  console.log("I'm here");
+  try {
+    await autoSwitchNetwork();
+  } catch (error) {
+    console.warn("Couldn't get protocol fee: " + error.message)
+    
+    return null
+  }
+
   const smartContract = Unicrow__factory.connect(
     getContractAddress("unicrow"),
     getBrowserProvider(),
