@@ -14,9 +14,9 @@ export const getProtocolFee = async () => {
   try {
     await autoSwitchNetwork();
   } catch (error) {
-    console.warn("Couldn't get protocol fee: " + error.message)
-    
-    return null
+    console.warn("Couldn't get protocol fee: " + error.message);
+
+    return null;
   }
 
   const smartContract = Unicrow__factory.connect(

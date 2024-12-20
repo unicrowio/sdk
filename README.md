@@ -37,6 +37,18 @@ npm install @unicrowio/sdk
 import Unicrow from "@unicrowio/sdk";
 ```
 
+### Set the network
+
+Define which network should be used by default. If `autoSwitchNetwork` is set to true, the contract interaction
+functions will ask user to switch to this network, otherwise the functions will revert with an error.
+
+```js
+Unicrow.config({
+  chainId: <chainId>,
+  autoSwitchNetwork: <true|false> // optional, defaults to true
+})
+```
+
 ### Pay
 
 ```js
@@ -73,20 +85,6 @@ Unicrow.ui.release(escrowId)
 ```js
 Unicrow.ui.claim(escrowId)
 ```
-
-### Change the network
-
-The SDK is by default configured to interact with the Arbitrum One network and to ask the user to switch to it when any contract-interacting function is called. We support also the Arbitrum Sepolia Testnet. The automated switch can also be turned off (in such case, an error is thrown).
-
-
-```js
-Unicrow.config({
-  defaultNetwork: “<arbitrum|arbitrumSepolia>”,
-  autoSwitchNetwork: <true|false> // optional, defaults to true
-})
-```
-
-For more examples, check out the [SDK Tutorial](https://github.com/unicrowio/sdk-tutorial).
 
 ## SDK Developers
 
