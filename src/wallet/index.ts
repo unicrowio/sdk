@@ -129,8 +129,7 @@ export const switchNetwork = async (chainId: bigint) => {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [switchParams], // chainId must be in hexadecimal numbers
-    })
-    
+    });
   } catch (error) {
     // Unrecognized chain id error, this chain has not yet been added to this wallet
     if (error.code === 4902) {
@@ -154,7 +153,7 @@ export const switchNetwork = async (chainId: bigint) => {
       autoSwitchNetwork: globalThis?.unicrow?.autoSwitchNetwork,
     });
   } else {
-    throw Error("Failed to switch the network")
+    throw Error("Failed to switch the network");
   }
 
   return chainId;
