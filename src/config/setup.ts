@@ -92,7 +92,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
  * - 42161 - Arbitrum One
  * - 421614 - Arbitrum Sepolia
  * - 8453 - Base
- * - 8453 - Base Sepolia 
+ * - 8453 - Base Sepolia
  *
  * @param {bigint} chainId - `chainId` of one of Unicrow's supported networks (see: {@link module:wallet~NETWORK})
  * @param {boolean} autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, send a chain add/switch request
