@@ -94,14 +94,18 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
  * - 8453 - Base
  * - 8453 - Base Sepolia
  *
+ * @example unicrowSDK.config(
+ *   chainId: 42161 
+ *   autoSwitchNetwork: true 
+ * )
  * @param {Object} config - The network configuration options
- * @param {bigint} chainId - `chainId` of one of Unicrow's supported networks (see: {@link module:wallet~NETWORK})
- * @param {boolean} autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, send a chain add/switch request
+ * @param {bigint} chainId - Chain ID of one of Unicrow's supported networks (see above)
+ * @param {boolean} autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, ask the user to change to that network (or add it if the user doesn't have it configured)
  */
-export const setupNetwork = ({
-  chainId = BigInt("42161"),
-  autoSwitchNetwork = false,
-}) => {
+export const setupNetwork = (
+  chainId = 42161,
+  autoSwitchNetwork = true,
+) => {
   const network = NETWORK[chainId.toString()];
   if (!network) throw new Error(`Unsupported network: ${chainId}`);
 
