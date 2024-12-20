@@ -41,6 +41,11 @@ import Unicrow from "@unicrowio/sdk";
 
 Define which network should be used by default. If `autoSwitchNetwork` is set to true, the contract interaction
 functions will ask user to switch to this network, otherwise the functions will revert with an error.
+Currently supported networks and their chain IDs
+- 42161 - Arbitrum One
+- 421614 - Arbitrum Sepolia
+- 8453 - Base
+- 8453 - Base Sepolia
 
 ```js
 Unicrow.config({
