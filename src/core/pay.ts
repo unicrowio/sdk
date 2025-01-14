@@ -184,6 +184,7 @@ export const pay = async (
     throw new Error(`Insufficient balance: ${balance} < ${solidityAmount}`);
   }
 
+  
   const unicrowAddress = getContractAddress("unicrow");
 
   if (tokenAddress !== ethers.ZeroAddress) {
@@ -213,16 +214,18 @@ export const pay = async (
     challengePeriod,
     challengeExtension: challengePeriodExtension,
     amount: solidityAmount,
-    paymentReference,
+    paymentReference: paymentReference == null ? "" : paymentReference,
   };
 
   try {
     callbacks && callbacks.broadcasting && callbacks.broadcasting();
 
+    let step = 0;
     const unicrowSc = Unicrow__factory.connect(unicrowAddress, providerSigner);
 
     let payTx: any;
     if (tokenAddress === ethers.ZeroAddress) {
+
       payTx = await unicrowSc.pay(
         walletAddress,
         payInput,
