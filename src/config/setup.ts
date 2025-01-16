@@ -1,5 +1,4 @@
 import { UnicrowNetwork } from "typing";
-
 export const NETWORK: { [name: string]: UnicrowNetwork } = {
   "42161": {
     chainId: BigInt(42161),
@@ -95,16 +94,16 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
  * - 8453 - Base Sepolia
  *
  * @example unicrowSDK.config({
- *   chainId = BigInt(42161), 
- *   autoSwitchNetwork: true 
+ *   chainId = BigInt(42161),
+ *   autoSwitchNetwork: true
  * })
  * @param options - Configuration options
  * @param options.chainId - Chain ID of one of Unicrow's supported networks (see above)
  * @param options.autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, ask the user to change to that network (or add it if the user doesn't have it configured)
  */
-export const setupNetwork = ({ 
-  chainId = BigInt(42161), 
-  autoSwitchNetwork = true 
+export const setupNetwork = ({
+  chainId = BigInt(42161),
+  autoSwitchNetwork = true,
 }: {
   chainId?: BigInt;
   autoSwitchNetwork?: boolean;
