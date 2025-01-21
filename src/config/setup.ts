@@ -36,7 +36,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
   },
   "8453": {
     chainId: BigInt(8453),
-    displayName: "Base Mainnet",
+    displayName: "Base",
     nativeCurrency: {
       name: "Ether",
       symbol: "ETH",
