@@ -11,10 +11,6 @@ The SDK is organized in modules as follows:
 - Wallet - web3 wallet integration functions. The SDK takes care of the wallet integration automatically wherever necessary, so these are optional to use.
 - Indexer - functions to read escrow information from the indexer. While it is possible to read data for a single escrow from the contract directly via core functions, using the indexer is necessary to search or list multiple escrows or to read user’s overall balance in the contract in case the app doesn’t keep records in other ways.
 
-**Note: In order to continuously and quickly improve SDK’s developer experience, we might introduce small breaking changes in the first couple of months after the launch.**
-
-**We promise to avoid such situations as much as possible, but if it'll happen, the changes will be announced in the [#breaking-changes](https://discord.gg/6vnHwuKmwS) Discord channel, and explained along with the version number in the function comments. To get notified about such changes, we recommend to enable the channel's notifications.**
-
 ## Getting Started
 
 To get a quick hands-on experience with using the SDK, check out our [SDK Tutorial](https://github.com/unicrowio/sdk-tutorial). Otherwise you can follow the steps and see some basic functions below.

@@ -39,11 +39,7 @@ export function ClaimModal(props: IClaimModalProps) {
 
   React.useEffect(() => {
     if (escrowBalance && !success) {
-      if (escrowBalance.connectedUser === "other") {
-        setModalAction({
-          isForbidden: true,
-        });
-      } else if (escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
+      if (escrowBalance.status.state !== EscrowStatus.PERIOD_EXPIRED) {
         setModalAction({
           isForbidden: true,
           reason:
