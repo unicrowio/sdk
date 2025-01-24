@@ -1,5 +1,4 @@
 import { UnicrowNetwork } from "typing";
-
 export const NETWORK: { [name: string]: UnicrowNetwork } = {
   "42161": {
     chainId: BigInt(42161),
@@ -37,7 +36,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
   },
   "8453": {
     chainId: BigInt(8453),
-    displayName: "Base Mainnet",
+    displayName: "Base",
     nativeCurrency: {
       name: "Ether",
       symbol: "ETH",
@@ -94,13 +93,21 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
  * - 8453 - Base
  * - 8453 - Base Sepolia
  *
- * @param {bigint} chainId - `chainId` of one of Unicrow's supported networks (see: {@link module:wallet~NETWORK})
- * @param {boolean} autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, send a chain add/switch request
+ * @example unicrowSDK.config({
+ *   chainId = BigInt(42161),
+ *   autoSwitchNetwork: true
+ * })
+ * @param options - Configuration options
+ * @param options.chainId - Chain ID of one of Unicrow's supported networks (see above)
+ * @param options.autoSwitchNetwork - If the user is connected to a different network when a call is about to be performed, ask the user to change to that network (or add it if the user doesn't have it configured)
  */
 export const setupNetwork = ({
-  chainId = BigInt("42161"),
-  autoSwitchNetwork = false,
-}) => {
+  chainId = BigInt(42161),
+  autoSwitchNetwork = true,
+}: {
+  chainId?: BigInt;
+  autoSwitchNetwork?: boolean;
+} = {}) => {
   const network = NETWORK[chainId.toString()];
   if (!network) throw new Error(`Unsupported network: ${chainId}`);
 

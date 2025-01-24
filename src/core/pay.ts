@@ -213,7 +213,7 @@ export const pay = async (
     challengePeriod,
     challengeExtension: challengePeriodExtension,
     amount: solidityAmount,
-    paymentReference,
+    paymentReference: paymentReference == null ? "" : paymentReference,
   };
 
   try {
