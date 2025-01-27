@@ -14,6 +14,7 @@ interface IGeckoRespObj {
 export const CG_NETWORK_ID = {
   "42161": "arbitrum-one",
   "421614": "arbitrumSepolia",
+  "8453": "base",
 };
 
 const API_COINGECKO =
@@ -40,6 +41,7 @@ const getCoinGeckoPrices = async (
 
       response[ethers.ZeroAddress] = coinGeckoEthRespJson.ethereum?.usd;
     } else {
+      console.log(`fetching ${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddress}&vs_currencies=USD`)
       const coinGeckoResp = await fetch(
         `${API_COINGECKO_TOKENS}${network}?contract_addresses=${tokensAddress}&vs_currencies=USD`,
       );

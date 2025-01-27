@@ -19,7 +19,7 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
   },
   "421614": {
     chainId: BigInt(421614),
-    displayName: "Arbitrum Sepolia Testnet",
+    displayName: "Arbitrum Sepolia",
     nativeCurrency: {
       name: "Ether",
       symbol: "ETH",

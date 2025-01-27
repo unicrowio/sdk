@@ -33,8 +33,6 @@ const registerChainChangedListener = () => {
     chainChangedListener = window.ethereum.on(
       "chainChanged",
       (chainId: bigint) => {
-        console.info("chainChanged", chainId);
-
         const network = NETWORK[chainId.toString()];
         if (network) {
           config({
