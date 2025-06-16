@@ -45,10 +45,10 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
     blockExplorerUrls: ["https://basescan.org/"],
     publicRpcs: ["https://mainnet.base.org"],
     contracts: {
-      unicrow: "0x24e9ECC6c56dcD0C875fDF181FA3A4EEf3c5D5F0",
-      dispute: "0xab32831aA9bBFEB12F1BA7B74eBFf76e45944937",
-      arbitrator: "0xF1447b0fda912a6857B5d77d7cDE9663266896cf",
-      claim: "0x40F83551803051676eB7Cb0374176d03db247b97",
+      unicrow: "0x19EbA0BE87dF312d9041240ddE468507adaC9e0A",
+      dispute: "0x9D0FeAa4DfCa9e3Ae18ad97f90231E9a7C963D84",
+      arbitrator: "0x888B745df64eF65399429e1DB3663BCFa5d73a97",
+      claim: "0x063d6472df3FdD1cec9B00cac29bcd935511f451",
     },
   },
   "84532": {
@@ -62,10 +62,10 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
     blockExplorerUrls: ["https://sepolia-explorer.base.org"],
     publicRpcs: ["https://sepolia.base.org"],
     contracts: {
-      unicrow: "0xe0Ee927Fc4B128b20Fb087F2372d21526d636945",
-      dispute: "0x81BDA62F4E0e95edaf2ED72985B93e95880D05f7",
-      arbitrator: "0xfA8b095785c87F2fc4f19BA9d9a39B3FD17F74ca",
-      claim: "0x7c27bE3C886465C9bf831E216FbadcDC4f4d9161",
+      unicrow: "0x32fab9f28724c1c5832d5d6830afe498f8abdaac",
+      dispute: "0xdb2076dcecc82ed0dd204bf7b6dba44f0fea9e36",
+      arbitrator: "0xad8d43ddefaf2779f72340627a81b9f31330c3dd",
+      claim: "0x01d612617028f14db6c6f4c00b2a9b4107a90f7a",
     },
   },
   "31337": {

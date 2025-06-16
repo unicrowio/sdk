@@ -21,7 +21,7 @@ import {
   getWeb3Provider,
   getCurrentWalletAddress,
   autoSwitchNetwork,
-  getNetwork
+  getNetwork,
 } from "../wallet";
 import {
   DataStructOutput,
@@ -163,9 +163,15 @@ const parseToken = async (data: TokenStruct): Promise<IToken | null> => {
       decimals: 18,
       symbol: "ETH",
     };
-  // adding a check for USDT on Arbitrum here, it returns USD₮0 symbol from the contract,
-  // which is not very use friendly, so we're overriding it manually
-  } else if (isSameAddress(data.address_.toString(), "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9") && (await getNetwork()).chainId == BigInt(42161)) {
+    // adding a check for USDT on Arbitrum here, it returns USD₮0 symbol from the contract,
+    // which is not very use friendly, so we're overriding it manually
+  } else if (
+    isSameAddress(
+      data.address_.toString(),
+      "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+    ) &&
+    (await getNetwork()).chainId == BigInt(42161)
+  ) {
     return {
       address: data.address_.toString(),
       symbol: "USD₮",
@@ -181,11 +187,14 @@ const parseToken = async (data: TokenStruct): Promise<IToken | null> => {
   };
 };
 
-const parse = async (escrowId: number, data: DataStructOutput): Promise<any> => {
+const parse = async (
+  escrowId: number,
+  data: DataStructOutput,
+): Promise<any> => {
   const arbitration: IArbitratorInfo | null = parseArbitration(data.arbitrator);
 
   const settlement: ISettlement | null = parseSettlement(data.settlement);
-  const token: IToken | null = (await parseToken(data.token));
+  const token: IToken | null = await parseToken(data.token);
   const escrow: IEscrowData = parseEscrow(
     escrowId,
     data.escrow,
