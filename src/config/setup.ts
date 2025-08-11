@@ -84,6 +84,23 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
       claim: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
     },
   },
+  "137": {
+    chainId: BigInt(137),
+    displayName: "Polygon",
+    nativeCurrency: {
+      name: "MATIC",
+      symbol: "MATIC",
+      decimals: 18,
+    },
+    blockExplorerUrls: ["https://polygonscan.com/"],
+    publicRpcs: ["https://polygon-rpc.com"],
+    contracts: {
+      unicrow: "0xC34dc58b7B9f6e80120d7E92C0c3FA28105DE58d",
+      dispute: "0x62966a60988E15af3F952783bD12AECd7a9d4b8e",
+      arbitrator: "0x38F17D0752266B7E13D8BB773aaf17BEED09511E",
+      claim: "0xf1FE17836D13EEB3aF90D2164bD7EBCA0cF0cA71",
+    },
+  },
 };
 
 /**
@@ -91,7 +108,8 @@ export const NETWORK: { [name: string]: UnicrowNetwork } = {
  * - 42161 - Arbitrum One
  * - 421614 - Arbitrum Sepolia
  * - 8453 - Base
- * - 8453 - Base Sepolia
+ * - 84532 - Base Sepolia
+ * - 137 - Polygon
  *
  * @example unicrowSDK.config({
  *   chainId = BigInt(42161),
