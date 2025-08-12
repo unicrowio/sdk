@@ -28,14 +28,6 @@ jobs:
             node-version: 22
             cache: 'yarn'
 
-      - name: Cache Yarn v1
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/yarn/v6
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-            
         - name: Install dependencies
           run: yarn install
 
